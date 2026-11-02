@@ -1,4 +1,4 @@
-# SpliceGAIP
+# EpitopeRank
 
 **AI-driven Alternative Splicing Analysis Agent Platform**
 
@@ -7,13 +7,13 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-SpliceGAIP 是在开源项目 [BioGAIP](https://github.com/zhangjy859/BioGAIP) 的多智能体架构基础上，结合剪接领域数据层（来自 SplicingNexus v2 的生产级事件标准化契约）重构而成的**面向可变剪接下游分析的 AI 智能体平台**。
+EpitopeRank 是在开源项目 [BioGAIP](https://github.com/zhangjy859/BioGAIP) 的多智能体架构基础上，结合剪接领域数据层（来自 SplicingNexus v2 的生产级事件标准化契约）重构而成的**面向可变剪接下游分析的 AI 智能体平台**。
 
 自然语言驱动分析 → 自动生成分析流程 → 自动统计分析 → 自动解释生物意义 → 自动生成科研报告。
 
-> 本文档即《SpliceGAIP 能力手册 v0.1.0》的完整 Markdown 版。带样式在线版见
-> [能力手册 HTML](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.html) ·
-> [PDF](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.pdf)。
+> 本文档即《EpitopeRank 能力手册 v0.1.0》的完整 Markdown 版。带样式在线版见
+> [能力手册 HTML](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.html) ·
+> [PDF](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.pdf)。
 
 ---
 
@@ -45,14 +45,14 @@ python run.py serve --ui  --port 8501   # Streamlit 仪表盘
 | 形态 | 命令 |
 |---|---|
 | 🐳 Docker | `docker compose up -d`（API 8800 / UI 8501） |
-| 💻 Windows EXE | `pyinstaller packaging/SpliceGAIP.spec` |
+| 💻 Windows EXE | `pyinstaller packaging/EpitopeRank.spec` |
 | 🔧 源码 | `python run.py serve --api --port 8800` |
 
 ### 演示与文档
 
 | 材料 | 内容 |
 |---|---|
-| 📘 [能力手册 HTML](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.html) · [PDF](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.pdf) · [Markdown](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.md) | v0.1.0：15 个功能模块、11 个规划项、3 份附录 |
+| 📘 [能力手册 HTML](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.html) · [PDF](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.pdf) · [Markdown](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.md) | v0.1.0：15 个功能模块、11 个规划项、3 份附录 |
 | 🎬 [剪接来源候选新抗原 · 1:00](media/videos/splice-neoantigen-peptides.bilingual.mp4) | 事件 → 可翻译肽 → HLA 结合预测 → 132 条候选肽（中英双字幕轨） |
 | 🎬 [完整分析流程 · 1:47](media/videos/pipeline-overview.bilingual.mp4) | 接入体检 → 六 Agent 流水线 → 火山图 / PSI 热图（中英双字幕轨） |
 | 🗒 [双语讲解稿](docs/WALKTHROUGH.md) | 逐句中英对照，可直接当配音稿 |
@@ -64,7 +64,7 @@ python run.py serve --ui  --port 8501   # Streamlit 仪表盘
 
 ---
 
-# SpliceGAIP 能力手册
+# EpitopeRank 能力手册
 
 **版本**：v0.1.0（依据 2026-10-29 仓库代码、`config/*.yaml`、`docs/` 与说明文档整理）
 **适用对象**：分析人员（想知道能做什么）、开发者（想知道改哪里）、评审者（想知道边界在哪）
@@ -74,7 +74,7 @@ python run.py serve --ui  --port 8501   # Streamlit 仪表盘
 
 ## 0. 一页速览
 
-SpliceGAIP 是一个**面向"已完成可变剪接定量结果"的 AI 分析智能体平台**。它不接受 FASTQ，也不做比对；它接收 rMATS / SUPPA2 / MAJIQ / LeafCutter / 华大 RNAref 的已量化事件表，然后用一个**会自己决策、会自我质疑、会调用外部知识、会写报告**的智能体内核，产出可解释、可复现、可发表的分析结果。
+EpitopeRank 是一个**面向"已完成可变剪接定量结果"的 AI 分析智能体平台**。它不接受 FASTQ，也不做比对；它接收 rMATS / SUPPA2 / MAJIQ / LeafCutter / 华大 RNAref 的已量化事件表，然后用一个**会自己决策、会自我质疑、会调用外部知识、会写报告**的智能体内核，产出可解释、可复现、可发表的分析结果。
 
 ```
 已量化剪接事件表  →  智能接入与标准化  →  自治智能体（观察→决策→执行→校验→反思）
@@ -98,7 +98,7 @@ SpliceGAIP 是一个**面向"已完成可变剪接定量结果"的 AI 分析智�
 | # | 模块 | 一句话用途 | 状态 | 主要入口 |
 |---|---|---|---|---|
 | M1 | 数据智能接入 | 认表头、认格式、认分组，把异构表格变成标准事件表 | ✅ | Web「数据接入」/ `POST /api/ingest/*` |
-| M2 | 剪接事件解析与标准化 | 四类工具输出 → 统一 `AS_event_master` 契约 | ✅ | `splicegaip/splicing/parsers/` |
+| M2 | 剪接事件解析与标准化 | 四类工具输出 → 统一 `AS_event_master` 契约 | ✅ | `epitoperank/splicing/parsers/` |
 | M3 | 统计分析与质量门控 | 卡方+BH FDR、阈值过滤、综合评分排序 | ✅ | 智能体动作 / `analysis/statistics.py` |
 | M4 | 可视化图件 | 6 张标准图 + 7 张按需图，PNG 300dpi + SVG | ✅ | Web「可视化」/ `analysis/*` |
 | M5 | 自治智能体内核 | OODA 循环、预算、自适应阈值、跨运行经验 | ✅（默认） | `run.py analyze` / `agent/*` |
@@ -303,7 +303,7 @@ python run.py followup --project-id <PID> --query "只看 SE 事件"
 **使用方式**
 - 智能体自动调用（`agent.skills.enabled: true`，默认开）。
 - 单独调用：`GET /api/skills/list` 取 schema，`POST /api/skills/execute` 执行。
-- 关闭：`--skills off` 或 `SPLICEGAIP_ENABLE_SKILLS=0`。
+- 关闭：`--skills off` 或 `EPITOPERANK_ENABLE_SKILLS=0`。
 
 | 技能 | 后端 | 用途 |
 |---|---|---|
@@ -349,12 +349,12 @@ python run.py followup --project-id <PID> --query "只看 SE 事件"
 ```bash
 python run.py analyze --input examples/demo_rmats --query "分析RNA剪接变化" --agent-mode scripted
 ```
-或在 `config.yaml` 设 `agent.mode: scripted`、或环境变量 `SPLICEGAIP_AGENT_MODE`。
+或在 `config.yaml` 设 `agent.mode: scripted`、或环境变量 `EPITOPERANK_AGENT_MODE`。
 
 **结构**
 ```
 BioPlanner（只规划，不计算） → BioAnalyst（summarize→filter→rank→enrich→figures）
-                            → BioInterpreter（文献→解读→报告，终止令牌 SPLICEGAIP_DONE）
+                            → BioInterpreter（文献→解读→报告，终止令牌 EPITOPERANK_DONE）
 ```
 角色与工具在 `config/agent_config.yaml` / `tool_config.yaml` 声明；`max_turns: 40`；Agent 间用结构化消息协作，全部操作写入 SQLite Analysis Memory。
 
@@ -436,8 +436,8 @@ runtime/projects/<project_id>/
 把平台能力**对外暴露成标准工具**，并让自然语言可以直接驱动这些工具。
 
 **使用方式**
-- 内置服务端 `splicegaip-builtin`（`http://127.0.0.1:9100`，随进程可用，无需配置），提供 5 个工具：`list_projects`、`project_summary`、`search_events`、`explain_event_type`、`compute_delta_psi`。
-- 外部服务端：写 `~/.splicegaip/mcp/servers.json`，支持 `stdio` / `sse` / `http` 三种传输、官方 MCP SDK 与简易 `/tools` 适配两种协议。
+- 内置服务端 `epitoperank-builtin`（`http://127.0.0.1:9100`，随进程可用，无需配置），提供 5 个工具：`list_projects`、`project_summary`、`search_events`、`explain_event_type`、`compute_delta_psi`。
+- 外部服务端：写 `~/.epitoperank/mcp/servers.json`，支持 `stdio` / `sse` / `http` 三种传输、官方 MCP SDK 与简易 `/tools` 适配两种协议。
 - 查看与调用：`GET /api/mcp/servers`（含连接状态与工具 schema）、`POST /api/mcp/call`、`POST /api/mcp/agent`（自然语言 → 选工具 → 本地校验 → 执行）。
 - Web「AI 助手」页可填自然语言指令，例如"查一下 CD44 有哪些显著剪接事件"。
 
@@ -496,7 +496,7 @@ Web「剪接候选新抗原」→ 选项目 → 表单 → 逐阶段确认推进
 |---|---|---|
 | CLI | `run.py analyze / followup / projects / status / serve` | 批量、脚本化、复现 |
 | Web 单页应用 | `python run.py serve --ui` 或 `python serve_ui.py`；9 个页面：仪表盘 / AI 流水线 / 事件浏览器 / 可视化 / 基因浏览器 / 报告 / 剪接候选新抗原 / AI 助手 | 日常分析主入口 |
-| 桌面窗口 | `desktop_ui.py`（pywebview 包一层本地服务）；`dist/SpliceGAIP.exe` 免 Python | 给不装环境的同事 |
+| 桌面窗口 | `desktop_ui.py`（pywebview 包一层本地服务）；`dist/EpitopeRank.exe` 免 Python | 给不装环境的同事 |
 | API | FastAPI（默认 8800）：分析、接入、状态、报告、图件、技能、MCP、新抗原 | 集成与自动化 |
 | 容器 | `docker compose up -d`（API 8800 + UI 8501）；Coolify 一键；`nginx.conf` 反代 | 团队/服务器部署 |
 
@@ -515,7 +515,7 @@ Web「剪接候选新抗原」→ 选项目 → 表单 → 逐阶段确认推进
 **机制**
 - 每次运行记录：输入指纹、分析计划、生成代码、结果、解释、工作流日志（SQLite Analysis Memory）。
 - 日志：`observability.py` 统一结构化输出，级别/来源/时间齐全。
-- 状态库默认写本地磁盘（`/var/tmp/splicegaip`；Windows 为系统临时目录），因为 NFS 不支持 SQLite 文件锁——程序会自动探测并迁移。
+- 状态库默认写本地磁盘（`/var/tmp/epitoperank`；Windows 为系统临时目录），因为 NFS 不支持 SQLite 文件锁——程序会自动探测并迁移。
 - 决策轨迹：每一步"观察到了什么 → 为什么这么决定"都进 report Methods 与 workflow log。
 
 **适用场景**
@@ -538,12 +538,12 @@ Web「剪接候选新抗原」→ 选项目 → 表单 → 逐阶段确认推进
 | 6 类输入格式自动识别 | 上传目录 | — | ✅ |
 | 华大 RNAref 单样本接入 | 接入向导 | 人工分组 | ✅ |
 | MCP 内置 5 工具 | `GET /api/mcp/servers` | — | ✅ |
-| 外部 MCP 服务端接入 | `~/.splicegaip/mcp/servers.json` | `mcp` SDK | ✅ |
+| 外部 MCP 服务端接入 | `~/.epitoperank/mcp/servers.json` | `mcp` SDK | ✅ |
 | 自然语言 → MCP 工具路由 | `/api/mcp/agent` | 模型（可选） | 🟡（无模型走确定性路由） |
 | 新抗原 7 阶段工作流 | Web 新抗原页 | 用户自备 ORF/FASTA/HLA | 🟡（实验性，逐阶段确认） |
 | 独立肽生成 | `neoantigen.run()` | CDS 对照表 | 🟡 |
 | moPepGen 容器适配 | `scripts/mopepgen_docker.py` | Docker + 镜像 | 🟡（探索性，不接 ORF 阶段） |
-| 桌面 EXE | `dist/SpliceGAIP.exe` | — | ✅ |
+| 桌面 EXE | `dist/EpitopeRank.exe` | — | ✅ |
 | Docker / Coolify 部署 | `docker compose up -d` | Docker | ✅ |
 | 人机交互确认 | `--autonomy assisted` | — | ✅ |
 

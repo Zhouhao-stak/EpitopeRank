@@ -1,10 +1,10 @@
-# SpliceGAIP system configuration.
+# EpitopeRank system configuration.
 # LLM credentials are NEVER stored here; they are read from the environment
 # (MODEL_API_BASE_URL / MODEL_API_KEY / MODEL_NAME / MODEL_API_TIMEOUT_SECONDS)
 # or from a .env file placed next to the executable / project root.
 
 project:
-  name: SpliceGAIP
+  name: EpitopeRank
   version: 0.1.0
 
 llm:
@@ -55,18 +55,18 @@ llm:
 paths:
   # Runtime state lives on local disk by default: SQLite databases cannot
   # be opened on NFS mounts (unsupported byte-range locking). Override with
-  # SPLICEGAIP_RUNTIME_ROOT / SPLICEGAIP_MEMORY_DB / SPLICEGAIP_LITERATURE_DB.
+  # EPITOPERANK_RUNTIME_ROOT / EPITOPERANK_MEMORY_DB / EPITOPERANK_LITERATURE_DB.
   #
   # All three are intentionally left unset: the databases default to sitting
-  # *under* the runtime root (/var/tmp/splicegaip on Linux/macOS, the system
+  # *under* the runtime root (/var/tmp/epitoperank on Linux/macOS, the system
   # temp dir on Windows), so relocating the root moves everything at once.
   # Uncomment to pin them explicitly:
-  # runtime_root: /var/tmp/splicegaip
-  # memory_db: /var/tmp/splicegaip/splicegaip.sqlite3
-  # literature_db: /var/tmp/splicegaip/literature.sqlite3
+  # runtime_root: /var/tmp/epitoperank
+  # memory_db: /var/tmp/epitoperank/epitoperank.sqlite3
+  # literature_db: /var/tmp/epitoperank/literature.sqlite3
 
 analysis:
-  # Default significance gates (SpliceGAIP Agent Prompt System v0.1).
+  # Default significance gates (EpitopeRank Agent Prompt System v0.1).
   fdr_threshold: 0.05
   delta_psi_threshold: 0.1
   min_support_reads: 10

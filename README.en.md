@@ -1,4 +1,4 @@
-# SpliceGAIP
+# EpitopeRank
 
 **AI-driven Alternative Splicing Analysis Agent Platform**
 
@@ -7,13 +7,13 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-SpliceGAIP is rebuilt on top of the multi-agent architecture from the open-source project [BioGAIP](https://github.com/zhangjy859/BioGAIP), fused with a splicing-domain data layer (the production-grade event-standardization contract from SplicingNexus v2) to form an **AI agent platform for downstream alternative-splicing analysis**.
+EpitopeRank is rebuilt on top of the multi-agent architecture from the open-source project [BioGAIP](https://github.com/zhangjy859/BioGAIP), fused with a splicing-domain data layer (the production-grade event-standardization contract from SplicingNexus v2) to form an **AI agent platform for downstream alternative-splicing analysis**.
 
 Natural language drives the analysis → automatically generates the analysis workflow → automatically runs statistics → automatically interprets the biology → automatically produces a research report.
 
-> This document is the full Markdown edition of the *SpliceGAIP Capability Manual v0.1.0*. For the styled online edition see
-> [Capability Manual HTML](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.html) ·
-> [PDF](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.pdf).
+> This document is the full Markdown edition of the *EpitopeRank Capability Manual v0.1.0*. For the styled online edition see
+> [Capability Manual HTML](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.html) ·
+> [PDF](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.pdf).
 
 ---
 
@@ -45,14 +45,14 @@ python run.py serve --ui  --port 8501   # Streamlit dashboard
 | Form | Command |
 |---|---|
 | 🐳 Docker | `docker compose up -d` (API 8800 / UI 8501) |
-| 💻 Windows EXE | `pyinstaller packaging/SpliceGAIP.spec` |
+| 💻 Windows EXE | `pyinstaller packaging/EpitopeRank.spec` |
 | 🔧 Source | `python run.py serve --api --port 8800` |
 
 ### Demos & Docs
 
 | Material | Content |
 |---|---|
-| 📘 [Capability Manual HTML](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.html) · [PDF](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.pdf) · [Markdown](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.md) | v0.1.0: 15 feature modules, 11 planned items, 3 appendices |
+| 📘 [Capability Manual HTML](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.html) · [PDF](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.pdf) · [Markdown](docs/manual/EpitopeRank_Capability_Manual_v0.1.0.md) | v0.1.0: 15 feature modules, 11 planned items, 3 appendices |
 | 🎬 [Splice-derived neoantigen candidates · 1:00](media/videos/splice-neoantigen-peptides.bilingual.mp4) | Events → translatable peptides → HLA binding prediction → 132 candidate peptides (bilingual subtitle tracks) |
 | 🎬 [End-to-end analysis pipeline · 1:47](media/videos/pipeline-overview.bilingual.mp4) | Ingestion check → six-Agent pipeline → volcano plot / PSI heatmap (bilingual subtitle tracks) |
 | 🗒 [Bilingual walkthrough](docs/WALKTHROUGH.md) | Line-by-line Chinese–English script, usable as voiceover; with subtitle regeneration commands |
@@ -64,7 +64,7 @@ python run.py serve --ui  --port 8501   # Streamlit dashboard
 
 ---
 
-# SpliceGAIP Capability Manual v0.1.0
+# EpitopeRank Capability Manual v0.1.0
 
 **Version**: v0.1.0 (compiled from the 2026-10-29 repository code, `config/*.yaml`, `docs/`, and supporting documentation)
 **Audience**: analysts (what it can do), developers (where to change things), reviewers (where the boundaries are)
@@ -74,7 +74,7 @@ python run.py serve --ui  --port 8501   # Streamlit dashboard
 
 ## 0. At a Glance
 
-SpliceGAIP is an **AI analysis agent platform for "already-quantified alternative-splicing results"**. It does not take FASTQ and does not do alignment; it ingests quantified event tables from rMATS / SUPPA2 / MAJIQ / LeafCutter / BGI RNAref, then runs an agent core that **decides for itself, challenges itself, calls external knowledge, and writes the report**, producing interpretable, reproducible, publishable analysis results.
+EpitopeRank is an **AI analysis agent platform for "already-quantified alternative-splicing results"**. It does not take FASTQ and does not do alignment; it ingests quantified event tables from rMATS / SUPPA2 / MAJIQ / LeafCutter / BGI RNAref, then runs an agent core that **decides for itself, challenges itself, calls external knowledge, and writes the report**, producing interpretable, reproducible, publishable analysis results.
 
 ```
 quantified splicing event table  →  smart ingestion & standardization  →  autonomous agent (observe→decide→act→verify→reflect)
@@ -98,7 +98,7 @@ Four design red lines (run through every feature):
 | # | Module | One-line purpose | Status | Main entry |
 |---|---|---|---|---|
 | M1 | Smart data ingestion | Reads headers, formats, groups; turns heterogeneous tables into a standard event table | ✅ | Web "Data ingestion" / `POST /api/ingest/*` |
-| M2 | Splicing-event parsing & standardization | Four tool outputs → unified `AS_event_master` contract | ✅ | `splicegaip/splicing/parsers/` |
+| M2 | Splicing-event parsing & standardization | Four tool outputs → unified `AS_event_master` contract | ✅ | `epitoperank/splicing/parsers/` |
 | M3 | Statistics & quality gating | Chi-square + BH FDR, threshold filtering, composite-score ranking | ✅ | Agent actions / `analysis/statistics.py` |
 | M4 | Visualization figures | 6 standard + 7 on-demand plots, PNG 300dpi + SVG | ✅ | Web "Visualization" / `analysis/*` |
 | M5 | Autonomous agent core | OODA loop, budgets, adaptive thresholds, cross-run experience | ✅ (default) | `run.py analyze` / `agent/*` |
@@ -303,7 +303,7 @@ Turns "look up what this gene is, whether there is literature, what pathways are
 **Usage**
 - Agent auto-calls (`agent.skills.enabled: true`, default on).
 - Standalone call: `GET /api/skills/list` for the schema, `POST /api/skills/execute` to run.
-- Disable: `--skills off` or `SPLICEGAIP_ENABLE_SKILLS=0`.
+- Disable: `--skills off` or `EPITOPERANK_ENABLE_SKILLS=0`.
 
 | Skill | Backend | Purpose |
 |---|---|---|
@@ -349,12 +349,12 @@ Retains the classic BioGAIP three-role pipeline for **regression comparison** an
 ```bash
 python run.py analyze --input examples/demo_rmats --query "analyze RNA splicing changes" --agent-mode scripted
 ```
-or set `agent.mode: scripted` in `config.yaml`, or env var `SPLICEGAIP_AGENT_MODE`.
+or set `agent.mode: scripted` in `config.yaml`, or env var `EPITOPERANK_AGENT_MODE`.
 
 **Structure**
 ```
 BioPlanner (plans only, does not compute) → BioAnalyst (summarize→filter→rank→enrich→figures)
-                            → BioInterpreter (literature→interpret→report, terminates on SPLICEGAIP_DONE)
+                            → BioInterpreter (literature→interpret→report, terminates on EPITOPERANK_DONE)
 ```
 Roles and tools are declared in `config/agent_config.yaml` / `tool_config.yaml`; `max_turns: 40`; agents collaborate via structured messages; all operations are written to SQLite Analysis Memory.
 
@@ -436,8 +436,8 @@ Group meeting, submission supplement, interim deliverable to collaborators, inte
 Exposes platform capabilities **as standard tools** and lets natural language drive them directly.
 
 **Usage**
-- Built-in server `splicegaip-builtin` (`http://127.0.0.1:9100`, available with the process, no config), provides 5 tools: `list_projects`, `project_summary`, `search_events`, `explain_event_type`, `compute_delta_psi`.
-- External servers: write `~/.splicegaip/mcp/servers.json`; supports `stdio` / `sse` / `http` transports, both the official MCP SDK and a simple `/tools` adapter protocol.
+- Built-in server `epitoperank-builtin` (`http://127.0.0.1:9100`, available with the process, no config), provides 5 tools: `list_projects`, `project_summary`, `search_events`, `explain_event_type`, `compute_delta_psi`.
+- External servers: write `~/.epitoperank/mcp/servers.json`; supports `stdio` / `sse` / `http` transports, both the official MCP SDK and a simple `/tools` adapter protocol.
 - View and call: `GET /api/mcp/servers` (with connection status and tool schemas), `POST /api/mcp/call`, `POST /api/mcp/agent` (natural language → pick tool → local validation → execute).
 - The Web "AI assistant" page accepts natural-language commands such as "check which significant splicing events CD44 has."
 
@@ -496,7 +496,7 @@ One kernel, four usages: run for yourself, share with colleagues, deploy on a se
 |---|---|---|
 | CLI | `run.py analyze / followup / projects / status / serve` | Batch, scripting, reproducibility |
 | Web SPA | `python run.py serve --ui` or `python serve_ui.py`; 9 pages: dashboard / AI pipeline / event browser / visualization / gene browser / report / splice neoantigen / AI assistant | Daily analysis main entry |
-| Desktop window | `desktop_ui.py` (pywebview wrapping a local service); `dist/SpliceGAIP.exe` no Python needed | For colleagues without an environment |
+| Desktop window | `desktop_ui.py` (pywebview wrapping a local service); `dist/EpitopeRank.exe` no Python needed | For colleagues without an environment |
 | API | FastAPI (default 8800): analysis, ingestion, status, report, figures, skills, MCP, neoantigen | Integration & automation |
 | Container | `docker compose up -d` (API 8800 + UI 8501) | Team/server deployment |
 
@@ -515,7 +515,7 @@ Keeps "where did this conclusion come from" always traceable.
 **Mechanisms**
 - Each run records: input fingerprint, analysis plan, generated code, results, interpretation, workflow log (SQLite Analysis Memory).
 - Logging: `observability.py` unified structured output, with level/source/timestamp.
-- The state DB defaults to local disk (`/var/tmp/splicegaip`; on Windows, the system temp dir), because NFS does not support SQLite file locks — the program auto-detects and migrates.
+- The state DB defaults to local disk (`/var/tmp/epitoperank`; on Windows, the system temp dir), because NFS does not support SQLite file locks — the program auto-detects and migrates.
 - Decision trace: every step's "what was observed → why this decision" goes into the report Methods and the workflow log.
 
 **Applicable scenarios**
@@ -538,12 +538,12 @@ Reproducing a figure six months later; a reviewer questions a threshold; handoff
 | 6 input formats auto-detected | upload directory | — | ✅ |
 | BGI RNAref single-sample ingestion | ingestion wizard | manual grouping | ✅ |
 | MCP built-in 5 tools | `GET /api/mcp/servers` | — | ✅ |
-| External MCP server ingestion | `~/.splicegaip/mcp/servers.json` | `mcp` SDK | ✅ |
+| External MCP server ingestion | `~/.epitoperank/mcp/servers.json` | `mcp` SDK | ✅ |
 | Natural-language → MCP tool routing | `/api/mcp/agent` | model (optional) | 🟡 (deterministic router without model) |
 | Neoantigen 7-stage workflow | Web neoantigen page | user-supplied ORF/FASTA/HLA | 🟡 (experimental, per-stage confirm) |
 | Standalone peptide generation | `neoantigen.run()` | CDS comparison table | 🟡 |
 | moPepGen container adapter | `scripts/mopepgen_docker.py` | Docker + image | 🟡 (exploratory, not wired into ORF stage) |
-| Desktop EXE | `dist/SpliceGAIP.exe` | — | ✅ |
+| Desktop EXE | `dist/EpitopeRank.exe` | — | ✅ |
 | Docker deployment | `docker compose up -d` | Docker | ✅ |
 | Human-in-the-loop confirmation | `--autonomy assisted` | — | ✅ |
 

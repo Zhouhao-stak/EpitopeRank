@@ -12,7 +12,7 @@
 
 ### 方式二：通过 Web 界面配置
 
-1. 启动 SpliceGAIP
+1. 启动 EpitopeRank
 2. 点击左侧菜单 "AI 解读" → "模型配置"
 3. 选择预设 "DeepSeek V4.1-Flash"
 4. 填入你的 API Key

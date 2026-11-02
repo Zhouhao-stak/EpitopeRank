@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SpliceGAIP command line interface.
+"""EpitopeRank command line interface.
 
 Examples
 --------
@@ -42,9 +42,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 
 def _cmd_analyze(args: argparse.Namespace) -> int:
-    from splicegaip.config import load_prepared_settings, load_settings
-    from splicegaip.llm.client import describe_llm_mode
-    from splicegaip.pipeline import run_analysis
+    from epitoperank.config import load_prepared_settings, load_settings
+    from epitoperank.llm.client import describe_llm_mode
+    from epitoperank.pipeline import run_analysis
 
     settings, _warnings = load_prepared_settings(args.config)
     agent_block = settings.agent
@@ -58,21 +58,21 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
             skills=dataclasses.replace(agent_block.skills, enabled=args.skills == "on"),
         )
     settings = dataclasses.replace(settings, agent=agent_block)
-    print(f"[splicegaip] mode: {describe_llm_mode(settings)}")
-    print(f"[splicegaip] engine: {'autonomous agent' if settings.agent.agentic else 'scripted team'}")
+    print(f"[epitoperank] mode: {describe_llm_mode(settings)}")
+    print(f"[epitoperank] engine: {'autonomous agent' if settings.agent.agentic else 'scripted team'}")
     print(
-        f"[splicegaip] autonomy: {settings.agent.autonomy} "
+        f"[epitoperank] autonomy: {settings.agent.autonomy} "
         f"| external skills: {'on' if settings.agent.skills.enabled else 'off'} "
         f"| hypothesis tests: {'on' if settings.agent.hypothesis_testing else 'off'}"
     )
-    print(f"[splicegaip] query: {args.query}")
+    print(f"[epitoperank] query: {args.query}")
     outcome = run_analysis(args.query, args.input, settings=settings, project_id=args.project_id)
     summary = outcome.summary()
-    print(f"[splicegaip] project: {summary['project_id']}")
-    print(f"[splicegaip] dataset: {json.dumps(summary['dataset'], ensure_ascii=False)}")
-    print(f"[splicegaip] validation: {json.dumps(summary['validation'], ensure_ascii=False)}")
-    print(f"[splicegaip] team: mode={summary['mode']} reason={summary['stopped_reason']} tool_calls={summary['tool_calls']}")
-    print(f"[splicegaip] top candidates:")
+    print(f"[epitoperank] project: {summary['project_id']}")
+    print(f"[epitoperank] dataset: {json.dumps(summary['dataset'], ensure_ascii=False)}")
+    print(f"[epitoperank] validation: {json.dumps(summary['validation'], ensure_ascii=False)}")
+    print(f"[epitoperank] team: mode={summary['mode']} reason={summary['stopped_reason']} tool_calls={summary['tool_calls']}")
+    print(f"[epitoperank] top candidates:")
     for index, candidate in enumerate(summary["top_candidates"], start=1):
         gene = candidate["gene_symbol"] or candidate["gene_id"]
         print(
@@ -80,11 +80,11 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
             f"dPSI={candidate['delta_PSI']} FDR={candidate['FDR']} score={candidate['score']}"
         )
     if summary["enriched_terms"]:
-        print(f"[splicegaip] enriched terms: {', '.join(summary['enriched_terms'])}")
+        print(f"[epitoperank] enriched terms: {', '.join(summary['enriched_terms'])}")
     agent = summary.get("agent") or {}
     if agent:
         print(
-            f"[splicegaip] agent: goal_satisfied={agent['goal_satisfied']} "
+            f"[epitoperank] agent: goal_satisfied={agent['goal_satisfied']} "
             f"steps={len(agent['steps'])} issues={len(agent['issues'])} "
             f"params={json.dumps(agent['params'], ensure_ascii=False)}"
         )
@@ -95,19 +95,19 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
             )
         for issue in agent["issues"]:
             print(f"  ! {issue['severity']:<7} {issue['code']}: {issue['message'][:90]}")
-    print(f"[splicegaip] figures: {', '.join(summary['figures'])}")
-    print(f"[splicegaip] report: {json.dumps(summary['report_paths'], ensure_ascii=False)}")
-    print(f"[splicegaip] output dir: {summary['output_dir']}")
+    print(f"[epitoperank] figures: {', '.join(summary['figures'])}")
+    print(f"[epitoperank] report: {json.dumps(summary['report_paths'], ensure_ascii=False)}")
+    print(f"[epitoperank] output dir: {summary['output_dir']}")
     return 0
 
 
 def _cmd_followup(args: argparse.Namespace) -> int:
-    from splicegaip.config import (
+    from epitoperank.config import (
         AgentSettings,
         load_prepared_settings,
         SkillSettings,
     )
-    from splicegaip.pipeline import resume_analysis
+    from epitoperank.pipeline import resume_analysis
 
     settings, _warnings = load_prepared_settings(args.config)
     agent_block: AgentSettings = settings.agent
@@ -123,20 +123,20 @@ def _cmd_followup(args: argparse.Namespace) -> int:
             ),
         )
     settings = dataclasses.replace(settings, agent=agent_block)
-    print(f"[splicegaip] resume: {args.project_id}")
-    print(f"[splicegaip] autonomy: {settings.agent.autonomy} | skills: {'on' if settings.agent.skills.enabled else 'off'}")
-    print(f"[splicegaip] query: {args.query}")
+    print(f"[epitoperank] resume: {args.project_id}")
+    print(f"[epitoperank] autonomy: {settings.agent.autonomy} | skills: {'on' if settings.agent.skills.enabled else 'off'}")
+    print(f"[epitoperank] query: {args.query}")
     try:
         outcome = resume_analysis(args.project_id, args.query, settings=settings)
     except ValueError as error:
-        print(f"[splicegaip] error: {error}")
+        print(f"[epitoperank] error: {error}")
         return 1
     summary = outcome.summary()
     agent = summary.get("agent") or {}
-    print(f"[splicegaip] resumed: mode={summary['mode']} reason={summary['stopped_reason']}")
+    print(f"[epitoperank] resumed: mode={summary['mode']} reason={summary['stopped_reason']}")
     if agent:
         print(
-            f"[splicegaip] agent: goal_satisfied={agent['goal_satisfied']} "
+            f"[epitoperank] agent: goal_satisfied={agent['goal_satisfied']} "
             f"steps={len(agent['steps'])} params={json.dumps(agent['params'], ensure_ascii=False)}"
         )
         for step in agent["steps"]:
@@ -144,14 +144,14 @@ def _cmd_followup(args: argparse.Namespace) -> int:
                 f"  {step['index'] + 1:>2}. [{step['source']:<11}] {step['action']:<28} "
                 f"{step['status']:<7} {step['rationale'][:70]}"
             )
-    print(f"[splicegaip] report: {json.dumps(summary['report_paths'], ensure_ascii=False)}")
-    print(f"[splicegaip] output dir: {summary['output_dir']}")
+    print(f"[epitoperank] report: {json.dumps(summary['report_paths'], ensure_ascii=False)}")
+    print(f"[epitoperank] output dir: {summary['output_dir']}")
     return 0
 
 
 def _cmd_projects(args: argparse.Namespace) -> int:
-    from splicegaip.config import load_prepared_settings, load_settings
-    from splicegaip.pipeline import list_projects
+    from epitoperank.config import load_prepared_settings, load_settings
+    from epitoperank.pipeline import list_projects
 
     settings, _warnings = load_prepared_settings(args.config)
     projects = list_projects(settings)
@@ -164,8 +164,8 @@ def _cmd_projects(args: argparse.Namespace) -> int:
 
 
 def _cmd_status(args: argparse.Namespace) -> int:
-    from splicegaip.config import load_prepared_settings, load_settings
-    from splicegaip.pipeline import project_status
+    from epitoperank.config import load_prepared_settings, load_settings
+    from epitoperank.pipeline import project_status
 
     settings, _warnings = load_prepared_settings(args.config)
     payload = project_status(args.project_id, settings)
@@ -186,12 +186,12 @@ def _cmd_serve(args: argparse.Namespace) -> int:
     
     def start_api():
         import uvicorn
-        from splicegaip.api.app import create_app
+        from epitoperank.api.app import create_app
         uvicorn.run(create_app(), host=args.host, port=args.port)
     
     def start_ui():
         import subprocess
-        ui_path = Path(__file__).resolve().parent / "splicegaip" / "interface" / "streamlit_app.py"
+        ui_path = Path(__file__).resolve().parent / "epitoperank" / "interface" / "streamlit_app.py"
         subprocess.run(
             [sys.executable, "-m", "streamlit", "run", str(ui_path), "--server.port", "8501", "--server.address", "0.0.0.0"]
         )
@@ -224,7 +224,7 @@ def _cmd_serve(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="splicegaip", description="SpliceGAIP CLI")
+    parser = argparse.ArgumentParser(prog="epitoperank", description="EpitopeRank CLI")
     parser.add_argument("--config", default=None, help="Path to config.yaml")
     subparsers = parser.add_subparsers(dest="command", required=True)
 

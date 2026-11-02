@@ -34,7 +34,7 @@ From one splicing event to a shortlist of peptides worth bench validation.
 
 | 时间 | 中文讲解 | English narration |
 |---|---|---|
-| 00:00–00:05 | SpliceGAIP「剪接来源候选新抗原」：从一条剪接事件，走到值得拿去做实验的候选肽。 | SpliceGAIP, "splice-derived neoantigen candidates": from a single splicing event to peptides worth testing at the bench. |
+| 00:00–00:05 | EpitopeRank「剪接来源候选新抗原」：从一条剪接事件，走到值得拿去做实验的候选肽。 | EpitopeRank, "splice-derived neoantigen candidates": from a single splicing event to peptides worth testing at the bench. |
 | 00:05–00:10 | 项目 test2 已载入 100,512 条剪接事件。平台先做数据检查：编码序列列表还没找到，这是进入新抗原流程的前提。 | Project test2 already holds 100,512 splicing events. The platform checks the data first: the coding-sequence list is still missing, and that list is the precondition for this workflow. |
 | 00:10–00:14 | 第二步填入受试者 HLA-I 型别：HLA-A\*02:01 与 HLA-B\*07:02，然后点「生成候选肽」。 | Step two: enter the subject's HLA class I types, HLA-A\*02:01 and HLA-B\*07:02, then click "Generate candidate peptides". |
 | 00:14–00:20 | 三步依次点亮：加载参考编码序列 → 解析可翻译的剪接事件 → HLA 结合预测。 | Three steps light up in order: load reference coding sequences, parse translatable events, predict HLA binding. |
@@ -59,7 +59,7 @@ A quantified event table goes in; a figures-and-report package with a full metho
 
 | 时间 | 中文讲解 | English narration |
 |---|---|---|
-| 00:00–00:05 | SpliceGAIP 的完整分析流程：从一份已量化的剪接事件表，到可以投稿的图和报告。 | The full SpliceGAIP flow: from a quantified splicing-event table to publication-ready figures and a report. |
+| 00:00–00:05 | EpitopeRank 的完整分析流程：从一份已量化的剪接事件表，到可以投稿的图和报告。 | The full EpitopeRank flow: from a quantified splicing-event table to publication-ready figures and a report. |
 | 00:05–00:10 | 新建分析项目：命名 test，用一句话写清分析目标「进行分组差异」，上传的是上游已经完成定量的结果表。 | Create a project: name it test, state the goal in one line ("group difference"), and upload the results quantified upstream. |
 | 00:10–00:17 | rMATS、SUPPA2、MAJIQ、LeafCutter、华大 RNAref 都能直接认；FASTQ 和比对不在这一层——平台从下游开始接手。 | rMATS, SUPPA2, MAJIQ, LeafCutter and BGI RNAref are recognised automatically. No FASTQ or alignment here — the platform starts downstream. |
 | 00:17–00:23 | 点「智能分析」后先做接入体检：90 个有效事件、20 个样本、FDR 覆盖 100%、ΔPSI 覆盖 100%。 | "Smart analysis" runs an ingestion check first: 90 valid events, 20 samples, 100% FDR coverage, 100% ΔPSI coverage. |

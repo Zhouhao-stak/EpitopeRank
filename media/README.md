@@ -1,9 +1,9 @@
 # 媒体素材 · Media Assets
 
-本目录放 SpliceGAIP 的**界面实录与配套字幕**。手册正文见 [`../docs/manual/`](../docs/manual)，
+本目录放 EpitopeRank 的**界面实录与配套字幕**。手册正文见 [`../docs/manual/`](../docs/manual)，
 逐句讲解稿见 [`../docs/WALKTHROUGH.md`](../docs/WALKTHROUGH.md)。
 
-This folder holds SpliceGAIP's screen recordings and their subtitles. The manual lives in
+This folder holds EpitopeRank's screen recordings and their subtitles. The manual lives in
 [`../docs/manual/`](../docs/manual); the line-by-line narration script is in
 [`../docs/WALKTHROUGH.md`](../docs/WALKTHROUGH.md).
 
@@ -47,7 +47,7 @@ This folder holds SpliceGAIP's screen recordings and their subtitles. The manual
 
 ## 播放说明 · Playback
 
-- **带字幕的网页版**：[`docs/index.html`](../docs/index.html)（在线：<https://zhouhao-stak.github.io/SpliceGAIP/docs/>），
+- **带字幕的网页版**：[`docs/index.html`](../docs/index.html)（在线：<https://zhouhao-stak.github.io/EpitopeRank/docs/>），
   两段视频直接内嵌，右下角 `CC` 可切换中文 / English。网页字幕用 `.vtt`（`media/subtitles/*.vtt`），
   由同名 `.srt` 转换而来。
 - GitHub 网页预览：点文件名可在线播放原始录屏，但不带字幕。

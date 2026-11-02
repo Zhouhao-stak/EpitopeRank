@@ -1,19 +1,19 @@
-# SpliceGAIP Docker Compose Configuration
+# EpitopeRank Docker Compose Configuration
 # Usage: docker-compose up -d
 
 services:
-  splicegaip:
+  epitoperank:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: splicegaip
+    container_name: epitoperank
     restart: unless-stopped
     ports:
       - "8800:8800"  # API server
       - "8501:8501"  # Streamlit UI (optional)
     volumes:
       # Persist analysis data and databases
-      - splicegaip-data:/data
+      - epitoperank-data:/data
       # Mount local config (optional, for custom settings)
       - ./config:/app/config:ro
     environment:
@@ -24,8 +24,8 @@ services:
       - MODEL_THINKING=auto
       - MODEL_REASONING_EFFORT=low
       # Runtime settings
-      - SPLICEGAIP_RUNTIME_ROOT=/data/runtime
-      - SPLICEGAIP_ENABLE_PUBMED=true
+      - EPITOPERANK_RUNTIME_ROOT=/data/runtime
+      - EPITOPERANK_ENABLE_PUBMED=true
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8800/api/health')"]
       interval: 30s
@@ -33,7 +33,7 @@ services:
       retries: 3
       start_period: 60s
     networks:
-      - splicegaip-network
+      - epitoperank-network
     # Resource limits (adjust based on your needs)
     deploy:
       resources:
@@ -45,10 +45,10 @@ services:
           memory: 4G
 
 volumes:
-  splicegaip-data:
+  epitoperank-data:
     driver: local
-    name: splicegaip-data
+    name: epitoperank-data
 
 networks:
-  splicegaip-network:
+  epitoperank-network:
     driver: bridge

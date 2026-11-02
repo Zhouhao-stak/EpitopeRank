@@ -1,4 +1,4 @@
-"""Windowed desktop launcher for the local SpliceGAIP application."""
+"""Windowed desktop launcher for the local EpitopeRank application."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import uvicorn
 import webview
 
 from serve_ui import _free_port, _load_local_env, _write_env_templates
-from splicegaip.api.app import create_app
+from epitoperank.api.app import create_app
 
 
 def main() -> int:
@@ -19,7 +19,7 @@ def main() -> int:
     port = _free_port(8800)
     url = f"http://127.0.0.1:{port}/"
     server = uvicorn.Server(uvicorn.Config(create_app(), host="127.0.0.1", port=port, log_level="error"))
-    worker = threading.Thread(target=server.run, name="splicegaip-api", daemon=True)
+    worker = threading.Thread(target=server.run, name="epitoperank-api", daemon=True)
     worker.start()
 
     deadline = time.monotonic() + 60
@@ -37,7 +37,7 @@ def main() -> int:
         raise RuntimeError("本地分析服务启动超时。")
 
     try:
-        webview.create_window("SpliceGAIP", url, width=1440, height=900, min_size=(1000, 650), background_color="#061923")
+        webview.create_window("EpitopeRank", url, width=1440, height=900, min_size=(1000, 650), background_color="#061923")
         webview.start(gui="edgechromium", private_mode=False)
     finally:
         server.should_exit = True
@@ -52,5 +52,5 @@ if __name__ == "__main__":
         # A windowed executable has no console in which to show startup errors.
         import ctypes
 
-        ctypes.windll.user32.MessageBoxW(0, str(error), "SpliceGAIP 启动失败", 0x10)
+        ctypes.windll.user32.MessageBoxW(0, str(error), "EpitopeRank 启动失败", 0x10)
         raise

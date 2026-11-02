@@ -1,4 +1,4 @@
-# SpliceGAIP agent roster.
+# EpitopeRank agent roster.
 #
 # Declarative agent definitions in the BioGAIP tradition (agent_config.yaml),
 # simplified to the three core agents. Model clients are resolved from the
@@ -7,7 +7,7 @@
 #
 # This file documents the roster and is the source for future extensions
 # (e.g. a dedicated QC agent in Phase 2). The runtime prompt text lives in
-# splicegaip/agents/prompts.py.
+# epitoperank/agents/prompts.py.
 
 agents:
   bio_planner:
@@ -35,5 +35,5 @@ agents:
     system_message: interpreter
 
 default_model: default
-termination_token: SPLICEGAIP_DONE
+termination_token: EPITOPERANK_DONE
 max_turns: 40

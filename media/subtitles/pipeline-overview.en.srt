@@ -1,6 +1,6 @@
 1
 00:00:00,300 --> 00:00:04,600
-The full SpliceGAIP analysis flow:
+The full EpitopeRank analysis flow:
 from a quantified splicing-event table to publication-ready figures and a report.
 
 2

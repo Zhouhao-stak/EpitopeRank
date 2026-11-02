@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SpliceGAIP desktop/web launcher.
+"""EpitopeRank desktop/web launcher.
 
 Starts the local web server and opens the UI in the default browser, so a
 double-click on the packaged exe gives a usable graphical interface:
@@ -26,7 +26,7 @@ if not getattr(sys, "frozen", False):
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 try:  # the file names the launcher recognises (kept in one place)
-    from splicegaip.llm.envfile import CONFIG_FILE_NAMES as _CONFIG_NAMES
+    from epitoperank.llm.envfile import CONFIG_FILE_NAMES as _CONFIG_NAMES
 except Exception:  # noqa: BLE001 - import happens before the app is ready
     _CONFIG_NAMES = (".env", "配置大模型.env")
 
@@ -35,12 +35,12 @@ def _load_local_env() -> list[Path]:
     """Load every configuration file sitting next to the exe / sources.
 
     Recognises both ``.env`` and ``配置大模型.env`` (see
-    :mod:`splicegaip.llm.envfile`): a key found in either file is used, and
+    :mod:`epitoperank.llm.envfile`): a key found in either file is used, and
     existing environment variables still win so a launcher script keeps
     precedence. Returns the files actually read, for the startup banner.
     """
     try:
-        from splicegaip.llm.envfile import load_env_values
+        from epitoperank.llm.envfile import load_env_values
 
         return load_env_values()
     except Exception:  # noqa: BLE001 - never block startup on config loading
@@ -96,7 +96,7 @@ def _free_port(start: int, attempts: int = 40) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Serve the SpliceGAIP web UI")
+    parser = argparse.ArgumentParser(description="Serve the EpitopeRank web UI")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=0, help="0 = auto-pick a free port")
     parser.add_argument("--no-browser", action="store_true", help="do not open a browser")
@@ -111,22 +111,22 @@ def main() -> int:
 
     import uvicorn
 
-    from splicegaip.api.app import create_app
+    from epitoperank.api.app import create_app
 
     app = create_app()
     url = f"http://{args.host}:{port}/"
 
     print("=" * 62)
-    print("  SpliceGAIP — AI 驱动可变剪接分析平台")
+    print("  EpitopeRank — AI 驱动可变剪接分析平台")
     print(f"  地址: {url}")
     if llm_ready:
         print(f"  大模型: 已接入 {model_name or '(未指定 MODEL_NAME)'} · AI 解读已启用")
         if env_files:
             print(f"  配置文件: {', '.join(str(p) for p in env_files)}")
         try:
-            from splicegaip.config import load_settings
+            from epitoperank.config import load_settings
 
-            from splicegaip.llm.client import describe_llm_mode
+            from epitoperank.llm.client import describe_llm_mode
 
             print(f"          端点详情: {describe_llm_mode(load_settings())}")
         except Exception:  # noqa: BLE001 - banner must never break startup
