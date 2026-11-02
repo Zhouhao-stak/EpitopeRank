@@ -1,0 +1,46 @@
+WEBVTT
+
+00:00:00.400 --> 00:00:04.800
+SpliceGAIP, "Splice-derived neoantigen candidates":
+from a single splicing event to peptides worth testing at the bench.
+
+00:00:04.800 --> 00:00:09.600
+Project test2 already holds 100,512 splicing events.
+The platform checks the data first: the coding-sequence list is missing,
+and that list is the precondition for this workflow.
+
+00:00:09.600 --> 00:00:14.400
+Step two: enter the subject's HLA class I types,
+HLA-A*02:01 and HLA-B*07:02, then click "Generate candidate peptides".
+
+00:00:14.400 --> 00:00:19.600
+Three steps light up in order:
+load reference coding sequences, parse translatable events, predict HLA binding.
+
+00:00:19.600 --> 00:00:25.200
+Only peptides that span the splice junction and translate into 8-11 aa
+enter the candidate pool; peptides already present in the normal proteome are removed.
+
+00:00:25.200 --> 00:00:30.600
+That is also why it never runs end-to-end unattended:
+every stage is a human confirmation gate, and every skip or failure is logged.
+
+00:00:30.600 --> 00:00:36.400
+At 81% the last step begins: HLA binding prediction via IEDB NetMHCpan 4.1 EL,
+scoring affinity and Rank% per peptide against the real HLA types.
+
+00:00:36.400 --> 00:00:42.400
+Done: 132 candidate peptides derived from 486 translatable splicing events,
+saved into the project directory.
+
+00:00:42.400 --> 00:00:48.000
+The candidate table lists sequence, length, source event, HLA type,
+predicted affinity (nM) and Rank%, with filtering and CSV export.
+
+00:00:48.000 --> 00:00:54.000
+Row one, ALVPGTSSK: 9 residues, from event SE_0123,
+HLA-A*02:01, predicted affinity 12.4 nM, Rank 0.12%.
+
+00:00:54.000 --> 00:00:59.800
+Mind the boundary: binding prediction is not presentation, and not immunogenicity.
+This is a shortlist worth validating experimentally, not a conclusion.

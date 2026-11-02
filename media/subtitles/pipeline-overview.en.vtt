@@ -1,0 +1,60 @@
+WEBVTT
+
+00:00:00.300 --> 00:00:04.600
+The full SpliceGAIP analysis flow:
+from a quantified splicing-event table to publication-ready figures and a report.
+
+00:00:04.600 --> 00:00:10.000
+Create a project: name it test, state the goal in one line ("group difference"),
+and upload the results table quantified upstream.
+
+00:00:10.000 --> 00:00:16.800
+rMATS, SUPPA2, MAJIQ, LeafCutter and BGI RNAref are recognised automatically.
+No FASTQ, no alignment here - the platform starts at the downstream end.
+
+00:00:16.800 --> 00:00:23.000
+"Smart analysis" runs an ingestion check first:
+90 valid events, 20 samples, 100% FDR coverage, 100% delta-PSI coverage.
+
+00:00:23.000 --> 00:00:29.600
+Sample groups, Tumor vs Normal, must be confirmed by a human before they are written.
+The model never guesses groups - that rule is hard-coded.
+
+00:00:29.600 --> 00:00:35.400
+The pipeline starts. Six agents run in sequence:
+data, QC, splice detection, statistics, annotation, interpretation.
+
+00:00:35.400 --> 00:00:42.000
+50%: the statistics agent is working. Chi-square tests with BH-corrected FDR,
+plus a delta-PSI effect-size gate, to isolate events that genuinely changed.
+
+00:00:42.000 --> 00:00:48.800
+When default thresholds return nothing, it relaxes them adaptively by the observed
+distribution and writes down why - rather than quietly moving numbers.
+
+00:00:48.800 --> 00:00:55.600
+Every agent reports status and results in real time:
+the first four are green, annotation and interpretation are still queued.
+
+00:00:55.600 --> 00:01:02.000
+83%: the interpretation agent is drafting the biological reading,
+drawing on gene annotation and literature retrieval.
+
+00:01:02.000 --> 00:01:17.500
+All six agents finish and results land in the project directory:
+standard figures, a ranked candidate table, an HTML + PDF report with full methods trails.
+
+00:01:17.500 --> 00:01:25.000
+Into "Visualisation": the volcano plot, delta PSI on x, minus log10(FDR) on y,
+with the FDR = 0.05 threshold as a red dashed line.
+
+00:01:25.000 --> 00:01:32.000
+90 events are in this run; the orange points pass both FDR < 0.05 and |delta PSI| > 0.1.
+
+00:01:32.000 --> 00:01:39.500
+Switching to the PSI heatmap: top 25 events by delta PSI across 20 samples,
+colour is PSI from 0 to 1, so a group-wide shift is visible at a glance.
+
+00:01:39.500 --> 00:01:46.300
+Figures come as 300 dpi PNG plus SVG, ready to drop into a manuscript.
+No rerun is needed to fetch them - figures come from persisted project state.

@@ -15,6 +15,23 @@ SpliceGAIP 是在开源项目 [BioGAIP](https://github.com/zhangjy859/BioGAIP) �
 
 ---
 
+## 演示与文档 · Demos & Docs
+
+| 材料 Material | 内容 Content |
+|---|---|
+| 📘 [能力手册 HTML](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.html) · [PDF](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.pdf) · [Markdown](docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.md) | v0.1.0：15 个功能模块、11 个规划项、3 份附录，按「分析人员 / 开发者 / 评审者」三条读法组织 |
+| 🎬 [剪接来源候选新抗原 · 1:00](media/videos/splice-neoantigen-peptides.bilingual.mp4) | 事件 → 可翻译肽 → HLA 结合预测 → 132 条候选肽实录（中英双字幕轨） |
+| 🎬 [完整分析流程 · 1:47](media/videos/pipeline-overview.bilingual.mp4) | 接入体检 → 六 Agent 流水线 → 火山图 / PSI 热图（中英双字幕轨） |
+| 🗒 [双语讲解稿](docs/WALKTHROUGH.md) | 逐句中英对照，可直接当配音稿；含字幕重生成命令与术语对照表 |
+| 🖼 [媒体素材索引](media/README.md) | 原始录屏、双轨软字幕版、`.srt` 文件清单与播放说明 |
+
+[![剪接来源候选新抗原](media/posters/splice-neoantigen-peptides.jpg)](media/videos/splice-neoantigen-peptides.bilingual.mp4)
+[![完整分析流程](media/posters/pipeline-overview.jpg)](media/videos/pipeline-overview.bilingual.mp4)
+
+> 两段录屏均为**无配音界面实录**，讲解以字幕形式提供：`media/videos/*.bilingual.mp4` 内含
+> 中文 / English 两条可切换字幕轨，原始无字幕文件与 `.srt` 同在 `media/` 下。
+> 手册与讲解稿有在线版：<https://zhouhao-stak.github.io/SpliceGAIP/docs/manual/SpliceGAIP_Capability_Manual_v0.1.0.html>
+
 ## 4. 定位（Phase 1）
 
 ```
