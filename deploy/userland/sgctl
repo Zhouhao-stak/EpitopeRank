@@ -1,0 +1,343 @@
+#!/usr/bin/env bash
+# sgctl — 管理 SpliceGAIP 服务，全程不需要 root。
+#
+#   bash deploy/userland/sgctl start|stop|restart|status|logs|url
+#   bash deploy/userland/sgctl doctor          # 排障用的环境体检
+#   bash deploy/userland/sgctl backup [目录]    # 停机也可安全备份
+#   bash deploy/userland/sgctl set workers 4   # 改并发进程数
+#
+# 常驻方式按可用性自动降级：systemd --user → tmux → setsid+nohup。
+# 想强制指定：SPLICEGAIP_MODE=systemd|tmux|nohup
+set -euo pipefail
+
+HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SG_ENV="$HERE/sg.env"
+[ -f "$SG_ENV" ] || { echo "还没初始化，先运行: bash $HERE/install.sh" >&2; exit 1; }
+# shellcheck disable=SC1090
+. "$SG_ENV"
+
+STATE_DIR="$APP_DIR/.state"
+LOG="$STATE_DIR/server.log"
+PID_FILE="$STATE_DIR/server.pid"
+MODE_FILE="$STATE_DIR/mode"
+RUNNER="$STATE_DIR/run.sh"
+UNIT_NAME="splicegaip"
+UNIT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
+UNIT_FILE="$UNIT_DIR/$UNIT_NAME.service"
+
+mkdir -p "$STATE_DIR"
+
+C_RESET=''; C_DIM=''; C_OK=''; C_WARN=''; C_ERR=''
+if [ -t 1 ]; then
+  C_RESET=$'\033[0m'; C_DIM=$'\033[2m'; C_OK=$'\033[32m'; C_WARN=$'\033[33m'; C_ERR=$'\033[31m'
+fi
+ok()   { printf '%s✓%s %s\n' "$C_OK" "$C_RESET" "$*"; }
+bad()  { printf '%s✗%s %s\n' "$C_ERR" "$C_RESET" "$*"; }
+warn() { printf '%s!%s %s\n' "$C_WARN" "$C_RESET" "$*"; }
+dim()  { printf '  %s%s%s\n' "$C_DIM" "$*" "$C_RESET"; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+systemd_user_ok() { have systemctl && systemctl --user show-environment >/dev/null 2>&1; }
+
+# ------------------------------------------------------------------ 启动器
+write_runner() {
+  {
+    printf '#!/usr/bin/env bash\n'
+    printf 'cd %q || exit 1\n' "$APP_DIR"
+    printf 'ulimit -n 65535 2>/dev/null || true\n'
+    printf 'export SPLICEGAIP_RUNTIME_ROOT=%q\n' "$RUNTIME_ROOT"
+    printf 'export SPLICEGAIP_SQLITE_WAL=%q\n' "$SQLITE_WAL"
+    printf 'export MPLCONFIGDIR=%q\n' "$STATE_DIR/mpl"
+    printf 'export PYTHONUNBUFFERED=1\n'
+    # One thread per BLAS call: with N workers, the default (one thread per
+    # core) turns 128 cores into 8x128 competing threads and everything crawls.
+    printf 'export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1\n'
+    printf 'export MALLOC_ARENA_MAX=2\n'
+    printf 'exec %q %q --host %q --port %q --no-browser --workers %q\n' \
+      "$VENV_PY" "$APP_DIR/serve_ui.py" "$HOST" "$PORT" "$WORKERS"
+  } > "$RUNNER"
+  chmod +x "$RUNNER"
+  mkdir -p "$STATE_DIR/mpl"
+}
+
+port_open() {
+  if have ss; then ss -ltn "sport = :$PORT" 2>/dev/null | grep -q LISTEN
+  elif have netstat; then netstat -ltn 2>/dev/null | grep -q ":$PORT "
+  else return 1
+  fi
+}
+
+health_ok() {
+  "$VENV_PY" - "$PORT" <<'PY' 2>/dev/null
+import json, sys, urllib.request
+port = sys.argv[1]
+with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/health", timeout=4) as response:
+    sys.exit(0 if response.status == 200 else 1)
+PY
+}
+
+wait_ready() {
+  local i
+  for i in $(seq 1 "${1:-90}"); do
+    if health_ok; then ok "服务已就绪"; return 0; fi
+    sleep 1
+  done
+  bad "等待就绪超时"; dim "日志：tail -n 50 $LOG"; return 1
+}
+
+running_pid() {
+  [ -f "$PID_FILE" ] || return 1
+  local pid; pid="$(cat "$PID_FILE" 2>/dev/null || true)"
+  [ -n "$pid" ] || return 1
+  kill -0 "$pid" 2>/dev/null
+}
+
+current_mode() { cat "$MODE_FILE" 2>/dev/null || echo none; }
+
+# ------------------------------------------------------------------- 命令
+cmd_start() {
+  local mode="${SPLICEGAIP_MODE:-}"
+  if [ "$(current_mode)" = systemd ] && systemd_user_ok && systemctl --user is-active --quiet "$UNIT_NAME"; then
+    ok "已在运行（systemd --user）"; return 0
+  fi
+  if running_pid; then
+    ok "已在运行（PID $(cat "$PID_FILE")）"; return 0
+  fi
+  if port_open; then
+    bad "端口 $PORT 已被占用，先停掉占用进程或改端口：sgctl set port 8899"
+    dim "查看占用：ss -ltnp | grep :$PORT"
+    return 1
+  fi
+
+  write_runner
+
+  if [ -z "$mode" ]; then
+    if systemd_user_ok; then mode=systemd
+    elif have tmux; then mode=tmux
+    else mode=nohup
+    fi
+  fi
+
+  case "$mode" in
+    systemd)
+      mkdir -p "$UNIT_DIR"
+      cat > "$UNIT_FILE" <<EOF
+[Unit]
+Description=SpliceGAIP web service
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash $RUNNER
+Restart=always
+RestartSec=5
+KillMode=mixed
+TimeoutStopSec=20
+
+[Install]
+WantedBy=default.target
+EOF
+      systemctl --user daemon-reload
+      systemctl --user enable --now "$UNIT_NAME"
+      systemctl --user show -p MainPID --value "$UNIT_NAME" > "$PID_FILE" 2>/dev/null || true
+      ok "已通过 systemd --user 启动"
+      if have loginctl; then
+        case "$(loginctl show-user "$USER" -p Linger --value 2>/dev/null || echo no)" in
+          yes) ;;
+          *) warn "用户 linger 未开启：退出 SSH 后服务可能被系统回收"
+             dim "让管理员执行：loginctl enable-linger $USER"
+             dim "或者自己试：loginctl enable-linger $USER（部分机器允许本人操作）" ;;
+        esac
+      fi
+      ;;
+    tmux)
+      tmux has-session -t splicegaip 2>/dev/null && tmux kill-session -t splicegaip
+      tmux new-session -d -s splicegaip "bash $(printf '%q' "$RUNNER") >> $(printf '%q' "$LOG") 2>&1"
+      sleep 1
+      tmux list-panes -t splicegaip -F '#{pane_pid}' > "$PID_FILE" 2>/dev/null || true
+      ok "已在 tmux 会话 splicegaip 中启动"
+      dim "查看：bash $HERE/sgctl logs    或    tmux attach -t splicegaip"
+      ;;
+    nohup)
+      setsid bash "$RUNNER" >> "$LOG" 2>&1 < /dev/null &
+      echo $! > "$PID_FILE"
+      ok "已后台启动（PID $(cat "$PID_FILE")）"
+      dim "注意：部分服务器在退出登录时会杀掉用户进程，建议改用 tmux 或 systemd"
+      ;;
+    *) bad "未知模式: $mode"; return 1 ;;
+  esac
+
+  echo "$mode" > "$MODE_FILE"
+  printf 'PORT=%q\n' "$PORT" > "$STATE_DIR/port"
+  wait_ready "${WAIT_SECONDS:-90}" || return 1
+  cmd_url
+}
+
+cmd_stop() {
+  local stopped=0
+  if systemd_user_ok && systemctl --user is-active --quiet "$UNIT_NAME" 2>/dev/null; then
+    systemctl --user stop "$UNIT_NAME" && stopped=1
+    ok "已停止（systemd --user）"
+  fi
+  if have tmux && tmux has-session -t splicegaip 2>/dev/null; then
+    tmux kill-session -t splicegaip && stopped=1
+    ok "已停止（tmux 会话）"
+  fi
+  if running_pid; then
+    local pid; pid="$(cat "$PID_FILE")"
+    # setsid put the server in its own process group: signal the whole group so
+    # uvicorn's worker children go down with the supervisor.
+    kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
+    local i
+    for i in $(seq 1 20); do
+      kill -0 "$pid" 2>/dev/null || break
+      sleep 0.5
+    done
+    kill -KILL -- "-$pid" 2>/dev/null || kill -KILL "$pid" 2>/dev/null || true
+    stopped=1
+    ok "已停止（PID $pid）"
+  fi
+  rm -f "$PID_FILE" "$MODE_FILE"
+  [ "$stopped" -eq 1 ] || dim "本来就没在运行"
+}
+
+cmd_status() {
+  printf 'SpliceGAIP  %s\n' "$(current_mode)"
+  dim "目录      $APP_DIR"
+  dim "数据      $RUNTIME_ROOT"
+  dim "worker    $WORKERS（$CORES 核机器）"
+  dim "监听      $HOST:$PORT"
+  local up=0
+  if [ "$(current_mode)" = systemd ] && systemd_user_ok; then
+    systemctl --user is-active --quiet "$UNIT_NAME" && up=1
+    dim "systemd   $(systemctl --user is-active "$UNIT_NAME" 2>/dev/null || echo unknown)"
+  fi
+  if running_pid; then
+    up=1
+    dim "进程      PID $(cat "$PID_FILE")  RSS $(ps -o rss= -p "$(cat "$PID_FILE")" 2>/dev/null | awk '{printf "%.0f MB", $1/1024}' || echo '-')"
+  fi
+  if health_ok; then
+    ok "运行中，健康检查通过"
+    local n
+    n="$("$VENV_PY" - "$PORT" <<'PY' 2>/dev/null
+import json, sys, urllib.request
+try:
+    with urllib.request.urlopen(f"http://127.0.0.1:{sys.argv[1]}/api/projects", timeout=15) as r:
+        print(len(json.load(r).get("projects", [])))
+except Exception:
+    print("-")
+PY
+)"
+    dim "历史项目  ${n}"
+    cmd_url
+  elif [ "$up" -eq 1 ]; then
+    bad "进程在，但健康检查失败 —— 看日志：bash $HERE/sgctl logs"
+    return 1
+  else
+    bad "未运行"
+    return 1
+  fi
+}
+
+cmd_logs() {
+  [ -f "$LOG" ] || { bad "还没有日志：$LOG"; return 1; }
+  if [ "${1:-}" = "-f" ] || [ "${1:-}" = "--follow" ]; then
+    tail -n 80 -f "$LOG"
+  else
+    tail -n "${1:-80}" "$LOG"
+  fi
+}
+
+cmd_url() {
+  local ip
+  ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+  [ -n "${ip:-}" ] || ip="$(hostname)"
+  printf '\n  本机访问   http://127.0.0.1:%s/\n' "$PORT"
+  if [ -n "$ip" ]; then printf '  内网访问   http://%s:%s/\n' "$ip" "$PORT"; fi
+  printf '  SSH 隧道   ssh -N -L %s:127.0.0.1:%s %s@%s\n\n' "$PORT" "$PORT" "${USER:-user}" "$(hostname)"
+}
+
+cmd_doctor() {
+  printf '机器\n'
+  dim "内核      $(uname -sr)"
+  dim "CPU       $CORES 核$([ -r /proc/cpuinfo ] && awk -F: '/model name/ {print " · " $2; exit}' /proc/cpuinfo || true)"
+  dim "内存      $(( $(awk '/MemTotal/ {print $2}' /proc/meminfo 2>/dev/null || echo 0) / 1048576 )) GB"
+  dim "负载      $(cut -d' ' -f1-3 /proc/loadavg 2>/dev/null || echo '-')"
+  printf '存储\n'
+  dim "运行目录  $RUNTIME_ROOT"
+  dim "文件系统  $(df -PT "$RUNTIME_ROOT" 2>/dev/null | awk 'NR==2 {print $2}')"
+  dim "剩余空间  $(df -Ph "$RUNTIME_ROOT" 2>/dev/null | awk 'NR==2 {print $4 " / " $2}')"
+  dim "数据库    $(du -sh "$RUNTIME_ROOT/splicegaip.sqlite3" 2>/dev/null | cut -f1 || echo '无')"
+  dim "项目产物  $(du -sh "$RUNTIME_ROOT/projects" 2>/dev/null | cut -f1 || echo '无')"
+  dim "配额      $( (quota -s 2>/dev/null | tail -n +3 | head -3) || echo '查询不到（需要 quota 命令）')"
+  printf '运行时\n'
+  dim "Python    $("$VENV_PY" -V 2>&1)"
+  dim "worker    $WORKERS"
+  dim "WAL       $([ "$SQLITE_WAL" = "1" ] && echo 开启 || echo 关闭)"
+  dim "fd 上限   $(ulimit -n)"
+  printf '常驻方式\n'
+  if systemd_user_ok; then
+    ok "systemd --user 可用"
+    dim "linger    $(loginctl show-user "$USER" -p Linger --value 2>/dev/null || echo 未知)"
+  else
+    warn "systemd --user 不可用（容器或精简系统常见）"
+  fi
+  if have tmux; then ok "tmux 可用"; else warn "没有 tmux（建议装或用 conda 装：conda install -c conda-forge tmux）"; fi
+  printf '端口\n'
+  if port_open; then warn "端口 $PORT 已被占用"; else ok "端口 $PORT 空闲"; fi
+  printf '外部访问\n'
+  dim "公网 IP   $(curl -fsS --max-time 5 https://api.ipify.org 2>/dev/null || echo '取不到（可能无外网）')"
+  dim "cloudflared $([ -x "$HOME/bin/cloudflared" ] && echo 已安装 || echo 未安装)"
+}
+
+cmd_backup() {
+  local dest="${1:-$HOME/splicegaip-backup-$(date +%Y%m%d-%H%M%S)}"
+  mkdir -p "$dest"
+  printf '备份到 %s\n' "$dest"
+  # sqlite3 online backup: safe even while the service is writing.
+  "$VENV_PY" - "$RUNTIME_ROOT/splicegaip.sqlite3" "$dest/splicegaip.sqlite3" <<'PY'
+import sqlite3, sys
+src = sqlite3.connect(sys.argv[1])
+dst = sqlite3.connect(sys.argv[2])
+with dst:
+    src.backup(dst)
+dst.close(); src.close()
+print("  数据库已备份")
+PY
+  tar -czf "$dest/projects.tar.gz" -C "$RUNTIME_ROOT" projects 2>/dev/null && printf '  项目产物已打包\n'
+  du -sh "$dest" 2>/dev/null | awk '{print "  合计 " $1}'
+}
+
+cmd_set() {
+  local key="${1:-}" value="${2:-}"
+  [ -n "$key" ] && [ -n "$value" ] || { bad "用法: sgctl set <workers|port|host> <值>"; return 1; }
+  case "$key" in
+    workers) local var=WORKERS ;;
+    port)    local var=PORT ;;
+    host)    local var=HOST ;;
+    *) bad "只支持 workers / port / host"; return 1 ;;
+  esac
+  if grep -q "^${var}=" "$SG_ENV"; then
+    sed -i.bak "s|^${var}=.*|${var}=$(printf '%q' "$value")|" "$SG_ENV"
+    rm -f "$SG_ENV.bak"
+  else
+    printf '%s=%q\n' "$var" "$value" >> "$SG_ENV"
+  fi
+  ok "$key = $value（执行 sgctl restart 生效）"
+}
+
+case "${1:-}" in
+  start)   shift; cmd_start "$@" ;;
+  stop)    shift; cmd_stop "$@" ;;
+  restart) shift; cmd_stop; sleep 1; cmd_start "$@" ;;
+  status)  shift; cmd_status "$@" ;;
+  logs)    shift; cmd_logs "$@" ;;
+  url)     shift; cmd_url "$@" ;;
+  doctor)  shift; cmd_doctor "$@" ;;
+  backup)  shift; cmd_backup "$@" ;;
+  set)     shift; cmd_set "$@" ;;
+  ""|-h|--help)
+    sed -n '2,14p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    ;;
+  *) bad "未知命令: $1"; sed -n '2,14p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

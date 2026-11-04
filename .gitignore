@@ -47,3 +47,26 @@ bioGen/document/node_modules/*
 biolancher/script/windows_gui_v2/python/*
 biolancher/script/windows_gui_v2/bioag/onnx.tar.gz
 bak/*
+
+# --- repository housekeeping ---
+# superseded files parked here instead of deleted (local only)
+_archive/
+# assistant / workspace tooling data
+.workbuddy/
+# rollback copies of packaged desktop builds
+*.prev
+# PyInstaller work dirs are disposable
+packaging/build-*/
+packaging/dist-*/
+packaging/build-log.txt
+
+# --- runtime output (never commit) ---
+# exported per-project deliverable folders
+/results/
+# scratch outputs, screenshots, ad-hoc probes
+/out/
+# local datasets: downloaded reference data, customer pilot inputs
+# (kept outside the repo root by convention, but be safe)
+/public_datasets/
+/data_public/
+/converted/

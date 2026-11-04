@@ -126,5 +126,5 @@ fi
 echo ""
 echo -e "${GREEN}✅ Deployment preparation complete!${NC}"
 echo ""
-echo "For detailed instructions, see: DEPLOY_COOLIFY.md"
+echo "For detailed instructions, see: docs/deploy/DEPLOY_COOLIFY.md"
 echo ""

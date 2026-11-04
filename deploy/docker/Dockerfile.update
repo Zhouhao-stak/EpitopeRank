@@ -1,0 +1,27 @@
+# Update an existing SpliceGAIP image **without network access**.
+#
+# The build host this runs on cannot reach PyPI or Docker Hub (both are blocked
+# by the cluster firewall), so a normal `docker build` from Dockerfile is
+# impossible. Every Python dependency is already inside the deployed image, and
+# code-only updates need no new packages, so this layers the current source on
+# top of that image instead of reinstalling anything.
+#
+#   docker build -f deploy/docker/Dockerfile.update -t splicegaip-splicegaip:latest .
+#
+# If a future update *does* add a dependency, this will fail at import time;
+# build it on a machine with PyPI access and `docker save`/`docker load` it.
+ARG BASE=splicegaip-splicegaip:latest
+FROM ${BASE}
+
+USER root
+
+# Keep the installed site-packages from the base image; only the source tree is
+# replaced. Anything in .dockerignore is skipped.
+COPY . /app
+
+RUN chmod +x /app/deploy/docker/entrypoint.sh || true
+
+USER splicegaip
+WORKDIR /app
+
+CMD ["sh", "/app/deploy/docker/entrypoint.sh"]

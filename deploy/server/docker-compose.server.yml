@@ -1,0 +1,33 @@
+# Server-only compose override for 123.255.66.81 (wang_zi_wei@, port 39145).
+#
+# The host cannot reach PyPI or Docker Hub, so rebuilding the image is not an
+# option. Instead the source tree is bind-mounted over the image's /app:
+#
+#   * code updates = copy files + `docker compose up -d --no-build` (seconds)
+#   * dependencies stay exactly as installed in the image
+#   * the image remains the rollback target
+#
+# A *directory* mount is used on purpose. Mounting individual files
+# (./run.py:/app/run.py) breaks after `tar -x` because tar replaces the inode
+# and the container keeps seeing the old file.
+#
+# Enable it by putting this line in .env (done by update-container.sh):
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.override.yml:docker-compose.server.yml
+
+services:
+  splicegaip:
+    volumes:
+      # Whole source tree, read-only. Nested mounts (./config, /data) from the
+      # base file still take precedence because they have longer target paths.
+      - ./:/app:ro
+    environment:
+      # Peptide prediction cache lives on the local docker volume, not NFS.
+      - SPLICEGAIP_PEPTIDE_CACHE=/data/runtime/peptide_cache
+      # IEDB is slow from this network (30-90 s for a cold request); give the
+      # first call room instead of timing out and retrying.
+      - SPLICEGAIP_PEPTIDE_TIMEOUT=120
+      - SPLICEGAIP_PEPTIDE_RETRIES=1
+      # Report/UI timestamps in the operator's timezone.
+      - TZ=Asia/Shanghai
+      # Never write __pycache__ into the read-only bind mount.
+      - PYTHONDONTWRITEBYTECODE=1

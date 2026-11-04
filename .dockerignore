@@ -50,3 +50,15 @@ test-venv/
 SpliceGAIP项目汇报/
 *.pptx
 create_ppt.py
+
+# Local data corpora / working dirs (never imported by the app)
+public_datasets/
+pdf_ppt_work/
+converted/
+out/
+_archive/
+.backup-before-update/
+.opt/
+.state/
+.workbuddy/
+env.bak-*
