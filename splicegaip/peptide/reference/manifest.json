@@ -1,0 +1,40 @@
+{
+  "retrieved_at": "2026-11-03T15:04:45+00:00",
+  "source": {
+    "tools_api": "https://tools-cluster-interface.iedb.org/tools_api/",
+    "query_api": "https://query-api.iedb.org/"
+  },
+  "notes": [
+    "Allele lists are the names accepted by the IEDB tools, not population frequencies.",
+    "Known epitopes are an assay extract for demos/regression tests, not a curated neoantigen set."
+  ],
+  "files": {
+    "hla_class1_alleles.tsv": {
+      "rows": 10386,
+      "sha256": "a9b61e57bac192746dcc9fb19f57cdfc8e2551b14192c61e4f13d0deb674950d"
+    },
+    "hla_class2_alleles.tsv": {
+      "rows": 4960,
+      "sha256": "b89d95c05490f2cb4d129e7d89409ed4a1c3077a335682093e926b4d6c46c813"
+    },
+    "known_epitopes.tsv": {
+      "rows": 1078,
+      "sha256": "7fbd19e8b43cf9a141aacbe820a1a4eb20c01a674095e539c947ea9798fdcd80",
+      "alleles_sampled": [
+        "HLA-A*01:01",
+        "HLA-A*02:01",
+        "HLA-A*03:01",
+        "HLA-A*11:01",
+        "HLA-A*24:02",
+        "HLA-B*07:02",
+        "HLA-B*08:01",
+        "HLA-B*35:01",
+        "HLA-B*44:02",
+        "HLA-B*57:01",
+        "HLA-DRB1*01:01",
+        "HLA-DRB1*15:01"
+      ],
+      "records_per_allele": 120
+    }
+  }
+}

@@ -93,7 +93,7 @@ def test_loader_rejects_missing_or_unrecognised_input(tmp_path):
     with pytest.raises(FileNotFoundError):
         load_dataset(tmp_path / "missing")
 
-    with pytest.raises(ValueError, match="No recognizable AS data"):
+    with pytest.raises(ValueError, match="No recognizable rMATS data"):
         load_dataset(tmp_path)
 
 

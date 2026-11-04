@@ -13,12 +13,25 @@ Persists everything the prompt requires an analysis to remember:
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 import threading
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator, Sequence
+
+_TRUE_VALUES = {"1", "true", "yes", "on"}
+
+
+def _wal_enabled() -> bool:
+    """True when ``SPLICEGAIP_SQLITE_WAL`` asks for write-ahead logging.
+
+    Multi-process serving (``serve_ui.py --workers N``) needs WAL so readers
+    are not blocked by a running analysis write. It stays opt-in because WAL
+    corrupts on some network filesystems.
+    """
+    return os.environ.get("SPLICEGAIP_SQLITE_WAL", "").strip().lower() in _TRUE_VALUES
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS projects (
@@ -121,6 +134,18 @@ CREATE TABLE IF NOT EXISTS interpretations (
     content TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
+
+-- History browsing filters and counts per project; without these a paged
+-- query over a 1.6M-event database does a full table scan every time.
+CREATE INDEX IF NOT EXISTS idx_events_project ON events (project_id);
+CREATE INDEX IF NOT EXISTS idx_events_project_significant ON events (project_id, significant);
+CREATE INDEX IF NOT EXISTS idx_events_project_fdr ON events (project_id, fdr);
+CREATE INDEX IF NOT EXISTS idx_events_gene ON events (project_id, gene_symbol);
+CREATE INDEX IF NOT EXISTS idx_candidates_project ON candidates (project_id);
+CREATE INDEX IF NOT EXISTS idx_samples_project ON samples (project_id);
+CREATE INDEX IF NOT EXISTS idx_artifacts_project ON artifacts (project_id);
+CREATE INDEX IF NOT EXISTS idx_logs_project ON workflow_logs (project_id);
+CREATE INDEX IF NOT EXISTS idx_enrichment_project ON enrichment_terms (project_id);
 """
 
 
@@ -137,11 +162,24 @@ class ProjectMemory:
         self._local = threading.local()
         with self._connect() as connection:
             connection.executescript(SCHEMA)
+            # WAL lets several uvicorn workers read while one of them writes.
+            # Opt-in because WAL is unsafe on NFS/SMB, where most HPC home
+            # directories live; the default rollback journal is the safe choice
+            # for a single process on a network mount.
+            if _wal_enabled():
+                try:
+                    connection.execute("PRAGMA journal_mode=WAL")
+                except sqlite3.DatabaseError:
+                    pass  # network filesystem refused WAL: keep the default
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
         connection = sqlite3.connect(self.db_path, timeout=30)
         connection.row_factory = sqlite3.Row
+        # ``synchronous`` is per-connection (journal_mode is not), so the WAL
+        # fast path has to be re-applied on every connection.
+        if _wal_enabled():
+            connection.execute("PRAGMA synchronous=NORMAL")
         try:
             yield connection
             connection.commit()
@@ -256,6 +294,127 @@ class ProjectMemory:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    # -- paged browsing (history view) ------------------------------------
+    def _event_filter(
+        self,
+        project_id: str,
+        *,
+        search: str = "",
+        event_type: str = "",
+        significant_only: bool = False,
+        fdr_max: float | None = None,
+        min_abs_delta: float | None = None,
+    ) -> tuple[str, list[Any]]:
+        clauses = ["project_id = ?"]
+        params: list[Any] = [project_id]
+        if search:
+            clauses.append("(LOWER(COALESCE(gene_symbol, '')) LIKE ? OR LOWER(COALESCE(gene_id, '')) LIKE ? OR LOWER(event_id) LIKE ?)")
+            pattern = f"%{search.lower()}%"
+            params.extend([pattern, pattern, pattern])
+        if event_type:
+            clauses.append("UPPER(COALESCE(event_type, '')) = ?")
+            params.append(event_type.upper())
+        if significant_only:
+            clauses.append("significant = 1")
+        if fdr_max is not None:
+            clauses.append("fdr IS NOT NULL AND fdr < ?")
+            params.append(float(fdr_max))
+        if min_abs_delta is not None:
+            clauses.append("delta_psi IS NOT NULL AND ABS(delta_psi) > ?")
+            params.append(float(min_abs_delta))
+        return " AND ".join(clauses), params
+
+    def count_events(self, project_id: str, **filters: Any) -> int:
+        where, params = self._event_filter(project_id, **filters)
+        with self._connect() as connection:
+            row = connection.execute(
+                f"SELECT COUNT(*) FROM events WHERE {where}", params
+            ).fetchone()
+        return int(row[0]) if row else 0
+
+    def query_events(
+        self,
+        project_id: str,
+        *,
+        offset: int = 0,
+        limit: int = 50,
+        order_by: str = "fdr",
+        **filters: Any,
+    ) -> list[dict[str, Any]]:
+        """Return a page of events, newest/highest-ranked first.
+
+        ``order_by`` accepts ``fdr`` (default), ``delta_psi`` or ``gene``.
+        """
+        order = {
+            "fdr": "fdr IS NULL, fdr ASC, ABS(delta_psi) DESC",
+            "delta_psi": "delta_psi IS NULL, ABS(delta_psi) DESC",
+            "gene": "COALESCE(gene_symbol, gene_id, '') ASC, event_id ASC",
+        }.get(order_by, "fdr IS NULL, fdr ASC, ABS(delta_psi) DESC")
+        where, params = self._event_filter(project_id, **filters)
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT event_id, gene_id, gene_symbol, event_type, chromosome, strand, "
+                "genomic_coordinates, source_tool, mean_psi_group1, mean_psi_group2, "
+                "delta_psi, p_value, fdr, inclusion_reads, exclusion_reads, "
+                "total_support_reads, significant "
+                f"FROM events WHERE {where} ORDER BY {order} LIMIT ? OFFSET ?",
+                params + [int(limit), int(offset)],
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def event_type_counts(self, project_id: str) -> dict[str, int]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT COALESCE(event_type, 'NA') AS kind, COUNT(*) FROM events "
+                "WHERE project_id = ? GROUP BY kind ORDER BY COUNT(*) DESC",
+                (project_id,),
+            ).fetchall()
+        return {str(row[0]): int(row[1]) for row in rows}
+
+    def list_projects_with_stats(self) -> list[dict[str, Any]]:
+        """Projects plus the counters the history panel needs."""
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT p.*, "
+                "(SELECT COUNT(*) FROM events e WHERE e.project_id = p.project_id) AS event_count, "
+                "(SELECT COUNT(*) FROM events e WHERE e.project_id = p.project_id AND e.significant = 1) AS significant_count, "
+                "(SELECT COUNT(*) FROM candidates c WHERE c.project_id = p.project_id) AS candidate_count, "
+                "(SELECT COUNT(*) FROM samples s WHERE s.project_id = p.project_id) AS sample_count "
+                "FROM projects p ORDER BY p.created_at DESC"
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def delete_project(self, project_id: str) -> int:
+        """Remove every row belonging to ``project_id``; returns rows deleted."""
+        tables = (
+            "samples",
+            "events",
+            "candidates",
+            "enrichment_terms",
+            "artifacts",
+            "workflow_logs",
+            "plans",
+            "interpretations",
+            "agent_episodes",
+            "projects",
+        )
+        deleted = 0
+        with self._connect() as connection:
+            existing = {
+                row[0]
+                for row in connection.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table'"
+                ).fetchall()
+            }
+            for table in tables:
+                if table not in existing:
+                    continue
+                cursor = connection.execute(
+                    f"DELETE FROM {table} WHERE project_id = ?", (project_id,)
+                )
+                deleted += max(cursor.rowcount, 0)
+        return deleted
+
     # -- candidates -------------------------------------------------------
     def save_candidates(self, project_id: str, candidates: Sequence[Any]) -> None:
         with self._connect() as connection:
@@ -368,7 +527,9 @@ class ProjectMemory:
     def load_interpretations(self, project_id: str) -> list[dict[str, Any]]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT * FROM interpretations WHERE project_id = ? ORDER BY id", (project_id,)
+                # ``interpretations`` has no surrogate id column: order by the
+                # implicit rowid so insertion order is preserved.
+                "SELECT * FROM interpretations WHERE project_id = ? ORDER BY rowid", (project_id,)
             ).fetchall()
         return [dict(row) for row in rows]
 

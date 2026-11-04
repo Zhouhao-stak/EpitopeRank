@@ -1,9 +1,9 @@
-"""Tests for splicing event parsers (rMATS, SUPPA2)."""
+"""Tests for the rMATS event parser (the only supported input format)."""
+
 
 import pytest
 from pathlib import Path
 from splicegaip.splicing.parsers.rmats import parse_rmats_file
-from splicegaip.splicing.parsers.suppa import parse_suppa_psi_file
 
 
 class TestRmatsParser:
@@ -89,49 +89,3 @@ class TestRmatsParser:
         assert len(result) == 1
         assert result[0].genomic_coordinates is not None
         assert "chr1" in result[0].genomic_coordinates
-
-
-class TestSuppaParser:
-    """Test cases for SUPPA2 parser."""
-
-    def test_parse_psi_events(self, tmp_path):
-        """Test parsing PSI values from SUPPA2 output."""
-        test_file = tmp_path / "psi_events.txt"
-        test_file.write_text(
-            "seqname\tstart\tend\ttotal_counts\tpsi_sample1\tpsi_sample2\n"
-            "chr1\t1000\t1100\t50\t0.8\t0.3\n"
-            "chr1\t2000\t2100\t30\t0.6\t0.7\n"
-        )
-
-        result = parse_suppa_psi_file(str(test_file))
-
-        assert len(result) == 2
-        event = result[0]
-        # Check that we got events back with sample PSI data
-        assert event is not None
-        assert len(event.psi_by_sample) > 0
-        # Verify sample PSI values are stored
-        assert "psi_sample1" in event.psi_by_sample
-        assert abs(event.psi_by_sample["psi_sample1"] - 0.8) < 0.01
-
-    def test_parse_missing_values(self, tmp_path):
-        """Test handling of missing PSI values."""
-        test_file = tmp_path / "psi_missing.txt"
-        test_file.write_text(
-            "seqname\tstart\tend\ttotal_counts\tpsi_sample1\tpsi_sample2\n"
-            "chr1\t1000\t1100\tNA\t0.8\tNA\n"
-        )
-
-        result = parse_suppa_psi_file(str(test_file))
-
-        # Should handle NA values gracefully
-        assert isinstance(result, list)
-
-    def test_parse_empty_file(self, tmp_path):
-        """Test parsing empty SUPPA2 file."""
-        test_file = tmp_path / "empty.txt"
-        test_file.write_text("")
-
-        result = parse_suppa_psi_file(str(test_file))
-
-        assert len(result) == 0

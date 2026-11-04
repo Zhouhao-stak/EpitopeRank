@@ -1,0 +1,7 @@
+sample_id	group	condition	tissue	batch
+OC_001	Control	Control	colon	B1
+OC_002	Control	Control	colon	B1
+OC_003	Control	Control	colon	B1
+OC_004	Treatment	Treatment	colon	B1
+OC_005	Treatment	Treatment	colon	B1
+OC_006	Treatment	Treatment	colon	B1

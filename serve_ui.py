@@ -92,7 +92,12 @@ def _free_port(start: int, attempts: int = 40) -> int:
                 return port
             except OSError:
                 continue
-    raise SystemExit(f"No free port found in range {start}-{start + attempts - 1}")
+    # Windows may reserve an entire contiguous port block for Hyper-V/Docker.
+    # Let the OS pick an available ephemeral port when the preferred range is
+    # unavailable instead of terminating before the desktop window opens.
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
 
 
 def main() -> int:
@@ -100,6 +105,16 @@ def main() -> int:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=0, help="0 = auto-pick a free port")
     parser.add_argument("--no-browser", action="store_true", help="do not open a browser")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=int(os.environ.get("SPLICEGAIP_WORKERS", "1")),
+        help=(
+            "number of uvicorn worker processes (default 1). Set >1 on a "
+            "multi-core server that serves several concurrent users; the "
+            "SQLite store is opened per process, so keep it moderate."
+        ),
+    )
     args = parser.parse_args()
 
     port = args.port or _free_port(8800)
@@ -142,13 +157,28 @@ def main() -> int:
             print(f"  已生成配置模板: {'、'.join(str(p) for p in templates)}")
             print("          把模板复制为 .env（同目录）并填入密钥，重启后即可启用 AI 解读")
     print("  浏览器已自动打开；关闭本窗口即可停止服务。")
+    if args.workers > 1:
+        print(f"  并发模式: {args.workers} 个 worker 进程")
     print("=" * 62, flush=True)
 
     if not args.no_browser:
         # Open once the server is actually accepting connections.
         threading.Thread(target=_open_when_ready, args=(url,), daemon=True).start()
 
-    uvicorn.run(app, host=args.host, port=port, log_level="warning")
+    workers = max(1, int(args.workers))
+    if workers > 1:
+        # multi-process mode needs an import string: uvicorn re-imports the
+        # factory inside every worker instead of forking the live app object.
+        uvicorn.run(
+            "splicegaip.api.app:create_app",
+            factory=True,
+            host=args.host,
+            port=port,
+            workers=workers,
+            log_level="warning",
+        )
+    else:
+        uvicorn.run(app, host=args.host, port=port, log_level="warning")
     return 0
 
 

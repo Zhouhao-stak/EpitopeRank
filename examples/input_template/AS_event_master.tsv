@@ -1,0 +1,3 @@
+event_id	gene_id	gene_symbol	event_type	chromosome	strand	genomic_coordinates	coordinate_system	source_tool	mean_PSI_group1	mean_PSI_group2	delta_PSI	p_value	FDR	inclusion_reads	exclusion_reads	total_support_reads	valid_sample_count	psi_missing_rate	single_sample_driven	mapping_ambiguity	confidence_level	PSI_OC_001	PSI_OC_002	PSI_OC_003	PSI_OC_004	PSI_OC_005	PSI_OC_006
+SE:1	672	BRCA1	SE	chr2	+	chr2:109001-109120	1-based-inclusive	rMATS	0.9031	0.9900	0.0869	0.4400	0.6520	805	48	853	6	0.0	false	false	high	0.9031	0.9031	0.9031	0.9900	0.9900	0.9900
+SE:2	6774	STAT3	SE	chr3	-	chr3:118001-118260	1-based-inclusive	rMATS	0.4321	0.1221	-0.3100	0.0172	0.0316	292	623	915	6	0.0	false	false	high	0.4321	0.4321	0.4321	0.1221	0.1221	0.1221

@@ -20,7 +20,8 @@ _HTML = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SpliceGAIP - AI 智能分析平台</title>
+<title>__TITLE__</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.ico">
 <style>
 /* Ocean lab theme: data-dense, calm, and unmistakably scientific. */
 :root {
@@ -77,6 +78,7 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .nav-item[data-page="visualization"]::before { content: "◒"; font-size: 16px; }
 .nav-item[data-page="gene"]::before { content: "⌬"; font-size: 18px; }
 .nav-item[data-page="report"]::before { content: "▤"; font-size: 15px; }
+.nav-item[data-page="peptide"]::before { content: "◎"; font-size: 16px; }
 .nav-item[data-page="assistant"]::before { content: "✦"; font-size: 15px; color: var(--accent); }
 .nav-item:hover { background: rgba(94,234,212,.07); color: var(--white); }
 .nav-item.active { background: linear-gradient(90deg, rgba(94,234,212,.16), rgba(94,234,212,.04)); color: var(--white); border-left-color: var(--accent); box-shadow: inset 0 0 24px rgba(94,234,212,.04); }
@@ -106,6 +108,17 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .btn-secondary { background: rgba(17,43,54,.55); color: var(--text-secondary); border-color: var(--border); }
 .btn-secondary:hover { color: var(--white); border-color: var(--accent); background: rgba(94,234,212,.08); }
 .btn-sm { padding: 7px 13px; font-size: 12px; }
+
+.neo-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
+.neo-tab { padding: 7px 14px; font-size: 12px; font-weight: 700; border-radius: 999px; border: 1px solid var(--border); background: rgba(17,43,54,.55); color: var(--text-secondary); cursor: pointer; transition: all .2s ease; }
+.neo-tab:hover { color: var(--white); border-color: var(--accent); }
+.neo-tab.active { background: rgba(94,234,212,.14); border-color: var(--accent); color: var(--accent); }
+.neo-result-body { max-height: 58vh; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(8,25,34,.6); }
+.neo-result-body table { font-size: 12px; }
+.neo-result-body th { position: sticky; top: 0; z-index: 1; background: #0d2430; white-space: nowrap; }
+.neo-result-body td { white-space: nowrap; font-family: var(--font-mono); font-size: 12px; padding: 8px 12px; }
+.neo-result-body pre { margin: 0; padding: 16px; font-size: 12px; line-height: 1.6; white-space: pre; color: var(--text-secondary); font-family: var(--font-mono); }
+.neo-path { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); word-break: break-all; margin-top: 10px; }
 
 .table-container { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -281,6 +294,8 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
       <div class="nav-item" data-page="visualization">可视化</div>
       <div class="nav-item" data-page="gene">基因浏览器</div>
       <div class="nav-item" data-page="report">报告</div>
+      <div class="nav-item" data-page="neoantigen">剪接候选新抗原</div>
+      <div class="nav-item" data-page="peptide">肽预测</div>
     </div>
     <div class="nav-section"><div class="nav-label">智能助手</div>
       <div class="nav-item" data-page="assistant">🤖 AI 助手</div>
@@ -360,8 +375,46 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
                 <div style="font-size: 14px;">暂无项目</div>
               </div>
             </div>
+            <div id="storage-hint" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;line-height:1.6;color:var(--text-muted);">
+              数据目录：读取中…
+            </div>
           </div>
         </div>
+
+        <section class="card" id="project-detail" style="margin-top: 24px; display: none;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">历史项目详情</div>
+              <div style="font-size:20px;font-weight:700;margin-top:4px;" id="detail-title">-</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;" id="detail-meta">-</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-sm btn-secondary" onclick="openReport('html')">📄 打开 HTML 报告</button>
+              <button class="btn btn-sm btn-secondary" onclick="openReport('pdf')">📑 下载 PDF</button>
+              <button class="btn btn-sm btn-secondary" onclick="revealProjectBundle()">📁 成果文件夹</button>
+              <button class="btn btn-sm btn-secondary" onclick="packageProject()">📦 打包 ZIP</button>
+              <button class="btn btn-sm btn-secondary" onclick="jumpToExplorer()">🔍 浏览全部事件</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteCurrentProject()" style="color:var(--danger);">🗑 删除项目</button>
+            </div>
+          </div>
+          <div id="detail-bundle-hint" style="font-size:11px;color:var(--text-muted);margin:-6px 0 10px;"></div>
+          <div class="grid grid-2" style="gap:20px;">
+            <div>
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:10px;">样本分组</div>
+              <div id="detail-groups" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">事件类型分布</div>
+              <div id="detail-types" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">流程日志（最近 12 条）</div>
+              <div id="detail-logs" style="max-height:220px;overflow:auto;font-size:12px;line-height:1.7;"></div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:10px;">图表（点击放大）</div>
+              <div id="detail-figures" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">候选事件 Top 10</div>
+              <div id="detail-candidates" style="max-height:260px;overflow:auto;font-size:12px;"></div>
+            </div>
+          </div>
+        </section>
       </div>
       <div class="page" id="page-pipeline">
         <div class="card" style="margin-bottom: 24px;">
@@ -451,9 +504,15 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             </div>
             <div class="filter-group">
               <div class="filter-label">统计阈值</div>
-              <div style="display: flex; gap: 20px;">
-                <label class="checkbox-label"><input type="checkbox" id="filter-fdr" checked> FDR &lt; 0.05</label>
-                <label class="checkbox-label"><input type="checkbox" id="filter-dpsi" checked> |Delta PSI| &gt; 0.1</label>
+              <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+                <label class="checkbox-label"><input type="checkbox" id="filter-significant"> 仅显著事件</label>
+                <label class="checkbox-label">排序
+                  <select id="filter-order" style="margin-left:6px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-family:inherit;font-size:12px;">
+                    <option value="fdr">按 FDR</option>
+                    <option value="delta_psi">按 |ΔPSI|</option>
+                    <option value="gene">按基因名</option>
+                  </select>
+                </label>
               </div>
             </div>
           </div>
@@ -480,6 +539,16 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
               </tr>
             </tbody>
           </table>
+        </div>
+        <div id="events-pager" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;flex-wrap:wrap;font-size:13px;color:var(--text-secondary);">
+          <div id="events-pager-info">-</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn btn-sm btn-secondary" onclick="gotoEventPage(1)">首页</button>
+            <button class="btn btn-sm btn-secondary" onclick="gotoEventPage(state.eventPage - 1)">上一页</button>
+            <span id="events-pager-page">1 / 1</span>
+            <button class="btn btn-sm btn-secondary" onclick="gotoEventPage(state.eventPage + 1)">下一页</button>
+            <button class="btn btn-sm btn-secondary" onclick="gotoEventPage(state.eventPages)">末页</button>
+          </div>
         </div>
       </div>
       <div class="page" id="page-visualization">
@@ -626,7 +695,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           <div class="card" style="display: flex; flex-direction: column;">
             <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🤖 SpliceGAIP 智能助手</div>
             <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">
-              支持基因注释、文献搜索、通路富集、剪接事件解读等专业技能，并可通过 MCP 调用外部工具
+              会先规划再调用项目工具取数（事件查询 / 数据质量 / 富集 / 文献 / 肽预测），并对回答里的数字做溯源检查
             </div>
 
             <details class="model-config" id="model-config">
@@ -672,22 +741,40 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
                 <div class="message-author" style="font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">🤖 SpliceGAIP</div>
                 <div style="font-size: 14px; line-height: 1.6; color: var(--text);">
                   你好！我是 SpliceGAIP 智能助手，可以帮助你：<br>
-                  • 查询基因注释和剪接位点信息<br>
-                  • 搜索相关科学文献<br>
-                  • 执行通路富集分析<br>
-                  • 解读剪接事件的临床意义<br>
-                  • 通过 MCP 调用外部工具与项目数据<br><br>
-                  请选择上方的技能按钮开始，或直接输入你的问题。
+                  • 直接提问，我会调用工具读取当前项目的数据<br>
+                  • 查事件、看质量、读富集、找文献、预测候选肽<br>
+                  • 回答分四段：结论 / 关键证据 / 下一步 / 局限<br>
+                  • 每个数字都会与工具结果做溯源核对<br><br>
+                  也可以使用上方技能按钮做单项分析。
                 </div>
               </div>
             </div>
             
+            <!-- Chat Controls -->
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--text-secondary);">
+              <label style="display:flex;gap:6px;align-items:center;">策略
+                <select id="chat-mode" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);color:var(--text);">
+                  <option value="auto">自动（长问题先规划）</option>
+                  <option value="plan">先规划 + 审稿</option>
+                  <option value="react">直接工具循环</option>
+                </select>
+              </label>
+              <label style="display:flex;gap:6px;align-items:center;">
+                <input type="checkbox" id="chat-network" checked> 允许联网工具
+              </label>
+              <label style="display:flex;gap:6px;align-items:center;">
+                <input type="checkbox" id="chat-cache" checked> 结果缓存
+              </label>
+              <span id="chat-status" style="color:var(--accent);font-weight:600;"></span>
+              <button class="btn btn-sm btn-secondary" type="button" id="chat-stop" onclick="stopChat()" style="display:none;">停止</button>
+            </div>
+
             <!-- Chat Input -->
             <div style="display: flex; gap: 12px;">
               <input type="text" id="chat-input" placeholder="输入问题或选择上方技能..." 
                      style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px;"
                      onkeypress="if(event.key==='Enter') sendChatMessage()">
-              <button class="btn btn-primary" onclick="sendChatMessage()">发送</button>
+              <button class="btn btn-primary" id="chat-send" onclick="sendChatMessage()">发送</button>
             </div>
           </div>
           
@@ -752,6 +839,175 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         </div>
       </div>
     </div>
+    <div class="page" id="page-neoantigen">
+      <div class="card" style="max-width: 880px; padding: 24px;">
+        <h2>剪接来源候选新抗原</h2>
+        <p>使用当前项目查找候选肽。先检查数据，再决定是否进行 HLA 结合预测。</p>
+        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+          <strong>第一步：检查项目数据</strong>
+          <p style="margin:6px 0 12px;">系统会检查剪接事件和生成肽所需的编码序列表。</p>
+          <button class="btn btn-secondary" type="button" id="neo-check" onclick="checkNeoReadiness()">检查当前项目</button>
+          <div id="neo-readiness" style="white-space:pre-wrap;margin-top:12px;" aria-live="polite">请先选择一个项目。</div>
+        </div>
+        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+          <strong>第二步：选择编码序列表，生成候选肽</strong>
+          <p style="margin:6px 0 10px;">编码序列表就是「每个剪接事件对应的参考 CDS 与改变后 CDS」。系统按表头自动识别，<b>文件名不限</b>；下面若已列出文件，直接选即可。</p>
+          <label for="neo-cds-select">编码序列表</label>
+          <select id="neo-cds-select" style="display:block;width:100%;padding:10px;margin:8px 0 10px;"></select>
+          <div id="neo-mapping-panel" style="display:none;border:1px solid var(--border);border-radius:10px;padding:12px;margin:0 0 12px;background:rgba(255,255,255,.02);">
+            <div style="font-weight:650;margin-bottom:4px;">确认列的含义</div>
+            <p id="neo-mapping-note" style="margin:0 0 10px;font-size:13px;color:var(--text-muted);">这张表的列名不是标准写法，系统已按内容猜测。请核对下面四项，确认后只需设置一次。</p>
+            <div id="neo-mapping-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+            <div id="neo-mapping-preview" style="margin-top:10px;overflow-x:auto;"></div>
+            <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" type="button" onclick="saveColumnMapping()">确认这套对应关系</button>
+              <span id="neo-mapping-status" style="font-size:12px;color:var(--text-muted);"></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 6px;">
+            <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('neo-cds-file').click()">从本机添加编码序列表…</button>
+            <input id="neo-cds-file" type="file" accept=".tsv,.csv,.txt" style="display:none;" onchange="uploadCdsTable(this)">
+            <span id="neo-cds-hint" style="font-size:12px;color:var(--text-muted);"></span>
+          </div>
+          <label for="neo-hla">HLA-I 型别（可选，多个用逗号分隔）</label>
+          <input id="neo-hla" type="text" placeholder="例如 HLA-A*02:01,HLA-B*07:02" style="display:block;width:100%;padding:10px;margin:8px 0 14px;">
+          <p style="margin:6px 0 12px;">填写后，候选肽和 HLA 型别会分批发送至 IEDB 做 NetMHCpan 结合预测（需要联网，几百条肽通常 30–90 秒）。预测不等于免疫原性验证。</p>
+          <button class="btn btn-primary" type="button" id="neo-guided-run" onclick="runNeoantigen(true)" disabled style="opacity:.55;">生成候选肽</button>
+          <div id="neo-status" style="margin-top:12px;white-space:pre-wrap;" aria-live="polite"></div>
+        </div>
+        <details style="margin-top:20px;">
+        <summary style="cursor:pointer;font-weight:650;">高级选项：其他文件和专业分析工具</summary>
+        <h3>moPepGen · Docker 变异肽生成</h3>
+        <p>自动识别当前项目中的 rMATS JC 文件。请提供版本匹配的参考文件并启动 Docker；生成的是蛋白质组学变异肽，不是 HLA 预测或 CDS 对照表。</p>
+        <div id="mopep-fields"></div>
+        <button class="btn btn-secondary" type="button" id="mopep-run" onclick="runMopepgen()">运行 moPepGen</button>
+        <div id="mopep-status" style="white-space:pre-wrap;margin:12px 0;" aria-live="polite"></div>
+        <h3>分阶段证据审计</h3>
+        <p>使用当前项目逐阶段运行。每次确认只执行下一阶段；输入文件应位于项目数据目录。流程进度会保存。</p>
+        <div id="neo-stage-params"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-secondary" type="button" onclick="startNeoWorkflow()">开始阶段 0 审计</button>
+          <button class="btn btn-primary" type="button" id="neo-stage-next" onclick="advanceNeoWorkflow()" disabled>确认并执行下一阶段</button>
+        </div>
+        <pre id="neo-stage-result" style="white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0;" aria-live="polite">请先选择项目并填写已知证据。</pre>
+        <h3>探索性候选肽生成</h3>
+        <p>默认使用当前项目已上传的数据。编码序列对照表按表头自动识别，文件名不限；也可在下方选择文件进行独立分析。MHC 结合预测不等于免疫原性验证。</p>
+        <p>编码序列对照表需包含 <code>event_id, reference_cds, altered_cds, junction_nt</code>，其中 junction_nt 是异常 CDS 内新连接点前的核苷酸数。</p>
+        <label for="neo-files">可选：选择其他文件进行独立分析</label>
+        <input id="neo-files" type="file" multiple accept=".tsv,.csv,.txt" style="display:block;margin:12px 0;">
+        <button class="btn btn-secondary" type="button" onclick="runNeoantigen()">使用所选文件生成候选肽</button>
+        </details>
+      </div>
+      <div class="card" id="neo-result-panel" style="display:none;max-width:1240px;margin-top:18px;padding:22px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+          <div>
+            <div class="card-title" style="margin-bottom:4px;">分析结果</div>
+            <div id="neo-result-title" style="font-size:18px;font-weight:750;color:var(--white);">—</div>
+            <div id="neo-result-meta" style="font-size:12px;color:var(--text-muted);margin-top:4px;"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" type="button" onclick="copyNeoResult()">复制全部</button>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="downloadNeoResult()">下载当前文件</button>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="revealNeoResult()">打开结果目录</button>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="closeNeoResult()">关闭</button>
+          </div>
+        </div>
+        <div class="neo-tabs" id="neo-result-tabs"></div>
+        <div class="neo-result-body" id="neo-result-body"></div>
+        <div class="neo-path" id="neo-result-path" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="page" id="page-peptide">
+      <div class="card" style="max-width: 1080px; padding: 24px;">
+        <h2>肽预测</h2>
+        <p style="color:var(--text-secondary);max-width:860px;line-height:1.7;">
+          输入候选肽，或从当前项目生成候选肽，选择 HLA 型别后调用 IEDB（或本地 MHCflurry）进行
+          MHC-I / MHC-II 结合、抗原加工与复合排序。percentile rank 越低越好，它不是亲和力 Kd；
+          结合预测不等于抗原呈递，也不等于免疫原性。
+        </p>
+
+        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+          <strong>1. 候选肽</strong>
+          <p style="margin:6px 0 10px;color:var(--text-secondary);font-size:13px;">
+            每行一个肽段（8–30 aa）；可直接粘贴 FASTA 序列，<code>&gt;</code> 开头的标题行会被忽略。
+            单次最多 200 条肽、8 个 HLA（接口限制），避免触发 IEDB 频率限制。
+          </p>
+          <textarea id="pep-sequences" rows="7" spellcheck="false"
+            style="display:block;width:100%;padding:10px;margin:8px 0 6px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:var(--font-mono,monospace);font-size:13px;line-height:1.6;resize:vertical;"
+            placeholder="SLYNTVATL&#10;GILGFVFTL&#10;NLVPMVATV"></textarea>
+          <div id="pep-seq-count" style="font-size:12px;color:var(--text-muted);">已识别 0 条肽段</div>
+        </div>
+
+        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+          <strong>2. HLA 型别</strong>
+          <p style="margin:6px 0 10px;color:var(--text-secondary);font-size:13px;">
+            逗号分隔；输入时会在 IEDB 等位基因表中搜索（最多显示 500 条）。class-I 与 class-II 需分别预测，
+            选择“both”时平台会按类别拆分。
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 10px;">
+            <button class="btn btn-secondary btn-sm" type="button" onclick="pepUsePanel('class1_common')">常用 MHC-I 面板</button>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="pepUsePanel('class2_common')">常用 MHC-II 面板</button>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="pepClearAlleles()">清空型别</button>
+          </div>
+          <input id="pep-alleles" type="text" list="pep-allele-list" autocomplete="off" spellcheck="false"
+            placeholder="例如 HLA-A*02:01, HLA-B*07:02"
+            style="display:block;width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
+          <datalist id="pep-allele-list"></datalist>
+          <div id="pep-allele-hint" style="font-size:12px;color:var(--text-muted);margin-top:6px;">参考表尚未加载。</div>
+          <div id="pep-allele-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
+        </div>
+
+        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+          <strong>3. 预测选项</strong>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:12px;">
+            <div>
+              <label for="pep-mhc-class" style="display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px;">MHC 类别</label>
+              <select id="pep-mhc-class" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
+                <option value="class1">class1（MHC-I，8–11 aa）</option>
+                <option value="class2">class2（MHC-II，11–30 aa）</option>
+                <option value="both">both（按类别拆分）</option>
+              </select>
+            </div>
+            <div>
+              <label for="pep-predictor" style="display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px;">预测器</label>
+              <select id="pep-predictor" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
+                <option value="iedb">IEDB（在线）</option>
+                <option value="local">MHCflurry（本地，需安装）</option>
+                <option value="auto">auto（本地优先，失败转 IEDB）</option>
+              </select>
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);margin-top:22px;">
+              <input type="checkbox" id="pep-processing" checked> 加工预测（proteasome / TAP）
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);margin-top:22px;">
+              <input type="checkbox" id="pep-lookup"> 查询 IEDB 已知表位
+            </label>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;">
+            <button class="btn btn-primary" type="button" id="pep-predict-btn" onclick="pepPredict()">预测并排序</button>
+            <span id="pep-capabilities" style="font-size:12px;color:var(--text-muted);"></span>
+          </div>
+          <div id="pep-status" role="status" aria-live="polite" style="margin-top:12px;white-space:pre-wrap;"></div>
+          <div id="pep-errors" style="margin-top:8px;"></div>
+          <div id="pep-results" style="margin-top:14px;"></div>
+          <p style="margin:12px 0 0;font-size:12px;color:var(--text-muted);">
+            结合 ≠ 呈递 ≠ 免疫原性；排序分数只用于候选优先级的探索性排序。
+          </p>
+        </div>
+
+        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+          <strong>从当前项目生成候选肽</strong>
+          <p style="margin:6px 0 10px;color:var(--text-secondary);font-size:13px;">
+            使用当前项目的剪接事件与已重建的编码序列对照表生成跨连接点候选肽（对照表按表头自动识别，文件名不限），
+            再按上面的 HLA 与预测选项排序。读码框与 ORF 必须由上游提供，平台不会从坐标猜测序列。
+          </p>
+          <div id="pep-project-hint" style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">正在读取当前项目…</div>
+          <button class="btn btn-secondary" type="button" id="pep-project-btn" onclick="pepRunProject()" disabled style="opacity:.55;">从当前项目生成并排序</button>
+          <div id="pep-project-status" role="status" aria-live="polite" style="margin-top:12px;white-space:pre-wrap;"></div>
+          <div id="pep-project-files" style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:13px;"></div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -775,9 +1031,11 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
       <div id="drop-zone" style="border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--gray-100);" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('file-input').click()">
         <div style="font-size: 48px; margin-bottom: 12px;">📁</div>
         <div style="font-size: 14px; color: var(--gray-700);">拖拽文件到此处，或点击选择文件</div>
-        <div style="font-size: 12px; color: var(--gray-500); margin-top: 8px;">支持 CSV、TSV、TXT 表格（Excel 请另存为 CSV），可同时上传样本分组表</div>
+        <div style="font-size: 12px; color: var(--gray-500); margin-top: 8px;">支持 CSV、TSV、TXT、文本 .xls、Excel .xls/.xlsx/.xlsm 及压缩文本 .gz；表达量表会被识别并提示所需事件数据</div>
       </div>
       <input type="file" id="file-input" multiple style="display: none;" onchange="handleFileSelect(event)">
+      <input type="file" id="report-directory-input" webkitdirectory directory multiple style="display: none;" onchange="handleReportDirectory(event)">
+      <button type="button" class="btn btn-secondary" style="margin-top: 10px;" onclick="document.getElementById('report-directory-input').click()">选择华大报告目录</button>
       <div id="file-list" style="margin-top: 12px;"></div>
     </div>
     <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -808,7 +1066,843 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 <script src="agent_chat_ui.js"></script>
 <script>
-const state = { currentProject: localStorage.getItem('splicegaip.currentProject'), projects: [], analysis状态: null, events: [], currentPage: 'dashboard' };
+const state = { currentProject: localStorage.getItem('splicegaip.currentProject'), projects: [], analysis状态: null, detail: null, storage: null, events: [], eventPage: 1, eventPages: 1, eventTotal: 0, currentPage: 'dashboard' };
+let neoResultDir = '', neoResultName = '', neoResultText = '';
+const NEO_CR = String.fromCharCode(13), NEO_LF = String.fromCharCode(10), NEO_TAB = String.fromCharCode(9);
+async function checkNeoReadiness() {
+  const resultBox = document.getElementById('neo-readiness');
+  const runButton = document.getElementById('neo-guided-run');
+  const button = document.getElementById('neo-check');
+  runButton.disabled = true; runButton.style.opacity = '.55';
+  if (!state.currentProject) { resultBox.textContent = '还没有选择项目。请先创建或选择一个项目，再回来检查。'; return; }
+  const projectId = state.currentProject; button.disabled = true; resultBox.textContent = '正在检查项目数据…';
+  try {
+    const response = await fetch('/api/neoantigen/readiness/' + encodeURIComponent(projectId));
+    const data = await response.json(); if (!response.ok) throw new Error(data.detail || '检查失败');
+    if (projectId !== state.currentProject) { resultBox.textContent = '当前项目已切换，请重新检查。'; return; }
+    const lines = ['项目：' + data.project_name, '剪接事件：' + data.event_count + ' 条'];
+    const files = data.cds_files || [];
+    if (data.cds_status === 'available' && files.length) {
+      lines.push('编码序列表：已自动识别 ' + files.length + ' 份（' + files.join('、') + '）',
+                 '可以继续生成候选肽。检查只确认了表头，序列的读码框仍需由专业人员核实。');
+    } else {
+      lines.push('编码序列表：暂未找到',
+                 '需要一份含 event_id、reference_cds、altered_cds、junction_nt 四列的表，文件名随意。',
+                 '点下方「从本机添加编码序列表」就能直接补上，不用重新跑整个分析。');
+      if ((data.rmats_files || []).length) lines.push('已识别 rMATS 文件：' + data.rmats_files.join('、') + '。');
+    }
+    if ((data.cds_partial || []).length) {
+      lines.push('另有 ' + data.cds_partial.length + ' 个文件看着像编码序列表，但没被采用（不影响下面的生成）：'
+        + data.cds_partial.map(item => item.name + '——' + item.reason).join('；'));
+    }
+    resultBox.textContent = lines.join(NEO_LF);
+    renderCdsChoices(data);
+    neoReadiness = data;
+    renderColumnMapping(data);
+  } catch (error) { const message = String(error.message || error); resultBox.textContent = message.includes('input_dir must be inside') ? '无法访问此项目的原始数据目录。请重新选择该项目的数据文件，或联系管理员检查存储位置。' : '检查失败：' + message; }
+  finally { button.disabled = false; }
+}
+function renderCdsChoices(data) {
+  const select = document.getElementById('neo-cds-select');
+  const hint = document.getElementById('neo-cds-hint');
+  const runButton = document.getElementById('neo-guided-run');
+  const files = (data && data.cds_files) || [];
+  select.replaceChildren();
+  if (!files.length) {
+    const option = document.createElement('option');
+    option.value = ''; option.textContent = '（还没有可用的编码序列表）';
+    select.appendChild(option); select.disabled = true;
+    hint.textContent = '点左侧按钮从本机添加，或重新上传项目时把它一起放进去。';
+    runButton.disabled = true; runButton.style.opacity = '.55';
+    document.getElementById('neo-mapping-panel').style.display = 'none';
+    return;
+  }
+  files.forEach(name => {
+    const option = document.createElement('option');
+    option.value = name; option.textContent = name;
+    select.appendChild(option);
+  });
+  const preferred = (data.cds_selected && files.indexOf(data.cds_selected) >= 0) ? data.cds_selected : files[0];
+  select.value = preferred; select.disabled = false;
+  select.onchange = () => renderColumnMapping(neoReadiness);
+  hint.textContent = files.length > 1 ? '检测到 ' + files.length + ' 份，默认用 ' + preferred + '，可在下拉里切换。' : '文件已自动选中。';
+  runButton.disabled = false; runButton.style.opacity = '1';
+}
+const NEO_FIELD_ORDER = ['event_id', 'reference_cds', 'altered_cds', 'junction_nt'];
+const NEO_FIELD_FALLBACK = {event_id:'事件 ID', reference_cds:'参考（正常）编码序列',
+  altered_cds:'改变后（变异）编码序列', junction_nt:'新剪接连接点位置（整数）'};
+let neoReadiness = null;
+function neoClip(value, limit) { const text = String(value == null ? '' : value); return text.length > limit ? text.slice(0, limit) + '…' : text; }
+function renderColumnMapping(data) {
+  const panel = document.getElementById('neo-mapping-panel');
+  const fields = document.getElementById('neo-mapping-fields');
+  const preview = document.getElementById('neo-mapping-preview');
+  const status = document.getElementById('neo-mapping-status');
+  if (!panel || !data) return;
+  const name = (document.getElementById('neo-cds-select').value || data.cds_selected || '');
+  const detail = (data.cds_details || {})[name];
+  if (!detail || !detail.needs_confirmation) { panel.style.display = 'none'; fields.replaceChildren(); preview.innerHTML = ''; return; }
+  const labels = data.field_labels || NEO_FIELD_FALLBACK;
+  const header = detail.header || [];
+  fields.replaceChildren();
+  NEO_FIELD_ORDER.forEach(field => {
+    const wrap = document.createElement('label');
+    wrap.style.cssText = 'display:block;font-size:13px;';
+    wrap.appendChild(document.createTextNode(labels[field] || field));
+    const select = document.createElement('select');
+    select.id = 'neo-map-' + field;
+    select.style.cssText = 'display:block;width:100%;padding:8px;margin-top:4px;';
+    const blank = document.createElement('option'); blank.value = ''; blank.textContent = '（请选择）';
+    select.appendChild(blank);
+    header.forEach(column => {
+      const option = document.createElement('option');
+      option.value = column; option.textContent = column || '（空列名）';
+      select.appendChild(option);
+    });
+    select.value = (detail.map || {})[field] || '';
+    wrap.appendChild(select);
+    fields.appendChild(wrap);
+  });
+  const columns = detail.preview || [];
+  if (columns.length) {
+    const head = columns.map(item => '<th>' + neoEscape(item.column || '（空列名）') + '</th>').join('');
+    const body = [0, 1].map(index => '<tr>' + columns.map(item => {
+      const value = (item.samples || [])[index] || '';
+      return '<td style="max-width:280px;"><span title="' + neoEscape(value) + '">' + neoEscape(neoClip(value, 46)) + '</span></td>';
+    }).join('') + '</tr>').join('');
+    preview.innerHTML = '<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">样本内容（前两行）——用它确认哪列是参考、哪列是改变后</div>'
+      + '<table><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table>';
+  } else {
+    preview.innerHTML = '';
+  }
+  status.textContent = detail.source === 'saved' ? '已保存过映射。' : '自动猜测结果，确认后以后不再询问。';
+  panel.style.display = 'block';
+}
+async function saveColumnMapping() {
+  const status = document.getElementById('neo-mapping-status');
+  const name = document.getElementById('neo-cds-select').value || '';
+  if (!state.currentProject || !name) { status.textContent = '请先选择项目和编码序列表。'; return; }
+  const map = {};
+  NEO_FIELD_ORDER.forEach(field => {
+    const select = document.getElementById('neo-map-' + field);
+    map[field] = select ? select.value : '';
+  });
+  const missing = NEO_FIELD_ORDER.filter(field => !map[field]);
+  if (missing.length) { status.textContent = '还有 ' + missing.length + ' 项没有选择。'; return; }
+  if (new Set(Object.keys(map).map(key => map[key])).size < NEO_FIELD_ORDER.length) {
+    status.textContent = '同一列不能承担两个角色，请分别选择。'; return;
+  }
+  status.textContent = '正在保存…';
+  try {
+    const response = await fetch('/api/neoantigen/column-map', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({project_id: state.currentProject, file: name, map: map})});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || '保存失败');
+    const message = data.warning || ('已保存，按这套映射可为 ' + data.verified_rows + ' 行样本生成肽。');
+    await checkNeoReadiness();
+    document.getElementById('neo-mapping-status').textContent = message;
+  } catch (error) { status.textContent = String(error.message || error); }
+}
+async function uploadCdsTable(input) {
+  const status = document.getElementById('neo-status');
+  const file = input.files && input.files[0];
+  if (!file) return;
+  if (!state.currentProject) { status.textContent = '请先选择一个项目。'; input.value = ''; return; }
+  status.textContent = '正在上传 ' + file.name + '…';
+  try {
+    const form = new FormData();
+    form.append('project_id', state.currentProject);
+    form.append('file', file, file.name);
+    const response = await fetch('/api/neoantigen/cds-upload', {method:'POST', body:form});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || '上传失败');
+    status.textContent = '已添加 ' + data.saved + '，列：' + (data.columns || []).join('、');
+    await checkNeoReadiness();
+    document.getElementById('neo-cds-select').value = data.saved;
+  } catch (error) { status.textContent = String(error.message || error); }
+  finally { input.value = ''; }
+}
+const mopepFields = {genome:'参考基因组 FASTA 文件',gtf:'转录本注释 GTF 文件',proteome:'参考蛋白组 FASTA 文件',reference_source:'参考来源（GENCODE 或 ENSEMBL）',reference_version:'基因组及注释版本'};
+Object.entries(mopepFields).forEach(([key, labelText]) => {
+  const label = document.createElement('label'); label.style.display = 'block'; label.style.margin = '8px 0';
+  const input = document.createElement('input'); input.id = 'mopep-' + key; input.type = 'text'; input.style.display = 'block'; input.style.width = '100%';
+  input.placeholder = key === 'reference_version' ? '例如 GRCh38 / GENCODE vXX（须与上游一致）' : key === 'reference_source' ? 'GENCODE 或 ENSEMBL' : '相对于项目上传目录的文件路径';
+  label.appendChild(document.createTextNode(labelText)); label.appendChild(input); document.getElementById('mopep-fields').appendChild(label);
+});
+async function runMopepgen() {
+  const status = document.getElementById('mopep-status'); const button = document.getElementById('mopep-run');
+  if (!state.currentProject) { status.textContent = '请先选择项目。'; return; }
+  const payload = {project_id:state.currentProject}; Object.keys(mopepFields).forEach(key => { payload[key] = document.getElementById('mopep-' + key).value.trim(); });
+  button.disabled = true; status.textContent = '正在运行 Docker，耗时取决于输入大小，请勿关闭程序…';
+  try {
+    const response = await fetch('/api/neoantigen/mopepgen', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const result = await response.json(); if (!response.ok) throw new Error(result.detail || '执行失败');
+    const manifest = result.manifest;
+    status.textContent = (result.exit_code ? '执行失败，请查看日志。' : '执行完成。') + NEO_LF + '结果目录：' + result.output_dir + NEO_LF + (manifest.warnings || []).join(NEO_LF) + NEO_LF;
+    ['manifest.json','events.gvf','variant_peptides.fasta','step_1.log','step_2.log'].forEach(name => {
+      const link = document.createElement('a'); link.href = '/api/neoantigen/mopepgen/file?output_dir=' + encodeURIComponent(result.output_dir) + '&name=' + encodeURIComponent(name); link.textContent = name; link.style.marginRight = '12px'; status.appendChild(link);
+    });
+  } catch (error) { status.textContent = '无法运行：' + String(error.message || error); }
+  finally { button.disabled = false; }
+}
+let neoWorkflow = null;
+const neoStageExamples = [
+  {normal_design:'',input_kind:'',genome_build:'',annotation_version:'',coordinate_system:'',hla_source:'',hla_confidence:'',has_frame_correct_cds:false},
+  {input_is_quantified_events:false,event_set:'unknown'},
+  {min_support:null,min_samples:null,support_is_junction_reads:false},
+  {orf_file:''},
+  {protein_fastas:{paired_normal:'',gtex:'',proteome:''},event_junctions:'',gtex_junctions:'',event_build:'',gtex_build:'',normal_expression_file:'',acknowledge_missing_gtex_junction_and_tissue_expression:false},
+  {expression_file:''},
+  {alleles:[],hla_source:'',hla_confidence:''},
+  {}
+];
+const neoLabels = {normal_design:'正常对照设计',input_kind:'输入数据类型',genome_build:'基因组版本',annotation_version:'注释版本',coordinate_system:'坐标基准',hla_source:'HLA 分型来源',hla_confidence:'HLA 置信度',has_frame_correct_cds:'已有读码框正确的 CDS',input_is_quantified_events:'确认输入为已量化事件',event_set:'事件表完整性：complete / subset / unknown',min_support:'最低 junction 支持读数',min_samples:'最低有效样本数',support_is_junction_reads:'确认支持读数为 junction 读数',orf_file:'上游 ORF 表文件名（留空自动识别）',paired_normal:'配对正常蛋白 FASTA 文件名',gtex:'GTEx 蛋白 FASTA 文件名',proteome:'全蛋白组 FASTA 文件名',event_junctions:'事件连接点表文件名',gtex_junctions:'GTEx 连接点表文件名',event_build:'事件基因组版本',gtex_build:'GTEx 基因组版本',normal_expression_file:'正常组织表达表文件名',acknowledge_missing_gtex_junction_and_tissue_expression:'接受跳过缺失的连接点或组织表达检查',expression_file:'肿瘤表达及复现率表文件名',alleles:'HLA-I 型别，逗号分隔'};
+let neoFormStage = 0;
+function buildNeoForm(stage) {
+  neoFormStage = stage;
+  const container = document.getElementById('neo-stage-params'); container.replaceChildren();
+  function addFields(obj, prefix) {
+    Object.entries(obj).forEach(([key, val]) => {
+      const path = prefix ? prefix + '.' + key : key;
+      if (val && typeof val === 'object' && !Array.isArray(val)) { addFields(val, path); return; }
+      const label = document.createElement('label'); label.style.display = 'block'; label.style.margin = '8px 0';
+      const input = document.createElement('input'); input.dataset.path = path;
+      input.type = typeof val === 'boolean' ? 'checkbox' : (val === null ? 'number' : 'text');
+      if (input.type !== 'checkbox') { input.style.display = 'block'; input.style.width = '100%'; input.value = Array.isArray(val) ? val.join(',') : (val == null ? '' : val); }
+      label.appendChild(document.createTextNode(neoLabels[key] || key)); label.appendChild(input); container.appendChild(label);
+    });
+  }
+  addFields(neoStageExamples[stage] || {}, '');
+}
+function readNeoForm() {
+  const result = {};
+  document.querySelectorAll('#neo-stage-params input').forEach(input => {
+    const path = input.dataset.path.split('.'); let target = result;
+    path.slice(0, -1).forEach(key => { target[key] = target[key] || {}; target = target[key]; });
+    const key = path[path.length - 1];
+    target[key] = input.type === 'checkbox' ? input.checked : input.type === 'number' ? (input.value === '' ? null : Number(input.value)) : key === 'alleles' ? input.value.split(',').map(x => x.trim()).filter(Boolean) : input.value.trim();
+  });
+  return result;
+}
+buildNeoForm(0);
+function renderNeoWorkflow(data) {
+  neoWorkflow = data;
+  const last = data.history[data.history.length - 1];
+  document.getElementById('neo-stage-result').textContent = '阶段 ' + last.stage + ' 结果：' + NEO_LF + JSON.stringify(last, null, 2) + (data.stopped ? NEO_LF + '已停止：' + data.stopped : '');
+  const next = document.getElementById('neo-stage-next');
+  next.disabled = !!data.stopped || data.next_stage > 7;
+  next.textContent = next.disabled ? '流程已停止或完成' : '确认并执行阶段 ' + data.next_stage;
+  buildNeoForm(data.next_stage);
+}
+async function startNeoWorkflow() {
+  const out = document.getElementById('neo-stage-result');
+  try {
+    if (!state.currentProject) throw new Error('请先选择项目');
+    if (neoFormStage !== 0) { buildNeoForm(0); out.textContent = '请填写新审计的证据，再点击开始阶段 0。'; return; }
+    const evidence = readNeoForm();
+    out.textContent = '正在审计…';
+    const response = await fetch('/api/neoantigen/workflow/start', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:state.currentProject,evidence:evidence})});
+    const result = await response.json(); if (!response.ok) throw new Error(result.detail || '审计失败');
+    localStorage.setItem('splicegaip.neoWorkflow.' + state.currentProject, result.workflow_id);
+    renderNeoWorkflow(result);
+  } catch (error) { out.textContent = '无法开始：' + String(error.message || error); }
+}
+async function advanceNeoWorkflow() {
+  const out = document.getElementById('neo-stage-result');
+  const button = document.getElementById('neo-stage-next');
+  if (!neoWorkflow) return;
+  try {
+    const params = readNeoForm(); params.confirm = true;
+    button.disabled = true; out.textContent = '正在执行阶段 ' + neoWorkflow.next_stage + '…';
+    const response = await fetch('/api/neoantigen/workflow/advance', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({workflow_id:neoWorkflow.workflow_id,expected_stage:neoWorkflow.next_stage,parameters:params})});
+    const result = await response.json(); if (!response.ok) throw new Error(result.detail || '执行失败');
+    renderNeoWorkflow(result);
+  } catch (error) { out.textContent = '无法继续：' + String(error.message || error); button.disabled = false; }
+}
+async function restoreNeoWorkflow() {
+  neoWorkflow = null;
+  document.getElementById('neo-stage-next').disabled = true;
+  const id = state.currentProject && localStorage.getItem('splicegaip.neoWorkflow.' + state.currentProject);
+  if (!id) { buildNeoForm(0); document.getElementById('neo-stage-result').textContent = '请填写已知证据并开始审计。'; return; }
+  try {
+    const response = await fetch('/api/neoantigen/workflow/' + encodeURIComponent(id));
+    if (!response.ok) throw new Error('无法恢复流程，请重新开始审计。');
+    renderNeoWorkflow(await response.json());
+  } catch (error) { buildNeoForm(0); document.getElementById('neo-stage-result').textContent = String(error.message || error); }
+}
+async function runNeoantigen(useProject = false) {
+  const status = document.getElementById('neo-status');
+  const files = useProject ? [] : Array.from(document.getElementById('neo-files').files);
+  if (!files.length && !state.currentProject) { status.textContent = '请先选择已上传数据的项目，或选择文件进行独立分析。'; return; }
+  const cdsChoice = useProject ? (document.getElementById('neo-cds-select').value || '') : '';
+  if (useProject && !cdsChoice) {
+    status.textContent = '还没有可用的编码序列表。点第一步下方的「从本机添加编码序列表」补上，再回来生成。'; return;
+  }
+  const alleles = document.getElementById('neo-hla').value.split(',').map(v => v.trim()).filter(Boolean);
+  status.textContent = alleles.length
+    ? '正在生成候选肽并查询 IEDB（' + alleles.length + ' 个 HLA 型别，通常 30–90 秒，请勿关闭页面）…'
+    : (files.length ? '正在上传和分析…' : '正在使用当前项目数据分析…');
+  try {
+    let payload = {project_id: state.currentProject, alleles: alleles};
+    if (useProject) payload.cds_table = cdsChoice;
+    if (files.length) {
+      const form = new FormData(); files.forEach(file => form.append('files', file, file.name));
+      const upload = await fetch('/api/upload', {method:'POST', body:form});
+      const staged = await upload.json();
+      if (!upload.ok) throw new Error(staged.detail || '上传失败');
+      payload = {input_dir: staged.upload_dir, alleles: alleles};
+    }
+    const response = await fetch('/api/neoantigen/run', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || '分析失败');
+    const resultDir = result.input_dir;
+    const base = '/api/neoantigen/file?input_dir=' + encodeURIComponent(resultDir) + '&name=';
+    const links = ['splice_peptides.tsv','mhc_i_predictions.tsv','neoantigen_manifest.json'].map(name => '<a href="' + base + encodeURIComponent(name) + '">' + name + '</a>').join(' · ');
+    const failures = (result.prediction_errors || []).length;
+    const truncated = Number(result.prediction_truncated || 0);
+    let summary = '使用编码序列表：' + neoEscape(result.cds_table_name || '自动识别') + '<br>候选肽段 ' + Number(result.candidate_count) + ' 条';
+    if (alleles.length) {
+      summary += '；HLA 结合预测成功 ' + Number(result.prediction_count) + ' 条';
+      if (failures) summary += '，失败 ' + failures + ' 条（详见 manifest 的 prediction_errors）';
+      if (truncated) summary += '；超出单次上限的部分（' + truncated + ' 条）未预测，可缩小 CDS 表后重跑';
+      summary += '。<br><span style="color:var(--text-muted);font-size:12px;">预测发往 IEDB（NetMHCpan 4.1 EL），结合力不等于免疫原性。</span>';
+    } else {
+      summary += '；未填写 HLA，只生成候选肽，未做任何外部预测。';
+    }
+    summary += '<br>' + links;
+    status.innerHTML = summary;
+    neoResultDir = resultDir;
+    document.getElementById('neo-result-panel').style.display = 'block';
+    const tabs = document.getElementById('neo-result-tabs');
+    tabs.replaceChildren();
+    ['splice_peptides.tsv','mhc_i_predictions.tsv','neoantigen_manifest.json'].forEach(name => {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-secondary btn-sm'; button.textContent = name;
+      button.onclick = () => openNeoResult(name); tabs.appendChild(button);
+    });
+    await openNeoResult('splice_peptides.tsv');
+  } catch (error) { status.textContent = String(error.message || error); }
+}
+
+const NEO_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function neoEscape(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, ch => NEO_ESCAPES[ch]); }
+function neoShorten(value) { const text = value == null ? '' : String(value); return text.length > 240 ? text.slice(0, 240) + '…' : text; }
+function neoParseTsv(text) { const lines = String(text).split(NEO_CR).join('').split(NEO_LF).filter(line => line.trim().length > 0); const header = lines.length ? lines[0].split(NEO_TAB) : []; const rows = lines.slice(1).map(line => line.split(NEO_TAB)); return { header, rows }; }
+function neoTableHtml(parsed) { if (!parsed.header.length) return '<pre>结果为空</pre>'; const limit = 300; const shown = parsed.rows.slice(0, limit); const head = parsed.header.map(cell => '<th>' + neoEscape(cell) + '</th>').join(''); const body = shown.map(cells => '<tr>' + parsed.header.map((_, index) => '<td>' + neoEscape(neoShorten(cells[index])) + '</td>').join('') + '</tr>').join(''); return '<table><thead><tr>' + head + '</tr></thead><tbody>' + (body || '<tr><td colspan="' + parsed.header.length + '">无数据行</td></tr>') + '</tbody></table>'; }
+function neoResultUrl(name) { return '/api/neoantigen/file?input_dir=' + encodeURIComponent(neoResultDir) + '&name=' + encodeURIComponent(name); }
+
+async function openNeoResult(name) {
+  if (!neoResultDir || !name) return;
+  neoResultName = name;
+  document.getElementById('neo-result-title').textContent = name;
+  let meta = document.getElementById('neo-result-meta');
+  meta.dataset.base = '';
+  meta.textContent = '加载中…';
+  document.getElementById('neo-result-body').innerHTML = '<pre>加载中…</pre>';
+  try {
+    const response = await fetch(neoResultUrl(name));
+    if (!response.ok) { let detail = ''; try { const parsed = await response.json(); detail = parsed.detail || ''; } catch(ignore) {} throw new Error(detail || ('HTTP ' + response.status)); }
+    const text = await response.text();
+    neoResultText = text;
+    if (name.toLowerCase().endsWith('.json')) {
+      let pretty = text;
+      try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch(ignore) {}
+      meta.dataset.base = text.length + ' 字符';
+      meta.textContent = text.length + ' 字符';
+      document.getElementById('neo-result-body').innerHTML = '<pre>' + neoEscape(pretty) + '</pre>';
+      return;
+    }
+    const parsed = neoParseTsv(text);
+    meta.dataset.base = parsed.rows.length + ' 行 · ' + parsed.header.length + ' 列';
+    meta.textContent = parsed.rows.length + ' 行 · ' + parsed.header.length + ' 列';
+    document.getElementById('neo-result-body').innerHTML = neoTableHtml(parsed);
+  } catch (error) {
+    meta.dataset.base = '';
+    meta.textContent = '';
+    document.getElementById('neo-result-body').innerHTML = '<pre style="color:var(--danger);">读取失败：' + neoEscape(String(error.message || error)) + '</pre>';
+  }
+}
+
+let neoHintTimer = null;
+function setNeoHint(message) {
+  const meta = document.getElementById('neo-result-meta');
+  if (!meta.dataset.base) meta.dataset.base = meta.textContent;
+  meta.textContent = meta.dataset.base + ' · ' + message;
+  if (neoHintTimer) clearTimeout(neoHintTimer);
+  neoHintTimer = setTimeout(() => { meta.textContent = meta.dataset.base; meta.dataset.base = ''; neoHintTimer = null; }, 2500);
+}
+
+async function copyNeoResult() {
+  if (!neoResultText) return;
+  try { await navigator.clipboard.writeText(neoResultText); setNeoHint('已复制到剪贴板'); }
+  catch (error) {
+    const area = document.createElement('textarea'); area.value = neoResultText; area.style.position = 'fixed'; area.style.opacity = '0'; document.body.appendChild(area); area.select();
+    const ok = document.execCommand('copy'); area.remove(); setNeoHint(ok ? '已复制到剪贴板' : '复制失败，请手动选择表格内容');
+  }
+}
+
+async function downloadNeoResult() {
+  if (!neoResultName) return;
+  try {
+    const response = await fetch(neoResultUrl(neoResultName));
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a'); anchor.href = url; anchor.download = neoResultName; document.body.appendChild(anchor); anchor.click(); anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    setNeoHint('已触发下载；桌面窗口若未保存文件，请直接查看表格或复制全部');
+  } catch (error) { setNeoHint('下载失败：' + String(error.message || error)); }
+}
+
+async function revealNeoResult() {
+  if (!neoResultDir) return;
+  try {
+    const response = await fetch('/api/neoantigen/reveal', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({input_dir:neoResultDir})});
+    const payload = await response.json().catch(()=> ({}));
+    if (!response.ok) throw new Error(payload.detail || ('HTTP ' + response.status));
+    setNeoHint('已在文件管理器中打开结果目录');
+  } catch (error) { setNeoHint('无法打开目录：' + String(error.message || error)); }
+}
+
+function closeNeoResult() { document.getElementById('neo-result-panel').style.display = 'none'; }
+
+/* ------------------------------------------------------------------ */
+/* Peptide prediction page (additive; all globals prefixed with pep)   */
+/* ------------------------------------------------------------------ */
+const PEP_CLASS1_PANEL = [
+  'HLA-A*01:01', 'HLA-A*02:01', 'HLA-A*03:01', 'HLA-A*11:01',
+  'HLA-A*23:01', 'HLA-A*24:02', 'HLA-A*26:01', 'HLA-A*31:01',
+  'HLA-B*07:02', 'HLA-B*08:01', 'HLA-B*15:01', 'HLA-B*27:05',
+  'HLA-B*35:01', 'HLA-B*40:01', 'HLA-B*44:02', 'HLA-B*44:03',
+  'HLA-B*57:01', 'HLA-B*58:01', 'HLA-C*07:02', 'HLA-C*04:01'
+];
+const PEP_CLASS2_PANEL = [
+  'HLA-DRB1*01:01', 'HLA-DRB1*03:01', 'HLA-DRB1*04:01', 'HLA-DRB1*07:01',
+  'HLA-DRB1*09:01', 'HLA-DRB1*11:01', 'HLA-DRB1*13:02', 'HLA-DRB1*15:01',
+  'HLA-DPA1*01:03/DPB1*04:01', 'HLA-DQA1*05:01/DQB1*02:01'
+];
+const pepState = {
+  loaded: false,
+  loading: false,
+  capabilities: null,
+  referenceTotal: 0,
+  searchTimer: null,
+  predictions: [],
+  sortKey: 'percentile_rank',
+  sortDir: 1,
+  bound: false,
+  projectOutput: ''
+};
+const PEP_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function pepEscape(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, ch => PEP_ESCAPES[ch]);
+}
+function pepSetStatus(id, text, tone) {
+  const box = document.getElementById(id);
+  if (!box) return;
+  box.textContent = text || '';
+  box.style.color = tone === 'error' ? 'var(--danger)' : (tone === 'muted' ? 'var(--text-muted)' : 'var(--text-secondary)');
+}
+function pepErrorDetail(response, payload, fallback) {
+  if (payload && payload.detail) {
+    return typeof payload.detail === 'string' ? payload.detail : JSON.stringify(payload.detail);
+  }
+  return fallback + '（HTTP ' + response.status + '）';
+}
+function pepTokens() {
+  const input = document.getElementById('pep-alleles');
+  if (!input) return [];
+  return input.value.split(/[,;\\s]+/).map(v => v.trim()).filter(Boolean);
+}
+function pepRenderChips() {
+  const wrap = document.getElementById('pep-allele-chips');
+  if (!wrap) return;
+  wrap.replaceChildren();
+  const tokens = pepTokens();
+  tokens.forEach(token => {
+    const chip = document.createElement('span');
+    chip.textContent = token + '  ×';
+    chip.title = '点击移除 ' + token;
+    chip.style.cssText = 'padding:4px 9px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--text-secondary);cursor:pointer;';
+    chip.onclick = () => {
+      const remaining = pepTokens().filter(value => value !== token);
+      document.getElementById('pep-alleles').value = remaining.join(', ');
+      pepRenderChips();
+    };
+    wrap.appendChild(chip);
+  });
+}
+function pepCountSequences() {
+  const label = document.getElementById('pep-seq-count');
+  if (!label) return { peptides: [], invalid: 0 };
+  const raw = document.getElementById('pep-sequences').value.split(/\\r?\\n/);
+  const peptides = [];
+  let invalid = 0;
+  raw.forEach(line => {
+    let value = line.trim();
+    if (!value || value.startsWith('>') || value.startsWith(';')) return;
+    value = value.replace(/\\s+/g, '').toUpperCase();
+    if (!/^[ACDEFGHIKLMNPQRSTVWY]+$/.test(value) || value.length < 8 || value.length > 30) {
+      invalid += 1;
+      return;
+    }
+    peptides.push(value);
+  });
+  const unique = Array.from(new Set(peptides));
+  label.textContent = '已识别 ' + unique.length + ' 条肽段（8–30 aa）' + (invalid ? '，忽略 ' + invalid + ' 行无效输入' : '');
+  label.style.color = invalid ? 'var(--danger)' : 'var(--text-muted)';
+  return { peptides: unique, invalid: invalid };
+}
+function pepUsePanel(name) {
+  const panel = name === 'class2_common' ? PEP_CLASS2_PANEL : PEP_CLASS1_PANEL;
+  document.getElementById('pep-alleles').value = panel.join(', ');
+  document.getElementById('pep-mhc-class').value = name === 'class2_common' ? 'class2' : 'class1';
+  pepRenderChips();
+  pepRefreshReference();
+}
+function pepClearAlleles() {
+  document.getElementById('pep-alleles').value = '';
+  pepRenderChips();
+  pepRefreshReference();
+}
+async function pepRefreshReference() {
+  const hint = document.getElementById('pep-allele-hint');
+  if (!hint) return;
+  const mhcClass = document.getElementById('pep-mhc-class').value === 'class2' ? 2 : 1;
+  const search = document.getElementById('pep-alleles').value.trim();
+  hint.textContent = '正在加载等位基因参考表…';
+  hint.style.color = 'var(--text-muted)';
+  try {
+    const url = '/api/peptide/reference?mhc_class=' + mhcClass
+      + '&search=' + encodeURIComponent(search) + '&limit=500';
+    const response = await fetch(url);
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(pepErrorDetail(response, payload, '参考表加载失败'));
+    const items = payload.items || [];
+    const list = document.getElementById('pep-allele-list');
+    list.replaceChildren();
+    items.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item.allele;
+      option.label = [item.locus, item.supertype].filter(Boolean).join(' · ');
+      list.appendChild(option);
+    });
+    pepState.referenceTotal = Number(payload.total || items.length);
+    hint.textContent = 'MHC-' + (mhcClass === 1 ? 'I' : 'II') + ' 参考表：共 '
+      + pepState.referenceTotal + ' 个等位基因' + (search ? '（当前匹配 ' + items.length + '）' : '（显示前 ' + items.length + '）');
+    hint.style.color = 'var(--text-muted)';
+  } catch (error) {
+    hint.textContent = '参考表加载失败：' + String(error.message || error);
+    hint.style.color = 'var(--danger)';
+  }
+}
+function pepDebounceReference() {
+  if (pepState.searchTimer) clearTimeout(pepState.searchTimer);
+  pepState.searchTimer = setTimeout(() => { pepRefreshReference(); }, 300);
+}
+function pepUpdateProjectState() {
+  const hint = document.getElementById('pep-project-hint');
+  const button = document.getElementById('pep-project-btn');
+  if (!hint || !button) return;
+  if (state.currentProject) {
+    hint.textContent = '当前项目：' + state.currentProject + '。将读取项目目录中的事件表和编码序列对照表。';
+    hint.style.color = 'var(--text-muted)';
+    button.disabled = false;
+    button.style.opacity = '1';
+  } else {
+    hint.textContent = '尚未选择项目。请先在“仪表盘”新建或选择一个项目，再回来生成候选肽。';
+    hint.style.color = 'var(--text-muted)';
+    button.disabled = true;
+    button.style.opacity = '.55';
+  }
+}
+async function pepLoadMeta() {
+  if (pepState.loading) return;
+  pepState.loading = true;
+  try {
+    const response = await fetch('/api/peptide/capabilities');
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(pepErrorDetail(response, payload, '能力信息加载失败'));
+    pepState.capabilities = payload;
+    const local = (payload.predictors || {}).mhcflurry || {};
+    const reference = payload.reference || {};
+    const label = document.getElementById('pep-capabilities');
+    if (label) {
+      label.textContent = 'IEDB 在线 · MHCflurry ' + (local.available ? '可用 ' + (local.version || '') : '未安装')
+        + ' · 参考表 class1 ' + (reference.alleles_class1 || 0) + ' / class2 ' + (reference.alleles_class2 || 0)
+        + ' · 已知表位 ' + (reference.known_epitopes || 0);
+    }
+  } catch (error) {
+    const label = document.getElementById('pep-capabilities');
+    if (label) label.textContent = '能力信息加载失败：' + String(error.message || error);
+  } finally {
+    pepState.loading = false;
+    pepState.loaded = true;
+  }
+}
+function pepBindOnce() {
+  if (pepState.bound) return;
+  pepState.bound = true;
+  const textarea = document.getElementById('pep-sequences');
+  if (textarea) textarea.addEventListener('input', pepCountSequences);
+  const alleles = document.getElementById('pep-alleles');
+  if (alleles) {
+    alleles.addEventListener('input', () => { pepRenderChips(); pepDebounceReference(); });
+    alleles.addEventListener('change', () => { pepRenderChips(); pepRefreshReference(); });
+  }
+  const mhcSelect = document.getElementById('pep-mhc-class');
+  if (mhcSelect) mhcSelect.addEventListener('change', () => { pepRefreshReference(); });
+}
+function pepInitPage() {
+  pepBindOnce();
+  pepUpdateProjectState();
+  pepRenderChips();
+  const textarea = document.getElementById('pep-sequences');
+  if (textarea) textarea.focus();
+  if (!pepState.loaded) {
+    pepLoadMeta();
+    pepRefreshReference();
+  } else {
+    pepUpdateProjectState();
+  }
+}
+function pepScoreValue(row) {
+  const candidates = [row.score, row.total_score, row.mhcnp_probability];
+  for (let index = 0; index < candidates.length; index += 1) {
+    const value = Number(candidates[index]);
+    if (candidates[index] !== null && candidates[index] !== undefined && Number.isFinite(value)) {
+      return value;
+    }
+  }
+  return Number.POSITIVE_INFINITY;
+}
+function pepSortValue(row, key) {
+  if (key === 'percentile_rank') {
+    const value = Number(row[key]);
+    return Number.isFinite(value) ? value : Number.POSITIVE_INFINITY;
+  }
+  if (key === 'score') return pepScoreValue(row);
+  return String(row[key] == null ? '' : row[key]).toLowerCase();
+}
+function pepSortBy(key) {
+  if (pepState.sortKey === key) {
+    pepState.sortDir = -pepState.sortDir;
+  } else {
+    pepState.sortKey = key;
+    pepState.sortDir = key === 'percentile_rank' ? 1 : -1;
+  }
+  pepRenderPredictionTable();
+}
+function pepRenderPredictionTable() {
+  const box = document.getElementById('pep-results');
+  if (!box) return;
+  const rows = pepState.predictions.slice();
+  if (!rows.length) {
+    box.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">暂无预测结果。</p>';
+    return;
+  }
+  const key = pepState.sortKey;
+  const dir = pepState.sortDir;
+  rows.sort((a, b) => {
+    const left = pepSortValue(a, key);
+    const right = pepSortValue(b, key);
+    if (left < right) return -1 * dir;
+    if (left > right) return 1 * dir;
+    return String(a.peptide || '').localeCompare(String(b.peptide || ''));
+  });
+  const header = '<th style="white-space:nowrap;">#</th>' + [
+    ['peptide', '肽段'], ['allele', 'HLA'],
+    ['method', '方法'], ['percentile_rank', 'percentile'], ['score', '分数']
+  ].map(([column, text]) => {
+    const marker = pepState.sortKey === column ? (pepState.sortDir === 1 ? ' ▲' : ' ▼') : '';
+    return '<th data-sort="' + column + '" style="cursor:pointer;white-space:nowrap;">'
+      + pepEscape(text) + marker + '</th>';
+  }).join('');
+  const body = rows.map((row, index) => {
+    const method = row.method_label || row.method || '';
+    const percentile = (row.percentile_rank === null || row.percentile_rank === undefined)
+      ? '—' : pepEscape(row.percentile_rank);
+    const scoreValue = pepScoreValue(row);
+    const score = scoreValue === Number.POSITIVE_INFINITY ? '—' : pepEscape(scoreValue);
+    return '<tr>'
+      + '<td>' + (index + 1) + '</td>'
+      + '<td style="font-family:var(--font-mono,monospace);">' + pepEscape(row.peptide) + '</td>'
+      + '<td>' + pepEscape(row.allele) + '</td>'
+      + '<td>' + pepEscape(method) + '</td>'
+      + '<td>' + percentile + '</td>'
+      + '<td>' + score + '</td>'
+      + '</tr>';
+  }).join('');
+  box.innerHTML = '<div class="table-container" style="max-height:460px;overflow:auto;">'
+    + '<table><thead><tr>' + header + '</tr></thead><tbody>' + body + '</tbody></table></div>'
+    + '<div style="font-size:12px;color:var(--text-muted);margin-top:6px;">共 '
+    + rows.length + ' 行（肽段 × HLA × 方法）。点击表头可排序。</div>';
+  box.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => pepSortBy(th.getAttribute('data-sort')));
+  });
+}
+function pepRenderErrors(errors) {
+  const box = document.getElementById('pep-errors');
+  if (!box) return;
+  if (!errors || !errors.length) { box.replaceChildren(); return; }
+  const items = errors.map(error => {
+    const stage = error && error.stage ? String(error.stage) : '未知阶段';
+    const message = error && error.error ? String(error.error) : JSON.stringify(error);
+    return '<li><strong>' + pepEscape(stage) + '</strong>：' + pepEscape(message) + '</li>';
+  }).join('');
+  box.innerHTML = '<div style="font-size:12px;color:var(--danger);">预测服务返回 ' + errors.length
+    + ' 条错误：</div><ul style="margin:6px 0 0 18px;font-size:12px;color:var(--text-secondary);">'
+    + items + '</ul>';
+}
+function pepRenderEpitopes(matches) {
+  const box = document.getElementById('pep-results');
+  if (!box || !matches || !matches.length) return;
+  const rows = matches.slice(0, 50).map(row => '<tr>'
+    + '<td style="font-family:var(--font-mono,monospace);">' + pepEscape(row.candidate_peptide || row.peptide) + '</td>'
+    + '<td>' + pepEscape(row.mhc_restriction || '') + '</td>'
+    + '<td>' + pepEscape(row.qualitative_measure || '') + '</td>'
+    + '<td>' + pepEscape(row.source_organism || '') + '</td>'
+    + '<td>' + pepEscape(row.pubmed_id || '') + '</td>'
+    + '</tr>').join('');
+  const section = document.createElement('div');
+  section.style.marginTop = '12px';
+  section.innerHTML = '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">IEDB 已知表位匹配（'
+    + matches.length + ' 条；命中只说明该序列曾被检测过，不代表本次候选已验证）</div>'
+    + '<div class="table-container" style="max-height:220px;overflow:auto;"><table><thead><tr>'
+    + '<th>肽段</th><th>HLA</th><th>结局</th><th>来源</th><th>PMID</th></tr></thead><tbody>'
+    + rows + '</tbody></table></div>';
+  box.appendChild(section);
+}
+async function pepPredict() {
+  const button = document.getElementById('pep-predict-btn');
+  const status = 'pep-status';
+  const parsed = pepCountSequences();
+  const peptides = parsed.peptides;
+  if (!peptides.length) {
+    pepSetStatus(status, '请先输入至少一条 8–30 aa 的候选肽序列。', 'error');
+    return;
+  }
+  const alleles = pepTokens();
+  if (!alleles.length) {
+    pepSetStatus(status, '请至少填写一个 HLA 型别，或点击常用面板快速填充。', 'error');
+    return;
+  }
+  if (peptides.length > 200) {
+    pepSetStatus(status, '单次最多 200 条肽，当前输入 ' + peptides.length + ' 条；请分批预测。', 'error');
+    return;
+  }
+  if (alleles.length > 8) {
+    pepSetStatus(status, '单次最多 8 个 HLA 型别，当前输入 ' + alleles.length + ' 个；请分批预测。', 'error');
+    return;
+  }
+  const payload = {
+    peptides: peptides,
+    alleles: alleles,
+    mhc_class: document.getElementById('pep-mhc-class').value,
+    predictor: document.getElementById('pep-predictor').value,
+    processing: document.getElementById('pep-processing').checked,
+    lookup_epitopes: document.getElementById('pep-lookup').checked
+  };
+  button.disabled = true;
+  button.style.opacity = '.55';
+  pepSetStatus(status, '正在调用预测服务（' + peptides.length + ' 条肽 × ' + alleles.length + ' 个 HLA）…', 'muted');
+  try {
+    const response = await fetch('/api/peptide/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(pepErrorDetail(response, data, '预测失败'));
+    pepState.predictions = data.predictions || [];
+    pepRenderErrors(data.errors || []);
+    pepRenderPredictionTable();
+    pepRenderEpitopes(data.epitope_matches || []);
+    const errorCount = (data.errors || []).length;
+    const suffix = errorCount ? '；有 ' + errorCount + ' 条服务错误，见下方说明' : '；无服务错误';
+    pepSetStatus(status, '预测完成：候选 ' + Number(data.candidate_count || 0) + ' 条，预测记录 '
+      + Number(data.prediction_count || pepState.predictions.length) + ' 条' + suffix + '。'
+      + ' percentile rank 越低越好；预测不等于呈递或免疫原性。', errorCount ? 'error' : 'muted');
+  } catch (error) {
+    pepState.predictions = [];
+    pepRenderPredictionTable();
+    pepSetStatus(status, String(error.message || error), 'error');
+  } finally {
+    button.disabled = false;
+    button.style.opacity = '1';
+  }
+}
+async function pepRunProject() {
+  const button = document.getElementById('pep-project-btn');
+  const statusId = 'pep-project-status';
+  const filesBox = document.getElementById('pep-project-files');
+  if (filesBox) filesBox.replaceChildren();
+  if (!state.currentProject) {
+    pepSetStatus(statusId, '尚未选择项目，请先在仪表盘选择或新建项目。', 'error');
+    return;
+  }
+  const alleles = pepTokens();
+  if (!alleles.length) {
+    pepSetStatus(statusId, '请先在上方填写 HLA 型别。', 'error');
+    return;
+  }
+  const payload = {
+    project_id: state.currentProject,
+    alleles: alleles,
+    mhc_class: document.getElementById('pep-mhc-class').value,
+    predictor: document.getElementById('pep-predictor').value,
+    processing: document.getElementById('pep-processing').checked,
+    lookup_epitopes: document.getElementById('pep-lookup').checked
+  };
+  button.disabled = true;
+  button.style.opacity = '.55';
+  pepSetStatus(statusId, '正在读取项目数据并生成候选肽，预测可能需要数十秒…', 'muted');
+  try {
+    const response = await fetch('/api/peptide/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(pepErrorDetail(response, data, '生成候选肽失败'));
+    pepState.projectOutput = data.output_dir || '';
+    const tiers = data.tiers || {};
+    const tierText = Object.keys(tiers).length
+      ? Object.keys(tiers).sort().map(key => key + ':' + tiers[key]).join(' · ')
+      : '无';
+    const errorCount = (data.errors || []).length;
+    pepSetStatus(statusId, '完成：候选 ' + Number(data.candidate_count || 0) + ' 条，预测 '
+      + Number(data.prediction_count || 0) + ' 条，排序 ' + Number(data.ranked_count || 0)
+      + ' 条；证据分层 ' + tierText + (errorCount ? '；服务错误 ' + errorCount + ' 条' : '') + '。', 'muted');
+    pepRenderErrors(data.errors || []);
+    if (filesBox && data.output_dir) {
+      const names = ['ranked_candidates.tsv', 'splice_peptides.tsv', 'mhc_predictions.tsv', 'manifest.json', 'summary.md'];
+      // /api/peptide/file expects the project data directory and appends
+      // "peptide_results" itself, so strip the trailing output folder here.
+      const normalized = String(data.output_dir).replace(new RegExp(String.fromCharCode(92), 'g'), '/');
+      const marker = normalized.lastIndexOf('/peptide_results');
+      const inputDir = marker >= 0 ? normalized.slice(0, marker) : normalized;
+      const base = '/api/peptide/file?input_dir=' + encodeURIComponent(inputDir) + '&name=';
+      names.forEach(name => {
+        if ((data.files || []).length && (data.files || []).indexOf(name) < 0) return;
+        const link = document.createElement('a');
+        link.href = base + encodeURIComponent(name);
+        link.textContent = name;
+        link.style.color = 'var(--accent)';
+        filesBox.appendChild(link);
+      });
+      const path = document.createElement('div');
+      path.textContent = '输出目录：' + data.output_dir;
+      path.style.cssText = 'width:100%;font-size:12px;color:var(--text-muted);';
+      filesBox.appendChild(path);
+    }
+  } catch (error) {
+    pepSetStatus(statusId, String(error.message || error), 'error');
+  } finally {
+    button.disabled = false;
+    button.style.opacity = '1';
+  }
+}
+
 document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('click', () => { navigateTo(item.dataset.page); }); });
 function navigateTo(page) {
   document.querySelectorAll('.nav-item').forEach(item => { item.classList.toggle('active', item.dataset.page === page); });
@@ -816,8 +1910,10 @@ function navigateTo(page) {
   state.currentPage = page;
   if (page === 'dashboard') loadDashboard();
   if (page === 'pipeline') loadPipeline();
+  if (page === 'neoantigen') { restoreNeoWorkflow(); checkNeoReadiness(); }
+  if (page === 'peptide') { pepInitPage(); }
   if (page === 'explorer') loadExplorer();
-  if (page === 'assistant') { loadModelConfig(); loadMcpServers(); }
+  if (page === 'assistant') { loadModelConfig(); loadMcpServers(); loadChatHistory(); }
 }
 async function apiCall(endpoint, options = {}) {
   try { const response = await fetch(`/api${endpoint}`, { headers: { 'Content-Type': 'application/json' }, ...options }); return await response.json(); }
@@ -827,48 +1923,191 @@ async function loadDashboard() {
   const response = await apiCall('/projects');
   const projectsData = response.projects || response || [];
   state.projects = Array.isArray(projectsData) ? projectsData : [];
-  
+
   // Keep the selected historical project across refreshes.
   if (state.projects.length > 0) {
     const selectedProject = state.projects.find(p => p.project_id === state.currentProject) || state.projects[0];
     state.currentProject = selectedProject.project_id;
     localStorage.setItem('splicegaip.currentProject', state.currentProject);
-    const status = await apiCall(`/status/${selectedProject.project_id}`);
-    
-    if (status) {
-      document.getElementById('stat-samples').textContent = (status.samples || []).length;
-      document.getElementById('stat-events').textContent = status.events || 0;
-      
-      const candidates = status.candidates || [];
-      const significantCount = (typeof status.significant === 'number')
-        ? status.significant
-        : candidates.filter(c => c.fdr < 0.05 && Math.abs(c.delta_psi || 0) > 0.1).length;
-      document.getElementById('stat-significant').textContent = significantCount;
-      
-      // Update current project
-      document.getElementById('current-project').textContent = selectedProject.name || selectedProject.project_id;
-    }
+    document.getElementById('current-project').textContent = selectedProject.name || selectedProject.project_id;
+
+    // Counters come from the list endpoint (SQL counts), so the dashboard stays
+    // fast even for projects with a million events.
+    document.getElementById('stat-samples').textContent = selectedProject.sample_count ?? '-';
+    document.getElementById('stat-events').textContent = fmtCount(selectedProject.event_count);
+    document.getElementById('stat-significant').textContent = fmtCount(selectedProject.significant_count);
+    document.getElementById('stat-status').innerHTML = '<span class="status status-waiting"><span class="status-dot"></span>已归档</span>';
+
+    await loadProjectDetail(state.currentProject);
   } else {
     document.getElementById('stat-samples').textContent = '-';
     document.getElementById('stat-events').textContent = '-';
     document.getElementById('stat-significant').textContent = '-';
+    document.getElementById('project-detail').style.display = 'none';
   }
-  
+
   renderProjectHistory();
+  loadStorageHint();
+}
+function fmtCount(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return '-';
+  return n.toLocaleString('en-US');
+}
+function fmtDate(value) {
+  if (!value) return '-';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+async function loadStorageHint() {
+  if (state.storage) { renderStorageHint(); return; }
+  const info = await apiCall('/storage');
+  if (info) { state.storage = info; renderStorageHint(); }
+}
+function renderStorageHint() {
+  const box = document.getElementById('storage-hint');
+  if (!box || !state.storage) return;
+  const root = state.storage.runtime_root || '-';
+  const db = (state.storage.databases || {})['splicegaip.sqlite3'] || {};
+  box.innerHTML = `数据目录：<span style="font-family:var(--font-mono);word-break:break-all;color:var(--text-secondary);">${ingestEsc(root)}</span>`
+    + `　·　数据库 ${db.size_mb || 0} MB`;
+}
+async function loadProjectDetail(projectId) {
+  const status = await apiCall(`/status/${projectId}`);
+  state.detail = status || null;
+  const panel = document.getElementById('project-detail');
+  if (!status) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+
+  const project = status.project || {};
+  document.getElementById('detail-title').textContent = project.name || project.project_id || projectId;
+  document.getElementById('detail-meta').textContent =
+    `${project.project_id || projectId} · ${fmtDate(project.created_at)} · 输入格式 ${project.source_format || '-'} · ${fmtCount(status.events)} 个事件 / ${fmtCount(status.significant)} 个显著`;
+
+  const groups = {};
+  (status.samples || []).forEach(s => { const g = s.group_name || '未分组'; (groups[g] = groups[g] || []).push(s.sample_id); });
+  const groupChips = Object.entries(groups).map(([g, ids]) =>
+    `<span class="hero-chip" title="${ingestEsc(ids.join(', '))}">${ingestEsc(g)} · ${ids.length}</span>`).join('');
+  document.getElementById('detail-groups').innerHTML = groupChips || '<span style="font-size:12px;color:var(--text-muted);">未记录样本分组</span>';
+
+  const types = status.event_types || {};
+  document.getElementById('detail-types').innerHTML = Object.entries(types).map(([k, v]) =>
+    `<span class="hero-chip">${ingestEsc(k)} · ${fmtCount(v)}</span>`).join('') || '<span style="font-size:12px;color:var(--text-muted);">-</span>';
+
+  const logs = (status.logs || []).slice(-12).reverse();
+  document.getElementById('detail-logs').innerHTML = logs.length ? logs.map(l =>
+    `<div style="display:flex;gap:8px;border-bottom:1px dashed var(--border);padding:4px 0;">
+       <span style="color:var(--text-muted);white-space:nowrap;">${ingestEsc((l.created_at || '').replace('T', ' ').slice(5, 16))}</span>
+       <span style="color:var(--text-secondary);">[${ingestEsc(l.agent || '')}] ${ingestEsc(l.action || '')}</span>
+       <span style="margin-left:auto;color:${l.status === 'ok' ? 'var(--success)' : 'var(--danger)'};">${ingestEsc(l.status || '')}</span>
+     </div>`).join('') : '<span style="font-size:12px;color:var(--text-muted);">无日志</span>';
+
+  const figures = (status.artifacts || []).filter(a => (a.kind || '').startsWith('figure:'));
+  document.getElementById('detail-figures').innerHTML = figures.length ? figures.map(a => {
+    const name = a.kind.split(':')[1];
+    const url = `/api/figure/${encodeURIComponent(projectId)}/${encodeURIComponent(name)}`;
+    return `<a href="${url}" target="_blank" rel="noopener" style="display:block;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:rgba(3,12,17,.5);">
+      <img src="${url}" alt="${ingestEsc(name)}" loading="lazy" style="width:100%;height:96px;object-fit:cover;display:block;">
+      <div style="font-size:11px;padding:4px 6px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ingestEsc(name)}</div>
+    </a>`;
+  }).join('') : '<span style="font-size:12px;color:var(--text-muted);">该项目没有保存图表</span>';
+
+  const candidates = status.candidates || [];
+  document.getElementById('detail-candidates').innerHTML = candidates.length ? `<table style="width:100%;border-collapse:collapse;">
+      <thead><tr style="text-align:left;color:var(--text-muted);font-size:11px;">
+        <th style="padding:4px 6px;">#</th><th style="padding:4px 6px;">基因</th><th style="padding:4px 6px;">类型</th>
+        <th style="padding:4px 6px;">ΔPSI</th><th style="padding:4px 6px;">FDR</th></tr></thead>
+      <tbody>${candidates.map(c => `<tr style="border-top:1px solid var(--border);">
+        <td style="padding:4px 6px;">${ingestEsc(c.rank)}</td>
+        <td style="padding:4px 6px;font-weight:600;">${ingestEsc(c.gene_symbol || c.gene_id || '-')}</td>
+        <td style="padding:4px 6px;">${ingestEsc(c.event_type || '-')}</td>
+        <td style="padding:4px 6px;color:${(c.delta_psi || 0) > 0 ? 'var(--danger)' : 'var(--success)'};">${c.delta_psi === null || c.delta_psi === undefined ? '-' : Number(c.delta_psi).toFixed(3)}</td>
+        <td style="padding:4px 6px;">${c.fdr === null || c.fdr === undefined ? '-' : Number(c.fdr).toExponential(2)}</td>
+      </tr>`).join('')}</tbody></table>`
+    : '<span style="font-size:12px;color:var(--text-muted);">该项目没有候选事件记录</span>';
+}
+function openReport(format) {
+  if (!state.currentProject) return;
+  window.open(`/api/report/${encodeURIComponent(state.currentProject)}?format=${format}`, '_blank');
+}
+async function revealProjectBundle() {
+  if (!state.currentProject) return;
+  const hint = document.getElementById('detail-bundle-hint');
+  const say = (text, ok) => {
+    if (!hint) return;
+    hint.textContent = text;
+    hint.style.color = ok ? 'var(--success)' : 'var(--danger)';
+  };
+  if (hint) say('正在整理成果文件夹…', true);
+  try {
+    const response = await fetch(`/api/projects/${encodeURIComponent(state.currentProject)}/reveal-bundle`, { method: 'POST' });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) { say(data.detail || '打开成果文件夹失败', false); return; }
+    say('已打开：' + (data.path || ''), true);
+  } catch (error) {
+    say('打开成果文件夹失败：' + error.message, false);
+  }
+}
+async function packageProject() {
+  if (!state.currentProject) return;
+  const hint = document.getElementById('detail-bundle-hint');
+  const say = (text, ok) => {
+    if (!hint) return;
+    hint.textContent = text;
+    hint.style.color = ok ? 'var(--success)' : 'var(--danger)';
+  };
+  if (hint) say('正在打包…', true);
+  try {
+    const response = await fetch(`/api/projects/${encodeURIComponent(state.currentProject)}/package`, { method: 'POST' });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) { say(data.detail || '打包失败', false); return; }
+    say(`已打包（${data.size_mb} MB）：${data.path}`, true);
+  } catch (error) {
+    say('打包失败：' + error.message, false);
+  }
+}
+function jumpToExplorer() {
+  if (!state.currentProject) return;
+  navigateTo('explorer');
+  loadExplorer();
+}
+async function deleteCurrentProject() {
+  if (!state.currentProject) return;
+  const project = (state.projects || []).find(p => p.project_id === state.currentProject) || {};
+  const label = project.name || state.currentProject;
+  if (!confirm(`确定删除项目「${label}」吗？\n\n会删除数据库记录和该项目的图表/报告目录，无法撤销。\n原始输入数据不会被删除。`)) return;
+  const response = await fetch(`/api/projects/${encodeURIComponent(state.currentProject)}`, { method: 'DELETE' });
+  if (!response.ok) { alert('删除失败：' + response.status); return; }
+  localStorage.removeItem('splicegaip.currentProject');
+  state.currentProject = null;
+  state.detail = null;
+  document.getElementById('project-detail').style.display = 'none';
+  await loadDashboard();
 }
 function renderProjectHistory() {
   const projectsList = document.getElementById('recent-projects');
   const term = (document.getElementById('project-search')?.value || '').toLowerCase();
   const projects = state.projects.filter(p => ((p.name || '') + ' ' + (p.project_id || '') + ' ' + (p.query || '')).toLowerCase().includes(term));
-  if (state.projects.length === 0) { 
-    projectsList.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">暂无项目</div>'; 
-  } else { 
-    projectsList.innerHTML = projects.map(p =>
-      `<div style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; ${p.project_id === state.currentProject ? 'background:var(--gray-100);' : ''}" onclick="selectProject('${ingestEsc(p.project_id)}')">
-        <div style="font-weight: 600;">${ingestEsc(p.name || p.project_id)}</div>
-        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${ingestEsc(p.created_at || '')} · ${ingestEsc(p.query || '分析查询')}</div>
-      </div>`
-    ).join('') || '<div style="padding:20px;text-align:center;color:var(--text-muted);">没有匹配的项目</div>';
+  if (state.projects.length === 0) {
+    projectsList.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">暂无项目</div>';
+  } else {
+    projectsList.innerHTML = projects.map(p => {
+      const active = p.project_id === state.currentProject;
+      return `<div style="padding: 11px 12px; border-bottom: 1px solid var(--border); cursor: pointer; ${active ? 'background:var(--gray-100);border-left:3px solid var(--black);' : 'border-left:3px solid transparent;'}" onclick="selectProject('${ingestEsc(p.project_id)}')">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;">
+          <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ingestEsc(p.name || p.project_id)}</div>
+          <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;">${ingestEsc(fmtDate(p.created_at).slice(0, 10))}</div>
+        </div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap;">
+          <span>${ingestEsc(p.source_format || '-')}</span>
+          <span>事件 ${fmtCount(p.event_count)}</span>
+          <span style="color:var(--danger);">显著 ${fmtCount(p.significant_count)}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ingestEsc(p.query || '分析查询')}</div>
+      </div>`;
+    }).join('') || '<div style="padding:20px;text-align:center;color:var(--text-muted);">没有匹配的项目</div>';
   }
 }
 async function loadPipeline() {
@@ -951,21 +2190,60 @@ function updatePipelineUI(status) {
 }
 async function loadExplorer() {
   if (!state.currentProject) return;
-  const status = await apiCall(`/status/${state.currentProject}`);
-  if (status && status.candidates) { 
-    state.events = status.candidates; 
-    renderEventsTable(state.events); 
-  } else if (status && status.events) {
-    // Fallback: try to get events from status
-    state.events = [];
-    renderEventsTable(state.events);
+  // Real rMATS projects hold 10^5-10^6 events: filtering and paging happen in
+  // SQLite, the browser only ever receives one page.
+  await loadEventPage(1);
+}
+function explorerFilters() {
+  const term = (document.getElementById('search-input')?.value || '').trim();
+  const types = Array.from(document.querySelectorAll('.checkbox-group input[type="checkbox"]'))
+    .filter(cb => cb.checked).map(cb => cb.value);
+  return {
+    q: term,
+    // The backend accepts a single event type; when several are ticked we omit
+    // the filter and let the user narrow further, rather than silently
+    // showing only the first one.
+    event_type: types.length === 1 ? types[0] : '',
+    significant_only: !!document.getElementById('filter-significant')?.checked,
+    order_by: document.getElementById('filter-order')?.value || 'fdr',
+  };
+}
+async function loadEventPage(page) {
+  if (!state.currentProject) return;
+  const filters = explorerFilters();
+  const params = new URLSearchParams({
+    page: String(page),
+    size: '50',
+    q: filters.q,
+    event_type: filters.event_type,
+    significant_only: filters.significant_only ? 'true' : 'false',
+    order_by: filters.order_by,
+  });
+  const data = await apiCall(`/projects/${encodeURIComponent(state.currentProject)}/events?${params.toString()}`);
+  if (!data || data.events === undefined) {
+    document.getElementById('events-table').innerHTML =
+      '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--danger);">读取事件失败（项目可能已被删除）</td></tr>';
+    return;
   }
+  state.events = data.events;
+  state.eventPage = data.page;
+  state.eventPages = data.pages;
+  state.eventTotal = data.total;
+  renderEventsTable(data.events);
+  const info = document.getElementById('events-pager-info');
+  if (info) info.textContent = `共 ${fmtCount(data.total)} 个事件 · 每页 ${data.size} 条 · 已按${({fdr: 'FDR', delta_psi: '|ΔPSI|', gene: '基因名'})[filters.order_by] || 'FDR'}排序`;
+  const pager = document.getElementById('events-pager-page');
+  if (pager) pager.textContent = `${data.page} / ${data.pages}`;
+}
+function gotoEventPage(page) {
+  const target = Math.min(Math.max(1, Number(page) || 1), state.eventPages || 1);
+  loadEventPage(target);
 }
 function renderEventsTable(events) {
   const tbody = document.getElementById('events-table');
-  if (!events || events.length === 0) { 
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">未找到匹配的事件</td></tr>'; 
-    return; 
+  if (!events || events.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">未找到匹配的事件</td></tr>';
+    return;
   }
   tbody.innerHTML = events.map(event => {
     const eventId = event.event_id || event.id || '-';
@@ -973,27 +2251,20 @@ function renderEventsTable(events) {
     const eventType = event.event_type || event.type || '-';
     const dpsi = (event.delta_psi !== null && event.delta_psi !== undefined) ? Number(event.delta_psi).toFixed(3) : '-';
     const fdr = (event.fdr !== null && event.fdr !== undefined) ? Number(event.fdr).toExponential(2) : '-';
+    const color = (Number(event.delta_psi) || 0) > 0 ? 'var(--danger)' : 'var(--success)';
+    const flag = event.significant ? '' : ' <span style="font-size:10px;color:var(--text-muted);">(不显著)</span>';
     return `<tr>
-      <td>${eventId}</td>
-      <td><strong>${gene}</strong></td>
-      <td>${eventType}</td>
-      <td>${dpsi}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;">${ingestEsc(eventId)}</td>
+      <td><strong>${ingestEsc(gene)}</strong>${flag}</td>
+      <td>${ingestEsc(eventType)}</td>
+      <td style="color:${color};">${dpsi}</td>
       <td>${fdr}</td>
-      <td><button class="btn btn-sm btn-secondary" onclick="viewEventDetails('${eventId}')">查看</button></td>
+      <td><button class="btn btn-sm btn-secondary" onclick="viewEventDetails('${ingestEsc(eventId)}')">查看</button></td>
     </tr>`;
   }).join('');
 }
 function applyFilters() {
-  const searchTerm = document.getElementById('search-input').value.toLowerCase();
-  const selected类型s = Array.from(document.querySelectorAll('.checkbox-group input:checked')).map(cb => cb.value);
-  const filterFDR = document.getElementById('filter-fdr').checked;
-  const filterDPSI = document.getElementById('filter-dpsi').checked;
-  let filtered = state.events || [];
-  if (searchTerm) { filtered = filtered.filter(e => { const gene = e.gene_symbol || e.gene || ''; const id = e.event_id || e.id || ''; return gene.toLowerCase().includes(searchTerm) || id.toLowerCase().includes(searchTerm); }); }
-  if (selected类型s.length > 0) { filtered = filtered.filter(e => selected类型s.includes(e.event_type || e.type)); }
-  if (filterFDR) { filtered = filtered.filter(e => e.fdr !== null && e.fdr !== undefined && e.fdr < 0.05); }
-  if (filterDPSI) { filtered = filtered.filter(e => e.delta_psi !== null && e.delta_psi !== undefined && Math.abs(e.delta_psi) > 0.1); }
-  renderEventsTable(filtered);
+  loadEventPage(1);
 }
 function loadChart(chartType) {
   const container = document.getElementById('chart-display');
@@ -1283,7 +2554,7 @@ async function generateReport(format) {
     `; 
   }
 }
-function selectProject(projectId) { state.currentProject = projectId; localStorage.setItem('splicegaip.currentProject', projectId); loadDashboard(); }
+function selectProject(projectId) { state.currentProject = projectId; localStorage.setItem('splicegaip.currentProject', projectId); loadDashboard(); if (state.currentPage === 'neoantigen') { restoreNeoWorkflow(); checkNeoReadiness(); } }
 function refreshData() { if (state.currentPage === 'dashboard') loadDashboard(); if (state.currentPage === 'pipeline') loadPipeline(); if (state.currentPage === 'explorer') loadExplorer(); }
 
 // Upload Modal Functions
@@ -1341,6 +2612,15 @@ function handleFileSelect(event) {
   handleFiles(files);
 }
 
+function handleReportDirectory(event) {
+  const files = Array.from(event.target.files).filter(file => /.+[.](SE|MXE|A3SS|A5SS|RI)[.]xls$/i.test(file.name));
+  if (!files.length) {
+    alert('目录中没有找到华大逐样本剪接表（如 OC_001.SE.xls）');
+    return;
+  }
+  handleFiles(files);
+}
+
 function handleFiles(files) {
   console.log('handleFiles called with', files.length, 'files');
   selectedFiles = [...selectedFiles, ...files];
@@ -1356,7 +2636,7 @@ function updateFileList() {
     fileListDiv.innerHTML = '';
     startBtn.disabled = true;
   } else {
-    fileListDiv.innerHTML = selectedFiles.map((file, index) => 
+    fileListDiv.innerHTML = (selectedFiles.length > 30 ? '<div style="margin-bottom:8px">已选择 ' + selectedFiles.length + ' 个文件（仅显示前 30 个）</div>' : '') + selectedFiles.slice(0, 30).map((file, index) => 
       `<div style="padding: 8px; background: var(--bg); border-radius: var(--radius); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
         <span style="font-size: 13px;">${file.name}</span>
         <button onclick="removeFile(${index})" style="background: none; border: none; cursor: pointer; color: var(--error); font-size: 18px;">×</button>
@@ -1373,7 +2653,8 @@ function removeFile(index) {
 
 async function startAnalysis() {
   const projectName = document.getElementById('project-name').value.trim();
-  const analysisQuery = document.getElementById('analysis-query').value.trim();
+  const analysisQuery = document.getElementById('analysis-query').value.trim() ||
+    (selectedFiles.some(file => /.+[.](SE|MXE|A3SS|A5SS|RI)[.]xls$/i.test(file.name)) ? 'Explore per-sample PSI' : '');
   
   if (!projectName) {
     alert('请输入项目名称');
@@ -1619,7 +2900,9 @@ function renderIngestModal() {
   const preview = data.preview || {};
   const issues = data.issues || [];
   const native = !!data.native;
+  const bgi = data.status === 'bgi_single_sample';
   const unmappable = data.status === 'unmappable';
+  const expressionOnly = data.detected_format === 'expression_quantification' || data.detected_format === 'transcript_quantification';
 
   const title = document.getElementById('ingest-title');
   const sub = document.getElementById('ingest-sub');
@@ -1631,7 +2914,9 @@ function renderIngestModal() {
 
   let subText = ingestT('Agent 已读取数据结构。确认字段映射后，将标准化并进入原有分析流程。', 'The agent has read the data structure. Confirm the field mapping to standardize and continue to analysis.');
   if (native) subText = ingestT('请核对每个样本的分组，确认后开始分析。', 'Review each sample group before analysis.');
+  if (bgi) subText = ingestT('已识别华大逐样本剪接表。确认真实分组后可生成探索性 PSI 表；原报告没有组间显著性检验。', 'BGI per-sample PSI tables found. Confirm biological groups to create an exploratory table; the report has no differential significance test.');
   if (unmappable) subText = ingestT('未能从这些文件中识别出可分析的剪接事件表。', 'No analyzable splicing event table could be recognized in these files.');
+  if (expressionOnly) subText = ingestT('文件已读取并识别为表达量矩阵。请另选剪接事件结果表进行剪接分析。', 'File read as an expression matrix. Select splicing event results for splicing analysis.');
   if (title) title.textContent = ingestT('智能接入检查', 'Smart ingestion review');
   if (sub) sub.textContent = subText;
   if (errorDiv) errorDiv.textContent = '';
@@ -1728,7 +3013,9 @@ function renderIngestModal() {
         return '<div class="ingest-map-row"><label>' + ingestEsc(sampleId) + '</label><select data-sample-id="' + ingestEsc(sampleId) + '" onchange="ingestGroupChanged(this)"><option value="">' + ingestEsc(ingestT('— 请选择 —', '— Select —')) + '</option><option value="0"' + (current === labels[0] ? ' selected' : '') + '>' + ingestEsc(labels[0]) + '</option><option value="1"' + (current === labels[1] ? ' selected' : '') + '>' + ingestEsc(labels[1]) + '</option></select></div>';
       }).join('') + '</div></details></div>');
   } else {
-    html.push('<div class="ingest-issue warning">' + ingestEsc(ingestT('没有每样本 PSI 数据，无法生成真实的样本箱线图或热图。', 'No per-sample PSI data: sample box plots and heatmaps cannot be generated.')) + '</div>');
+    html.push('<div class="ingest-issue warning">' + ingestEsc(expressionOnly
+      ? ingestT('FPKM、TPM 和 read_count 是表达量，不是剪接事件 PSI；请上传 SE/MXE/A3SS/A5SS/RI 事件表。', 'FPKM, TPM and read counts are expression values, not event PSI. Upload SE/MXE/A3SS/A5SS/RI event tables.')
+      : ingestT('没有每样本 PSI 数据，无法生成真实的样本箱线图或热图。', 'No per-sample PSI data: sample box plots and heatmaps cannot be generated.')) + '</div>');
   }
 
   if (issues.length) {
@@ -1828,9 +3115,9 @@ function updateIngestConfirmState() {
   const missingGene = !columns.gene_symbol && !columns.gene_id;
   const hasDelta = !!columns.delta_PSI || (!!columns.mean_PSI_group1 && !!columns.mean_PSI_group2) || Number(preview.sample_psi_columns || 0) > 0;
   const hasSignificance = !!columns.FDR || !!columns.p_value;
-  const ready = groupsReady && (data.native ? Number(validation.error_count || 0) === 0 : (!missingGene && hasDelta && hasSignificance));
+  const ready = groupsReady && (data.native ? Number(validation.error_count || 0) === 0 : (data.status === 'bgi_single_sample' ? true : (!missingGene && hasDelta && hasSignificance)));
   confirmBtn.disabled = !ready;
-  confirmBtn.textContent = ready ? ingestT('确认映射并分析', 'Confirm & analyze') : ingestT('请先补全映射', 'Complete the mapping');
+  confirmBtn.textContent = ready ? (data.status === 'bgi_single_sample' ? ingestT('确认分组并生成探索性表', 'Create exploratory table') : ingestT('确认映射并分析', 'Confirm & analyze')) : ingestT('请先补全映射', 'Complete the mapping');
 }
 
 async function confirmIngest() {
@@ -1840,6 +3127,25 @@ async function confirmIngest() {
   const errorDiv = document.getElementById('ingest-error');
   const confirmBtn = document.getElementById('ingest-confirm');
   if (errorDiv) errorDiv.textContent = '';
+
+  if (data.status === 'bgi_single_sample') {
+    ingestState.applying = true;
+    if (confirmBtn) confirmBtn.disabled = true;
+    try {
+      const response = await fetch('/api/ingest/apply', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({input_dir:ctx.uploadDir, mapping:{adapter:'bgi_single_sample',sample_groups:ingestState.mapping.sample_groups}})});
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.detail || 'HTTP ' + response.status);
+      closeIngestModal();
+      const statusDiv = ctx.statusDiv || document.getElementById('stat-status');
+      if (statusDiv) statusDiv.textContent = ingestT('探索性事件表已生成：', 'Exploratory event table created: ') + result.path + ingestT('。原报告没有组间 p 值或 FDR，不会报告显著差异。', '. No differential p-values or FDR were available.');
+    } catch (error) {
+      if (errorDiv) errorDiv.textContent = error.message;
+    } finally {
+      ingestState.applying = false;
+      updateIngestConfirmState();
+    }
+    return;
+  }
 
   if (data.native) {
     const sampleIds = data.sample_ids || [];
@@ -2404,40 +3710,316 @@ async function loadSkill(skillName) {
 async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   const message = input.value.trim();
-  
   if (!message) return;
-  
-  // Add user message to chat
+
+  // Capture prior turns before appending the new user message, so the backend
+  // does not receive the current question twice.
+  const history = readChatHistory().slice(-8).map(function (m) {
+    return { role: m.role, content: m.content };
+  });
   addChatMessage('user', message);
   input.value = '';
-  
-  // If we have a current skill, try to execute it with the message as parameters
-  if (window.currentSkill) {
-    await executeSkillWithParams(window.currentSkill, message);
-    window.currentSkill = null;
-    document.getElementById('chat-input').placeholder = '输入问题或选择上方技能...';
-  } else {
-    // General question - provide guidance
-    addChatMessage('assistant', '我理解你的问题。请选择上方的技能按钮开始专业分析，或者告诉我你想分析哪个基因/事件。');
+
+  const skill = window.currentSkill;
+  window.currentSkill = null;
+  document.getElementById('chat-input').placeholder = '\u8f93\u5165\u95ee\u9898\u6216\u9009\u62e9\u4e0a\u65b9\u6280\u80fd...';
+  if (skill) {
+    await executeSkillWithParams(skill, message);
+    return;
+  }
+
+  const pending = renderPendingMessage();
+  const body = pending.querySelector('[data-pending-body]') || pending;
+  const statusEl = document.getElementById('chat-status');
+  const stopBtn = document.getElementById('chat-stop');
+  const sendBtn = document.getElementById('chat-send');
+  const modeEl = document.getElementById('chat-mode');
+  const networkEl = document.getElementById('chat-network');
+  const cacheEl = document.getElementById('chat-cache');
+  const payload = {
+    message: message,
+    project_id: state.currentProject || '',
+    history: history,
+    max_steps: 6,
+    mode: modeEl ? modeEl.value : 'auto',
+    allow_network: networkEl ? !!networkEl.checked : true,
+    use_cache: cacheEl ? !!cacheEl.checked : true
+  };
+  if (stopBtn) stopBtn.style.display = 'inline-block';
+  if (sendBtn) sendBtn.disabled = true;
+  if (statusEl) statusEl.textContent = '\u51c6\u5907\u4e2d\u2026';
+
+  const controller = new AbortController();
+  window.chatAbort = controller;
+  const notes = [];
+  function note(text) {
+    notes.push(text);
+    while (notes.length > 9) notes.shift();
+    body.textContent = notes.join('\\n');
+    const box = document.getElementById('chat-messages');
+    if (box) box.scrollTop = box.scrollHeight;
+  }
+
+  let finalData = null;
+  function handleEvent(event, data) {
+    if (event === 'plan') {
+      const tools = (data.steps || []).map(function (s) { return s.tool || s.action; }).filter(Boolean);
+      note('[plan] \u8ba1\u5212 ' + tools.length + ' \u6b65\uff1a' + tools.join(' \u2192 '));
+      if (statusEl) statusEl.textContent = '\u6267\u884c\u8ba1\u5212\u2026';
+    } else if (event === 'step') {
+      if (statusEl) statusEl.textContent = '\u7b2c ' + data.step + '/' + data.max_steps + ' \u6b65';
+    } else if (event === 'tool_start') {
+      note('[tool] ' + data.tool);
+      if (statusEl) statusEl.textContent = '\u8c03\u7528 ' + data.tool;
+    } else if (event === 'tool_result') {
+      note('   ' + (data.ok ? 'ok' : 'failed')
+        + (data.cached ? ' (cache)' : '')
+        + ' \u00b7 ' + String(data.summary || data.error || '').slice(0, 90));
+    } else if (event === 'critique') {
+      note('[critique] \u5ba1\u7a3f\uff1a' + (data.verdict || '') + ' \u00b7 issues '
+        + ((data.issues || []).length));
+    } else if (event === 'revision') {
+      note('\u270d\ufe0f \u5df2\u6309\u5ba1\u7a3f\u610f\u89c1\u4fee\u8ba2');
+    } else if (event === 'offline') {
+      if (statusEl) statusEl.textContent = '\u79bb\u7ebf\u6a21\u5f0f';
+    } else if (event === 'done') {
+      finalData = data;
+    } else if (event === 'error') {
+      throw new Error(data.message || 'stream error');
+    }
+  }
+
+  try {
+    const response = await fetch('/api/copilot/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    if (!response.ok || !response.body) {
+      throw new Error('HTTP ' + response.status);
+    }
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      buffer += decoder.decode(chunk.value, { stream: true });
+      let index;
+      while ((index = buffer.indexOf('\\n\\n')) >= 0) {
+        const raw = buffer.slice(0, index);
+        buffer = buffer.slice(index + 2);
+        let event = 'message';
+        let data = '';
+        raw.split('\\n').forEach(function (line) {
+          if (line.indexOf('event: ') === 0) event = line.slice(7).trim();
+          else if (line.indexOf('data: ') === 0) data += line.slice(6);
+        });
+        if (!data) continue;
+        let parsed = {};
+        try { parsed = JSON.parse(data); } catch (error) { continue; }
+        handleEvent(event, parsed);
+      }
+    }
+    if (!finalData) throw new Error('\u6d41\u5f0f\u8fde\u63a5\u672a\u8fd4\u56de\u7ed3\u679c');
+    pending.remove();
+    addChatMessage('assistant', finalData.answer || '\uff08\u6a21\u578b\u672a\u8fd4\u56de\u5185\u5bb9\uff09');
+    renderCopilotTrace(finalData);
+    if (statusEl) statusEl.textContent = '';
+  } catch (error) {
+    const aborted = error && (error.name === 'AbortError' || controller.signal.aborted);
+    pending.remove();
+    if (aborted) {
+      addChatMessage('assistant', '\u23f9\ufe0f \u5df2\u505c\u6b62\u672c\u6b21\u5206\u6790\u3002');
+    } else {
+      addChatMessage('assistant', '\u274c \u5206\u6790\u5931\u8d25\uff1a' + (error.message || error));
+    }
+    if (statusEl) statusEl.textContent = '';
+  } finally {
+    window.chatAbort = null;
+    if (stopBtn) stopBtn.style.display = 'none';
+    if (sendBtn) sendBtn.disabled = false;
   }
 }
 
-function addChatMessage(role, content) {
+function stopChat() {
+  if (window.chatAbort) {
+    try { window.chatAbort.abort(); } catch (error) { /* ignore */ }
+  }
+}
+
+function renderPendingMessage() {
   const messagesDiv = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-message assistant-message';
+  const title = document.createElement('div');
+  title.className = 'message-author';
+  title.style.cssText = 'font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 4px;';
+  title.textContent = '🤖 SpliceGAIP';
+  const body = document.createElement('div');
+  body.setAttribute('data-pending-body', '1');
+  body.style.cssText = 'font-size: 13px; color: var(--text-secondary); white-space: pre-wrap;';
+  body.textContent = '\u6b63\u5728\u89c4\u5212\u5e76\u8c03\u7528\u5de5\u5177\u5206\u6790\u2026';
+  div.appendChild(title);
+  div.appendChild(body);
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  return div;
+}
+
+function escapeHtmlText(value) {
+  return String(value === null || value === undefined ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function formatChatText(text) {
+  var escaped = escapeHtmlText(text);
+  escaped = escaped.replace(/^#{2,3}\\s*(.+)$/gm,
+    '<div style="font-weight:700;margin:12px 0 4px;color:var(--accent);">$1</div>');
+  escaped = escaped.replace(/\\*\\*(.+?)\\*\\*/g, '<b>$1</b>');
+  escaped = escaped.replace(/`([^`]+)`/g, '<code style="background:rgba(148,163,184,.18);padding:1px 4px;border-radius:4px;">$1</code>');
+  escaped = escaped.replace(/\\n/g, '<br>');
+  return escaped;
+}
+
+function renderCopilotTrace(data) {
+  const resultsDiv = document.getElementById('skill-results');
+  if (!resultsDiv) return;
+  const calls = data.tool_calls || [];
+  const usage = data.usage || {};
+  const grounding = data.grounding || {};
+  const strategy = data.strategy === 'plan' ? '\u8ba1\u5212+\u5ba1\u7a3f' : '\u76f4\u63a5\u5de5\u5177\u5faa\u73af';
+  const mode = data.mode === 'llm' ? '\u6a21\u578b + \u5de5\u5177' : (data.mode === 'offline' ? '\u79bb\u7ebf\u6458\u8981' : String(data.mode || ''));
+  const badgeColor = data.mode === 'llm' ? '#0f766e' : '#b45309';
+
+  let html = '<div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;background:rgba(15,23,42,.35);">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">';
+  html += '<div style="font-size:16px;font-weight:700;color:var(--accent);">🧭 \u667a\u80fd\u4f53\u6267\u884c\u8f68\u8ff9</div>';
+  html += '<span style="font-size:12px;font-weight:700;color:#fff;background:' + badgeColor + ';padding:3px 9px;border-radius:999px;">' + escapeHtmlText(mode) + ' · ' + escapeHtmlText(strategy) + '</span>';
+  html += '</div>';
+  html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">'
+    + '\u6b65\u9aa4 ' + (data.steps || 0)
+    + ' \u00b7 \u5de5\u5177\u8c03\u7528 ' + calls.length
+    + ' \u00b7 \u7f13\u5b58\u547d\u4e2d ' + calls.filter(function (c) { return c.cached; }).length
+    + ' \u00b7 \u7528\u65f6 ' + (data.elapsed_seconds || 0) + ' s'
+    + (data.model ? ' \u00b7 \u6a21\u578b ' + escapeHtmlText(data.model) : '')
+    + (usage.total_tokens ? ' \u00b7 tokens ' + usage.total_tokens : '')
+    + '</div>';
+
+  const plan = data.plan || {};
+  if (plan.steps && plan.steps.length) {
+    html += '<div style="margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(2,6,23,.28);">';
+    html += '<div style="font-size:12px;font-weight:700;color:var(--accent);">\u8bc1\u636e\u8ba1\u5212</div>';
+    plan.steps.forEach(function (step, index) {
+      html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">'
+        + (index + 1) + '. ' + escapeHtmlText(step.tool || '\u5df2\u5b8c\u6210') + ' \u00b7 '
+        + escapeHtmlText(step.purpose || step.action || '') + '</div>';
+    });
+    html += '</div>';
+  }
+
+  const critique = data.critique || {};
+  const critiqueIssues = critique.issues || [];
+  const showCritique = critique.verdict && critique.verdict !== 'pass'
+    && critiqueIssues.length > 0;
+  if (showCritique) {
+    const high = critiqueIssues.some(function (item) { return item.severity === 'high'; });
+    html += '<div style="margin-top:10px;padding:10px 12px;border-left:3px solid ' + (high ? '#f87171' : '#f59e0b') + ';background:rgba(245,158,11,.10);border-radius:var(--radius);">';
+    html += '<div style="font-size:12px;font-weight:700;color:' + (high ? '#fca5a5' : '#fbbf24') + ';">\u5ba1\u7a3f\u610f\u89c1 \u00b7 ' + escapeHtmlText(critique.verdict) + '</div>';
+    critiqueIssues.forEach(function (item) {
+      html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">[' + escapeHtmlText(item.severity) + '] ' + escapeHtmlText(item.problem) + '</div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  if (grounding && grounding.severity && grounding.severity !== 'ok') {
+    html += '<div style="padding:12px 14px;border-left:3px solid #f59e0b;background:rgba(245,158,11,.12);border-radius:var(--radius);margin-bottom:14px;">';
+    html += '<div style="font-weight:700;color:#fbbf24;margin-bottom:4px;">\u26a0\ufe0f \u6570\u5b57\u6eaf\u6e90\u63d0\u9192</div>';
+    html += '<div style="font-size:13px;color:var(--text-secondary);">\u56de\u7b54\u4e2d\u6709 '
+      + escapeHtmlText((grounding.unverified || []).length) + ' \u4e2a\u6570\u5b57\u672a\u5728\u5de5\u5177\u7ed3\u679c\u4e2d\u68c0\u7d22\u5230\uff1a'
+      + escapeHtmlText((grounding.unverified || []).join(', ')) + '\u3002\u8bf7\u4ee5\u8868\u683c\u6570\u636e\u4e3a\u51c6\u3002</div>';
+    html += '</div>';
+  }
+
+  if (!calls.length) {
+    html += '<div style="font-size:13px;color:var(--text-muted);">\u672c\u6b21\u6ca1\u6709\u8c03\u7528\u5de5\u5177\uff08\u53ef\u80fd\u662f\u79bb\u7ebf\u6a21\u5f0f\u6216\u95ee\u9898\u4e0d\u9700\u8981\u9879\u76ee\u6570\u636e\uff09\u3002</div>';
+  } else {
+    html += '<div style="font-size:14px;font-weight:700;margin:6px 0 8px;">\u5de5\u5177\u8c03\u7528</div>';
+    calls.forEach(function (call, index) {
+      const ok = call.ok !== false;
+      html += '<div style="border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;background:rgba(2,6,23,.35);">';
+      html += '<div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;">';
+      html += '<span style="font-weight:700;">' + (index + 1) + '. ' + escapeHtmlText(call.tool) + '</span>';
+      html += '<span style="color:' + (ok ? '#34d399' : '#f87171') + ';">'
+        + (ok ? 'ok' : 'failed') + ' \u00b7 ' + escapeHtmlText(call.elapsed_seconds) + ' s</span>';
+      html += '</div>';
+      const args = JSON.stringify(call.arguments || {});
+      html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;word-break:break-all;">\u53c2\u6570\uff1a' + escapeHtmlText(args) + '</div>';
+      html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">\u7ed3\u679c\uff1a' + escapeHtmlText(call.summary || call.error || '') + '</div>';
+      html += '</div>';
+    });
+  }
+
+  if (data.errors && data.errors.length) {
+    html += '<div style="font-size:12px;color:#fca5a5;margin-top:8px;">\u9519\u8bef\uff1a' + escapeHtmlText(data.errors.join(' | ')) + '</div>';
+  }
+  resultsDiv.innerHTML = html;
+}
+
+function addChatMessage(role, content) {
+  saveChatMessage(role, content);
+  renderChatMessage(role, content);
+}
+// The assistant conversation is kept per project in localStorage, so a refresh
+// (or reopening the app tomorrow) still shows what was asked and answered.
+function chatStorageKey() {
+  return 'splicegaip.chat.' + (state.currentProject || 'none');
+}
+function readChatHistory() {
+  try {
+    const raw = localStorage.getItem(chatStorageKey());
+    const items = raw ? JSON.parse(raw) : [];
+    return Array.isArray(items) ? items : [];
+  } catch (error) { return []; }
+}
+function saveChatMessage(role, content) {
+  const items = readChatHistory();
+  items.push({ role: role, content: content, at: new Date().toISOString() });
+  // Keep the tail so localStorage cannot grow without bound.
+  const trimmed = items.slice(-200);
+  try { localStorage.setItem(chatStorageKey(), JSON.stringify(trimmed)); } catch (error) { /* quota */ }
+}
+function loadChatHistory() {
+  const messagesDiv = document.getElementById('chat-messages');
+  if (!messagesDiv) return;
+  messagesDiv.innerHTML = '';
+  const items = readChatHistory();
+  if (!items.length) {
+    renderChatMessage('assistant', '选择上方技能开始分析，或直接提问。对话会保存在本机（按项目分开），刷新或下次打开仍可回看。');
+    return;
+  }
+  items.forEach(m => renderChatMessage(m.role, m.content));
+}
+function renderChatMessage(role, content) {
+  const messagesDiv = document.getElementById('chat-messages');
+  if (!messagesDiv) return;
   const isUser = role === 'user';
-  
+
   const msgDiv = document.createElement('div');
   msgDiv.className = 'chat-message ' + (isUser ? 'user-message' : 'assistant-message');
-  
+
   const titleDiv = document.createElement('div');
   titleDiv.className = 'message-author';
   titleDiv.style.cssText = 'font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 4px;';
   titleDiv.textContent = isUser ? '👤 你' : '🤖 SpliceGAIP';
-  
+
   const contentDiv = document.createElement('div');
   contentDiv.style.cssText = 'font-size: 14px; line-height: 1.6; white-space: pre-wrap; color: var(--text);';
   var newlineRegex = new RegExp('\\n', 'g');
-  contentDiv.innerHTML = content.replace(newlineRegex, '<br>');
+  contentDiv.innerHTML = formatChatText(content);
   
   msgDiv.appendChild(titleDiv);
   msgDiv.appendChild(contentDiv);
@@ -2601,7 +4183,7 @@ async function executeSkillWithParams(skillName, paramText) {
 
 function parseParameters(text) {
   const params = {};
-  const pairs = text.split(/\s+/);
+  const pairs = text.split(/\\s+/);
   
   for (const pair of pairs) {
     const [key, ...valueParts] = pair.split('=');
@@ -2616,12 +4198,12 @@ function parseParameters(text) {
 function extractGeneFromText(text) {
   // Simple extraction - look for common gene patterns
   const match = text.match(/([A-Z][A-Z0-9]+[0-9]?)/);
-  return match ? match[1] : text.split(/\s+/)[0];
+  return match ? match[1] : text.split(/\\s+/)[0];
 }
 
 function extractGenesFromText(text) {
   // Split by comma, space, or semicolon and filter
-  const candidates = text.split(/[,\s;]+/).filter(s => s.length > 1 && /^[A-Z]/.test(s));
+  const candidates = text.split(/[,\\s;]+/).filter(s => s.length > 1 && /^[A-Z]/.test(s));
   return candidates.slice(0, 20); // Limit to 20 genes
 }
 

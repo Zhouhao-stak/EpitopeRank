@@ -1,17 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller **onefile** spec for the SpliceGAIP desktop/web launcher.
+"""PyInstaller **onefile** spec for the SpliceGAIP desktop window (desktop_ui.py).
 
-Produces a single self-contained SpliceGAIP.exe that can be dropped straight
-onto the Desktop: double-click -> local server starts -> browser opens.
+Produces a single self-contained SpliceGAIP-Desktop.exe: double-click -> the
+local server starts -> the pywebview window opens with the dark ocean-lab
+chrome (see desktop_ui.py for the title-bar colouring).
 
-Trade-off vs. SpliceGAIP-Web.spec (onedir):
-  * onefile = one file, but every launch unpacks ~110 MB into %TEMP%
-    (a few extra seconds before the browser opens)
-  * onedir  = starts faster, but ships as a folder (exe + _internal)
+Trade-off: onefile ships as one file, but every launch unpacks ~145 MB into
+%TEMP% (a few extra seconds before the window appears).
 
 Build:
-    pyinstaller packaging/SpliceGAIP-Web-OneFile.spec \
-        --distpath packaging/dist-web-onefile --workpath packaging/build-web-onefile
+    python -m PyInstaller packaging/SpliceGAIP-Desktop-OneFile.spec \
+        --distpath dist --workpath packaging/build-temp --noconfirm
 """
 
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
@@ -29,6 +28,8 @@ datas = [
     (os.path.join(ROOT, "splicegaip", "interface", "OPENCC-JS-LICENSE.txt"), "splicegaip/interface"),
     (os.path.join(ROOT, "splicegaip", "interface", "OPENCC-DATA-LICENSE.txt"), "splicegaip/interface"),
     (os.path.join(ROOT, "splicegaip", "interface", "OPENCC-NOTICE.txt"), "splicegaip/interface"),
+    # Bundled peptide reference tables (HLA allele catalogues + IEDB assay extract).
+    (os.path.join(ROOT, "splicegaip", "peptide", "reference"), "splicegaip/peptide/reference"),
 ]
 datas += collect_data_files("matplotlib")
 datas += collect_data_files("reportlab")
@@ -46,6 +47,15 @@ for package in (
     "autogen_ext",
     "autogen_ext.models",
     "autogen_ext.models.openai",
+    # Agentic copilot: OpenAI-compatible native tool calling. These are
+    # imported lazily inside splicegaip.llm.chat, so they must be collected
+    # explicitly or the frozen build loses the copilot at runtime.
+    "openai",
+    "httpx",
+    "httpcore",
+    "jiter",
+    "distro",
+    "sniffio",
     "pymed",
     "uvicorn",
     "fastapi",
@@ -75,6 +85,8 @@ hiddenimports += [
     # statistics capability must be available in the frozen build.
     "scipy",
     "scipy.stats",
+    "openpyxl",
+    "xlrd",
 ]
 
 # Explicitly add report submodules since collect_submodules may miss them
@@ -125,6 +137,7 @@ exe = EXE(
     a.datas,
     [],
     name="SpliceGAIP-Desktop",
+    icon=os.path.join(HERE, "icon.ico"),
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

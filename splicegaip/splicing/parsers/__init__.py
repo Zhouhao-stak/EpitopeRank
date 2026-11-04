@@ -1,12 +1,17 @@
 """Parsers for alternative-splicing tool outputs.
 
-Each parser converts a tool-specific output table into the standardized
-``AS_event_master`` contract. Currently supported:
+SpliceGAIP accepts **rMATS input only**. The rMATS junction-count tables
+(``SE/A3SS/A5SS/MXE/RI.MATS.JC.txt``) are normalized into the standardized
+``AS_event_master`` contract, which is the internal interchange format used by
+the rest of the pipeline.
 
-* rMATS (JC tables)                 -- :mod:`splicegaip.splicing.parsers.rmats`
-* SUPPA2 (``.psv`` / ``.ioe``)      -- :mod:`splicegaip.splicing.parsers.suppa`
-* MAJIQ (``.majiq``-derived TSV)    -- :mod:`splicegaip.splicing.parsers.majiq`
-* LeafCutter (``_cluster_significance.txt``) -- :mod:`splicegaip.splicing.parsers.leafcutter`
+Vendor exports (e.g. BGI per-sample rMATS ``.xls``) reach the same contract
+through the ingestion adapter (:mod:`splicegaip.data.ingestion`), not through a
+second parser.
+
+SUPPA2 / MAJIQ / LeafCutter / pre-computed delta-PSI tables used to be
+supported; those parsers were removed so there is exactly one input contract
+to validate, test and document.
 """
 
 from splicegaip.splicing.parsers.rmats import (

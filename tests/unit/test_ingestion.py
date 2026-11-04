@@ -59,6 +59,73 @@ def test_preview_maps_messy_vendor_export(tmp_path):
     assert preview["validation"]["ok"] is True
 
 
+def test_long_read_transcript_counts_are_not_invented_as_events(tmp_path):
+    _write(
+        tmp_path,
+        "uniqueCounts_transcript.txt",
+        "TXNAME\tGENEID\tSample_A_filtered_mapq_10\tSample_B_filtered_mapq_10\tSample_C_filtered_mapq_10\n"
+        "BambuTx1\tENSG000001\t12\t6\t8\n",
+    )
+    _write(tmp_path, "sample_groups_58.csv", "sampleID,condition\nSample_A,Brain\nSample_B,Lung\n")
+
+    data = preview_ingestion(tmp_path, use_llm=False)
+
+    assert data["status"] == "unmappable"
+    assert data["detected_format"] == "transcript_quantification"
+    assert "transcript_quantification_not_events" in _codes(data)
+    assert data["preview"] == {}
+
+
+def test_text_xls_expression_matrix_is_read_and_classified(tmp_path):
+    _write(tmp_path, "rna_expression.xls",
+           "rna_id\tgene_id\tfpkm_OC_001\tfpkm_OC_002\ttpm_OC_001\ttpm_OC_002\n"
+           "TX1\tG1\t2.1\t3.4\t1.0\t2.0\n")
+    result = preview_ingestion(tmp_path, use_llm=False)
+    assert result["detected_format"] == "expression_quantification"
+    assert result["preview"]["sample_count"] == 2
+    assert result["files"][0]["file_kind"] == "delimited"
+    assert "expression_not_splicing_events" in _codes(result)
+
+
+def test_excel_and_gzip_event_tables_are_profiled(tmp_path):
+    import gzip
+    import openpyxl
+    import xlwt
+
+    header = ["Gene", "Type", "Delta PSI", "p"]
+    value = ["GENE1", "SE", 0.4, 0.001]
+    workbook = openpyxl.Workbook()
+    workbook.active.append(header)
+    workbook.active.append(value)
+    workbook.save(tmp_path / "events.xlsx")
+    sheet = xlwt.Workbook()
+    page = sheet.add_sheet("events")
+    for col, item in enumerate(header):
+        page.write(0, col, item)
+    for col, item in enumerate(value):
+        page.write(1, col, item)
+    sheet.save(str(tmp_path / "events.xls"))
+    with gzip.open(tmp_path / "events.tsv.gz", "wt", encoding="utf-8") as handle:
+        handle.write("Gene\tType\tDelta PSI\tp\nGENE1\tSE\t0.4\t0.001\n")
+    from splicegaip.data.ingestion import profile_file
+    for name, kind in (("events.xlsx", "xlsx"), ("events.xls", "xls"), ("events.tsv.gz", "delimited")):
+        profile = profile_file(tmp_path / name)
+        assert profile.supported and profile.file_kind == kind
+        assert profile.headers == header
+        assert len(list(profile.iter_rows())) == 1
+    result = preview_ingestion(tmp_path, use_llm=False)
+    assert result["status"] == "mapped"
+
+
+def test_nested_event_table_is_discovered(tmp_path):
+    nested = tmp_path / "vendor" / "results"
+    nested.mkdir(parents=True)
+    _write(nested, "events.tsv", "Gene\tType\tDelta PSI\tp\nA\tSE\t0.3\t0.01\n")
+    result = preview_ingestion(tmp_path, use_llm=False)
+    assert result["status"] == "mapped"
+    assert result["event_file"]["name"] == "vendor/results/events.tsv"
+
+
 def test_decimal_commas_and_pvalue_fdr_fallback(tmp_path):
     _write(tmp_path, "vendor.tsv", DECIMAL_COMMA_TSV)
 
@@ -72,7 +139,7 @@ def test_decimal_commas_and_pvalue_fdr_fallback(tmp_path):
     first = preview["events"][0]
     assert first["delta_psi"] == pytest.approx(0.255)
     assert first["p_value"] == pytest.approx(0.001)
-    assert first["fdr"] == pytest.approx(0.001)
+    assert first["fdr"] == pytest.approx(0.002)
     assert {"fdr_from_p", "rows_dropped", "means_from_samples"} <= _codes(data)
 
 
@@ -198,6 +265,25 @@ class _FakeEnhancer:
 
     def json(self, **kwargs):
         return self.proposal
+
+
+def test_llm_can_rescue_unfamiliar_event_headers(tmp_path):
+    _write(tmp_path, "vendor.tsv", "Locus Label\tShift Measure\tAdjusted Score\n"
+           "GENEA\t0.25\t0.01\n")
+    proposal = _FakeEnhancer({
+        "event_file": "vendor.tsv",
+        "columns": {
+            "gene_symbol": "Locus Label",
+            "delta_PSI": "Shift Measure",
+            "FDR": "Adjusted Score",
+        },
+    })
+
+    data = preview_ingestion(tmp_path, enhancer=proposal)
+
+    assert data["llm"]["used"] is True
+    assert data["mapping"]["columns"]["delta_PSI"] == "Shift Measure"
+    assert data["preview"]["valid_events"] == 1
 
 
 def test_llm_proposal_is_accepted_only_after_header_validation(tmp_path):

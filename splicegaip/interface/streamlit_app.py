@@ -86,10 +86,11 @@ def main() -> None:
 def _render_run_page(settings) -> None:
     st.header("Run analysis")
     st.markdown(
-        "Upload your analysis input (rMATS JC tables, SUPPA2 `.psi.tsv` files, a "
-        "standardized `AS_event_master.tsv`, or a differential-splicing CSV set "
-        "such as `differential_splicing_results.csv` + `psi_matrix.csv`; optionally "
-        "`sample_metadata.tsv`/`.csv`, `gene_annotation.tsv`, `differential_expression.tsv`)."
+        "Upload your rMATS output (the JC tables `SE/A3SS/A5SS/MXE/RI.MATS.JC.txt`, "
+        "or a vendor per-sample rMATS export such as BGI `.xls`), optionally with "
+        "`sample_metadata.tsv`/`.csv`, `gene_annotation.tsv` and "
+        "`differential_expression.tsv`. Other splicing tools are not supported — "
+        "convert them to rMATS tables first."
     )
     uploaded = st.file_uploader(
         "Input files",

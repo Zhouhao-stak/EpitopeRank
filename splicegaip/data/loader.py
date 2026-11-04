@@ -1,13 +1,17 @@
 """Data layer: loading and validation of the Standard BioAnalysis Format.
 
-Accepted inputs (auto-detected):
+SpliceGAIP takes **rMATS input only**. Accepted layouts (auto-detected):
 
-* a directory containing rMATS JC tables (``SE.MATS.JC.txt`` ...) plus
-  ``sample_metadata.tsv``
-* a directory containing SUPPA2 ``*.psi.tsv`` files
-* a standardized ``AS_event_master.tsv`` (+ optional ``sample_metadata.tsv``,
-  ``gene_annotation.tsv``, ``differential_expression.tsv``)
+* a directory containing rMATS JC tables (``SE.MATS.JC.txt`` / ``.MATS.JCEC.txt``
+  ...) plus an optional ``sample_metadata.tsv`` with the group assignment
+* a single rMATS JC table
+* a standardized ``AS_event_master.tsv`` — the internal contract produced by
+  :mod:`splicegaip.data.ingestion` when a vendor rMATS export needs remapping
+  (optional ``sample_metadata.tsv``, ``gene_annotation.tsv``,
+  ``differential_expression.tsv``)
 
+SUPPA2 / MAJIQ / LeafCutter / pre-computed delta-PSI inputs are no longer
+accepted: one input contract keeps validation, tests and documentation honest.
 The loader normalizes everything into one :class:`Dataset`.
 """
 
@@ -21,14 +25,8 @@ from typing import Any, Iterable, Mapping
 from splicegaip.splicing.parsers import (
     is_rmats_directory,
     parse_rmats_directory,
+    parse_rmats_file,
 )
-from splicegaip.splicing.parsers.differential_psi import (
-    is_differential_psi_directory,
-    parse_differential_psi_directory,
-)
-from splicegaip.splicing.parsers.leafcutter import is_leafcutter_file, parse_leafcutter_file
-from splicegaip.splicing.parsers.majiq import is_majiq_file, parse_majiq_file
-from splicegaip.splicing.parsers.suppa import is_suppa_directory, parse_suppa_psi_file
 from splicegaip.splicing.schema import (
     CORE_EVENT_FIELDS,
     StandardEvent,
@@ -165,6 +163,24 @@ def _has_standard_event_header(path: Path) -> bool:
     return set(CORE_EVENT_FIELDS).issubset(columns)
 
 
+#: Header markers that identify a single rMATS JC table.
+_RMATS_MARKERS = ("IncLevel1", "IJC_SAMPLE_1", "SJC_SAMPLE_1")
+
+
+def _looks_like_rmats_table(path: Path) -> bool:
+    """True if ``path`` is one rMATS junction-count table."""
+    if path.suffix.lower() not in {".txt", ".tsv", ".csv"}:
+        return False
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            header = next(csv.reader(handle, delimiter="\t"), None)
+    except (OSError, csv.Error):
+        return False
+    if not header:
+        return False
+    return any(marker in header for marker in _RMATS_MARKERS)
+
+
 def _find_standard_event_table(directory: Path) -> Path | None:
     path = _find_file(directory, STANDARD_EVENT_FILENAMES)
     if path:
@@ -237,38 +253,18 @@ def load_dataset(input_path: str | Path) -> Dataset:
         if is_rmats_directory(directory):
             source_format = "rMATS"
             events = parse_rmats_directory(directory, group1, group2)
-        elif is_differential_psi_directory(directory):
-            source_format = "differential_psi"
-            events = parse_differential_psi_directory(directory, group1, group2)
-        elif is_suppa_directory(directory):
-            source_format = "SUPPA2"
-            for psi_file in sorted(directory.glob("*.psi.tsv")):
-                events.extend(
-                    parse_suppa_psi_file(
-                        psi_file, group1_samples=group1, group2_samples=group2
-                    )
-                )
         else:
             standard_path = _find_standard_event_table(directory)
             if standard_path:
                 source_format = "standard"
                 events = load_events_tsv(standard_path)
             else:
-                # Single-file inputs: try MAJIQ / LeafCutter tables.
-                for candidate in sorted(directory.iterdir()):
-                    if not candidate.is_file():
-                        continue
-                    if is_majiq_file(candidate):
-                        source_format = "MAJIQ"
-                        events.extend(parse_majiq_file(candidate))
-                    elif is_leafcutter_file(candidate):
-                        source_format = "LeafCutter"
-                        events.extend(parse_leafcutter_file(candidate))
-                if not events:
-                    raise ValueError(
-                        f"No recognizable AS data in {directory}. Expected rMATS JC tables, "
-                        "SUPPA2 *.psi.tsv files, or a standardized AS_event_master.tsv."
-                    )
+                raise ValueError(
+                    f"No recognizable rMATS data in {directory}. Expected the rMATS JC "
+                    "tables (SE.MATS.JC.txt, A3SS.MATS.JC.txt, A5SS.MATS.JC.txt, "
+                    "MXE.MATS.JC.txt, RI.MATS.JC.txt) or a standardized "
+                    "AS_event_master.tsv produced by the upload step."
+                )
         annotation_path = _find_file(directory, ANNOTATION_FILENAMES)
         if annotation_path:
             from splicegaip.analysis.enrichment import load_gene_annotation
@@ -280,13 +276,10 @@ def load_dataset(input_path: str | Path) -> Dataset:
             de_genes = load_differential_expression(de_path)
             extra_files["differential_expression"] = de_path
     else:
-        # A single file was given: standardized table or a tool table.
-        if is_majiq_file(directory):
-            source_format = "MAJIQ"
-            events = parse_majiq_file(directory)
-        elif is_leafcutter_file(directory):
-            source_format = "LeafCutter"
-            events = parse_leafcutter_file(directory)
+        # A single file was given: one rMATS JC table or a standardized table.
+        if _looks_like_rmats_table(directory):
+            source_format = "rMATS"
+            events = parse_rmats_file(directory)
         else:
             source_format = "standard"
             events = load_events_tsv(directory)

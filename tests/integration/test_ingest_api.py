@@ -61,3 +61,15 @@ def test_external_directory_is_blocked_without_flag(tmp_path, monkeypatch):
 
     assert response.status_code == 400
     assert "inside the runtime" in response.json()["detail"]
+
+
+def test_uploaded_expression_xls_is_read_but_not_mapped_to_splicing(tmp_path, monkeypatch):
+    monkeypatch.setenv("SPLICEGAIP_RUNTIME_ROOT", str(tmp_path))
+    client = TestClient(create_app())
+    content = b"gene_id\tfpkm_OC_001\tfpkm_OC_002\ttpm_OC_001\ttpm_OC_002\nG1\t1\t2\t3\t4\n"
+    uploaded = client.post("/api/upload", files={"files": ("rna_expression.xls", content, "application/octet-stream")})
+    assert uploaded.status_code == 200
+    response = client.post("/api/ingest/preview", json={"input_dir": uploaded.json()["upload_dir"], "use_llm": False})
+    assert response.status_code == 200
+    assert response.json()["detected_format"] == "expression_quantification"
+    assert response.json()["preview"]["sample_count"] == 2

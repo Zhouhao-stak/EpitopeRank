@@ -8,6 +8,7 @@ import os
 import re
 import secrets
 import shutil
+import subprocess
 import sys
 import tempfile
 import threading
@@ -16,7 +17,7 @@ from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 
 from splicegaip.analysis import extra_figures
 from splicegaip.config import ensure_runtime_dirs, load_prepared_settings
@@ -32,15 +33,40 @@ from splicegaip.observability import (
 API_VERSION = "0.1.0"
 logger = logging.getLogger(__name__)
 
-# Dark-navy plate with the BMW-blue accent bar — same marks as the UI header.
+#: Remembered CDS column mappings, stored next to the table it describes.
+CDS_MAPPING_FILE = ".cds_mapping.json"
+
+# Dark ocean tile with the teal helix + purple AI node, matching the app icon.
 # Served as a real endpoint because browsers probe /favicon.ico unconditionally
 # and a 404 there shows up as a console error.
 _FAVICON_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
-    '<rect width="32" height="32" fill="#1a2129"/>'
-    '<rect y="28" width="32" height="4" fill="#1c69d4"/>'
-    '<text x="16" y="21" font-family="Segoe UI, sans-serif" font-size="13"'
-    ' font-weight="700" fill="#ffffff" text-anchor="middle">SG</text>'
+    '<defs>'
+    '<linearGradient id="p" x1="0" y1="0" x2="1" y2="1">'
+    '<stop offset="0" stop-color="#0e3240"/><stop offset="1" stop-color="#04101a"/>'
+    "</linearGradient>"
+    '<linearGradient id="s" x1="0" y1="0" x2="0" y2="1">'
+    '<stop offset="0" stop-color="#c8fff6"/><stop offset="1" stop-color="#2dd4bf"/>'
+    "</linearGradient>"
+    "</defs>"
+    '<rect width="32" height="32" rx="7" fill="url(#p)"/>'
+    '<path d="M10.50 5.25L10.61 5.70L10.94 6.15L11.47 6.59L12.18 7.04L13.05 7.49L14.04 7.94'
+    "L15.10 8.39L16.21 8.83L17.30 9.28L18.34 9.73L19.29 10.18L20.10 10.62L20.75 11.07L21.21 11.52"
+    "L21.46 11.97L21.48 12.42L21.29 12.86L20.89 13.31L20.28 13.76L19.51 14.21L18.59 14.66L17.57 15.10"
+    "L16.49 15.55L15.38 16.00L14.31 16.45L13.29 16.90L12.39 17.34L11.64 17.79L11.06 18.24L10.67 18.69"
+    "L10.51 19.14L10.56 19.58L10.83 20.03L11.32 20.48L11.99 20.93L12.82 21.38L13.78 21.82L14.83 22.27"
+    "L15.92 22.72L17.02 23.17L18.08 23.61L19.06 24.06L19.91 24.51L20.60 24.96L21.11 25.41L21.41 25.85"
+    'L21.50 26.30L21.36 26.75" fill="none" stroke="#11837d" stroke-width="2.6" stroke-linecap="round"/>'
+    '<path d="M21.50 5.25L21.39 5.70L21.06 6.15L20.53 6.59L19.82 7.04L18.95 7.49L17.96 7.94'
+    "L16.90 8.39L15.79 8.83L14.70 9.28L13.66 9.73L12.71 10.18L11.90 10.62L11.25 11.07L10.79 11.52"
+    "L10.54 11.97L10.52 12.42L10.71 12.86L11.11 13.31L11.72 13.76L12.49 14.21L13.41 14.66L14.43 15.10"
+    "L15.51 15.55L16.62 16.00L17.69 16.45L18.71 16.90L19.61 17.34L20.36 17.79L20.94 18.24L21.33 18.69"
+    "L21.49 19.14L21.44 19.58L21.17 20.03L20.68 20.48L20.01 20.93L19.18 21.38L18.22 21.82L17.17 22.27"
+    "L16.08 22.72L14.98 23.17L13.92 23.61L12.94 24.06L12.09 24.51L11.40 24.96L10.89 25.41L10.59 25.85"
+    'L10.50 26.30L10.64 26.75" fill="none" stroke="url(#s)" stroke-width="2.6" stroke-linecap="round"/>'
+    '<circle cx="16" cy="15.75" r="2.6" fill="none" stroke="#c4b5fd" stroke-opacity=".7" stroke-width=".8"/>'
+    '<circle cx="16" cy="15.75" r="1.7" fill="#a855f7"/>'
+    '<circle cx="15.5" cy="15.25" r=".55" fill="#fff"/>'
     "</svg>"
 )
 
@@ -89,6 +115,48 @@ def _with_overrides(settings: Any, thresholds: Any) -> Any:
     return dataclasses.replace(settings, analysis=new_analysis)
 
 
+def _export_project_bundle(
+    settings: Any,
+    project_id: str,
+    project_name: str,
+    *,
+    input_dir: str | None = None,
+) -> str:
+    """Copy a finished project's deliverables into its own browsable folder.
+
+    Users should not have to dig through ``%LOCALAPPDATA%`` to find a report, so
+    every run also publishes ``results/<项目名>_<ID>/``. Failure here must never
+    fail the analysis itself: the run's own output directory is still valid.
+    """
+    from splicegaip.config import PROJECT_ROOT
+    from splicegaip.memory.project_memory import ProjectMemory
+    from splicegaip.results_export import default_results_root, export_bundle
+
+    project_dir = settings.paths.runtime_root / "projects" / project_id
+    stats: dict[str, Any] = {}
+    try:
+        for row in ProjectMemory(settings.paths.memory_db).list_projects_with_stats():
+            if row.get("project_id") == project_id:
+                stats = row
+                break
+    except Exception:  # noqa: BLE001 - stats are cosmetic
+        logger.debug("Could not load stats for %s", project_id, exc_info=True)
+
+    try:
+        target = export_bundle(
+            project_dir,
+            project_name or stats.get("name") or project_id,
+            project_id,
+            results_root=default_results_root(PROJECT_ROOT),
+            stats=stats,
+            input_dir=input_dir,
+        )
+    except OSError:
+        logger.warning("Could not publish results bundle for %s", project_id, exc_info=True)
+        return ""
+    return str(target) if target else ""
+
+
 def create_app() -> FastAPI:
     """Build the SpliceGAIP API application."""
     # Load .env file so API keys are available in environment variables
@@ -98,6 +166,26 @@ def create_app() -> FastAPI:
     app = FastAPI(title="SpliceGAIP API", version=API_VERSION)
     settings, storage_warnings = load_prepared_settings()
     ensure_runtime_dirs(settings)
+
+    # Merge any pre-0.2 runtime directory (system temp dir or the folder next
+    # to the executable) into the stable per-user root. Without this, projects
+    # analysed by an older build would silently disappear from the UI.
+    storage_migration: dict[str, Any] = {"migrated_from": []}
+    if not os.getenv("SPLICEGAIP_RUNTIME_ROOT", "").strip():
+        try:
+            from splicegaip.storage import migrate_legacy_storage
+
+            storage_migration = migrate_legacy_storage(
+                settings.paths.runtime_root, logger=logger.info
+            )
+            if storage_migration.get("migrated_from"):
+                logger.warning(
+                    "Merged legacy runtime storage into %s (sources: %s)",
+                    settings.paths.runtime_root,
+                    ", ".join(storage_migration["migrated_from"]),
+                )
+        except Exception as error:  # noqa: BLE001 - never block boot
+            logger.warning("Legacy storage migration skipped: %s", error)
 
     # The built-in MCP tool server runs in-process so the AI assistant always
     # has a live tool provider, including in the packaged one-file build.
@@ -280,6 +368,133 @@ def create_app() -> FastAPI:
             "config": env_config_payload(),
         }
 
+    @app.get("/api/copilot/tools")
+    def copilot_tools_endpoint(project_id: str = "", allow_network: bool = True) -> dict[str, Any]:
+        """Describe the tool-using analysis copilot and its readiness."""
+        from splicegaip.agent.copilot import status
+
+        return status(_fresh_settings(), project_id=project_id or None,
+                      allow_network=allow_network)
+
+    def _copilot_request(payload: dict[str, Any]) -> dict[str, Any]:
+        """Validate the shared body of /chat and /stream."""
+        message = str(payload.get("message") or "").strip()
+        if not message:
+            raise HTTPException(status_code=400, detail="message is required")
+        if len(message) > 8000:
+            raise HTTPException(status_code=413, detail="message is too long (max 8000 characters)")
+        history = payload.get("history")
+        if history is not None and not isinstance(history, list):
+            raise HTTPException(status_code=422, detail="history must be a list")
+        if isinstance(history, list) and len(history) > 20:
+            history = history[-20:]
+        try:
+            max_steps = max(1, min(10, int(payload.get("max_steps") or 6)))
+        except (TypeError, ValueError):
+            max_steps = 6
+        mode = str(payload.get("mode") or "auto").lower()
+        if mode not in {"auto", "react", "plan"}:
+            raise HTTPException(status_code=422, detail="mode must be auto, react or plan")
+        return {
+            "message": message,
+            "history": history,
+            "project_id": str(payload.get("project_id") or "").strip() or None,
+            "max_steps": max_steps,
+            "mode": mode,
+            "allow_network": bool(payload.get("allow_network", True)),
+            "use_cache": bool(payload.get("use_cache", True)),
+            "force_offline": bool(payload.get("force_offline")),
+        }
+
+    @app.post("/api/copilot/chat")
+    def copilot_chat(payload: dict[str, Any]) -> dict[str, Any]:
+        """Answer an analyst question with bounded tool use.
+
+        This is the modern agent loop: native function calling over
+        project-scoped read-only tools, with a step/tool budget, optional
+        plan/critic orchestration, persistent caching and numeric grounding of
+        the final answer. Without a model it returns a deterministic briefing
+        and says so.
+        """
+        from splicegaip.agent.copilot import ask
+
+        request = _copilot_request(payload)
+        try:
+            answer = ask(
+                request["message"],
+                _fresh_settings(),
+                project_id=request["project_id"],
+                history=request["history"],
+                max_steps=request["max_steps"],
+                force_offline=request["force_offline"],
+                mode=request["mode"],
+                allow_network=request["allow_network"],
+                use_cache=request["use_cache"],
+            )
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        except RuntimeError as error:
+            raise HTTPException(status_code=502, detail=f"copilot failed: {error}") from error
+        return answer.as_dict()
+
+    @app.post("/api/copilot/stream")
+    def copilot_stream(payload: dict[str, Any]) -> StreamingResponse:
+        """Server-Sent Events variant of /chat.
+
+        Events: ``plan``, ``step``, ``tool_start``, ``tool_result``,
+        ``critique``, ``revision``, ``final``, ``done`` or ``error``.
+        Closing the connection cancels the loop at the next step boundary.
+        """
+        import queue
+
+        from splicegaip.agent.copilot import ask
+
+        request = _copilot_request(payload)
+        events: "queue.Queue[dict[str, Any] | None]" = queue.Queue()
+        cancelled = threading.Event()
+
+        def worker() -> None:
+            try:
+                answer = ask(
+                    request["message"],
+                    _fresh_settings(),
+                    project_id=request["project_id"],
+                    history=request["history"],
+                    max_steps=request["max_steps"],
+                    force_offline=request["force_offline"],
+                    mode=request["mode"],
+                    allow_network=request["allow_network"],
+                    use_cache=request["use_cache"],
+                    on_event=events.put,
+                    cancel=cancelled.is_set,
+                )
+                events.put({"event": "done", "data": answer.as_dict()})
+            except Exception as error:  # noqa: BLE001 - reported as an SSE error event
+                events.put({"event": "error",
+                            "data": {"message": f"{type(error).__name__}: {str(error)[:400]}"}})
+            finally:
+                events.put(None)
+
+        threading.Thread(target=worker, daemon=True, name="copilot-stream").start()
+
+        def generate():
+            try:
+                while True:
+                    item = events.get()
+                    if item is None:
+                        break
+                    yield (f"event: {item['event']}\n"
+                           f"data: {json.dumps(item['data'], ensure_ascii=False, default=str)}\n\n")
+            finally:
+                cancelled.set()
+
+        return StreamingResponse(
+            generate(),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "Connection": "keep-alive",
+                     "X-Accel-Buffering": "no"},
+        )
+
     @app.post("/api/understand")
     def understand(payload: dict[str, Any]) -> dict[str, Any]:
         """Resolve a natural-language question into a structured intent.
@@ -316,12 +531,186 @@ def create_app() -> FastAPI:
     def projects() -> dict[str, Any]:
         return {"projects": list_projects(settings)}
 
+    @app.get("/api/storage")
+    def storage() -> dict[str, Any]:
+        """Where the app keeps its data, so the user can back it up."""
+        from splicegaip.storage import storage_info
+
+        info = storage_info(settings.paths.runtime_root)
+        info["memory_db"] = str(settings.paths.memory_db)
+        info["literature_db"] = str(settings.paths.literature_db)
+        info["migration"] = storage_migration
+        return info
+
     @app.get("/api/status/{project_id}")
     def status(project_id: str) -> dict[str, Any]:
         payload = project_status(project_id, settings)
         if payload is None:
             raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
         return payload
+
+    @app.get("/api/projects/{project_id}/events")
+    def project_events(
+        project_id: str,
+        page: int = 1,
+        size: int = 50,
+        q: str = "",
+        event_type: str = "",
+        significant_only: bool = False,
+        order_by: str = "fdr",
+    ) -> dict[str, Any]:
+        """Paged, filterable event browser for a *historical* project.
+
+        Paging happens in SQLite: real rMATS runs carry 10^5-10^6 events, which
+        cannot be shipped to the browser in one response.
+        """
+        from splicegaip.memory.project_memory import ProjectMemory
+
+        memory = ProjectMemory(settings.paths.memory_db)
+        if memory.get_project(project_id) is None:
+            raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
+        size = max(1, min(int(size), 500))
+        page = max(1, int(page))
+        filters = {
+            "search": q.strip(),
+            "event_type": event_type.strip(),
+            "significant_only": bool(significant_only),
+        }
+        total = memory.count_events(project_id, **filters)
+        rows = memory.query_events(
+            project_id,
+            offset=(page - 1) * size,
+            limit=size,
+            order_by=order_by,
+            **filters,
+        )
+        return {
+            "project_id": project_id,
+            "total": total,
+            "page": page,
+            "size": size,
+            "pages": max(1, (total + size - 1) // size),
+            "events": rows,
+            "event_types": memory.event_type_counts(project_id),
+        }
+
+    @app.delete("/api/projects/{project_id}")
+    def delete_project(project_id: str) -> dict[str, Any]:
+        """Delete a project: database rows plus its output folder."""
+        from splicegaip.memory.project_memory import ProjectMemory
+
+        memory = ProjectMemory(settings.paths.memory_db)
+        if memory.get_project(project_id) is None:
+            raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
+        removed_rows = memory.delete_project(project_id)
+        project_dir = settings.paths.runtime_root / "projects" / project_id
+        if project_dir.is_dir():
+            shutil.rmtree(project_dir, ignore_errors=True)
+        return {"deleted": project_id, "rows": removed_rows}
+
+    @app.post("/api/projects/{project_id}/export")
+    def export_project(project_id: str) -> dict[str, Any]:
+        """Publish this project's report/figures into its own results folder."""
+        from splicegaip.memory.project_memory import ProjectMemory
+
+        memory = ProjectMemory(settings.paths.memory_db)
+        project = memory.get_project(project_id)
+        if project is None:
+            raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
+        name = project.get("name") if isinstance(project, dict) else ""
+        bundle = _export_project_bundle(settings, project_id, str(name or project_id))
+        if not bundle:
+            raise HTTPException(
+                status_code=404,
+                detail="这个项目还没有可导出的报告，跑完分析后再试",
+            )
+        return {"ok": True, "path": bundle}
+
+    @app.post("/api/projects/{project_id}/reveal-bundle")
+    def reveal_project_bundle(project_id: str) -> dict[str, Any]:
+        """Export (if needed) and open the folder in the system file manager."""
+        from splicegaip.memory.project_memory import ProjectMemory
+
+        memory = ProjectMemory(settings.paths.memory_db)
+        project = memory.get_project(project_id)
+        if project is None:
+            raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
+        name = project.get("name") if isinstance(project, dict) else ""
+        bundle = _export_project_bundle(settings, project_id, str(name or project_id))
+        if not bundle:
+            raise HTTPException(status_code=404, detail="这个项目还没有可导出的报告")
+        try:
+            if sys.platform == "win32":
+                os.startfile(bundle)  # type: ignore[attr-defined]
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", bundle])
+            else:
+                subprocess.Popen(["xdg-open", bundle])
+        except OSError as error:
+            raise HTTPException(status_code=500, detail=f"Cannot open folder: {error}") from error
+        return {"ok": True, "path": bundle}
+
+    def _bundle_dir_for(project_id: str) -> str:
+        from splicegaip.memory.project_memory import ProjectMemory
+
+        memory = ProjectMemory(settings.paths.memory_db)
+        project = memory.get_project(project_id)
+        if project is None:
+            raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
+        name = project.get("name") if isinstance(project, dict) else ""
+        bundle = _export_project_bundle(settings, project_id, str(name or project_id))
+        if not bundle:
+            raise HTTPException(status_code=404, detail="这个项目还没有可导出的报告")
+        return bundle
+
+    @app.post("/api/projects/{project_id}/package")
+    def package_project(project_id: str) -> dict[str, Any]:
+        """Zip the project's results folder for e-mail, archive or upload."""
+        from splicegaip.results_export import package_bundle
+
+        archive = package_bundle(_bundle_dir_for(project_id))
+        if archive is None:
+            raise HTTPException(status_code=404, detail="打包失败：成果文件夹不存在")
+        return {"ok": True, "path": str(archive), "size_mb": round(archive.stat().st_size / 1048576, 2)}
+
+    @app.post("/api/projects/{project_id}/upload")
+    def upload_project(project_id: str) -> dict[str, Any]:
+        """Push the project's bundle to the configured cloud endpoint."""
+        from splicegaip.results_export import (
+            cloud_upload_target,
+            package_bundle,
+            upload_bundle,
+        )
+
+        url, _token = cloud_upload_target()
+        if not url:
+            raise HTTPException(
+                status_code=400,
+                detail="还没有配置云端地址（环境变量 SPLICEGAIP_CLOUD_URL）",
+            )
+        archive = package_bundle(_bundle_dir_for(project_id))
+        if archive is None:
+            raise HTTPException(status_code=404, detail="打包失败：成果文件夹不存在")
+        result = upload_bundle(archive)
+        if not result.get("ok"):
+            raise HTTPException(status_code=502, detail=f"上传失败：{result.get('detail')}")
+        return {"ok": True, "archive": str(archive), "cloud": result.get("detail", "")}
+
+    @app.post("/api/cloud/upload")
+    async def cloud_receive(file: UploadFile = File(...)) -> dict[str, Any]:
+        """Receive a results bundle from a desktop client (server-side endpoint)."""
+        target_dir = settings.paths.runtime_root / "cloud_receipts"
+        target_dir.mkdir(parents=True, exist_ok=True)
+        safe_name = Path(file.filename or "bundle.zip").name
+        destination = target_dir / safe_name
+        with destination.open("wb") as handle:
+            while chunk := await file.read(1024 * 1024):
+                handle.write(chunk)
+        return {
+            "ok": True,
+            "saved": str(destination),
+            "size_mb": round(destination.stat().st_size / 1048576, 2),
+        }
 
     @app.post("/api/analyze")
     def analyze(payload: dict[str, Any]) -> dict[str, Any]:
@@ -333,11 +722,22 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=400, detail=f"input_dir does not exist: {input_dir}")
 
         run_settings = _with_overrides(settings, payload.get("thresholds"))
+        project_name = str(payload.get("project_name") or "").strip()[:120]
         try:
-            outcome = run_analysis(query, input_dir, settings=run_settings, project_name=str(payload.get("project_name") or "").strip()[:120])
+            outcome = run_analysis(query, input_dir, settings=run_settings, project_name=project_name)
         except ValueError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
-        return JSONResponse(outcome.summary())
+        summary = outcome.summary()
+        try:
+            bundle = _export_project_bundle(
+                run_settings, outcome.project_id, project_name, input_dir=input_dir
+            )
+        except Exception:  # noqa: BLE001 - publishing must never fail a run
+            logger.warning("Results bundle failed for %s", outcome.project_id, exc_info=True)
+            bundle = ""
+        if bundle:
+            summary["results_dir"] = bundle
+        return JSONResponse(summary)
 
     def _ingest_input_dir(raw: str) -> Path:
         """Resolve an ingestion directory and keep model exposure local.
@@ -417,6 +817,643 @@ def create_app() -> FastAPI:
         except ValueError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
+    neo_workflows: dict[str, dict] = {}
+    neo_workflows_lock = threading.RLock()
+    neo_workflows_dir = settings.paths.runtime_root / 'neoantigen_workflows'
+
+    def _neo_session_file(workflow_id: str) -> Path:
+        if not re.fullmatch(r'[A-Za-z0-9_-]{32}', workflow_id):
+            raise HTTPException(status_code=404, detail='流程不存在')
+        return neo_workflows_dir / (workflow_id + '.json')
+
+    def _neo_save(workflow_id: str, session: dict) -> None:
+        path = _neo_session_file(workflow_id)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix('.tmp')
+        temporary.write_text(json.dumps(session, ensure_ascii=False), encoding='utf-8')
+        os.replace(temporary, path)
+        neo_workflows[workflow_id] = session
+
+    def _neo_load(workflow_id: str) -> dict:
+        path = _neo_session_file(workflow_id)
+        if workflow_id not in neo_workflows:
+            try:
+                neo_workflows[workflow_id] = json.loads(path.read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                raise HTTPException(status_code=404, detail='流程不存在或无法读取')
+        return neo_workflows[workflow_id]
+
+    @app.get('/api/neoantigen/workflow/{workflow_id}')
+    def neo_workflow_get(workflow_id: str) -> dict[str, Any]:
+        with neo_workflows_lock:
+            session = _neo_load(workflow_id)
+            return {'workflow_id': workflow_id, **session['state']}
+
+    @app.get('/api/neoantigen/readiness/{project_id}')
+    def neo_readiness(project_id: str) -> dict[str, Any]:
+        import csv
+        from splicegaip.data.loader import load_dataset
+        from splicegaip.neoantigen import (CDS_FIELD_LABELS, CDS_FIELDS, discover_cds_tables,
+                                           pick_cds_table)
+        from splicegaip.splicing.parsers.rmats import RMATS_EVENT_FILES
+        project = project_status(project_id, settings)
+        if not project:
+            raise HTTPException(status_code=404, detail='未找到项目，请先选择项目')
+        directory = _ingest_input_dir(str(project['project'].get('source_dir') or ''))
+        roots = [directory]
+        if directory.name == 'standardized':
+            roots.append(_ingest_input_dir(str(directory.parent)))
+        try:
+            dataset = load_dataset(directory)
+            event_ids = {event.event_id for event in dataset.events}
+            # Detection is header-based: any table carrying the four CDS columns
+            # works, whatever name the customer gave the file.
+            discovered = discover_cds_tables(*roots, include_partial=True, event_ids=event_ids)
+            candidates = [item for item in discovered if item['valid']]
+            partial = [item for item in discovered if not item['valid']]
+            chosen = pick_cds_table(candidates)
+            details = {}
+            for item in candidates:
+                stored = _load_cds_mappings(Path(item['path']).parent).get(item['name'], {})
+                mapping = stored.get('map') or item['mapping']
+                details[item['name']] = {
+                    'map': mapping,
+                    'source': 'saved' if stored else item['mapping_source'],
+                    'confidence': 'high' if stored else item['confidence'],
+                    'needs_confirmation': False if stored else item['needs_confirmation'],
+                    'header': item['header'],
+                    'preview': item['preview'],
+                    'row_count': item.get('row_count') or 0,
+                }
+            return {'project_name': project['project'].get('name') or project_id,
+                    'event_count': len(dataset.events),
+                    'cds_status': 'available' if candidates else 'missing',
+                    'cds_files': [item['name'] for item in candidates],
+                    'cds_selected': chosen.name if chosen else None,
+                    'cds_choices': [{'name': item['name'], 'columns': item['header']} for item in candidates],
+                    'cds_details': details,
+                    'cds_needs_confirmation': bool(chosen and details.get(chosen.name, {}).get('needs_confirmation')),
+                    'cds_partial': [{'name': item['name'], 'missing': item['missing'],
+                                     'reason': item['reason']} for item in partial[:5]],
+                    'field_labels': CDS_FIELD_LABELS,
+                    'required_fields': list(CDS_FIELDS),
+                    'rmats_files': [filename for root in roots for filename in RMATS_EVENT_FILES.values() if (root / filename).is_file()],
+                    'note': '仅检查表头与列内容，序列读码框和数据质量须在分析时进一步核实。'}
+        except (ValueError, OSError, UnicodeError, csv.Error) as error:
+            raise HTTPException(status_code=422, detail=f'无法读取项目数据：{error}') from error
+
+    @app.post('/api/neoantigen/mopepgen')
+    def neo_mopepgen(payload: dict[str, Any]) -> dict[str, Any]:
+        from splicegaip.mopepgen_docker import execute
+        project = project_status(str(payload.get('project_id') or ''), settings)
+        if not project:
+            raise HTTPException(status_code=404, detail='请先选择有效项目')
+        directory = _ingest_input_dir(str(project['project'].get('source_dir') or ''))
+        root = _ingest_input_dir(str(directory.parent)) if directory.name == 'standardized' else directory
+        def input_file(value: Any) -> Path:
+            path = (root / str(value or '')).resolve()
+            if root not in path.parents or not path.is_file():
+                raise HTTPException(status_code=422, detail='输入文件必须位于当前项目上传目录中')
+            return path
+        ref_source = payload.get('reference_source')
+        version = str(payload.get('reference_version') or '').strip()
+        if ref_source not in ('GENCODE', 'ENSEMBL') or not version:
+            raise HTTPException(status_code=422, detail='请选择参考来源并填写基因组及注释版本')
+        reference = {key: input_file(payload.get(key)) for key in ('genome', 'gtf', 'proteome')}
+        if any(path.suffix.lower() == '.gz' for path in reference.values()):
+            raise HTTPException(status_code=422, detail='请先解压参考文件，提供未压缩的 FASTA 和 GTF')
+        tables = {}
+        for key in ('se', 'a3ss', 'a5ss', 'mxe', 'ri'):
+            if payload.get(key):
+                tables[key] = input_file(payload[key])
+        if not tables:
+            from splicegaip.splicing.parsers.rmats import RMATS_EVENT_FILES
+            tables = {kind.lower(): path for kind, filename in RMATS_EVENT_FILES.items()
+                      for path in [root / filename] if path.is_file() and path.resolve().parent == root}
+        if not tables:
+            raise HTTPException(status_code=422, detail='当前项目未找到原始 rMATS JC 文件；请在高级选项指定文件')
+        output = directory / 'mopepgen_results' / secrets.token_hex(12)
+        args = ['--genome', str(reference['genome']), '--gtf', str(reference['gtf']),
+                '--proteome', str(reference['proteome']), '--reference-source', ref_source,
+                '--reference-version', version, '--output', str(output)]
+        for key, path in tables.items():
+            args.extend(['--' + key, str(path)])
+        try:
+            code = execute(args)
+            manifest = json.loads((output / 'manifest.json').read_text(encoding='utf-8'))
+        except (OSError, ValueError, SystemExit) as error:
+            raise HTTPException(status_code=422, detail=f'moPepGen 无法启动：{error}') from error
+        return {'output_dir': str(output), 'exit_code': code, 'manifest': manifest}
+
+    @app.get('/api/neoantigen/mopepgen/file')
+    def neo_mopepgen_file(output_dir: str, name: str) -> FileResponse:
+        directory = _ingest_input_dir(output_dir)
+        if directory.parent.name != 'mopepgen_results' or name not in {'manifest.json', 'events.gvf', 'variant_peptides.fasta', 'step_1.log', 'step_2.log'}:
+            raise HTTPException(status_code=400, detail='无效结果文件')
+        path = directory / name
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail='结果文件不存在')
+        return FileResponse(path, filename=name)
+
+    @app.post('/api/neoantigen/workflow/start')
+    def neo_workflow_start(payload: dict[str, Any]) -> dict[str, Any]:
+        from splicegaip.data.loader import load_dataset
+        from splicegaip.neoantigen_workflow import start
+        project = project_status(str(payload.get('project_id') or ''), settings)
+        if not project:
+            raise HTTPException(status_code=404, detail='请先选择有效项目')
+        directory = _ingest_input_dir(str(project['project'].get('source_dir') or ''))
+        evidence = payload.get('evidence') or {}
+        if not isinstance(evidence, dict):
+            raise HTTPException(status_code=422, detail='evidence 必须为对象')
+        try:
+            state = start(load_dataset(directory), evidence)
+        except (ValueError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        workflow_id = secrets.token_urlsafe(24)
+        with neo_workflows_lock:
+            _neo_save(workflow_id, {'directory': str(directory), 'state': state})
+        return {'workflow_id': workflow_id, **state}
+
+    @app.post('/api/neoantigen/workflow/advance')
+    def neo_workflow_advance(payload: dict[str, Any]) -> dict[str, Any]:
+        from splicegaip.data.loader import load_dataset
+        from splicegaip.neoantigen_workflow import advance
+        workflow_id = str(payload.get('workflow_id') or '')
+        params = payload.get('parameters') or {}
+        if not isinstance(params, dict):
+            raise HTTPException(status_code=422, detail='parameters 必须为对象')
+        with neo_workflows_lock:
+            session = _neo_load(workflow_id)
+            if payload.get('expected_stage') != session['state']['next_stage']:
+                raise HTTPException(status_code=409, detail='阶段已改变，请刷新状态')
+            try:
+                state = advance(session['state'], load_dataset(session['directory']), params)
+            except (ValueError, TypeError, OSError) as error:
+                raise HTTPException(status_code=422, detail=str(error)) from error
+            _neo_save(workflow_id, {**session, 'state': state})
+        return {'workflow_id': workflow_id, **state}
+
+    @app.post("/api/neoantigen/audit")
+    def neoantigen_audit(payload: dict[str, Any]) -> dict[str, Any]:
+        from splicegaip.data.loader import load_dataset
+        from splicegaip.neoantigen_audit import audit, filter_events
+
+        project_id = str(payload.get('project_id') or '').strip()
+        if project_id:
+            project = project_status(project_id, settings)
+            if not project:
+                raise HTTPException(status_code=404, detail='项目不存在')
+            directory = _ingest_input_dir(str(project['project'].get('source_dir') or ''))
+        else:
+            directory = _ingest_input_dir(str(payload.get('input_dir') or ''))
+        try:
+            dataset = load_dataset(directory)
+            if payload.get('stage', 0) == 0:
+                return audit(dataset, payload.get('evidence') or {})
+            if payload.get('stage') == 2:
+                if payload.get('audit_confirmed') is not True:
+                    raise ValueError('请先完成并确认阶段 0 数据审计')
+                return filter_events(dataset, min_support=payload.get('min_support'),
+                                     min_samples=payload.get('min_samples'),
+                                     support_is_junction_reads=payload.get('support_is_junction_reads', False))
+            raise ValueError('目前仅支持阶段 0 审计及阶段 2 事件级过滤')
+        except (ValueError, TypeError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    def _project_input_dirs(project_id: str) -> tuple[Path, list[Path]]:
+        project = project_status(project_id, settings)
+        if not project:
+            raise HTTPException(status_code=404, detail="项目不存在，请重新选择项目")
+        directory = _ingest_input_dir(str(project['project'].get('source_dir') or ''))
+        roots = [directory]
+        if directory.name == 'standardized':
+            roots.append(_ingest_input_dir(str(directory.parent)))
+        return directory, roots
+
+    def _resolve_cds_table(value: Any, roots: list[Path]) -> Path:
+        """Map a customer-supplied file name or path onto an existing CDS table."""
+        from splicegaip.neoantigen import inspect_cds_table
+
+        raw = str(value or "").strip()
+        if not raw:
+            raise HTTPException(status_code=422, detail="请先选择编码序列表文件")
+        requested = Path(raw).expanduser()
+        options = [requested] if requested.is_absolute() else [root / requested for root in roots]
+        allowed = [root.resolve() for root in roots]
+        for option in options:
+            try:
+                resolved = option.resolve()
+            except OSError:
+                continue
+            if not resolved.is_file():
+                continue
+            if not any(resolved.parent == root or root in resolved.parents for root in allowed):
+                raise HTTPException(status_code=422, detail="编码序列表必须位于当前项目的数据目录中，请先上传到项目")
+            info = inspect_cds_table(resolved)
+            if not info['valid']:
+                raise HTTPException(status_code=422, detail=f"{resolved.name} 不能作为编码序列表：{info['reason']}")
+            return resolved
+        raise HTTPException(status_code=404, detail=f"当前项目里没有找到文件「{raw}」，请重新选择或上传")
+
+    def _detect_cds_table(roots: list[Path]) -> Path:
+        from splicegaip.neoantigen import discover_cds_tables
+
+        candidates = discover_cds_tables(*roots)
+        if not candidates:
+            raise HTTPException(status_code=422, detail=(
+                "当前项目里还没找到编码序列表。需要一份包含 event_id、reference_cds、altered_cds、"
+                "junction_nt 四列的表（TSV/CSV/TXT，文件名不限），上传后即可生成候选肽。"))
+        return candidates[0]['path']
+
+    # Customer-confirmed column mappings live next to the table so a manual fix
+    # only has to be made once per project.
+    def _load_cds_mappings(directory: Path) -> dict[str, Any]:
+        path = Path(directory) / CDS_MAPPING_FILE
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            return {}
+        return data if isinstance(data, dict) else {}
+
+    def _save_cds_mapping(directory: Path, name: str, mapping: dict[str, str]) -> None:
+        data = _load_cds_mappings(directory)
+        data[name] = {'map': mapping}
+        (Path(directory) / CDS_MAPPING_FILE).write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+
+    def _mapping_for(table: Path, requested: Any, roots: list[Path]) -> dict[str, str] | None:
+        """Merge an explicit mapping from the request with one saved earlier."""
+        saved = _load_cds_mappings(Path(table).parent).get(Path(table).name, {}).get('map') or {}
+        supplied = requested if isinstance(requested, dict) else {}
+        merged = {str(key): str(value) for key, value in {**saved, **supplied}.items()
+                  if str(value or '').strip()}
+        return merged or None
+
+    @app.post("/api/neoantigen/column-map")
+    def neo_column_map(payload: dict[str, Any]) -> dict[str, Any]:
+        """Persist a human-confirmed column mapping for one CDS table."""
+        from splicegaip.neoantigen import CDS_FIELDS, read_table_rows
+
+        directory, roots = _project_input_dirs(str(payload.get("project_id") or "").strip())
+        table = _resolve_cds_table(payload.get("file"), roots)
+        mapping = payload.get("map") or {}
+        if not isinstance(mapping, dict):
+            raise HTTPException(status_code=400, detail="列映射格式应为 {字段: 列名}")
+        try:
+            header, body, _delimiter = read_table_rows(table, limit=5)
+        except OSError as error:
+            raise HTTPException(status_code=422, detail=f"无法读取 {table.name}：{error}") from error
+        cleaned: dict[str, str] = {}
+        for field in CDS_FIELDS:
+            value = str(mapping.get(field) or "").strip()
+            if not value:
+                raise HTTPException(status_code=422, detail=f"请为每个字段选择一列（缺少 {field}）")
+            if value not in header:
+                raise HTTPException(status_code=422, detail=f"表里没有列「{value}」")
+            cleaned[field] = value
+        if len(set(cleaned.values())) != len(cleaned):
+            raise HTTPException(status_code=422, detail="同一个列不能承担两个字段角色，请分别选择")
+        # Verify the mapping really produces peptides before we remember it.
+        from splicegaip.neoantigen import junction_peptides
+
+        produced = 0
+        for row in body:
+            cells = {field: (row[header.index(name)] if header.index(name) < len(row) else '').strip()
+                     for field, name in cleaned.items()}
+            try:
+                if junction_peptides(cells['reference_cds'], cells['altered_cds'],
+                                     int(cells['junction_nt'])):
+                    produced += 1
+            except (ValueError, TypeError):
+                continue
+        _save_cds_mapping(Path(table).parent, table.name, cleaned)
+        return {'saved': table.name, 'map': cleaned,
+                'verified_rows': produced,
+                'warning': None if produced else '这套映射没有为样本行生成任何肽，请核对参考与改变后序列是否填反。'}
+
+    @app.post("/api/neoantigen/cds-upload")
+    async def neo_cds_upload(project_id: Annotated[str, Form()], file: Annotated[UploadFile, File()]) -> dict[str, Any]:
+        """Store a CDS table chosen from the customer's disk into the project directory."""
+        from splicegaip.neoantigen import CDS_TABLE_MAX_BYTES, CDS_TABLE_SUFFIXES, discover_cds_tables, inspect_cds_table
+
+        directory, roots = _project_input_dirs(str(project_id or '').strip())
+        name = Path(file.filename or "").name
+        if not name:
+            raise HTTPException(status_code=400, detail="请选择一个文件")
+        if Path(name).suffix.lower() not in CDS_TABLE_SUFFIXES:
+            raise HTTPException(status_code=422, detail="编码序列表只支持 TSV、CSV 或 TXT 文本文件（Excel 请另存为 CSV）")
+        content = await file.read()
+        if not content:
+            raise HTTPException(status_code=422, detail=f"{name} 是空文件")
+        if len(content) > CDS_TABLE_MAX_BYTES:
+            raise HTTPException(status_code=413, detail=f"{name} 超过 {CDS_TABLE_MAX_BYTES // (1024 * 1024)} MB 上限")
+        target = directory / name
+        target.write_bytes(content)
+        info = inspect_cds_table(target)
+        if not info['valid']:
+            try:
+                target.unlink()
+            except OSError:
+                pass
+            raise HTTPException(status_code=422, detail=(
+                f"{name} 不能作为编码序列表：{info['reason']}。需要包含 event_id、reference_cds、"
+                "altered_cds、junction_nt 四列（列名可用常见别名，如事件ID / 参考序列 / 变异序列 / 连接点）。"))
+        discovered = discover_cds_tables(*roots)
+        return {'saved': name, 'cds_status': 'available',
+                'cds_files': [item['name'] for item in discovered],
+                'cds_selected': name, 'columns': info['header']}
+
+    @app.post("/api/neoantigen/run")
+    def neoantigen_run(payload: dict[str, Any]) -> dict[str, Any]:
+        """Generate auditable junction peptides; optionally query IEDB."""
+        from splicegaip.neoantigen import run
+
+        project_id = str(payload.get("project_id") or "").strip()
+        requested = payload.get("cds_table")
+        if project_id:
+            directory, roots = _project_input_dirs(project_id)
+        else:
+            directory = _ingest_input_dir(str(payload.get("input_dir", "")))
+            roots = [directory]
+        cds_table = _resolve_cds_table(requested, roots) if str(requested or "").strip() else _detect_cds_table(roots)
+        alleles = payload.get("alleles") or []
+        if not isinstance(alleles, list):
+            raise HTTPException(status_code=400, detail="alleles must be a list")
+        output = directory / "neoantigen_results"
+        from splicegaip.neoantigen import DEFAULT_MAX_PREDICTIONS
+
+        try:
+            max_predictions = int(payload.get("max_predictions") or DEFAULT_MAX_PREDICTIONS)
+        except (TypeError, ValueError):
+            max_predictions = DEFAULT_MAX_PREDICTIONS
+        try:
+            result = run(directory, cds_table, output, alleles=alleles,
+                         max_predictions=max_predictions,
+                         column_map=_mapping_for(cds_table, payload.get("column_map"), roots))
+        except (ValueError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        result['cds_table_name'] = cds_table.name
+        result['cds_table_auto_selected'] = not str(requested or "").strip()
+        return result
+
+    @app.get("/api/neoantigen/file")
+    def neoantigen_file(input_dir: str, name: str) -> FileResponse:
+        directory = _ingest_input_dir(input_dir)
+        if name not in {"splice_peptides.tsv", "mhc_i_predictions.tsv", "neoantigen_manifest.json"}:
+            raise HTTPException(status_code=400, detail="Unsupported result file")
+        path = directory / "neoantigen_results" / name
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Result file not found")
+        return FileResponse(path, filename=name)
+
+    @app.post("/api/neoantigen/reveal")
+    def neoantigen_reveal(payload: dict[str, Any]) -> dict[str, Any]:
+        """Open results folder in system file manager (desktop only)."""
+        directory = _ingest_input_dir(str(payload.get("input_dir", "")))
+        results = directory / "neoantigen_results"
+        if not results.is_dir():
+            raise HTTPException(status_code=404, detail="Result directory not found")
+        try:
+            if sys.platform == "win32":
+                os.startfile(str(results))  # type: ignore[attr-defined]
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", str(results)])
+            else:
+                subprocess.Popen(["xdg-open", str(results)])
+        except OSError as error:
+            raise HTTPException(status_code=500, detail=f"Cannot open results folder: {error}") from error
+        return {"ok": True, "path": str(results)}
+
+    # ------------------------------------------------------------------
+    # Peptide prediction (MHC-I/II binding, processing, ranking)
+    # ------------------------------------------------------------------
+
+    @app.get("/api/peptide/capabilities")
+    def peptide_capabilities() -> dict[str, Any]:
+        """Report which peptide predictors, models and reference tables exist."""
+        from splicegaip.peptide import capabilities
+
+        try:
+            return capabilities()
+        except (OSError, ValueError, RuntimeError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @app.get("/api/peptide/reference")
+    def peptide_reference(
+        mhc_class: int = 1, search: str = "", limit: int = 500
+    ) -> dict[str, Any]:
+        """Search the bundled IEDB-derived allele catalogue."""
+        from splicegaip.peptide import reference
+
+        if mhc_class not in (1, 2):
+            raise HTTPException(status_code=422, detail="mhc_class must be 1 or 2")
+        limit = max(1, min(int(limit), 5000))
+        try:
+            items = reference.load_alleles(mhc_class)
+            manifest = reference.manifest()
+        except (OSError, ValueError, RuntimeError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        needle = str(search or "").strip().lower()
+        if needle:
+            items = [item for item in items
+                     if needle in str(item.get("allele", "")).lower()]
+        return {"total": len(items), "items": items[:limit], "manifest": manifest}
+
+    @app.post("/api/peptide/predict")
+    def peptide_predict(payload: dict[str, Any]) -> dict[str, Any]:
+        """Predict MHC binding/processing for a small peptide list."""
+        from splicegaip.peptide import IedbError, predict_peptides
+        from splicegaip.peptide.sequences import normalize_peptide
+
+        raw_peptides = payload.get("peptides")
+        raw_alleles = payload.get("alleles")
+        if not isinstance(raw_peptides, list) or not raw_peptides:
+            raise HTTPException(status_code=422, detail="peptides must be a non-empty list")
+        if not isinstance(raw_alleles, list) or not raw_alleles:
+            raise HTTPException(status_code=422, detail="alleles must be a non-empty list")
+        if len(raw_peptides) > 2000:
+            raise HTTPException(status_code=422, detail="单次最多 2000 条肽；更多请分批提交")
+        if len(raw_alleles) > 8:
+            raise HTTPException(status_code=422, detail="at most 8 alleles per request")
+        peptides: list[str] = []
+        for value in raw_peptides:
+            try:
+                peptide = normalize_peptide(str(value))
+            except ValueError as error:
+                raise HTTPException(status_code=422, detail=str(error)) from error
+            if not 8 <= len(peptide) <= 30:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"peptide length must be 8-30 aa: {peptide}",
+                )
+            peptides.append(peptide)
+        alleles = [str(item).strip() for item in raw_alleles if str(item).strip()]
+        if not alleles:
+            raise HTTPException(status_code=422, detail="alleles must be a non-empty list")
+        mhc_class = str(payload.get("mhc_class") or "class1")
+        predictor = str(payload.get("predictor") or "iedb")
+        if mhc_class not in {"class1", "class2", "both"}:
+            raise HTTPException(status_code=422, detail="mhc_class must be class1, class2 or both")
+        if predictor not in {"iedb", "local", "auto", "none"}:
+            raise HTTPException(status_code=422, detail="predictor must be iedb, local, auto or none")
+        processing = bool(payload.get("processing", True))
+        lookup_epitopes = bool(payload.get("lookup_epitopes", False))
+
+        try:
+            if predictor == "none":
+                # Offline smoke test: no model is consulted and no network call is made.
+                result: dict[str, Any] = {"predictions": [], "errors": [],
+                                          "methods": {}}
+            else:
+                result = predict_peptides(
+                    peptides,
+                    alleles,
+                    mhc_class=mhc_class,
+                    predictor=predictor,
+                    processing=processing,
+                )
+        except (ValueError, OSError, IedbError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+        epitope_matches: list[dict[str, Any]] = []
+        if lookup_epitopes and predictor in {"iedb", "auto"} and result.get("predictions"):
+            try:
+                from splicegaip.peptide import IedbClient
+
+                found = IedbClient().lookup_epitopes(peptides[:10])
+                for peptide, hits in found.items():
+                    for hit in hits:
+                        epitope_matches.append({"candidate_peptide": peptide, **hit})
+            except IedbError as error:
+                result.setdefault("errors", []).append(
+                    {"stage": "epitope_lookup", "error": str(error)[:500]}
+                )
+
+        predictions = result.get("predictions") or []
+        return {
+            "candidate_count": len(peptides),
+            "prediction_count": len(predictions),
+            "predictions": predictions,
+            "errors": result.get("errors") or [],
+            "methods": result.get("methods") or {},
+            "epitope_matches": epitope_matches,
+        }
+
+    @app.post("/api/peptide/run")
+    def peptide_run(payload: dict[str, Any]) -> dict[str, Any]:
+        """Generate splice-derived candidates, predict, filter and rank peptides."""
+        from splicegaip.peptide import PeptideOptions, run as run_peptides
+
+        project_id = str(payload.get("project_id") or "").strip()
+        if project_id:
+            project = project_status(project_id, settings)
+            if not project:
+                raise HTTPException(status_code=404, detail="请先选择有效项目")
+            directory = _ingest_input_dir(str(project["project"].get("source_dir") or ""))
+            search_dirs = [directory]
+            if directory.name == "standardized":
+                search_dirs.append(_ingest_input_dir(str(directory.parent)))
+        else:
+            directory = _ingest_input_dir(str(payload.get("input_dir") or ""))
+            search_dirs = [directory]
+        roots = [path.resolve() for path in search_dirs]
+
+        def input_file(raw: Any, label: str) -> Path:
+            value = str(raw or "").strip()
+            if not value:
+                raise HTTPException(status_code=422, detail=f"{label} 不能为空")
+            candidate = Path(value).expanduser()
+            path = (candidate if candidate.is_absolute() else directory / candidate).resolve()
+            if not any(path == root or root in path.parents for root in roots):
+                raise HTTPException(status_code=400, detail="文件必须位于当前项目上传目录内")
+            if not path.is_file():
+                raise HTTPException(status_code=400, detail=f"{label} 文件不存在")
+            return path
+
+        cds_value = str(payload.get("cds_table") or "").strip()
+        peptides_value = str(payload.get("peptides_file") or "").strip()
+        if cds_value and peptides_value:
+            raise HTTPException(status_code=422, detail="cds_table 与 peptides_file 只能提供一个")
+        cds_path: Path | None = None
+        peptides_path: Path | None = None
+        if cds_value:
+            cds_path = input_file(cds_value, "cds_table")
+        elif peptides_value:
+            peptides_path = input_file(peptides_value, "peptides_file")
+        else:
+            if not project_id:
+                raise HTTPException(status_code=422, detail="需要提供 cds_table 或 peptides_file")
+            from splicegaip.neoantigen import discover_cds_tables
+
+            detected = discover_cds_tables(*roots)
+            if not detected:
+                raise HTTPException(
+                    status_code=422,
+                    detail=(
+                        "当前项目里还没找到编码序列表。需要一份包含 event_id、reference_cds、altered_cds、"
+                        "junction_nt 四列的表（TSV/CSV/TXT，文件名不限），上传后即可生成候选肽。"
+                    ),
+                )
+            cds_path = detected[0]["path"].resolve()
+
+        raw_fastas = payload.get("self_fastas") or []
+        if not isinstance(raw_fastas, list):
+            raise HTTPException(status_code=422, detail="self_fastas 必须为路径列表")
+        self_fastas = [str(input_file(item, "self_fastas")) for item in raw_fastas]
+        raw_alleles = payload.get("alleles") or []
+        if not isinstance(raw_alleles, list):
+            raise HTTPException(status_code=422, detail="alleles 必须为列表")
+        alleles = [str(item).strip() for item in raw_alleles if str(item).strip()]
+        mhc_class = str(payload.get("mhc_class") or "both")
+        predictor = str(payload.get("predictor") or "iedb")
+        if mhc_class not in {"class1", "class2", "both"}:
+            raise HTTPException(status_code=422, detail="mhc_class 必须为 class1、class2 或 both")
+        if predictor not in {"iedb", "local", "auto", "none"}:
+            raise HTTPException(status_code=422, detail="predictor 必须为 iedb、local、auto 或 none")
+        try:
+            class2_window = int(payload.get("class2_window") or 15)
+        except (TypeError, ValueError):
+            raise HTTPException(status_code=422, detail="class2_window 必须为整数") from None
+        options = PeptideOptions(
+            alleles=alleles,
+            mhc_class=mhc_class,
+            predictor=predictor,
+            processing=bool(payload.get("processing", True)),
+            self_fastas=self_fastas,
+            class2_window=class2_window,
+            lookup_epitopes=bool(payload.get("lookup_epitopes", False)),
+        )
+        try:
+            return run_peptides(
+                output_dir=directory / "peptide_results",
+                input_dir=directory if cds_path is not None else None,
+                cds_table=cds_path,
+                peptides=peptides_path,
+                options=options,
+            )
+        except (ValueError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @app.get("/api/peptide/file")
+    def peptide_file(input_dir: str, name: str) -> FileResponse:
+        """Download one whitelisted peptide result file."""
+        directory = _ingest_input_dir(input_dir)
+        allowed = {
+            "splice_peptides.tsv",
+            "mhc_predictions.tsv",
+            "ranked_candidates.tsv",
+            "epitope_matches.tsv",
+            "manifest.json",
+            "summary.md",
+        }
+        if name not in allowed:
+            raise HTTPException(status_code=400, detail="无效结果文件")
+        path = directory / "peptide_results" / name
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="结果文件不存在")
+        return FileResponse(path, filename=name)
+
     @app.post("/api/upload")
     async def upload(files: list[UploadFile] = File(...)) -> dict[str, Any]:
         """Upload analysis input files into a new staging directory."""
@@ -437,18 +1474,25 @@ def create_app() -> FastAPI:
             logger.info(f"Created staging directory: {staging}")
             
             uploaded_files = []
+            seen_names: set[str] = set()
             for idx, upload in enumerate(files):
                 if not upload.filename:
                     logger.warning(f"File {idx} has no filename, skipping")
                     continue
                     
-                destination = staging / Path(upload.filename).name
+                filename = Path(upload.filename).name
+                if filename.lower() in seen_names:
+                    raise HTTPException(status_code=422, detail=f"Duplicate uploaded filename: {filename}")
+                seen_names.add(filename.lower())
+                destination = staging / filename
                 logger.info(f"Saving file {idx+1}/{len(files)}: {upload.filename} ({upload.content_type}) -> {destination}")
                 
                 with destination.open("wb") as handle:
-                    content = await upload.read()
-                    handle.write(content)
-                    logger.info(f"Saved {len(content)} bytes to {destination}")
+                    size = 0
+                    while chunk := await upload.read(1024 * 1024):
+                        handle.write(chunk)
+                        size += len(chunk)
+                    logger.info(f"Saved {size} bytes to {destination}")
                 
                 uploaded_files.append(upload.filename)
             
@@ -492,10 +1536,21 @@ def create_app() -> FastAPI:
         payload = project_status(project_id, settings)
         if payload is None:
             raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
-        for artifact in payload["artifacts"]:
-            if artifact["kind"] == f"report:{format}" and Path(artifact["path"]).is_file():
-                return FileResponse(artifact["path"])
-        raise HTTPException(status_code=404, detail=f"No {format} report for project {project_id}")
+        extension = "pdf" if format.lower() == "pdf" else "html"
+        media = "application/pdf" if extension == "pdf" else "text/html"
+        # 1) the stored artifact, 2) the conventional location inside the
+        # project folder — the second one survives a runtime-root migration
+        # even when the database still carries an old absolute path.
+        candidates: list[Path] = [
+            Path(artifact["path"])
+            for artifact in payload["artifacts"]
+            if artifact["kind"] == f"report:{extension}"
+        ]
+        candidates.append(settings.paths.runtime_root / "projects" / project_id / f"report.{extension}")
+        for candidate in candidates:
+            if candidate.is_file():
+                return FileResponse(candidate, media_type=media)
+        raise HTTPException(status_code=404, detail=f"No {extension} report for project {project_id}")
 
     # ==================== MCP Integration Endpoints ====================
 

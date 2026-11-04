@@ -149,19 +149,18 @@ class AnalysisSettings:
 
 
 def default_runtime_root() -> Path:
-    """Platform-safe default for the runtime root.
+    """Platform-safe, *persistent* default for the runtime root.
 
-    Linux/macOS keep the historical ``/var/tmp/splicegaip`` (local disk, so
-    SQLite byte-range locking works even when the home directory is on NFS).
-    Windows has no ``/var/tmp`` — a POSIX-looking absolute path there silently
-    resolves to ``C:\\var\\tmp`` relative to the current drive, which is both
-    surprising and sometimes not creatable. Use the real temp dir instead.
+    Delegates to :func:`splicegaip.storage.default_runtime_root`, which keeps
+    analysis history in a per-user application directory
+    (``%LOCALAPPDATA%\\SpliceGAIP`` on Windows, ``~/.local/share/splicegaip``
+    elsewhere). It used to point at the system temp directory, which Windows
+    Storage Sense and Disk Cleanup wipe without asking — that is why old
+    projects used to disappear between sessions.
     """
-    if os.name == "nt":
-        import tempfile
+    from splicegaip.storage import default_runtime_root as _default
 
-        return Path(tempfile.gettempdir()) / "splicegaip"
-    return Path("/var/tmp/splicegaip")
+    return _default()
 
 
 @dataclass(frozen=True)

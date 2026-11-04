@@ -17,14 +17,6 @@ def sample_rmats_data():
 
 
 @pytest.fixture
-def sample_suppa_data():
-    """Sample SUPPA2 data for testing."""
-    return """seqname\tstart\tend\ttotal_counts\tpsi_sample1\tpsi_sample2
-chr1\t1000\t1100\t50\t0.8\t0.3
-chr1\t2000\t2100\t30\t0.6\t0.7"""
-
-
-@pytest.fixture
 def test_config_dict():
     """Test configuration dictionary."""
     return {

@@ -1,0 +1,7 @@
+event_id	gene_id	gene_symbol	event_type	chromosome	strand	genomic_coordinates	coordinate_system	source_tool	FDR	delta_psi	total_support_reads	valid_sample_count
+DEMO:SE:1	DEMO1	DEMO_GENE_1	SE	chr17	+	chr17:1001000-1001200	1-based-inclusive	synthetic_positive_control	0.01	0.35	120	6
+DEMO:SE:2	DEMO2	DEMO_GENE_2	SE	chr17	+	chr17:1002000-1002200	1-based-inclusive	synthetic_positive_control	0.01	0.35	120	6
+DEMO:SE:3	DEMO3	DEMO_GENE_3	SE	chr17	+	chr17:1003000-1003200	1-based-inclusive	synthetic_positive_control	0.01	0.35	120	6
+DEMO:SE:4	DEMO4	DEMO_GENE_4	SE	chr17	+	chr17:1004000-1004200	1-based-inclusive	synthetic_positive_control	0.01	0.35	120	6
+DEMO:SE:5	DEMO5	DEMO_GENE_5	SE	chr17	+	chr17:1005000-1005200	1-based-inclusive	synthetic_positive_control	0.01	0.35	120	6
+DEMO:SE:6	DEMO6	DEMO_GENE_6	SE	chr17	+	chr17:1006000-1006200	1-based-inclusive	synthetic_positive_control	0.01	0.35	120	6

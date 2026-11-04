@@ -1,8 +1,8 @@
 """Agentic ingestion for messy alternative-splicing tables.
 
-The strict loader only accepts rMATS / SUPPA2 / MAJIQ / LeafCutter or a
+SpliceGAIP takes rMATS input. The strict loader accepts rMATS JC tables or a
 fully standardized ``AS_event_master`` table. Real vendor exports rarely
-match any of those: headers are renamed, separators differ, PSI is written
+match either exactly: headers are renamed, separators differ, PSI is written
 as percentages, p-values carry ``<`` prefixes, sample groups live in a
 second file, and event types use long English labels.
 
@@ -30,11 +30,13 @@ a self-contained directory that the existing :func:`load_dataset` accepts.
 from __future__ import annotations
 
 import csv
+import gzip
 import hashlib
 import io
 import json
 import re
 import time
+from itertools import islice
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -64,7 +66,10 @@ VALUE_SCAN_ROWS = 20000
 MAX_COUNT_ROWS = 500000
 #: Values longer than this are truncated before being sent to a model.
 MAX_CELL_CHARS = 64
-SUPPORTED_SUFFIXES = {".csv", ".tsv", ".txt", ".tab"}
+SUPPORTED_SUFFIXES = {".csv", ".tsv", ".txt", ".tab", ".xls", ".xlsx", ".xlsm"}
+COMPRESSED_TABLE_SUFFIXES = tuple(f"{suffix}.gz" for suffix in (".csv", ".tsv", ".txt", ".tab", ".xls"))
+MAX_PROFILE_COUNT_BYTES = 25 * 1024 * 1024
+MAX_PROFILE_FILES = 256
 
 #: Standard fields the mapping UI exposes, with bilingual labels.
 MAPPING_FIELDS: tuple[tuple[str, str, str, bool], ...] = (
@@ -295,6 +300,7 @@ class FileProfile:
     supported: bool = True
     encoding: str = ""
     delimiter: str = ","
+    file_kind: str = "delimited"
     header_row: int = 0
     headers: list[str] = field(default_factory=list)
     sample_rows: list[list[str]] = field(default_factory=list)
@@ -333,18 +339,16 @@ class FileProfile:
 
     def iter_rows(self) -> Iterator[list[str]]:
         """Yield data rows after the detected header, aligned to its width."""
-        with self.path.open("r", encoding=self.encoding or "utf-8-sig", newline="") as handle:
-            reader = csv.reader(handle, delimiter=self.delimiter)
-            for index, row in enumerate(reader):
-                if index <= self.header_row:
-                    continue
-                if not any(str(cell).strip() for cell in row):
-                    continue
-                if len(row) < self.width:
-                    row = list(row) + [""] * (self.width - len(row))
-                elif len(row) > self.width:
-                    row = row[: self.width]
-                yield row
+        for index, row in enumerate(_raw_table_rows(self.path, self.file_kind, self.encoding, self.delimiter)):
+            if index <= self.header_row:
+                continue
+            if not any(str(cell).strip() for cell in row):
+                continue
+            if len(row) < self.width:
+                row = list(row) + [""] * (self.width - len(row))
+            elif len(row) > self.width:
+                row = row[: self.width]
+            yield row
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -352,6 +356,7 @@ class FileProfile:
             "supported": self.supported,
             "encoding": self.encoding,
             "delimiter": self.delimiter,
+            "file_kind": self.file_kind,
             "header_row": self.header_row,
             "headers": self.headers,
             "column_count": self.width,
@@ -380,12 +385,41 @@ def _decode_head(raw: bytes) -> tuple[str, str]:
 
 
 def _head_text(path: Path) -> tuple[bytes, str, str]:
-    with path.open("rb") as handle:
+    opener = gzip.open if path.name.lower().endswith(".gz") else Path.open
+    with opener(path, "rb") as handle:
         raw = handle.read(HEAD_BYTES)
     encoding, text = _decode_head(raw)
     if len(raw) >= HEAD_BYTES and "\n" in text:
         text = text.rsplit("\n", 1)[0]
     return raw, encoding, text
+
+
+def _raw_table_rows(path: Path, kind: str, encoding: str, delimiter: str) -> Iterator[list[str]]:
+    """Read a real spreadsheet or delimited text without trusting its suffix."""
+    if kind == "xlsx":
+        from openpyxl import load_workbook
+
+        with path.open("rb") as source:
+            workbook = load_workbook(source, read_only=True, data_only=True)
+            try:
+                for row in workbook.active.iter_rows(values_only=True):
+                    yield ["" if cell is None else str(cell) for cell in row]
+            finally:
+                workbook.close()
+    elif kind == "xls":
+        import xlrd
+
+        workbook = xlrd.open_workbook(str(path), on_demand=True)
+        try:
+            sheet = workbook.sheet_by_index(0)
+            for index in range(sheet.nrows):
+                yield ["" if cell is None else str(cell) for cell in sheet.row_values(index)]
+        finally:
+            workbook.release_resources()
+    else:
+        opener = gzip.open if path.name.lower().endswith(".gz") else Path.open
+        with opener(path, "rt", encoding=encoding or "utf-8-sig", newline="") as handle:
+            yield from csv.reader(handle, delimiter=delimiter)
 
 
 def _detect_delimiter(text: str, suffix: str) -> str:
@@ -481,10 +515,11 @@ def profile_file(path: Path, *, count_rows: bool = True) -> FileProfile:
         profile.supported = False
         profile.error = "not a file"
         return profile
-    if path.suffix.lower() not in SUPPORTED_SUFFIXES:
+    lowered_name = path.name.lower()
+    if path.suffix.lower() not in SUPPORTED_SUFFIXES and not lowered_name.endswith(COMPRESSED_TABLE_SUFFIXES):
         profile.supported = False
         profile.notes.append(
-            f"unsupported extension {path.suffix or '(none)'}; only CSV/TSV/TXT are profiled"
+            f"unsupported extension {path.suffix or '(none)'}"
         )
         return profile
     try:
@@ -492,15 +527,25 @@ def profile_file(path: Path, *, count_rows: bool = True) -> FileProfile:
             profile.supported = False
             profile.error = "empty file"
             return profile
-        raw, encoding, text = _head_text(path)
-        profile.encoding = encoding
-        profile.delimiter = _detect_delimiter(text, path.suffix.lower())
-        try:
-            rows = list(csv.reader(io.StringIO(text), delimiter=profile.delimiter))
-        except csv.Error as error:
+        with path.open("rb") as handle:
+            signature = handle.read(8)
+        if signature.startswith(b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"):
+            profile.file_kind = "xls"
+        elif signature.startswith(b"PK\x03\x04") and path.suffix.lower() in {".xls", ".xlsx", ".xlsm"}:
+            profile.file_kind = "xlsx"
+        elif path.suffix.lower() in {".xlsx", ".xlsm"}:
             profile.supported = False
-            profile.error = f"cannot parse table: {error}"
+            profile.error = "Excel extension does not contain a valid XLSX workbook"
             return profile
+        if profile.file_kind == "delimited":
+            raw, encoding, text = _head_text(path)
+            profile.encoding = encoding
+            profile.delimiter = _detect_delimiter(text, ".tsv" if path.suffix.lower() == ".xls" else path.suffix.lower())
+            rows = list(csv.reader(io.StringIO(text), delimiter=profile.delimiter))
+            if path.suffix.lower() == ".xls":
+                profile.notes.append(".xls filename contains delimited text, not a binary workbook")
+        else:
+            rows = list(islice(_raw_table_rows(path, profile.file_kind, "", ""), HEADER_SCAN_ROWS + SAMPLE_ROWS + 4))
         if not rows:
             profile.supported = False
             profile.error = "no rows"
@@ -523,10 +568,13 @@ def profile_file(path: Path, *, count_rows: bool = True) -> FileProfile:
                 break
         if not profile.sample_rows and profile.width:
             profile.notes.append("no data rows found below the header")
-        if count_rows:
+        if count_rows and path.stat().st_size <= MAX_PROFILE_COUNT_BYTES:
             profile.row_count, profile.truncated = _count_rows(path, profile)
+        elif count_rows:
+            profile.truncated = True
+            profile.notes.append("row count skipped for large file; preview uses headers and sample rows")
         return profile
-    except OSError as error:
+    except Exception as error:  # malformed vendor workbooks must not crash the preview
         profile.supported = False
         profile.error = f"cannot read file: {error}"
         return profile
@@ -535,28 +583,34 @@ def profile_file(path: Path, *, count_rows: bool = True) -> FileProfile:
 def _count_rows(path: Path, profile: FileProfile) -> tuple[int, bool]:
     count = 0
     try:
-        with path.open("r", encoding=profile.encoding, newline="") as handle:
-            for index, row in enumerate(csv.reader(handle, delimiter=profile.delimiter)):
-                if index <= profile.header_row:
-                    continue
-                if not any(str(cell).strip() for cell in row):
-                    continue
-                count += 1
-                if count >= MAX_COUNT_ROWS:
-                    return count, True
-    except (OSError, UnicodeError, csv.Error):
+        for index, row in enumerate(_raw_table_rows(path, profile.file_kind, profile.encoding, profile.delimiter)):
+            if index <= profile.header_row or not any(str(cell).strip() for cell in row):
+                continue
+            count += 1
+            if count >= MAX_COUNT_ROWS:
+                return count, True
+    except (OSError, UnicodeError, csv.Error, ValueError):
         return count, False
     return count, False
 
 
 def _profile_directory(directory: Path) -> list[FileProfile]:
     profiles: list[FileProfile] = []
-    for path in sorted(directory.iterdir()):
+    candidates = [path for path in directory.rglob("*")
+                  if path.is_file() and not path.name.startswith(".")
+                  and (path.suffix.lower() in SUPPORTED_SUFFIXES or path.name.lower().endswith(COMPRESSED_TABLE_SUFFIXES))]
+    candidates.sort(key=lambda path: (
+        0 if any(token in path.name.lower() for token in ("event", "mats", "psi", "splice", "metadata")) else 1,
+        len(path.relative_to(directory).parts), str(path).lower(),
+    ))
+    for path in candidates[:MAX_PROFILE_FILES]:
         if not path.is_file() or path.name.startswith("."):
             continue
         if path.suffix.lower() in {".json", ".png", ".pdf", ".log"}:
             continue
-        profiles.append(profile_file(path))
+        profile = profile_file(path)
+        profile.name = str(path.relative_to(directory)).replace("\\", "/")
+        profiles.append(profile)
     return profiles
 
 
@@ -732,6 +786,8 @@ class _Candidate:
 def _candidate_for(profile: FileProfile) -> _Candidate | None:
     if not profile.supported or not profile.headers:
         return None
+    if _is_expression_quantification(profile) or _is_transcript_quantification(profile):
+        return None
     # Group means must match an exact synonym: PSI_control_1 is one sample, not
     # the control-group mean, even though it starts with "PSI_control".
     columns = _map_columns(
@@ -770,6 +826,24 @@ def _candidate_for(profile: FileProfile) -> _Candidate | None:
     if any(token in lowered for token in ("event", "psi", "mats", "splice", "as_")):
         score += 0.4
     return _Candidate(profile=profile, columns=columns, sample_columns=sample_columns, score=score)
+
+
+def _is_transcript_quantification(profile: FileProfile) -> bool:
+    """Recognize long-read transcript abundance without calling it event PSI."""
+    headers = {_norm(header) for header in profile.headers}
+    name = profile.name.lower()
+    bambu = {"txname", "geneid"} <= headers and profile.width > 4
+    named_counts = ("transcript" in name or "isoform" in name) and any(
+        token in name for token in ("count", "cpm", "tpm", "abundance")
+    )
+    return profile.supported and (bambu or named_counts)
+
+
+def _is_expression_quantification(profile: FileProfile) -> bool:
+    """Expression abundance columns are not event-level inclusion ratios."""
+    headers = [header.lower() for header in profile.headers]
+    abundance = sum(header.startswith(("fpkm_", "tpm_", "read_count_", "norm_read_count_", "counts_")) for header in headers)
+    return profile.supported and abundance >= 2 and not any(header.startswith("psi_") for header in headers)
 
 
 def _heuristic_mapping(profiles: Sequence[FileProfile]) -> tuple[dict[str, Any], FileProfile | None, _Candidate | None]:
@@ -821,7 +895,9 @@ def _heuristic_mapping(profiles: Sequence[FileProfile]) -> tuple[dict[str, Any],
 _INGEST_SYSTEM = """You are the data-ingestion agent of SpliceGAIP, an alternative-splicing analysis platform.
 Your job is to map a messy tabular export onto a fixed event schema. You may only use the file names and
 column headers that are supplied; never invent them. Return a single JSON object and nothing else.
-If a field cannot be mapped, omit it or use null. Prefer the heuristic guess when it is already correct."""
+If a field cannot be mapped, omit it or use null. Prefer the heuristic guess when it is already correct.
+Transcript counts/CPM/TPM are not event PSI. Never map abundance columns to per-sample PSI, and never
+invent event types, p-values, FDR, biological groups, or genomic coordinates."""
 
 
 def _mapping_prompt(profiles: Sequence[FileProfile], heuristic: Mapping[str, Any]) -> str:
@@ -878,6 +954,7 @@ def _mapping_prompt(profiles: Sequence[FileProfile], heuristic: Mapping[str, Any
         },
         "rules": [
             "Use exact header strings from the file; do not translate or rename headers.",
+            "A transcript or gene abundance matrix is not an event table; leave event_file empty in that case.",
             "Choose event_file from the supplied file names; metadata_file is optional.",
             "Per-sample PSI columns are those that hold one PSI value per sample; return them in sample_columns as {header: sample_id}.",
             "Assign each listed sample ID to a biological group in sample_groups as {sample_id: group_label}. Use only the supplied sample IDs. Infer labels from sample names and metadata; leave uncertain samples empty for human review.",
@@ -1429,34 +1506,32 @@ def _convert(
             )
         )
 
-    # FDR fallback: only with an explicit, visible warning.
+    # Raw p-values are not FDR. Apply BH only when this table has no FDR
+    # column; a mixed table may represent an unknown, larger testing universe.
     fdr_mode = str(mapping.get("fdr_from_p") or "auto")
     if fdr_mode != "never":
         missing_fdr = [event for event in conversion.events if event.fdr is None]
-        usable_p = [event for event in missing_fdr if event.p_value is not None]
-        if missing_fdr and len(usable_p) == len(missing_fdr):
-            for event in missing_fdr:
-                event.fdr = event.p_value
-            if "FDR" in columns:
-                zh = f"{len(missing_fdr)} 个事件缺少 FDR/q 值，已用原始 p 值填充；结果可能偏宽松。"
-                en = (
-                    f"{len(missing_fdr)} events had no FDR/q value and were filled with raw p-values. "
-                    "This is anti-conservative."
-                )
-            else:
-                zh = "输入没有 FDR/q 值，已将原始 p 值作为 FDR 使用；结果可能偏宽松，建议补充校正后的 q 值。"
-                en = (
-                    "No FDR/q column was available; raw p-values were used as FDR. "
-                    "This is anti-conservative — supply adjusted q-values when possible."
-                )
-            issues.append(_issue("warning", "fdr_from_p", zh, en))
+        usable_p = [event for event in conversion.events if event.p_value is not None]
+        if missing_fdr and "FDR" not in columns and len(usable_p) == len(conversion.events):
+            ordered = sorted(usable_p, key=lambda event: event.p_value, reverse=True)
+            minimum = 1.0
+            total = len(ordered)
+            for rank_from_end, event in enumerate(ordered):
+                rank = total - rank_from_end
+                minimum = min(minimum, event.p_value * total / rank)
+                event.fdr = minimum
+            issues.append(_issue(
+                "info", "fdr_from_p",
+                "输入没有 FDR/q 值，已按当前表中全部事件的 p 值计算 BH 校正；若原分析检验了更多事件，请使用原始 FDR。",
+                "No FDR/q column was available. BH correction was computed over all events in this table; use original FDR if the source tested more events.",
+            ))
         elif missing_fdr:
             issues.append(
                 _issue(
                     "warning",
                     "missing_fdr",
-                    f"{len(missing_fdr)} 个事件缺少 FDR，且没有可用的 p 值可替代；显著性筛选会跳过这些事件。",
-                    f"{len(missing_fdr)} events have no FDR and no p-value fallback; significance filtering will skip them.",
+                    f"{len(missing_fdr)} 个事件缺少 FDR；无法确认完整检验范围，显著性筛选会跳过这些事件。",
+                    f"{len(missing_fdr)} events lack FDR; the full testing universe is unknown, so significance filtering will skip them.",
                 )
             )
 
@@ -1804,6 +1879,22 @@ def preview_ingestion(
         native["elapsed_ms"] = int((time.perf_counter() - started) * 1000)
         return native
 
+    from splicegaip.data.bgi_report import preview as preview_bgi
+    bgi_enhancer = enhancer
+    if use_llm and bgi_enhancer is None:
+        try:
+            from splicegaip.llm.enrich import LLMEnhancer
+            if settings is None:
+                from splicegaip.config import load_settings
+                settings = load_settings()
+            bgi_enhancer = LLMEnhancer(settings, features=("ingest",))
+        except Exception:  # the deterministic adapter remains available
+            pass
+    bgi = preview_bgi(directory, enhancer=bgi_enhancer if use_llm else None)
+    if bgi is not None:
+        bgi["elapsed_ms"] = int((time.perf_counter() - started) * 1000)
+        return bgi
+
     step(
         "profile",
         "running",
@@ -1828,8 +1919,8 @@ def preview_ingestion(
                 _issue(
                     "error",
                     "no_tables",
-                    "没有找到可解析的 CSV/TSV/TXT 表格。请上传文本表格（Excel 请先另存为 CSV）。",
-                    "No parseable CSV/TSV/TXT table was found. Export spreadsheets as CSV first.",
+                    "没有找到可解析的表格。支持 CSV/TSV/TXT/TAB、文本或二进制 XLS、XLSX/XLSM 以及表格文本的 .gz 压缩包。",
+                    "No parseable table found. Supported: CSV/TSV/TXT/TAB, text or binary XLS, XLSX/XLSM, and compressed delimited tables (.gz).",
                 )
             ],
             "agent_trace": trace,
@@ -1864,7 +1955,60 @@ def preview_ingestion(
     llm_errors: list[dict[str, str]] = []
     llm_notes: list[str] = []
     mapping = heuristic
-    if candidate is not None and use_llm:
+    # Synonyms cannot cover every vendor dialect. Give the model a chance to
+    # propose a real-column mapping before declaring an unfamiliar event table
+    # unmappable. Transcript abundance is handled separately below.
+    if candidate is None and use_llm and not any(
+        _is_transcript_quantification(profile) or _is_expression_quantification(profile)
+        for profile in supported
+    ):
+        llm_attempted = True
+        try:
+            if enhancer is None:
+                from splicegaip.llm.enrich import LLMEnhancer
+                if settings is None:
+                    from splicegaip.config import load_settings
+                    settings = load_settings()
+                enhancer = LLMEnhancer(settings, features=("ingest",))
+            if getattr(enhancer, "has", lambda _feature: False)("ingest"):
+                proposal = enhancer.json(
+                    system=_INGEST_SYSTEM,
+                    user=_mapping_prompt(supported, {}),
+                    feature="ingest", max_tokens=1600, temperature=0.0, timeout=60,
+                )
+                mapping, llm_notes, accepted = _sanitize_mapping(
+                    proposal, supported, {}, metadata_profile
+                )
+                chosen = next(
+                    (profile for profile in supported if profile.name == mapping.get("event_file")),
+                    None,
+                )
+                mapped = mapping.get("columns") or {}
+                if chosen and accepted and ({"gene_symbol", "gene_id"} & set(mapped)) and (
+                    "delta_PSI" in mapped
+                    or {"mean_PSI_group1", "mean_PSI_group2"} <= set(mapped)
+                    or bool(mapping.get("sample_columns"))
+                    or "FDR" in mapped or "p_value" in mapped
+                ):
+                    candidate = _Candidate(chosen, dict(mapped), dict(mapping.get("sample_columns") or {}), 0.0)
+                    mapping.update({
+                        "delimiter": chosen.delimiter,
+                        "encoding": chosen.encoding,
+                        "header_row": chosen.header_row,
+                        "source_tool": chosen.path.stem,
+                        "coordinate_system": "unknown",
+                        "delta_direction": mapping.get("delta_direction", "group2-group1"),
+                        "fdr_from_p": mapping.get("fdr_from_p", "auto"),
+                    })
+                    llm_used = True
+                    step("llm", "ok", "模型映射已通过真实列名校验。", "Model mapping passed actual-header validation.")
+                else:
+                    mapping = {}
+                    step("llm", "warn", "模型未找到可验证的事件映射。", "No verifiable event mapping was found.")
+        except Exception as error:  # noqa: BLE001 - ingestion can still explain the format
+            llm_errors = [{"feature": "ingest", "error": _scrub(str(error))}]
+            mapping = {}
+    if candidate is not None and use_llm and not llm_used:
         llm_attempted = True
         try:
             if enhancer is None:
@@ -1938,6 +2082,46 @@ def preview_ingestion(
             )
 
     if candidate is None:
+        expression_profiles = [profile for profile in supported if _is_expression_quantification(profile)]
+        if expression_profiles:
+            selected = max(expression_profiles, key=lambda profile: profile.width)
+            sample_ids = {header.split("_", 1)[1] for header in selected.headers if header.lower().startswith(("fpkm_", "tpm_"))}
+            return {
+                "status": "unmappable", "native": False, "detected_format": "expression_quantification",
+                "files": [profile.to_dict() for profile in profiles],
+                "issues": [_issue("error", "expression_not_splicing_events",
+                    f"已读取表达量矩阵 {selected.name}（{len(sample_ids)} 个样本）。FPKM/TPM/read_count 不是剪接事件 PSI；请上传 SE/MXE/A3SS/A5SS/RI 事件表或标准 AS_event_master.tsv。",
+                    f"Expression matrix {selected.name} was read ({len(sample_ids)} samples). Abundance is not event PSI; provide event tables or AS_event_master.tsv.")],
+                "agent_trace": trace, "mapping": {},
+                "preview": {"valid_events": 0, "sample_count": len(sample_ids), "fdr_coverage": 0, "delta_coverage": 0},
+                "confidence": {"score": 1.0, "level": "high", "reasons": ["expression columns"]},
+                "llm": {"attempted": False, "used": False, "errors": []},
+                "privacy": "表达量表由本地规则识别，未发送给大模型。",
+                "privacy_en": "The abundance matrix was recognized locally and not sent to the model.",
+            }
+        transcript_profiles = [profile for profile in supported if _is_transcript_quantification(profile)]
+        if transcript_profiles:
+            names = ", ".join(profile.name for profile in transcript_profiles[:3])
+            issue = _issue(
+                "error",
+                "transcript_quantification_not_events",
+                f"识别到长读长转录本定量表（{names}）。其中的计数/CPM 不是剪接事件 PSI；"
+                "需要事件识别与逐样本事件使用比例，不能靠大模型改列名生成事件或 FDR。",
+                f"Detected transcript quantification ({names}). Counts/CPM are not event PSI; "
+                "event calling and per-sample event usage are required. A model cannot create events or FDR by renaming columns.",
+            )
+            return {
+                "status": "unmappable",
+                "native": False,
+                "detected_format": "transcript_quantification",
+                "files": [profile.to_dict() for profile in profiles],
+                "issues": [issue],
+                "agent_trace": trace,
+                "mapping": {},
+                "preview": {},
+                "confidence": {"score": 0.0, "level": "low", "reasons": []},
+                "llm": {"attempted": llm_attempted, "used": False, "errors": llm_errors},
+            }
         result = {
             "status": "unmappable",
             "native": False,
@@ -2155,6 +2339,9 @@ def apply_ingestion(
     directory = Path(input_dir)
     if not directory.is_dir():
         raise FileNotFoundError(f"Input directory not found: {directory}")
+    if mapping.get("adapter") == "bgi_single_sample":
+        from splicegaip.data.bgi_report import apply as apply_bgi
+        return apply_bgi(directory, mapping, Path(output_dir) if output_dir else None)
     profiles = _profile_directory(directory)
     supported = [profile for profile in profiles if profile.supported and profile.headers]
     if not supported:

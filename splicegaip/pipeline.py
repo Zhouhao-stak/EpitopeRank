@@ -429,49 +429,47 @@ def resume_analysis(
 
 
 def project_status(project_id: str, settings: Settings | None = None) -> dict[str, Any] | None:
-    """Load a persisted project's status from the analysis memory."""
+    """Load a persisted project's status from the analysis memory.
+
+    Counts are computed in SQL: a real rMATS project holds 1-2 million events,
+    so materialising them just to count would make the history view unusable.
+    """
     if settings is None:
         settings, _ = load_prepared_settings()
     memory = ProjectMemory(settings.paths.memory_db)
     project = memory.get_project(project_id)
     if project is None:
         return None
-    events = memory.load_events(project_id)
-    candidates = memory.load_candidates(project_id)
     gates = settings.analysis
-
-    def _is_significant(event: Any) -> bool:
-        if isinstance(event, dict):
-            if event.get("significant") is not None:
-                return bool(event["significant"])
-            fdr, delta = event.get("fdr"), event.get("delta_psi")
-        else:
-            fdr, delta = event.fdr, event.delta_psi
-        return (
-            fdr is not None
-            and delta is not None
-            and fdr < gates.fdr_threshold
-            and abs(delta) > gates.delta_psi_threshold
+    total_events = memory.count_events(project_id)
+    significant = memory.count_events(project_id, significant_only=True)
+    if significant == 0 and total_events:
+        # Projects written before the ``significant`` column was populated.
+        significant = memory.count_events(
+            project_id,
+            fdr_max=gates.fdr_threshold,
+            min_abs_delta=gates.delta_psi_threshold,
         )
-
-    significant = sum(1 for event in events if _is_significant(event))
+    candidates = memory.load_candidates(project_id)
     return {
         "project": project,
         "samples": memory.load_samples(project_id) if hasattr(memory, "load_samples") else [],
-        "events": len(events),
+        "events": total_events,
         "significant": significant,
+        "event_types": memory.event_type_counts(project_id),
         "candidates": candidates[:10],
         "candidates_total": len(candidates),
         "enrichment": memory.load_enrichment(project_id)[:10],
         "artifacts": memory.load_artifacts(project_id),
         "plan": memory.load_plan(project_id),
         "logs": memory.load_logs(project_id),
+        "interpretations": memory.load_interpretations(project_id),
     }
 
 
 def list_projects(settings: Settings | None = None) -> list[dict[str, Any]]:
-    """List known projects (most recent first)."""
+    """List known projects (most recent first) with per-project counters."""
     if settings is None:
         settings, _ = load_prepared_settings()
     memory = ProjectMemory(settings.paths.memory_db)
-    return memory.list_projects()
+    return memory.list_projects_with_stats()

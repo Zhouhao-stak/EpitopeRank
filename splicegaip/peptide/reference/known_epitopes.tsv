@@ -1,0 +1,1079 @@
+peptide	length	mhc_class	mhc_restriction	qualitative_measure	assay	source_organism	pubmed_id	source
+YLEKESIYY	9	I	HLA-A*01:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human respiratory syncytial virus A2 (Human respiratory syncytial virus (strain A2))	16301748	IEDB query API
+CTELKLSDY	9	I	HLA-A*01:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Influenza A virus (A/Texas/1/1977(H3N2)) (Influenza A virus (A/Texas/1/77 (H3N2)))	16301748	IEDB query API
+ITDFNIDTY	9	I	HLA-A*01:01	Positive	ELISA IFNg release <strong>Positive</strong>	Vaccinia virus NYCBH - Dryvax	16301664	IEDB query API
+ATDALMTGY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	hepatitis C virus genotype 1a (Hepatitis C virus subtype 1a)	15939790	IEDB query API
+ATDALMTGF	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	15939790	IEDB query API
+VTMMKYCSY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ASTTENAAY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TISSESLVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ISKIYTLIY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FISDNKKEY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VTFRERYSY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QTLISLNSMY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MLSNGYSEY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SSNIMSESY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PFDIKKLLY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IASIKGKSY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ITNILTSEY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ISFDVSEKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VSEKYTDMY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MMVLLHAVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KTGLTNNNY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YREHTTLYY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LISTILKRY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FTDWANKQY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MADTDDIIDY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TSDIDPKSSY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HISALKRRY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YESDDLTEY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YTNVPEGTY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QGDYKVEEY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EYDDHINLY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DMCDIYLLY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FGDSKEPVPY	10	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FLSMLNLTKY	10	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LSMLNLTKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GTHVLLPFY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KSPLPSLEY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PSLEYGANY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FLEFSNRVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FSNRVYEALY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MSSFVTNGY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TVSFSDSKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+INDFNIFSY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IYEAVIHLY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YIEHPLIPY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HISSILLLMY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ISSILLLMY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YAAFLWLFY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FIANNDCRY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FIANNDCRYY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TSFTNDILY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DSTITFMKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YMEYCLVIY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NRSMTTIHY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SQSDTVFDY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QSDTVFDYY	9	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MSHLKVALY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VTDTNKFDNY	10	I	HLA-A*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AVDSQIPTLY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VDSQIPTLY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TIALKHSGY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ETFNKEFVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VPELSFIGY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HAATSLSVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLSVYTKPY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NTDNKFISY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VSDGPPTGY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GTRKNSFIY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TMDVNHPIYY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TMDVNHPIY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+STAEQLSKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TLATANKIY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MVSTENNLQY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VSTENNLQY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MLSTKSIDLY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LSTKSIDLY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TTFIDVNEEY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FMTNFSMVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FSMVYRTKVY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GTSRSPPSY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KTLDISSFY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QMAGVEVRY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+WISDNTHIY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VMNFIPIIY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VPDADPPIPY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YSRVNHAKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GTSNWTGNY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FMRDWNSKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NSKYSYELY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ASRLKFNLY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LLAGIPLAY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FMCNNIVDY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ASNNVDHDY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DKSTNILDY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MSKQRLDDLY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YCDKVSNDY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ASTKSFTVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ICDDYFVDY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ITAIMFATY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MFATYKTLKY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RYDAKAYLY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FSSPISVPDY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IMKSGDLKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KSGDLKYTY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SIDSSVDRY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EVASLRKEY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LMDEEVPAY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RTAIGIADY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TLESEIAKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MSMGDIITY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GMYCRCSHGY	10	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ITCCLLSVY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ISYDDLITY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ITYFPDRKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FPDRKYHKY	9	I	HLA-A*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KLEDLERDL	9	I	HLA-A*02:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Hepatitis delta virus TW2667	15448372	IEDB query API
+DLMGYIPLV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	hepatitis C virus genotype 1a (Hepatitis C virus subtype 1a)	15519708	IEDB query API
+ATLGFGAYM	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus (isolate Japanese)	15368525	IEDB query API
+GLIEKNIEL	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+FLFDGSPTYVL	11	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+LIYDSSLCDL	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	15538043	IEDB query API
+FVFLRNFSL	9	I	HLA-A*02:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Homo sapiens (human)	15305339	IEDB query API
+ALENKRKQL	9	I	HLA-A*02:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Hepatitis delta virus TW2667	15448372	IEDB query API
+QLAAGGKHL	9	I	HLA-A*02:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Hepatitis delta virus TW2667	15448372	IEDB query API
+RTAGPSVGGV	10	I	HLA-A*02:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Hepatitis delta virus TW2667	15448372	IEDB query API
+GGFVPNMLSV	10	I	HLA-A*02:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Hepatitis delta virus TW2667	15448372	IEDB query API
+FLFLRNFSL	9	I	HLA-A*02:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>		15305339	IEDB query API
+FPPSPLFFFL	10	I	HLA-A*02:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Homo sapiens (human)	15305339	IEDB query API
+FLPSPLFFFL	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15305339	IEDB query API
+YLSGANLNL	9	I	HLA-A*02:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	15102666	IEDB query API
+LMLGEFLKL	9	I	HLA-A*02:01	Positive	ELISPOT IFNg release <strong>Positive</strong>		15603888	IEDB query API
+YLLKPVQRI	9	I	HLA-A*02:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	15683221	IEDB query API
+AMLDLLKSV	9	I	HLA-A*02:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	15683221	IEDB query API
+MIMQGGFSV	9	I	HLA-A*02:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	15683221	IEDB query API
+FLPSDFFPSV	10	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	15480991	IEDB query API
+FLPPDFFPSV	10	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	15480991	IEDB query API
+FLPSDFLPSV	10	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	15480991	IEDB query API
+FLPSDFFPGV	10	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	15480991	IEDB query API
+FLPADFFPSV	10	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	15480991	IEDB query API
+FLPSDTNMGL	10	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	15480991	IEDB query API
+AIISGDSPV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	15501984	IEDB query API
+YIGSGDSPV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YIIIGDSPV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YIILGDSPV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YIISGISPV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YIISGDLPV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YIISGDSWV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YIISGDSPL	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YLISGDSPV	9	I	HLA-A*02:01	Negative	3H-thymidine proliferation <strong>Negative</strong>		15501984	IEDB query API
+YLISGDSPV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		15501984	IEDB query API
+YVLDHLIVV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+GLCTLVAML	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+TLDYKPLSV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+FLDKGTYTL	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+GLLGTLVQL	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+SLWGQPAEA	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+SLSEKTVLL	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+SLFPGKLEV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+GLYPGLIWL	9	I	HLA-A*02:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Homo sapiens (human)	11782012	IEDB query API
+TLWVDPYEV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+ALSDHHIYL	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	11782012	IEDB query API
+DMWEHAFYL	9	I	HLA-A*02:01	Positive	in vitro assay cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+GLSPTVWLSV	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	15468058	IEDB query API
+DMWEHAFYLQ	10	I	HLA-A*02:01	Positive	in vitro assay cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+VLMGGVPGVE	10	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+GLSTHEGALL	10	I	HLA-A*02:01	Negative	in vitro assay cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+LLSERVATDL	10	I	HLA-A*02:01	Negative	in vitro assay cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+GLLHHAPSL	9	I	HLA-A*02:01	Positive	ICS IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+LLAFTNPTV	9	I	HLA-A*02:01	Negative	in vitro assay cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+QLSDVIDRL	9	I	HLA-A*02:01	Negative	in vitro assay cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	15039371	IEDB query API
+YMLDLQPETT	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human papillomavirus 16 (Human papilloma virus type 16)	15609329	IEDB query API
+LLFGYPVYV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human T-cell leukemia virus type I (Human T cell leukemia virus type 1)	15483462	IEDB query API
+TIHDIILECV	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human papillomavirus 16 (Human papilloma virus type 16)	15609329	IEDB query API
+RLNEVAKNL	9	I	HLA-A*02:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	SARS coronavirus BJ01	15016646	IEDB query API
+SLLMWITQV	9	I	HLA-A*02:01	Positive	ELISA IFNg release <strong>Positive</strong>		15534491	IEDB query API
+GLIDIAPHQI	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis H37Ra (Mycobacterium tuberculosis str. H37Ra)	12010981	IEDB query API
+GLIDIAPHQISS	12	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis H37Ra (Mycobacterium tuberculosis str. H37Ra)	12010981	IEDB query API
+GLIDIAPHQISSV	13	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis H37Ra (Mycobacterium tuberculosis str. H37Ra)	12010981	IEDB query API
+FVDYNFTIV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Trypanosoma cruzi	12356679	IEDB query API
+NLNESLIDL	9	I	HLA-A*02:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	SARS coronavirus BJ01	15016646	IEDB query API
+CLTEYILWV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Modified Vaccinia Ankara virus (MVA virus)	12668642	IEDB query API
+KVDDTFYYV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Modified Vaccinia Ankara virus (MVA virus)	12668642	IEDB query API
+VLGRLDQKL	9	I	HLA-A*02:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+AVAGAAILV	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+LLAVLTAAPL	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+TLLYPLFNL	9	I	HLA-A*02:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+FLLPDAQSI	9	I	HLA-A*02:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+VLGRLDQKL	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+ALEAFAIAVA	10	I	HLA-A*02:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+LVVADLSFI	9	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+WLLSVLAAV	9	I	HLA-A*02:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+LLSVLAAVGL	10	I	HLA-A*02:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+GIVIDPNGVV	10	I	HLA-A*02:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Mycobacterium tuberculosis	12972510	IEDB query API
+TTVYPPSSTAK	11	I	HLA-A*03:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	15694996	IEDB query API
+RVRAYTYSK	9	I	HLA-A*03:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+RLGVRATRK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+KTSERSQPR	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+QLFTFSPRR	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+RMYVGGVEHR	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+LGFGAYMSK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+LIFCHSKKK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+GVAGALVAFK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+VAGALVAFK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12691700	IEDB query API
+MLHEFHVRR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+STSDTGIRY	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+STLSDSSGR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SFTFKEGFK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IQRFSSLRR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SSLRREHIK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KSNILMWNK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+CLSLLFLRR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLAIKNYYR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QLMYALEPR	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NTIVFGIYK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RSFTFKEGFK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ATIQRFSSLR	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AFEFINSLLK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LTPIFSDLLK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LLKYAGLTIK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ILMWNKQFIK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LLHCVTESYK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LTILDDNLYK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TLFIDRGSIK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LFASADNHPK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLAIKNYYRK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ALDEKWNEFK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SVPLPCQLMY	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+CQLMYALEPR	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QLMYALEPRK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LLLSINSSFY	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KVTYSLYDQK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VTYSLYDQK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ATDIIISHVK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NVPNSLIYQK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ISFWIDSIPK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SFWIDSIPK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LTYLLGMIVK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AVIEYDDIK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FVNAFTVDK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NQVKFYFNK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ILMYPTTLLK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IVAAYSLFR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GTLARKIIK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QVVIGNTLIK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VVIGNTLIK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KQGFVYSQK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ALSSFHTTEK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IVNKLYIKR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LVVEYMIER	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MVLPGAANK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MTVELMNLK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ALLNAALHK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LLNAALHKK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QLTRQLNMEK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KSFDDVIPAK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SFDDVIPAK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RVFDKADGK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KLLGYVIIR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TSIPLAYFFK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PLAYFFKPR	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FLNSLAIHEK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RFVMFGFCY	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GFCYLSHWK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RFFECTFGAK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLFMILCTR	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ILCTRTPPK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLKKVYTFFK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YTFFKFLADK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TFFKFLADK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TFFKFLADKK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+STHDWSTRLR	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IQDMLNIMNK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ELFQLLTHVK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TLNNASVSVK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SQDLSFIYR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SQDLSFIYRK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ILMALFGIK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IQQLYEFRK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QLYEFRKVK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IVNGAMMFY	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MFYVERRQNK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RLKSAVCYK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PLSASVFYR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IVFNLPVSK	9	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TTICLSIDQK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KSYVFNFHK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KSYVFNFHKY	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HLEWLLGFIK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HQHLAIMFK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MFKDDNIIMK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SQELQKFSFK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SSLNKLRGFK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLNKLRGFK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLNKLRGFKK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LFSDRVQSFK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FFADDDSFFK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FLLLLLIQSK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KFTDFQDFK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KFTDFQDFKK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FQDFKKLFNK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DFVISLMRFK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FVISLMRFK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ATYIDALAK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+STIQESFIR	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SFIRFTVTNK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LVTENRLHK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KTKNFTIDFK	10	I	HLA-A*03:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SLLHAINHPK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LLHAINHPK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VVFGEAVKDK	10	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ILFYSKGPK	9	I	HLA-A*03:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GIAPLQLGK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+GIAPLQLGK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+VTAACSHAGK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+VTAACSHAGK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+GIHHPSNSK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+GIHHPSNSK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+RMNYYWTLLK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+RMNYYWTLLK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+ITNKVNSVIEK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+NIQFTAVGK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+AVGKEFNKLEK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+RTLDFHDSNVK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+SVRNGTYDYPK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+SVRNGTYDYPK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+SIIPSGPLK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+SIIPSGPLK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+KTRPILSPLTK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+RMVLASTTAK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+RMVLASTTAK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+MVLASTTAK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+GTHPSSSAGLK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+GTHPSSSAGLK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+ILWILDRLFFK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+WILDRLFFK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+CIYRRFKYFLK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+KSMREEYRK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+KSMREEYRK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+ATEIRASVGK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+TMVMELVRMIK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+TMVMELVRMIK	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+MVMELVRMIK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+LILRGSVAHK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+RVLSFIKGTK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	10773346	IEDB query API
+NVKNLYEKVK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+GVTAACSHAGK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+LTEKEGSYPK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+PVTIGECPK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+KTRPILSPLTK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+RMGVQMQRFK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+ATEIRASVGK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+MVMELVRMIK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+GTKVVPRGK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	9366399	IEDB query API
+TVQPIVLPEK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+QMAVFIHNFK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+AVFIHNFKRK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+AVFIHNFKR	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+TVYYGVPVWK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+AIFQSSMTK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+KVYLAWVPAHK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+KVLFLDGIDK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+IVIWGKTPK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+ASQIYAGIK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+GIPHPAGLK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+QIYQEPFKNLK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+YLAWVPAHK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+MTKILEPFR	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+VTVYYGVPVWK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+RAKWNNTLK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+AVDLSHFLK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+RLRDLLLIVTR	11	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	9366399	IEDB query API
+GSTHVSWPK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+IMPARFYPK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+QAFTFSPTYK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+HTLWKAGILYK	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+LVVDFSQFSR	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+TLWKAGILYK	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+NVSIPWTHK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+GTDNSVVLSR	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+LSLDVSAAFY	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+HTLWKAGILY	10	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+TTDLEAYFK	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+STLPETTVVRR	11	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+GVAGALVAFK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	9366399	IEDB query API
+TTINYTLWR	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	9366399	IEDB query API
+LSTNLPYGK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	9366399	IEDB query API
+LACAGLAYK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	9366399	IEDB query API
+ESLFRAVITK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	9366399	IEDB query API
+IVTDFSVIK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	9366399	IEDB query API
+AVFDRKSDAK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	9366399	IEDB query API
+GIVCPICSQK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human papillomavirus 16 (Human papilloma virus type 16)	9366399	IEDB query API
+LLIRCINCQK	10	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human papillomavirus 16 (Human papilloma virus type 16)	9366399	IEDB query API
+AVNHYFKTR	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+KVFVLGGCR	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+RLADEGLNR	9	I	HLA-A*11:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+ATQIPSYKK	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	9366399	IEDB query API
+CALPFTSAR	9	I	HLA-A*11:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9366399	IEDB query API
+AVYGNIKHK	9	I	HLA-A*11:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Vaccinia virus WR (Vaccinia virus (strain WR))	16210659	IEDB query API
+STLNFNNLR	9	I	HLA-A*11:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Vaccinia virus WR (Vaccinia virus (strain WR))	16210659	IEDB query API
+NTYLFNILYK	10	I	HLA-A*11:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Vaccinia virus WR (Vaccinia virus (strain WR))	16210659	IEDB query API
+CMTWNQMNL	9	I	HLA-A*24:02	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Homo sapiens (human)	15365188	IEDB query API
+CYTWNQMNL	9	I	HLA-A*24:02	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>		15365188	IEDB query API
+GYDQIMPKK	9	I	HLA-A*24:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	15647119	IEDB query API
+QYSWFVNGTF	10	I	HLA-A*24:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	15102666	IEDB query API
+TYACFVSNL	9	I	HLA-A*24:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	15102666	IEDB query API
+IACPIVMRYVLDHLI	15	I	HLA-A*24:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+CYDHAQTHL	9	I	HLA-A*24:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+QYDPVAALF	9	I	HLA-A*24:02	Positive	bioassay IFNg release <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	15514011	IEDB query API
+NLVPMVATV	9	I	HLA-A*24:02	Positive	bioassay IFNg release <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	15514011	IEDB query API
+CYSIEPLDL	9	I	HLA-A*24:02	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Hepatitis C virus	12629644	IEDB query API
+EYVLLLFLL	9	I	HLA-A*24:02	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Hepatitis C virus	12629644	IEDB query API
+TYSTYGKFL	9	I	HLA-A*24:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12629644	IEDB query API
+FWAKHMWNF	9	I	HLA-A*24:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Hepatitis C virus	12629644	IEDB query API
+RMILMTHFF	9	I	HLA-A*24:02	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Hepatitis C virus	12629644	IEDB query API
+GFADLMGYI	9	I	HLA-A*24:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus (isolate BK)	15958073	IEDB query API
+AYSIVRIFM	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TYTTMDTLI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YYFSLQQRL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LWEPGFISF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IFINSIINF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VWINNSWKF	9	I	HLA-A*24:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KFVEDSPEM	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RYRFAFLYLL	10	I	HLA-A*24:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RYRFAFLYL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+WYRKYHVPI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYHVPIMKL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FYLKIGTLL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SFINRHKKF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KFANVSDEY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SFAIKWEYVL	10	I	HLA-A*24:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	16095964	IEDB query API
+IFTITKILL	9	I	HLA-A*24:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	16095964	IEDB query API
+PYIEQGMQL	9	I	HLA-A*24:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	16095964	IEDB query API
+FFNTLDMYL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AYLCRHIGI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYNVRYVFL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VYLENTGKI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AMKVDANYF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NYFTKINNF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYNINRLIL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FFLRLSANL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FYVSKMLNL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYAISVVIY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LFTDVYTSI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HFQRITLEL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KFFDTSTII	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TMAPVHTYI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYYYSNSYL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YYYSNSYLY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YYSNSYLYVF	10	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+CYNILRYHL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VFVYFSNSL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYVNVKQWI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AMNLFNDEF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IFIHSTTSF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NYNDNVINY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KFLDTRVVY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MYNVSMAVL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KFKYFINRI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YFINRIQTL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYIMLSNGY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IWFMTIPDTF	10	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+WFMTIPDTF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TYSLPPHPSI	10	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FYNNSRIKY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HFFVSNKVF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RYPIIDIKW	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+CWFCNQDLVF	10	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VFKPISIETF	10	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FYEDKEKVI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MFTILEEYF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYGRLFNEI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYCLRAIKL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HMLDKIKSI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LYSRCSFSF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GWLDKGFII	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IYSTTNSVI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IFPFFVAFL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LYGVVWFNI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LYKSINVEY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KYVNNTATL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QYITMVNSL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TMVNSLTYF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NYSFFLDKI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FFLDKIFDI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VWENFLAHM	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FFLIMYSVI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MYSLVFVILM	10	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VYTNRDTVY	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IYTDSVDDL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EYTILNMVL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VMFVIRFKF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TYSELTNAI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+WYEKYNIVL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LYKILDDEI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LYSQPKKLKI	10	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RMEIFLVLL	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QYVQQHNKI	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SWTKCIHFF	9	I	HLA-A*24:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPQGGSRPEFVKL	13	I	HLA-B*07:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+RPHERNGFTV	10	I	HLA-B*07:02	Positive	bioassay IFNg release <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	15514011	IEDB query API
+LPFDRTTVM	9	I	HLA-B*07:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus (A/Puerto Rico/8/1934(H1N1)) (Influenza A virus (A/PR 8/34 (H1N1)))	12421934	IEDB query API
+QPRAPIRPI	9	I	HLA-B*07:02	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	7531143	IEDB query API
+KPFNNILNL	9	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Vaccinia virus WR (Vaccinia virus (strain WR))	16210659	IEDB query API
+LPRPDTRHL	9	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Vaccinia virus WR (Vaccinia virus (strain WR))	16210659	IEDB query API
+RPSTRNFFEL	10	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Vaccinia virus WR (Vaccinia virus (strain WR))	16210659	IEDB query API
+RPMSLRSTI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NPCVVRRTM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPFLERSVI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPCSKINEV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPGVRCLSL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+CPLHIISAF	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPTPKKMNI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPMSLRSTII	10	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPGVRCLSLL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPADCFLVKL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KPAHINLTA	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPPLIIRPA	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+APFNFLVFV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NPSTMSTPM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EPLITKLIL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KPNSFTFSF	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPYIAQMCL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPPPRYITV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LPSPASGICL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPRLLRTFLA	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VPITGSKLIL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FPRSMLSIF	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VPRTMSKYEL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TPIGDNKAL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPLQEPIRL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPNIPLKIV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPLKIVRFF	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPAYIRNTL	9	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPASISSVL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPDTCLLAI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+APNPNRFVI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPIGMMLEL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TPPKSFKSL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPIKSIVTL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPTYKHLIM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPVNNNIVL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FPRKDKSIM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPRVTKQYI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KPFNNILNL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPLSKVHGL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPKSRPNTSL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPRHYATVM	9	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VPAAIMMIL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LPRPDTRHL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPDTRHLRVL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPDTRHLRV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+APVSPIVIA	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPDNRIRLM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPDNRIRLML	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPSFVKCTSL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VPTMNNAKL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+CPNAECQPL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPSLSNGLI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPYISLNMI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPTKRCRLL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPTNDIPSL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPAGRPNYV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPIISSITM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPQHMLMRV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPGVMAIYL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPTASTAQIL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPQKTIIKM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPFNMKNLL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+APCEHQIRL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KPRRVIGQI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+APKAVFKPA	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EPKISLLPL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VPYLLVKLAL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPLKYIVLM	9	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPLMRSICV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPVLNIVLF	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KPKMYVLNI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPFFRKLVL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPDDCNKIL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KPKPAVRFAI	10	I	HLA-B*07:02	Positive	ELISPOT IFNg release <strong>Positive</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KPAVRFAIL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LPIPYNRFF	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPTIGHVKAF	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPLVFDSWL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FPSIIYSMSI	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GPIKSMIEI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IPSPGIMLVL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPYNFFKRI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPKFMTNTM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPRTEYWTI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPRTEYWTIV	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TPRYSGASVF	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TPRYSGASV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPMPRHHSI	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPRHHSIVY	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPRHHSIVYA	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPVVHHAASA	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPTQYPRLM	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FPFFVAFLAI	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPTQYPRLML	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YPRLMLLKKL	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPSSQVFRSV	10	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPAIKKLVY	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MPIDERRII	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RPADSITYL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SPYTINCLL	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+HPNNTIFSV	9	I	HLA-B*07:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RAKFKQLL	8	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	15684323	IEDB query API
+WLKIKRDYL	9	I	HLA-B*08:01	Positive	ELISA IFNg release <strong>Positive</strong>	Vaccinia virus NYCBH - Dryvax	16301664	IEDB query API
+ELRSRYWAI	9	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Influenza A virus	16731941	IEDB query API
+EMKTDAATL	9	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)		IEDB query API
+AAHARFVAA	9	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)		IEDB query API
+ENFVRSSNL	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Mycobacterium tuberculosis	17429413	IEDB query API
+DIKVQFQSG	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Mycobacterium tuberculosis	17429413	IEDB query API
+CQTYKWETF	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Mycobacterium tuberculosis	17429413	IEDB query API
+ELKRKMMYM	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	16160916	IEDB query API
+FLRGRAYGL	9	I	HLA-B*08:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	12530975	IEDB query API
+DANDIYRIF	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	11237798	IEDB query API
+QAKWRLQTL	9	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	18032491	IEDB query API
+ELRRKMMYM	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	18418774	IEDB query API
+EIYKRWII	8	I	HLA-B*08:01	Positive	ICS IL-2 release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	17911249	IEDB query API
+GGKKKYKLK	9	I	HLA-B*08:01	Positive-Low	ICS IL-2 release <strong>Positive-Low</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	17911249	IEDB query API
+GGKKKYKLK	9	I	HLA-B*08:01	Positive	ICS IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	17911249	IEDB query API
+DCKTILKAL	9	I	HLA-B*08:01	Positive	ICS IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	17911249	IEDB query API
+YNLRRGIAL	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	20562330	IEDB query API
+YNLRRGTAL	9	I	HLA-B*08:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Human herpesvirus 4 (Epstein Barr virus)	20562330	IEDB query API
+ELRRKMMYM	9	I	HLA-B*08:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Human herpesvirus 5 (Human cytomegalovirus)	20195281	IEDB query API
+QIKVRVDMV	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	20195281	IEDB query API
+QIKVRVDMV	9	I	HLA-B*08:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Human herpesvirus 5 (Human cytomegalovirus)	20195281	IEDB query API
+HSKKKCDEL	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Hepatitis C virus	21160049	IEDB query API
+HSRKKCDEL	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Hepatitis C virus	21160049	IEDB query API
+RAKFKQLL	8	I	HLA-B*08:01	Positive-Low	multimer/tetramer qualitative binding <strong>Positive-Low</strong>	Human herpesvirus 4 (Epstein Barr virus)	18768532	IEDB query API
+MMARDTAEA	9	I	HLA-B*08:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	20002212	IEDB query API
+ILRNPGYAL	9	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	West Nile virus	20856867	IEDB query API
+HPKEYEYPL	9	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Plasmodium falciparum FC27/Papua New Guinea	20735847	IEDB query API
+NQYLKDGGFAFPTE	14	I	HLA-B*08:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Plasmodium falciparum FC27/Papua New Guinea	20735847	IEDB query API
+HSKKKCDEL	9	I	HLA-B*08:01	Positive-Low	ELISPOT IFNg release <strong>Positive-Low</strong>	hepatitis C virus genotype 1a (Hepatitis C virus subtype 1a)	22508927	IEDB query API
+ELRRKMMYM	9	I	HLA-B*08:01	Positive-Low	multimer/tetramer qualitative binding <strong>Positive-Low</strong>	Human herpesvirus 5 (Human cytomegalovirus)	23304188	IEDB query API
+GGKKKYKL	8	I	HLA-B*08:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	8976183	IEDB query API
+GGKKKYRL	8	I	HLA-B*08:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	8976183	IEDB query API
+APIWPYEILY	10	I	HLA-B*35:01	Positive	ELISPOT IFNg release <strong>Positive</strong>		15496958	IEDB query API
+LPFEKSTVM	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus H3N2 (A/Resvir-9 (H3N2))	14764717	IEDB query API
+RPREATIIY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+IPRDEVRVM	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+KPRDDAAAL	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+RPKIDDHDY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+RPKPDTETY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+RPKPDYSAM	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+RPKVEGLEY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+RPRLDSITY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+RPRYEIFVY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+IPKLRQGSY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+KPGCDAPAY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+RPGCDAPAY	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+SPKETWLRL	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+MPVGGQSSF	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+LPGTAVVPL	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+VPWQPAFVF	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+EPYLDPATM	9	I	HLA-B*35:01	Negative	ELISA IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+WPTLIGLAM	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+IPAEFLENF	9	I	HLA-B*35:01	Positive	ELISA IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis H37Rv (Mycobacterium tuberculosis str. H37Rv)	15762882	IEDB query API
+LPFDKSTIM	9	I	HLA-B*35:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Influenza A virus (A/Victoria/3/1975(H3N2)) (Influenza A virus (A/Victoria/3/75(H3N2)))	11836437	IEDB query API
+LPFDKPTIM	9	I	HLA-B*35:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Influenza A virus H3N2 (influenza virus A/H3N2)	11836437	IEDB query API
+ASCMGLIY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus H3N2 (A/Resvir-9 (H3N2))	11752149	IEDB query API
+TPEGIIPTL	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Dengue virus 4 Dominica/814669/1981 (Dengue virus type 4 (strain Dominica/814669/1981))	7529799	IEDB query API
+TPEGIIPSM	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Dengue virus 2 Thailand/NGS-C/1944 (Dengue virus NGC)	7529799	IEDB query API
+EPYLDPATM	9	I	HLA-B*35:01	Positive	ICS IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	11796635	IEDB query API
+GILGFVFTL	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Influenza A virus H3N2 (A/Resvir-9 (H3N2))	11752149	IEDB query API
+IPSINVHHY	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 5 strain AD169 (Human cytomegalovirus (strain AD169))	7691936	IEDB query API
+DSCMGLIY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		8617300	IEDB query API
+APCMGLIY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		8617300	IEDB query API
+ASCKGLIY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		8617300	IEDB query API
+ASCIGLIY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		8617300	IEDB query API
+ASCMGLLY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>		8617300	IEDB query API
+ASCMGLRY	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>		8617300	IEDB query API
+ASCMGLIH	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>		8617300	IEDB query API
+ASCMGLIF	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>		8617300	IEDB query API
+TPIPAASQL	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+HPNIEEVAL	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	9680137	IEDB query API
+TPCTCGSSDLY	11	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+LPQAVMGSSY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+VPGAAYALY	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+YPCTVNFTI	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+EPLDLPQII	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+LPIWARPDY	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+SPLTTQNTL	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+TPRCIVDYPY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+VPAAYAAQGY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+IPAASQLDL	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+SPPAVPQTF	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+YPYRLWHY	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+VPFFSCQRGY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+WPLYGNEGL	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+LPPTTGPPI	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+LPALSTGLI	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+APPPSWDQM	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+IPTSGDVVI	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+CPSGHAVGI	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+EPRDLDQRPY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+TPRCIVDY	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis C virus	9680137	IEDB query API
+LPKLPGVPF	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	9680137	IEDB query API
+EPEPDVAVL	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	9680137	IEDB query API
+TPAETTVRL	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	9680137	IEDB query API
+LPGCSFSIF	9	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis C virus	9680137	IEDB query API
+KPKDELDY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+KSKDELDY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+KPNDKSLY	8	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+LPSENERGY	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+KPKDQLDY	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum isolate WELLCOME	1280333	IEDB query API
+KPKDQLNY	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+EPSDKHIEQY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+EPSDQHIEKY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+HPSDGKCNLY	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+VPGAATPY	8	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+ELDYANDIEKKICKM	15	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum NF54	1280333	IEDB query API
+ENDIEKKICKMEKCS	15	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	1280333	IEDB query API
+YPALMPLYA	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9239396	IEDB query API
+HPAAMPHLL	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9239396	IEDB query API
+IPIPSSWAF	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9239396	IEDB query API
+LPSDFFPSV	9	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9239396	IEDB query API
+FPHCLAFSYM	10	I	HLA-B*35:01	Negative	51 chromium cytotoxicity <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	9239396	IEDB query API
+TPARVTGGVF	10	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	9239396	IEDB query API
+LPFDRTTIM	9	I	HLA-B*35:01	Positive	ICS IFNg release <strong>Positive</strong>	Influenza A virus	17326762	IEDB query API
+HPVGEADYFEY	11	I	HLA-B*35:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	17325349	IEDB query API
+EPLPQGQLTAY	11	I	HLA-B*35:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	17259989	IEDB query API
+HPTFTSQY	8	I	HLA-B*35:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	17357107	IEDB query API
+QGQLTAY	7	I	HLA-B*35:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	17259989	IEDB query API
+KEMNRSIIY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LESQHIISF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PESESTLSF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SESTLSFSL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DESRDRKWLY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MEREGVDYHY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEIHRRVIL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEANEAGLF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SEIKDRILSY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DENVLSSDIL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FESVTNSVY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FESVTNSVYL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GEYKQCLSDL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AEEFVQQRL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+YEIVDIKEF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KEFKPENEL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PENELRDYF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEIDNMDAL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DELAENISSL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AENISSLGIL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GEKMMIDDF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VEEGREGCY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEGREGCYNY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+REGCYNYKNL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DESEARVEF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SEARVEFGPL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NEEKSDINTL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEKSDINTL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NEEVALDEL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DELSSESGL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEIFALLSRF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEIDHINKLF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEIDHINKL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEVFAILNL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PEVASLRKEY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KEYSDVEPDY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEVPAYDKHL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEECGNSGEF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EECGNSGEF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TELEEAKRKL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEAKRKLTEL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+REREMRSEL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RELELSRMWL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KECDKYKEDL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEEERRVRDL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEERRVRDL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QEDTQEVDAL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+RENATEISRL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FESHGENRF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FESHGENRFL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEFLNISWF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEFLNISWFY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IECHFDKKF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QEAVDRGCL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MEMDYEREL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KEAVYLCIY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SEKLDSYKL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+WENGFKVVL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+WENGFKVVLL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SETKQKFPY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEEEINNQL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEEEINNQLL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEEINNQLL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+NEDPRFVEAF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VEAFKCDEL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IENNPECTLF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IENNPECTL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PECTLFESL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FESLRDEEAY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEAYSIVRIF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IEVSNCVARF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEDLVPDKL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DENNFTTVPL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LENGAIRIY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SEEPLITKL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEPLITKLIL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VEANIRDML	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VETDTYPDKL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IEDPWMNTIL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PEITKDCIF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QEFTMLVNL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QEFTMLVNLL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEKELVSKL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KELVSKLGGL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QEEIYQKAKL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEIYQKAKL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+AEIKTGISSF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GEYAQEIATL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QEIATLYNDF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+TELKEKSVKF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GECIKTCVF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PERRYVNVHF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KEFVQLFRVF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+QEVERALYL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VERALYLTPY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEKSPIYYF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+DEKSPIYYFL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PEIVKRHIL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+PEIVKRHILL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+FETMLMEVF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MEVFPQLDL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VESKFNNIF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+MERIKGDITY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IETATNNIL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IETATNNILL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VEKKIVSPY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KESSDKIDF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KESSDKIDFF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KELLSLYKSL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VETSISDYY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+VELGSGNSF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+SEYGLNIPKY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+LEIEIEEDTL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IEIEEDTLF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EEDTLFDDEL	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+IERSFDDKF	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+GELRRQVVDF	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KEENTFSILY	10	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+KEENTFSIL	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+EENTFSILY	9	I	HLA-B*44:02	Negative	ELISPOT IFNg release <strong>Negative</strong>	Orthopoxvirus vaccinia (Vaccinia virus)		IEDB query API
+ITKKVADLVGF	11	I	HLA-B*57:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Homo sapiens (human)	15104676	IEDB query API
+KSRRPLTTF	9	I	HLA-B*57:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	Human herpesvirus 2	14566059	IEDB query API
+KSRRPLTTF	9	I	HLA-B*57:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Human herpesvirus 2	14566059	IEDB query API
+VTLGSDVEEDLTMTR	15	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	17372003	IEDB query API
+ISPRTLNAW	9	I	HLA-B*57:01	Positive	ICS IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	17911249	IEDB query API
+KAFSPEVIPMF	11	I	HLA-B*57:01	Positive	ICS IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	17911249	IEDB query API
+QTVEDEARRMW	11	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	20802151	IEDB query API
+VAALFFFDI	9	I	HLA-B*57:01	Positive	RNA/DNA detection IFNg release <strong>Positive</strong>	Human herpesvirus 5 strain AD169 (Human cytomegalovirus (strain AD169))	19604317	IEDB query API
+KVRKDIQQW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+KAKGSRAIW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+GSRAIWYMW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+KGSRAIWYMW	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+MSSEGAWKHA	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+RAKGSRAIW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+LGFLNEDHW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+ASSMVNGVVR	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+GTSGSPIVNR	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+GGWRLSAQW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+WSIHAHHQW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+KAYAQMWSL	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Dengue virus		IEDB query API
+KTIHLTLKV	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	22645359	IEDB query API
+RTFHHGVRV	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	22645359	IEDB query API
+RTLAEIAKV	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	22645359	IEDB query API
+VTTDIQVKV	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Homo sapiens (human)	22645359	IEDB query API
+KAFSPEVIPMF	11	I	HLA-B*57:01	Positive-High	ELISPOT IFNg release <strong>Positive-High</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	23161907	IEDB query API
+VSFIEFVGW	9	I	HLA-B*57:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	23267020	IEDB query API
+RGINDRNFW	9	I	HLA-B*57:01	Positive	ICS IFNg release <strong>Positive</strong>	Influenza A virus	23399741	IEDB query API
+KAFSPEVI	8	I	HLA-B*57:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+TSTLQEQIGW	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+QASQEVKNW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+KAVRLIKFLY	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+YFPDWQNYT	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+HTQGYFPDWQ	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+KTAVQMAVF	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+ISKKAKGWF	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+AVRHFPRIW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16951352	IEDB query API
+ISPRTLNAW	9	I	HLA-B*57:01	Positive-High	ELISPOT IFNg release <strong>Positive-High</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16081817	IEDB query API
+IVLPEKDSW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	16081817	IEDB query API
+CEALTLATGPISTLW	15	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	dengue virus type 2 (Dengue Virus serotype 2)	24058176	IEDB query API
+EREIPERSWNSGHEW	15	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	dengue virus type 2 (Dengue Virus serotype 2)	24058176	IEDB query API
+HTWTEQYKF	9	I	HLA-B*57:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	dengue virus type 2 (Dengue Virus serotype 2)	23941420	IEDB query API
+HTWTEQYKF	9	I	HLA-B*57:01	Positive-Low	multimer/tetramer qualitative binding <strong>Positive-Low</strong>	dengue virus type 2 (Dengue Virus serotype 2)	23941420	IEDB query API
+KVRKDIPQW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	dengue virus type 1 (dengue type 1 D1 virus)		IEDB query API
+LSSPVTKSF	9	I	HLA-B*57:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Homo sapiens (human)	24563253	IEDB query API
+TSTLQEQIDW	10	I	HLA-B*57:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>		24563253	IEDB query API
+VTRGAVLTY	9	I	HLA-B*57:01	Positive	ICS IFNg release <strong>Positive</strong>	Dengue virus	24816171	IEDB query API
+YKSHGKGYNW	10	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Plasmodium falciparum 3D7	25211344	IEDB query API
+ILIGVIITW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	dengue virus type 2 (Dengue Virus serotype 2)	25320311	IEDB query API
+IAVASGLLW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	dengue virus type 4 (dengue type 4 virus DEN4)	25320311	IEDB query API
+LGKSYAQMW	9	I	HLA-B*57:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	dengue virus type 4 (dengue type 4 virus DEN4)	25320311	IEDB query API
+ATWASHIHLVI	11	I	HLA-B*57:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Yellow fever virus 17D (Yellow fever virus (STRAIN 17D))	28386132	IEDB query API
+CTMPPVSF	8	I	HLA-B*57:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Yellow fever virus 17D (Yellow fever virus (STRAIN 17D))	28386132	IEDB query API
+ESWIVDRQW	9	I	HLA-B*57:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Yellow fever virus 17D (Yellow fever virus (STRAIN 17D))	28386132	IEDB query API
+ITAHLKRLW	9	I	HLA-B*57:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Yellow fever virus 17D (Yellow fever virus (STRAIN 17D))	28386132	IEDB query API
+KAYANMWSL	9	I	HLA-B*57:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Yellow fever virus 17D (Yellow fever virus (STRAIN 17D))	28386132	IEDB query API
+KIMKVVNRW	9	I	HLA-B*57:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Yellow fever virus 17D (Yellow fever virus (STRAIN 17D))	28386132	IEDB query API
+KSAHGSPTF	9	I	HLA-B*57:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Yellow fever virus 17D (Yellow fever virus (STRAIN 17D))	28386132	IEDB query API
+VLKSYVLEGTLTAEK	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Borreliella burgdorferi (Lyme disease spirochete)	15501399	IEDB query API
+GSFGSAPSNGWLKLGLVEFG	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+TGSGAGIAQAAAGTVNI	17	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+LAIYHPQQFVYAGAMSGLLD	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+FAYGSFVRTVSLPVGA	16	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+MAAHKGLMNIALAISAQQVN	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+AETPGCVAYIGISFLDQASQ	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+NFLLPDAQSIQAAAAGFASK	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+YAIVNNRQKDAATAQTLQAF	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IGLSMAGSSAMILAAY	16	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+QQFIYAGSLSALLDPSQGM	19	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+EYWGAQLNAMKGDLQSSLGA	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+VSDLKSSTAVIPGYPVAGQV	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IRGSVTPAVSQFNARTADGI	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+YNINISLPSYYPDQKSLENY	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+AIPPRGTQAVVLKVYQNAGG	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+SFAAAGLAALAVAVSPPAA	19	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IDELKTNSSLLTSILTYHVV	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+GVSTANATVYMIDSVLMPP	19	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+WRRRPLSSALLSFGLLLGGLPL	22	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+PKYVKQNTLKLAT	13	II	HLA-DRB1*01:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Influenza A virus	15172451	IEDB query API
+TSLYNLRRGTALA	13	II	HLA-DRB1*01:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 4 (Epstein Barr virus)	15172451	IEDB query API
+RSLFPEFSELFAAFPSFAGL	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+RSLFPEFSELFAAFPSFAGL	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+VAVAGAAILVAGLSGCSSN	19	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IRLHTLLAVLTAAPLLLAAA	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IRLHTLLAVLTAAPLLLAAA	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IKIFMLVTAVVLLCCSGVAT	20	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IKIFMLVTAVVLLCCSGVAT	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+FAYGSFVRTVSLPVGA	16	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+MAAHKGLMNIALAISAQQVN	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+AETPGCVAYIGISFLDQASQ	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+NFLLPDAQSIQAAAAGFASK	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+YAIVNNRQKDAATAQTLQAF	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IGLSMAGSSAMILAAY	16	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+VSDLKSSTAVIPGYPVAGQV	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IRGSVTPAVSQFNARTADGI	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+YNINISLPSYYPDQKSLENY	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+AIPPRGTQAVVLKVYQNAGG	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+VNLVDTLNSGQYT	13	II	HLA-DRB1*01:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+IDELKTNSSLLTSILTYHVV	20	II	HLA-DRB1*01:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Mycobacterium tuberculosis	15755582	IEDB query API
+HQSLVIKLMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+CPKYVKQNTLKLATGMRNV	19	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Influenza A virus	7528190	IEDB query API
+YDVPDYASLRSLVASS	16	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Influenza A virus	7528190	IEDB query API
+CPKYVKQNTLKLATG	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Influenza A virus	7679697	IEDB query API
+PLKAEIAQRLEDV	13	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Influenza A virus	7679697	IEDB query API
+QYIKANSKFIGITE	14	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Clostridium tetani	7679697	IEDB query API
+GFATQRLTSLFALGPSQK	18	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	15923217	IEDB query API
+LFNILGGWVA	10	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+LVNLLPAILS	10	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+FNILGGWVAAQL	12	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+NLLPAIL	7	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+FGAQFITWRGIPLIPSDKV	19	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Mycobacterium leprae	10024600	IEDB query API
+FGAQFITWRGIPLIPSDKV	19	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Mycobacterium leprae	10024600	IEDB query API
+FGPTQFITWHGIRLPSDKV	19	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Mycobacterium avium	10024600	IEDB query API
+FGPTQFITWHGIRLPSDKV	19	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Mycobacterium avium	10024600	IEDB query API
+RGYFKMRTGKSSIMRS	16	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Influenza A virus	7514130	IEDB query API
+AYRPPNAPILSTLPE	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Hepatitis B virus (Human hepatitis B virus)	17109186	IEDB query API
+PPAYRPPNAPILSTL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis B virus (Human hepatitis B virus)	17109186	IEDB query API
+PAPQAPYQGYQEPPAPQAPY	20	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Human herpesvirus 4 strain B95-8 (Epstein-Barr virus (strain B95-8))	10700463	IEDB query API
+LPLKMLNIPSINVH	14	II	HLA-DRB1*01:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Human herpesvirus 5 (Human cytomegalovirus)	17034571	IEDB query API
+ASDVETAEGGEIHELLRLQ	19	II	HLA-DRB1*01:01	Positive	ELISA IFNg release <strong>Positive</strong>	Measles morbillivirus (Measles virus)	14671086	IEDB query API
+LPVVLENARILKNCVDAK	18	II	HLA-DRB1*01:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Felis catus (cat)	17137868	IEDB query API
+FMAVLLTLQTPTGQI	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+IKLMPNITLLNNCTR	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+NNCTRVEIAEYRRLL	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+VEIAEYRRLLRTVLE	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+YRRLLRTVLEPIRDA	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+ATAAQITAGIALHQS	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+MILAVQGVQDYINNE	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+YINNELIPSMNQLSC	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+TEILSLFGPSLRDPI	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+LRDPISAEISIQALS	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+SAEISIQALSYALGG	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+LLGILESRGIKARIT	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+HVDTESYFIVLSIAY	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+SYFIVLSIAYPTLSE	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+LSIAYPTLSEIKGVI	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+PTLSEIKGVIVHRLE	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+IKGVIVHRLEGVSYN	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+PKYVATQGYLISNFD	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+ESSCTFMPEGTVCSQ	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+NALYPMSPLLQECLR	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+GNRFILSQGNLIANC	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+LSQGNLIANCASILC	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+GTIINQDPDKILTYI	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+AIAKLEDAKELLESS	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+DQILRSMKGLSSTSI	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+VYILIAVCLGGLIGI	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+AVCLGGLIGIPALIC	15	II	HLA-DRB1*01:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Measles virus strain Edmonston (Measles morbillivirus strain Edmonston)	8671631	IEDB query API
+AQSLVIKLMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+HASLVIKLMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+HQALVIKLMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+HQSAVIKLMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+HQSLAIKLMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+HQSLVAKLMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+HQSLVIALMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+HQSLVIKAMPNITLL	15	II	HLA-DRB1*01:01	Positive	3H-thymidine proliferation <strong>Positive</strong>		8671631	IEDB query API
+MEVGWYRSPFSRVVHLYRNGK	21	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Mus musculus (mouse)	15114658	IEDB query API
+PGSRPHLIRLFSRDA	15	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	15699121	IEDB query API
+PGSRPHLIRLFSRDA	15	II	HLA-DRB1*15:01	Negative	ELISA IL-4 release <strong>Negative</strong>	Homo sapiens (human)	15699121	IEDB query API
+AHPADPGSRPHLIRLFSRDA	20	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	15699121	IEDB query API
+ITREEKPAVTAAPKK	15	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	15699121	IEDB query API
+TTSEDNEVFGEADANQNNGTSS	22	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	15699121	IEDB query API
+TLDISNNRLESLPAH	15	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	15699121	IEDB query API
+ENPVVHFFKNITPR	14	II	HLA-DRB1*15:01	Negative	in vivo assay disease exacerbation <strong>Negative</strong>	Mus musculus (mouse)	15114658	IEDB query API
+QAIGKKIQNN	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+TLITKKISAI	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+LNIKNSKLEI	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+LNIKNSKLEI	10	II	HLA-DRB1*15:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+FNIIKVHSSL	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+YNIKKIKVED	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+LNITSSSYLF	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+LNITSSSYLF	10	II	HLA-DRB1*15:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+ENIKKILLRE	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+NNIKSKVDNA	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+NNIKSKVDNA	10	II	HLA-DRB1*15:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+FFIKKRSLII	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+SNIIKKTSED	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+NNIYKKALIS	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Borreliella burgdorferi (Lyme disease spirochete)	10581079	IEDB query API
+YSICKSGCFY	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	10581079	IEDB query API
+LHIISKRVEA	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	10581079	IEDB query API
+LHIISKRVEA	10	II	HLA-DRB1*15:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Homo sapiens (human)	10581079	IEDB query API
+SFIYSVVCLV	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	10581079	IEDB query API
+GHIKKKRVEA	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	10581079	IEDB query API
+GHIKKKRVEA	10	II	HLA-DRB1*15:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Homo sapiens (human)	10581079	IEDB query API
+FNITSSTCEL	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	10581079	IEDB query API
+ENVKKSRRLI	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	10581079	IEDB query API
+ENVKKSRRLI	10	II	HLA-DRB1*15:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Homo sapiens (human)	10581079	IEDB query API
+DNITSSVLFN	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Homo sapiens (human)	10581079	IEDB query API
+FNIIKSLLGG	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Human herpesvirus 6 (strain Uganda-1102)	10581079	IEDB query API
+PNITFSVVYN	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Human adenovirus 40 (Adenovirus type 40)	10581079	IEDB query API
+PNITFSVVYN	10	II	HLA-DRB1*15:01	Negative	3H-thymidine proliferation <strong>Negative</strong>	Human adenovirus 40 (Adenovirus type 40)	10581079	IEDB query API
+FNITSSIRNK	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Human immunodeficiency virus 1 (human immunodeficiency virus 1 HIV-1)	10581079	IEDB query API
+ENIYYSSVRT	10	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Human herpesvirus 7 strain JI (Human herpesvirus (type 7 / strain JI))	10581079	IEDB query API
+VIGLYGNGV	9	II	HLA-DRB1*15:01	Positive	51 chromium cytotoxicity <strong>Positive</strong>	dengue virus type 4 (dengue type 4 virus DEN4)	7561761	IEDB query API
+IYWTIVKPGDILLINS	16	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Influenza A virus (A/Beijing/32/1992(H3N2)) (Influenza A virus (A/Beijing/32/92 (H3N2)))	9533449	IEDB query API
+KIDLWSYNAELLVALE	16	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Influenza A virus (A/Beijing/32/1992(H3N2)) (Influenza A virus (A/Beijing/32/92 (H3N2)))	9533449	IEDB query API
+NREGKVVGLYGNGVV	15	II	HLA-DRB1*15:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	dengue virus type 3 (Dengue virus serotype 3)	16081844	IEDB query API
+GNEWITDFVGKTVWF	15	II	HLA-DRB1*15:01	Positive	ICS IFNg release <strong>Positive</strong>	dengue virus type 3 (Dengue virus serotype 3)	16081844	IEDB query API
+PTRVVAAEMEEAMKG	15	II	HLA-DRB1*15:01	Positive	ICS IFNg release <strong>Positive</strong>	dengue virus type 3 (Dengue virus serotype 3)	16081844	IEDB query API
+NREGKIVGLYGNGVV	15	II	HLA-DRB1*15:01	Positive	ICS IFNg release <strong>Positive</strong>	dengue virus type 1 (dengue type 1 D1 virus)	16081844	IEDB query API
+DKKGKVVGLYGNGVV	15	II	HLA-DRB1*15:01	Positive	ICS IFNg release <strong>Positive</strong>	dengue virus type 2 (Dengue Virus serotype 2)	16081844	IEDB query API
+NRKGKIVGLYGNGVV	15	II	HLA-DRB1*15:01	Positive	ICS IFNg release <strong>Positive</strong>	dengue virus type 4 (dengue type 4 virus DEN4)	16081844	IEDB query API
+GYDWITGFPGKTVWF	15	II	HLA-DRB1*15:01	Negative	ICS IFNg release <strong>Negative</strong>	dengue virus type 1 (dengue type 1 D1 virus)	16081844	IEDB query API
+GHEWVTDFKGKTVWF	15	II	HLA-DRB1*15:01	Negative	ICS IFNg release <strong>Negative</strong>	dengue virus type 2 (Dengue Virus serotype 2)	16081844	IEDB query API
+GFDWITDYQGKTVWF	15	II	HLA-DRB1*15:01	Negative	ICS IFNg release <strong>Negative</strong>	dengue virus type 4 (dengue type 4 virus DEN4)	16081844	IEDB query API
+PTRVVASEMAEALKG	15	II	HLA-DRB1*15:01	Positive	ICS TNF release <strong>Positive</strong>	dengue virus type 1 (dengue type 1 D1 virus)	16081844	IEDB query API
+PTRVVASEMAEALKG	15	II	HLA-DRB1*15:01	Negative	ICS IFNg release <strong>Negative</strong>	dengue virus type 1 (dengue type 1 D1 virus)	16081844	IEDB query API
+PTRVVAAEMEEALRG	15	II	HLA-DRB1*15:01	Positive	ICS IFNg release <strong>Positive</strong>	dengue virus type 2 (Dengue Virus serotype 2)	16081844	IEDB query API
+IGNQRALYHTENAYVSVVSS	20	II	HLA-DRB1*15:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Influenza A virus	16677863	IEDB query API
+HTENAYVSVVSSHYSRRFTP	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+VVSSHYSRRFTPEIAKRPKV	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+RFTPEIAKRPKVRDQEGRIN	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+RPKVRDQEGRINYYWTLLEP	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+GRINYYWTLLEPGDTIIFEA	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+LLEPGDTIIFEANGNLIAPW	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+IFEANGNLIAPWYAFALSRG	20	II	HLA-DRB1*15:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Influenza A virus	16677863	IEDB query API
+IAPWYAFALSRGFGSGIITS	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+LSRGFGSGIITSNAPMDECD	20	II	HLA-DRB1*15:01	Negative	multimer/tetramer qualitative binding <strong>Negative</strong>	Influenza A virus	16677863	IEDB query API
+TYVLSIIPSGPLKAEIAQRL	20	II	HLA-DRB1*15:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Influenza A virus	16677863	IEDB query API
+TNPLIRHENRMVLASTTAKA	20	II	HLA-DRB1*15:01	Positive	multimer/tetramer qualitative binding <strong>Positive</strong>	Influenza A virus	16677863	IEDB query API
+VIKGGRHLIFCHSKKKCD	18	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	12826368	IEDB query API
+GRHLIFCHSKRKCDELATKL	20	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	9223492	IEDB query API
+GRHLIFCHSKKKCDELATKL	20	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+KLVAMGINAVAYYRGLDVSV	20	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+YLVAYQATVCARAQAPPPSW	20	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+VAYYRGLDVSV	11	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+YLVAYQATVCA	11	II	HLA-DRB1*15:01	Positive	3H-thymidine proliferation <strong>Positive</strong>	Hepatitis C virus	16160170	IEDB query API
+DVKFPGGGQIVGGVYLLPRR	20	II	HLA-DRB1*15:01	Positive	ELISA IFNg release <strong>Positive</strong>	Hepatitis C virus (isolate 1)	10498664	IEDB query API
+PSDKHIEQYLKKIQNSLSTEWS	22	II	HLA-DRB1*15:01	Positive	ELISPOT IFNg release <strong>Positive</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	10403640	IEDB query API
+PSDKHIEQYLKKIQNSLSTEWS	22	II	HLA-DRB1*15:01	Negative	ELISPOT IL-10 release <strong>Negative</strong>	Plasmodium falciparum (malaria parasite P. falciparum)	10403640	IEDB query API
+SAGKVSSTLASELG	14	II	HLA-DRB1*15:01	Positive	ELISA IFNg release <strong>Positive</strong>	Measles virus strain Edmonston-B (Measles virus (strain edmonston b))	16714073	IEDB query API
+LASEESAFYVLEHSSFQLLG	20	II	HLA-DRB1*15:01	Negative	ELISPOT IFNg release <strong>Negative</strong>	Human parvovirus B19 (B19 virus)	16943301	IEDB query API
