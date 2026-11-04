@@ -4,14 +4,14 @@
 
 ```
 SpliceGAIP/
-├── dist/                    ← 唯一的EXE输出目录
-│   └── SpliceGAIP.exe      ← 你的可执行文件在这里
-├── packaging/               ← 只保留配置文件
-│   ├── SpliceGAIP-Web.spec ← PyInstaller配置
-│   ├── icon.ico            ← 应用图标
-│   └── rthook_runtime.py   ← 运行时钩子
-├── build.bat                ← 一键构建脚本
-└── clean_builds.bat         ← 清理构建产物脚本
+├── dist/                        ← 唯一的EXE输出目录
+│   └── SpliceGAIP-Desktop.exe  ← 你的可执行文件在这里
+├── packaging/                   ← 只保留配置文件
+│   ├── SpliceGAIP-Desktop-OneFile.spec ← PyInstaller配置（唯一 spec）
+│   ├── icon.ico                ← 应用图标
+│   └── rthook_runtime.py       ← 运行时钩子
+├── build.bat                    ← 一键构建脚本
+└── clean_builds.bat             ← 清理构建产物脚本
 ```
 
 **不再有**：
@@ -33,12 +33,12 @@ build.bat
 或手动执行：
 ```bash
 cd E:/SpliceGAIP
-./venv/Scripts/python.exe -m PyInstaller packaging/SpliceGAIP-Web.spec \
+./venv/Scripts/python.exe -m PyInstaller packaging/SpliceGAIP-Desktop-OneFile.spec \
     --distpath dist \
     --workpath packaging/build-temp
 ```
 
-**输出位置**：`dist/SpliceGAIP.exe` (~26MB)
+**输出位置**：`dist/SpliceGAIP-Desktop.exe`（单文件，~145MB；约 4 分钟）
 
 ---
 
@@ -55,7 +55,7 @@ clean_builds.bat
 - ✅ `packaging/build-temp` 临时目录
 
 **保留**：
-- ✅ `dist/SpliceGAIP.exe` 你的EXE
+- ✅ `dist/SpliceGAIP-Desktop.exe` 你的EXE
 - ✅ `packaging/*.spec` 配置文件
 - ✅ `packaging/*.md` 文档
 
@@ -95,9 +95,9 @@ build.bat
 - [ ] `.env.example` 文件存在
 
 构建后验证：
-- [ ] `dist/SpliceGAIP.exe` 存在
-- [ ] 文件大小 ~26MB
-- [ ] 能正常启动（`dist/SpliceGAIP.exe --help`）
+- [ ] `dist/SpliceGAIP-Desktop.exe` 存在
+- [ ] 文件大小 ~145MB
+- [ ] 能正常启动（双击后出现深色标题栏的窗口，可访问 `http://127.0.0.1:8800/`）
 - [ ] Web UI可访问（默认端口8800+）
 
 ---

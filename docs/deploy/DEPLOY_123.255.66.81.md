@@ -281,7 +281,7 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 
 - 查看完整文档: [DEPLOY_NO_ROOT.md](DEPLOY_NO_ROOT.md)
 - 查看 Coolify 方案: [DEPLOY_COOLIFY.md](DEPLOY_COOLIFY.md)
-- 查看测试指南: [TESTING.md](TESTING.md)
+- 查看测试指南: [TESTING.md](../dev/TESTING.md)
 
 ---
 

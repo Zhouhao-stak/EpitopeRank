@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpliceGAIP 手把手教程 · 从原始 rMATS 表到候选新抗原肽</title>
+<style>
+  :root{
+    --ink:#16202a; --ink-2:#3d4a57; --ink-3:#6b7887;
+    --line:#e3e7ec; --bg:#f6f7f9; --card:#ffffff;
+    --brand:#0f766e; --brand-soft:#e6f4f1;
+    --warn:#b45309; --warn-soft:#fdf6e7;
+    --ok:#166534; --ok-soft:#eaf6ee;
+    --code-bg:#f3f5f7;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    line-height:1.78; font-size:16px;
+  }
+  .wrap{max-width:1000px; margin:0 auto; padding:0 24px 96px}
+  header.top{
+    background:linear-gradient(135deg,#0f2b2a 0%,#123c46 55%,#0e3550 100%);
+    color:#eaf6f4; padding:56px 0 46px; margin-bottom:34px;
+  }
+  header.top .wrap{padding-bottom:0}
+  header.top h1{margin:0 0 12px; font-size:31px; letter-spacing:.3px; font-weight:750}
+  header.top p{margin:0; color:#a9cdc8; font-size:15px}
+  header.top .meta{margin-top:22px; display:flex; gap:10px; flex-wrap:wrap}
+  header.top .meta span{
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16);
+    padding:4px 12px; border-radius:20px; font-size:12.5px; color:#d6ece8;
+  }
+  .toc{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:22px 26px; margin-bottom:34px;
+  }
+  .toc h2{margin:0 0 12px; font-size:15px; color:var(--ink-3); font-weight:700; letter-spacing:1px}
+  .toc ol{margin:0; padding-left:22px; columns:2; column-gap:36px}
+  .toc li{margin:5px 0}
+  .toc a{color:var(--brand); text-decoration:none; font-size:14.5px}
+  .toc a:hover{text-decoration:underline}
+  section.step{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:30px 34px 26px; margin-bottom:26px;
+  }
+  .badge{
+    display:inline-block; background:var(--brand-soft); color:var(--brand);
+    font-size:12.5px; font-weight:750; letter-spacing:.6px;
+    padding:4px 11px; border-radius:6px; margin-bottom:12px;
+  }
+  h2{font-size:24px; margin:0 0 6px; font-weight:750; letter-spacing:.2px}
+  .lede{color:var(--ink-3); font-size:14.5px; margin:0 0 22px}
+  h3{font-size:17.5px; margin:30px 0 10px; font-weight:700; color:var(--ink)}
+  h3 .num{color:var(--brand); font-weight:800; margin-right:6px}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0; padding-left:24px}
+  li{margin:6px 0}
+  code{
+    background:var(--code-bg); border:1px solid var(--line); border-radius:5px;
+    padding:1px 6px; font-size:13.5px; font-family:"Cascadia Mono",Consolas,Menlo,monospace;
+    color:#0b4f4a;
+  }
+  pre{
+    background:#0f2027; color:#d7e6e4; border-radius:10px; padding:16px 18px;
+    overflow-x:auto; font-size:13px; line-height:1.65; margin:14px 0;
+  }
+  pre code{background:none; border:none; color:inherit; padding:0; font-size:13px}
+  figure{margin:22px 0 26px}
+  figure img{
+    width:100%; display:block; border-radius:10px;
+    border:1px solid #cfd6dd; box-shadow:0 6px 22px rgba(16,32,40,.13);
+  }
+  figcaption{
+    font-size:13px; color:var(--ink-3); margin-top:9px; text-align:center;
+  }
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:14.5px}
+  th,td{border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top}
+  th{background:#f2f5f7; font-weight:700; color:var(--ink-2); font-size:13.5px}
+  tbody tr:nth-child(even){background:#fbfcfd}
+  .box{border-radius:10px; padding:14px 18px; margin:18px 0; font-size:14.5px; border-left:4px solid}
+  .box p:first-child{margin-top:0} .box p:last-child{margin-bottom:0}
+  .box.tip{background:var(--brand-soft); border-color:var(--brand)}
+  .box.warn{background:var(--warn-soft); border-color:#d99114}
+  .box.ok{background:var(--ok-soft); border-color:#22a04a}
+  .box b{font-weight:750}
+  .checkline{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+  .checkline .tick{color:#22a04a; font-weight:800; flex:0 0 18px}
+  .kbd{
+    background:#fff; border:1px solid #c9d1d9; border-bottom-width:2px; border-radius:5px;
+    padding:1px 6px; font-size:12.5px; font-family:inherit;
+  }
+  .pill{display:inline-block; background:#eef2f5; border-radius:5px; padding:1px 7px; font-size:13px; color:var(--ink-2)}
+  footer{text-align:center; color:var(--ink-3); font-size:13px; padding-top:20px}
+  @media (max-width:720px){
+    .toc ol{columns:1}
+    section.step{padding:22px 18px}
+    header.top h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>SpliceGAIP 手把手教程</h1>
+    <p>从 rMATS 原始表 → 剪接事件 → 候选新抗原肽 → HLA 结合预测，全程用一套真实公开数据走通</p>
+    <div class="meta">
+      <span>适用版本 v0.1.0</span>
+      <span>演示数据：pDC 抗病毒剪接（4771 事件）</span>
+      <span>预计用时 20–30 分钟</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#s0">开始之前：准备什么</a></li>
+    <li><a href="#s1">第 0 步　启动服务</a></li>
+    <li><a href="#s2">第 1 步　认识界面</a></li>
+    <li><a href="#s3">第 2 步　准备数据</a></li>
+    <li><a href="#s4">第 3 步　新建分析</a></li>
+    <li><a href="#s5">第 4 步　看剪接结果</a></li>
+    <li><a href="#s6">第 5 步　生成候选肽（核心）</a></li>
+    <li><a href="#s7">第 6 步　只做 HLA 预测</a></li>
+    <li><a href="#s8">第 7 步　交付与导出</a></li>
+    <li><a href="#s9">第 8 步　换自己的数据</a></li>
+    <li><a href="#s10">常见问题</a></li>
+  </ol>
+</nav>
+
+<section class="step" id="s0">
+  <span class="badge">开始之前</span>
+  <h2>你需要准备什么</h2>
+  <p class="lede">三样东西：一台能上网的电脑、一套 rMATS 结果、一张编码序列对照表。HLA 型别可选。</p>
+
+  <table>
+    <thead><tr><th style="width:150px">准备项</th><th>说明</th><th style="width:110px">必需</th></tr></thead>
+    <tbody>
+      <tr><td>浏览器</td><td>Chrome 或 Edge，任意近三年版本</td><td>必需</td></tr>
+      <tr><td>rMATS 结果</td><td><code>SE / A5SS / A3SS / MXE / RI</code> 五个 <code>*.MATS.JC.txt</code>，可以有缺项</td><td>必需</td></tr>
+      <tr><td>编码序列对照表</td><td>四列：事件 ID、参考 CDS、改变后 CDS、连接点位置。文件名和列名都随意</td><td>生成肽时必需</td></tr>
+      <tr><td>HLA 型别</td><td>如 <code>HLA-A*02:01</code>，可多个</td><td>可选</td></tr>
+      <tr><td>网络</td><td>HLA 预测要走 IEDB 在线服务；不填 HLA 就不需要外网</td><td>仅预测时</td></tr>
+    </tbody>
+  </table>
+
+  <p>本教程用项目自带的真实数据包演示，路径在 <code>E:/SpliceGAIP_data/datasets/data_public/peptide_test/</code>，里面有三套等价的输入目录，用来证明"CDS 表叫什么名字、列名写成什么样都能用"：</p>
+
+  <table>
+    <thead><tr><th style="width:180px">目录</th><th>编码序列表长什么样</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td><code>run_input/</code></td><td><code>splice_orfs.tsv</code>，标准英文列名</td><td>标准写法，先跑通这个</td></tr>
+      <tr><td><code>run_input_free/</code></td><td><code>客户给的_剪接CDS对照表.csv</code>，中文列名 <code>事件ID / 参考序列 / 变异序列 / 连接点</code></td><td>演示中文表头</td></tr>
+      <tr><td><code>run_input_wild/</code></td><td><code>实验原始导出_序列.csv</code>，列名只有 <code>编号 / 位点 / 序列1 / 序列2</code>，且两列序列还是反的</td><td>演示最难的情况</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box tip">
+    <p><b>三个目录跑出来的结果完全一样</b>：都是 296 条候选肽。区别只在系统要多花一步去猜列的含义。本教程用最难的 <code>run_input_wild/</code> 演示，因为只要这个能跑通，其他两种自然没问题。</p>
+  </div>
+</section>
+
+<section class="step" id="s1">
+  <span class="badge">第 0 步</span>
+  <h2>启动服务</h2>
+  <p class="lede">两种方式，选一种。桌面版适合日常使用，命令行版适合排查问题。</p>
+
+  <h3><span class="num">A.</span>桌面版（推荐）</h3>
+  <p>双击 <code>dist\SpliceGAIP-Desktop.exe</code>。程序会在本机启动服务并弹出应用窗口（同时可用浏览器访问控制台里打印的地址，形如 <code>http://127.0.0.1:8800/</code>）。关闭窗口即停止服务。</p>
+  <p>这个 exe 由当前源码打包，界面与本教程截图一致。如果哪一天发现界面比教程旧（比如找不到「确认列的含义」面板），说明手上是旧构建，重跑一次 <code>build.bat</code> 即可——该脚本已会自动清理 <code>__pycache__</code>，避免把旧字节码打进包里。</p>
+
+  <h3><span class="num">B.</span>命令行版（源码运行）</h3>
+<pre><code>cd E:\SpliceGAIP
+venv\Scripts\python.exe serve_ui.py --port 8800
+</code></pre>
+  <p>启动成功会打印一段横幅，注意看其中三行：</p>
+<pre><code>  地址: http://127.0.0.1:8800/
+  大模型: 已接入 deepseek-flash · AI 解读已启用
+  浏览器已自动打开；关闭本窗口即可停止服务。
+</code></pre>
+  <ul>
+    <li><b>端口被占用怎么办？</b>第 8800 端口若已被别的程序占用，启动器会自动往后续端口找（8801、8802…），以控制台打印的实际地址为准。</li>
+    <li><b>大模型没配？</b>横幅会写"当前为离线确定性模式"。此时分析、生成肽、HLA 预测都照常工作，只有 AI 文字解读会变成规则模板。要启用：打开网页 →「AI 助手」→「模型配置」粘贴密钥，保存即生效，不用重启。</li>
+    <li><b>检查是否活着：</b>浏览器访问 <code>http://127.0.0.1:8800/api/health</code>，返回 <code>{"status":"ok"}</code> 即正常。</li>
+  </ul>
+</section>
+
+<section class="step" id="s2">
+  <span class="badge">第 1 步</span>
+  <h2>认识界面</h2>
+  <p class="lede">左侧八个导航，按使用频率分三组。日常只需要用到前三项和「剪接候选新抗原」。</p>
+
+  <figure>
+    <img src="tutorial_shots/01_dashboard.png" alt="仪表盘">
+    <figcaption>图 1　仪表盘：顶部是当前项目名，主区四张统计卡（样本数 / 事件数 / 显著事件 / 系统状态），右栏是历史项目</figcaption>
+  </figure>
+
+  <table>
+    <thead><tr><th style="width:150px">导航项</th><th>你要在什么时候点它</th></tr></thead>
+    <tbody>
+      <tr><td><b>仪表盘</b></td><td>看历史项目、选项目、删项目</td></tr>
+      <tr><td>AI 流水线</td><td>分析进行中，想看 6 个 Agent 各自做到哪一步</td></tr>
+      <tr><td>事件浏览器</td><td>按基因 / 事件 ID 查具体剪接事件，导出清单</td></tr>
+      <tr><td>可视化</td><td>火山图、瀑布图、热图等 13 张科研图</td></tr>
+      <tr><td>基因浏览器</td><td>输入 TP53 这类基因符号，一次看齐它的所有事件</td></tr>
+      <tr><td>报告</td><td>生成 HTML / PDF 报告，用于交付</td></tr>
+      <tr><td><b>剪接候选新抗原</b></td><td>生成候选肽 + HLA 预测（本教程第 5 步）</td></tr>
+      <tr><td>肽预测</td><td>手上已有一批肽段，只想做 HLA 结合预测</td></tr>
+      <tr><td>AI 助手</td><td>聊天提问、配置大模型、调用 MCP 工具</td></tr>
+    </tbody>
+  </table>
+
+  <p>右上角三个按钮：<span class="pill">简体中文</span> 切换界面语言、<span class="pill">刷新</span> 重新拉取项目列表、<span class="pill">+ 新建分析</span> 开始一个新项目。</p>
+</section>
+
+<section class="step" id="s3">
+  <span class="badge">第 2 步</span>
+  <h2>准备数据目录</h2>
+  <p class="lede">把要用的文件放进同一个文件夹。系统不要求固定文件名，但 rMATS 的五个表必须保持官方名字。</p>
+
+  <p>以 <code>E:/SpliceGAIP_data/datasets/data_public/peptide_test/run_input_wild/</code> 为例，目录内容如下：</p>
+<pre><code>run_input_wild/
+├── SE.MATS.JC.txt          1882 个外显子跳跃事件
+├── A5SS.MATS.JC.txt         455 个 5' 可变剪接位点
+├── A3SS.MATS.JC.txt         685 个 3' 可变剪接位点
+├── MXE.MATS.JC.txt          331 个互斥外显子
+├── RI.MATS.JC.txt          1418 个内含子滞留
+├── sample_metadata.tsv        6 个样本的分组（3 活化 vs 3 对照）
+└── 实验原始导出_序列.csv      ★ 编码序列对照表（名字随意）
+</code></pre>
+
+  <p><b>rMATS 五个表必须用官方文件名</b>（<code>SE.MATS.JC.txt</code> 等），因为系统靠文件名区分事件类型。少几个也可以，比如只做 SE 就只放 <code>SE.MATS.JC.txt</code>。</p>
+
+  <p><code>sample_metadata.tsv</code> 是可选的，但强烈建议放，否则分组比较和样本相关图表出不来：</p>
+<pre><code>sample_id	group	condition	tissue	batch
+SRR1	activated	infected	pDC	b1
+SRR2	activated	infected	pDC	b1
+SRR3	activated	infected	pDC	b1
+SRR4	control	mock	pDC	b1
+SRR5	control	mock	pDC	b1
+SRR6	control	mock	pDC	b1
+</code></pre>
+
+  <div class="box warn">
+    <p><b>编码序列表反而没有任何命名要求。</b>叫 <code>序列表.csv</code>、<code>表3.tsv</code>、<code>实验原始导出_序列.csv</code> 都行；列名写中文、英文、甚至 <code>序列1/序列2</code> 这种也认——系统会读单元格内容反推每一列是什么（第 5 步会看到）。</p>
+  </div>
+</section>
+
+<section class="step" id="s4">
+  <span class="badge">第 3 步</span>
+  <h2>新建分析</h2>
+  <p class="lede">点右上角「+ 新建分析」，填三项、拖一组文件，就可以去喝口水了。</p>
+
+  <figure>
+    <img src="tutorial_shots/02_new_project_modal.png" alt="新建分析弹窗">
+    <figcaption>图 2　新建分析弹窗：项目名称、分析查询、上传文件三块</figcaption>
+  </figure>
+
+  <ol>
+    <li><b>项目名称</b>：随便起，建议能看出数据来源，例如 <code>pDC活化_剪接新抗原</code>。不要用空格和斜杠。</li>
+    <li><b>分析查询</b>：用一句人话写清楚你在比较什么，例如 <code>pDC 活化后可变剪接变化</code>。这句话会作为 AI 解读的输入，写得越具体，解读越贴题。</li>
+    <li><b>上传文件</b>：把第 2 步那个文件夹里的 6 个文件<b>全选</b>拖进虚线框；或点虚线框，在文件选择窗口里按住 <span class="kbd">Ctrl</span> 多选、或 <span class="kbd">Ctrl</span>+<span class="kbd">A</span> 全选。</li>
+    <li>点右下角 <b>开始分析</b>。按钮在选中文件之前是灰的，选上就变亮。</li>
+  </ol>
+
+  <p>提交后窗口自动关闭，顶部状态条依次变成：<span class="pill">上传中…</span> → <span class="pill">智能体正在理解数据结构…</span> → <span class="pill">分析中</span>。此时可以点左侧「AI 流水线」看六个 Agent 的实时进度：数据校验 → 质量控制 → 剪接检测 → 统计建模 → 功能注释 → 生信解读。</p>
+
+  <p><b>这套数据（4771 个事件）实际耗时约 1–3 分钟</b>，主要花在 AI 解读上，取决于大模型响应速度；没配大模型会更快。</p>
+
+  <div class="box tip">
+    <p><b>什么时候会弹「智能接入检查」？</b>只有上传的表不是 rMATS 标准格式时（例如华大逐样本 <code>OC_001.SE.xls</code>，或自己整理的表格）才会弹窗让你确认列映射和分组，确认后自动转成标准表。用本教程的 rMATS 目录不会弹，直接进分析。</p>
+  </div>
+
+  <p>分析完成后回到仪表盘，会看到四张卡：<b>样本 6</b>、<b>剪接事件 4,771</b>、<b>显著事件 24</b>、系统状态"已归档"。这三个数字是后面每一步的起点，也是你验证流程是否正常的第一道标尺。</p>
+</section>
+
+<section class="step" id="s5">
+  <span class="badge">第 4 步</span>
+  <h2>看剪接结果</h2>
+  <p class="lede">三层看法：项目详情看全貌，事件浏览器看单条，可视化看图形。</p>
+
+  <h3><span class="num">1.</span>项目详情（点历史项目里的项目名）</h3>
+  <figure>
+    <img src="tutorial_shots/03_project_detail.png" alt="项目详情">
+    <figcaption>图 3　项目详情：样本分组、事件类型分布、流程日志、六张图缩略图、候选事件 TOP 10</figcaption>
+  </figure>
+
+  <p>这块区域回答四个问题：样本怎么分组的（<code>activated 3 / control 3</code>）、五类事件各多少个（SE 1,882、RI 1,418、A3SS 685、A5SS 455、MXE 331）、每一步跑了什么、最该关注的十条事件是哪些。右上角四个按钮：<span class="pill">打开 HTML 报告</span> <span class="pill">下载 PDF</span> <span class="pill">浏览全部事件</span> <span class="pill">删除项目</span>。</p>
+
+  <h3><span class="num">2.</span>事件浏览器（逐条查）</h3>
+  <figure>
+    <img src="tutorial_shots/04_explorer.png" alt="事件浏览器">
+    <figcaption>图 4　事件浏览器：搜索框、五类事件勾选、仅显著开关、排序方式、事件表</figcaption>
+  </figure>
+
+  <p>常用操作：在搜索框输入基因名（如 <code>MTCH1</code>）或事件 ID（如 <code>RI:4579</code>）后按回车 → 勾掉不关心的事件类型 → 勾上「仅显著事件」→ 排序选 <code>|ΔPSI|</code> 从大到小。每页 50 条。</p>
+
+  <h3><span class="num">3.</span>可视化（13 张科研图）</h3>
+  <figure>
+    <img src="tutorial_shots/05_visualization.png" alt="可视化目录">
+    <figcaption>图 5　可视化页：左栏按"核心统计 / 事件组成 / 样本质控"分组列出 13 张图，点一下就渲染</figcaption>
+  </figure>
+
+  <figure>
+    <img src="tutorial_shots/06_waterfall.png" alt="瀑布图">
+    <figcaption>图 6　点「ΔPSI 瀑布图」后右侧即时渲染：按 |ΔPSI| 排序的 Top 事件，直观看出效应量大小</figcaption>
+  </figure>
+
+  <p>写文章常取的四张：火山图（Volcano）、ΔPSI 瀑布（Waterfall）、PSI 热图（heatmap）、剪接机制示意图（Schematic）。图是实时渲染的，右侧右上角有下载按钮。</p>
+</section>
+
+<section class="step" id="s6">
+  <span class="badge">第 5 步 · 核心</span>
+  <h2>生成候选肽</h2>
+  <p class="lede">点左侧「剪接候选新抗原」。这一页只有两个框：先检查数据，再生成肽。整套流程六小步。</p>
+
+  <h3><span class="num">5.1</span>进入页面，系统自动检查</h3>
+  <figure>
+    <img src="tutorial_shots/07_neoantigen_checked.png" alt="新抗原页就绪检查">
+    <figcaption>图 7　进入页面自动执行一次检查（也可随时点「检查当前项目」重跑），结论三行：项目名、事件数、编码序列表状态</figcaption>
+  </figure>
+
+  <p>你要看到的是这三行，尤其第三行：</p>
+<pre><code>项目：run_input_wild
+剪接事件：4771 条
+编码序列表：已自动识别 1 份（实验原始导出_序列.csv）
+可以继续生成候选肽。检查只确认了表头，序列的读码框仍需由专业人员核实。
+</code></pre>
+
+  <div class="box warn">
+    <p>如果第三行显示「<b>编码序列表：暂未找到</b>」，不要重跑分析。直接点下面的「<b>从本机添加编码序列表…</b>」把文件补进来，选中后立刻可用。这套设计就是让人不必为了一个表重跑整个项目。</p>
+  </div>
+
+  <h3><span class="num">5.2</span>编码序列表到底要什么</h3>
+  <p>四个角色，缺一不可。注意最后一列是<b>整数</b>，不是序列：</p>
+
+  <table>
+    <thead><tr><th style="width:130px">角色</th><th>含义</th><th style="width:260px">格式要求</th></tr></thead>
+    <tbody>
+      <tr><td>事件 ID</td><td>对应分析事件表里的 <code>ID</code></td><td>如 <code>RI:4579</code>、<code>SE:49301</code></td></tr>
+      <tr><td>参考 CDS</td><td>正常（组成型）剪接下的编码序列</td><td>5'→3'，只含 A/C/G/T，长度是 3 的倍数</td></tr>
+      <tr><td>改变后 CDS</td><td>发生剪接改变后的编码序列</td><td>同上</td></tr>
+      <tr><td><b>连接点位置</b></td><td>新剪接点在<b>改变后 CDS</b> 里的核苷酸边界</td><td><b>整数</b>，满足 1 ≤ n &lt; len(altered_cds)</td></tr>
+    </tbody>
+  </table>
+
+  <p>最小的可跑通例子（产出 8 肽 <code>MAKIYSPD</code>）：</p>
+<pre><code>event_id	reference_cds	altered_cds	junction_nt
+EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
+</code></pre>
+  <p>读法：参考序列译作 <code>MAKIYS</code>；改变后在同样的位置插入了 6 个碱基 <code>CCTGAC</code>，译作 <code>MAKIYSPD</code>。跨过连接点、且不出现在参考蛋白里的肽就被保留下来。</p>
+
+  <h3><span class="num">5.3</span>列名太野？确认一次，永久记住</h3>
+  <p>本例的表头是 <code>编号 / 位点 / 序列1 / 序列2</code>——没有任何一个字能提示它是什么。系统会读单元格内容判断：全是 ACGT 且长度是 3 的倍数的列是序列，能和事件表对上的列是事件 ID，整数列是连接点位置；然后<b>用真实数据回放一遍</b>，判断哪列是参考、哪列是改变后（两列顺序颠倒也能纠正）。</p>
+
+  <figure>
+    <img src="tutorial_shots/08_mapping_panel.png" alt="列映射面板">
+    <figcaption>图 8　「确认列的含义」面板：四个下拉框已按猜测预填，下方列出每类的样本内容供你核对</figcaption>
+  </figure>
+
+  <p>本例自动猜出的对应关系是：</p>
+  <table>
+    <thead><tr><th style="width:230px">系统要的角色</th><th style="width:130px">猜到的列</th><th>怎么核对</th></tr></thead>
+    <tbody>
+      <tr><td>事件 ID</td><td><code>编号</code></td><td>值形如 <code>RI:4579</code>，与事件表能对上 ✔</td></tr>
+      <tr><td>参考（正常）编码序列</td><td><code>序列2</code></td><td>比 <code>序列1</code> 短，是原始版本</td></tr>
+      <tr><td>改变后（变异）编码序列</td><td><code>序列1</code></td><td>比 <code>序列2</code> 长，多出插入片段</td></tr>
+      <tr><td>新剪接连接点位置（整数）</td><td><code>位点</code></td><td>值如 <code>1099</code>，是纯数字 ✔</td></tr>
+    </tbody>
+  </table>
+
+  <p>核对无误就点「<b>确认这套对应关系</b>」。系统会先用这套映射试算一遍，一行肽都产不出来时会提示你"参考/改变后可能填反了"。确认成功后写入表同目录的 <code>.cds_mapping.json</code>，<b>同一个项目以后不再询问</b>。</p>
+
+  <div class="box tip">
+    <p>表头是标准写法（<code>event_id / reference_cds / altered_cds / junction_nt</code>）或常见中文（<code>事件ID / 参考序列 / 变异序列 / 连接点</code>）时，这个面板根本不会出现，系统直接进下一步。只有真的猜不准才需要人工确认一次。</p>
+  </div>
+
+  <h3><span class="num">5.4</span>填 HLA 型别</h3>
+  <figure>
+    <img src="tutorial_shots/09_hla_filled.png" alt="HLA 输入">
+    <figcaption>图 9　HLA-I 型别填在第二个框里，多个用英文逗号分隔</figcaption>
+  </figure>
+
+  <ul>
+    <li>格式必须是 <code>HLA-</code> + <code>A/B/C</code> + <code>*</code> + 两位或三位 + <code>:</code> + 两位，例如 <code>HLA-A*02:01</code>、<code>HLA-B*07:02</code>、<code>HLA-A*24:02</code>。</li>
+    <li>多个用英文逗号 <code>,</code> 分隔：<code>HLA-A*02:01,HLA-B*07:02</code>。</li>
+    <li><b>留空就只出肽、不做预测</b>，全程不需要外网。</li>
+    <li>下面那行小字说明很重要：预测发往 IEDB（NetMHCpan 4.1 EL 方法），<b>结合力不等于免疫原性</b>。</li>
+  </ul>
+
+  <h3><span class="num">5.5</span>点「生成候选肽」</h3>
+  <p>按钮变亮后点它。若填了 HLA，状态会显示「正在生成候选肽并查询 IEDB（2 个 HLA 型别，通常 30–90 秒，请勿关闭页面）…」。系统按每批 100 条肽自动分批提交，失败会自动重试，<b>个别肽失败不会让整次运行失败</b>。</p>
+
+  <h3><span class="num">5.6</span>看结果</h3>
+  <figure>
+    <img src="tutorial_shots/10_peptide_result.png" alt="生成结果摘要">
+    <figcaption>图 10　结果摘要：用的哪张表、多少条肽、多少条预测成功，以及三个结果文件的链接</figcaption>
+  </figure>
+
+  <p>这套数据的真实结果是：</p>
+<pre><code>使用编码序列表：实验原始导出_序列.csv
+候选肽段 296 条；HLA 结合预测成功 592 条。
+</code></pre>
+  <p>592 = 296 条肽 × 2 个 HLA 型别，说明一条都没漏。首次运行约 60 秒；因为结果带磁盘缓存，同样参数再点一次不到 1 秒。</p>
+
+  <figure>
+    <img src="tutorial_shots/11_result_panel.png" alt="结果面板">
+    <figcaption>图 11　结果面板：三个 tab 可切换查看，右上角能复制全部、下载当前文件、直接打开结果目录</figcaption>
+  </figure>
+
+  <table>
+    <thead><tr><th style="width:230px">文件</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td><code>splice_peptides.tsv</code></td><td>全部候选肽，10 列：事件 ID、基因 ID、基因符号、事件类型、FDR、ΔPSI、肽序列、肽长、起止氨基酸位置</td></tr>
+      <tr><td><code>mhc_i_predictions.tsv</code></td><td>每条肽 × 每个型别的预测：<code>score</code>（结合打分）、<code>percentile_rank</code>（百分位排名，<b>越小越强</b>）、原始返回内容</td></tr>
+      <tr><td><code>neoantigen_manifest.json</code></td><td>运行清单：用的哪张表、列映射、HLA 型别、样本数、是否截断、失败明细</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="num">5.7</span>结果怎么读（重要，别读错）</h3>
+  <p>296 条肽覆盖 8 个基因，长度分布 11mer 86 条、10mer 78 条、9mer 70 条、8mer 62 条；来源事件类型 RI 224 条、A5SS 38 条、SE 34 条。</p>
+
+  <p>按 <code>percentile_rank</code> 从小到大排，这套真实数据里结合最强的几条是：</p>
+  <table>
+    <thead><tr><th style="width:60px">排名</th><th style="width:180px">肽段</th><th style="width:150px">HLA 型别</th><th style="width:110px">百分位</th><th>判读</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>MAYVQRQAV</code></td><td>HLA-B*07:02</td><td>0.91</td><td>弱结合</td></tr>
+      <tr><td>2</td><td><code>VLITTDLLGKL</code></td><td>HLA-A*02:01</td><td>1.20</td><td>弱结合</td></tr>
+      <tr><td>3</td><td><code>GQLFRGSSLL</code></td><td>HLA-A*02:01</td><td>1.30</td><td>弱结合</td></tr>
+      <tr><td>4</td><td><code>YMAYVQRQAV</code></td><td>HLA-A*02:01</td><td>1.60</td><td>弱结合</td></tr>
+      <tr><td>5</td><td><code>SLMASEEEYST</code></td><td>HLA-A*02:01</td><td>1.70</td><td>弱结合</td></tr>
+      <tr><td>6</td><td><code>IQDQGGWVRL</code></td><td>HLA-A*02:01</td><td>2.00</td><td>临界</td></tr>
+    </tbody>
+  </table>
+
+  <p>判读口径（IEDB / NetMHCpan 惯例）：<b>百分位 &lt; 0.5% 为强结合，&lt; 2% 为弱结合</b>。这套数据里强结合 0 条、弱结合 5 条（A*02:01 四条、B*07:02 一条）。</p>
+
+  <div class="box warn">
+    <p><b>这意味着什么，要跟客户说清楚：</b>这套公开数据的最优结果是 0.91% 的弱结合肽，<b>没有强结合</b>。这既可能是真的没有好抗原，也可能是 HLA 型别和样本人群不匹配（这批是 pDC 细胞系数据）。如果要拿去做验证实验，先把这张表按百分位升序排序，取前 10–20 条做多肽合成 + 四聚体或 ELISpot，<b>不要只看第一位</b>。</p>
+  </div>
+</section>
+
+<section class="step" id="s7">
+  <span class="badge">第 6 步</span>
+  <h2>只做 HLA 预测（手上已有肽）</h2>
+  <p class="lede">不需要剪接数据，也不需要 CDS 表。左侧「肽预测」就是干这个的。</p>
+
+  <figure>
+    <img src="tutorial_shots/12_peptide_page.png" alt="肽预测页">
+    <figcaption>图 12　肽预测页：粘贴序列 → 选 HLA 型别 → 选预测选项 → 预测并排序</figcaption>
+  </figure>
+
+  <ol>
+    <li><b>肽序列</b>：一行一条，如 <code>SLYNTVATL</code>。下方会实时显示"已识别 N 条肽段"。</li>
+    <li><b>HLA 型别</b>：可直接填，也可点「常用 MHC-I 面板」一键填入常见型别组合。</li>
+    <li><b>预测选项</b>：MHC 类别默认 <code>class1（MHC-I，8–11 aa）</code>，预测器 <code>IEDB（在线）</code>；「加工预测」勾上会额外做蛋白酶体/TAP 加工打分。</li>
+    <li>点 <b>预测并排序</b>。单次上限 2000 条肽，超了自动截断不报错。</li>
+  </ol>
+
+  <p>页面最下面还有一块「从当前项目生成候选肽」：它把事件表 + 编码序列表 + HLA 串成一条线自动跑完，等价于第 5 步的全流程，但结果会带排序和汇总报告，适合重复出报告。</p>
+</section>
+
+<section class="step" id="s8">
+  <span class="badge">第 7 步</span>
+  <h2>交付与导出</h2>
+
+  <h3><span class="num">0.</span>每个项目一个成果文件夹（最省事）</h3>
+  <p>分析跑完后，系统会自动把报告和图复制到 <b>项目根目录下的 <code>results\</code></b>，一个项目一个文件夹，名字就是「项目名_编号」，直接能看懂：</p>
+<pre><code>E:\SpliceGAIP\results\
+├── pDC活化后剪接变化_SPN-B3AA05B4\
+│   ├── report.html          ← 双击就能看
+│   ├── report.pdf
+│   ├── figures\             ← 6 张图，PNG 可进 PPT，SVG 可无损放大
+│   └── 项目说明.txt          ← 样本数 / 事件数 / 显著数，一眼核对
+└── 另一个项目_SPN-XXXXXXXX\
+</code></pre>
+  <p>在「历史项目详情」页有三个按钮：<b>📁 成果文件夹</b>（直接在资源管理器打开）、<b>📦 打包 ZIP</b>（压成压缩包，方便发给同事或存云盘）、<b>📄 打开报告</b>。一个项目的全部产物约 <b>4 MB</b>，不会越跑越大——体积大的是历史项目累积的数据库，删项目时一并清掉。</p>
+  <div class="box tip"><b>想换位置？</b>在 <code>.env</code> 里设 <code>SPLICEGAIP_RESULTS_ROOT=D:\某目录</code> 即可。桌面版默认放在 exe 同级的 <code>results\</code>。</div>
+
+  <h3><span class="num">1.</span>结果文件在哪</h3>
+  <p>结果写在项目原始数据目录下的 <code>neoantigen_results/</code>。最省事的办法是点结果面板右上角「<b>打开结果目录</b>」，资源管理器直接定位过去。本例是：</p>
+<pre><code>E:\SpliceGAIP_data\datasets\data_public\peptide_test\run_input_wild\neoantigen_results\
+├── splice_peptides.tsv
+├── mhc_i_predictions.tsv
+└── neoantigen_manifest.json
+</code></pre>
+
+  <h3><span class="num">2.</span>manifest 里三个必看字段</h3>
+  <table>
+    <thead><tr><th style="width:210px">字段</th><th>为什么重要</th></tr></thead>
+    <tbody>
+      <tr><td><code>workflow_status</code></td><td>固定为 <code>exploratory_only</code>，表示这是<b>探索性</b>结果——剪接坐标无法唯一确定读码框，必须标注，写文章时也要照实写</td></tr>
+      <tr><td><code>column_mapping</code></td><td>这次到底用了哪四列。审稿人问"你怎么知道序列1 是变异后"时，这就是答案</td></tr>
+      <tr><td><code>prediction_truncated</code> / <code>prediction_errors</code></td><td>分别为被截断的肽数和失败明细，正常应为 0</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="num">3.</span>报告</h3>
+  <p>左侧「报告」→ 生成 HTML 或 PDF。报告覆盖样本构成、五类事件统计、显著事件表与图表。肽结果文件不进报告，需要单独交付上面那三个文件。</p>
+</section>
+
+<section class="step" id="s9">
+  <span class="badge">第 8 步</span>
+  <h2>换成自己的数据</h2>
+  <p class="lede">照着这张清单逐条核对，能避开九成的失败。</p>
+
+  <div class="checkline"><span class="tick">✓</span><div><b>rMATS 五个表用官方文件名。</b><code>SE.MATS.JC.txt</code> 就是 <code>SE.MATS.JC.txt</code>，改名成大写的 <code>SE.MATS.JC.TXT</code> 也能认，但改成 <code>跳跃.MATS.txt</code> 就认不出。</div></div>
+  <div class="checkline"><span class="tick">✓</span><div><b>用 JC 表而不是 JCEC 表。</b>官方推荐 JC（junction counts），JCEC 会引入外显子计数，PSI 定义不一致。</div></div>
+  <div class="checkline"><span class="tick">✓</span><div><b>CDS 必须是确定读码框的完整序列。</b>长度是 3 的倍数、只含 ACGT、首密码子是 ATG、无内部终止子。从 GTF + 基因组现拼一段外显子序列通常不满足这些条件，会被截断成空结果。</div></div>
+  <div class="checkline"><span class="tick">✓</span><div><b>连接点位置填整数，不要填碱基。</b>最常见的错误是抄了一小段 <code>CCTGAC</code> 进去。系统会把它当 0 处理，然后一条肽都产不出来。</div></div>
+  <div class="checkline"><span class="tick">✓</span><div><b>HLA 用 <code>HLA-A*02:01</code> 这种完整写法。</b><code>A2</code>、<code>HLA-A2</code>、<code>A0201</code> 都会被拒。</div></div>
+  <div class="checkline"><span class="tick">✓</span><div><b>事件 ID 要和分析出来的对得上。</b>如果 CDS 表里的事件 ID 一个都匹配不上，肽会是 0 条。在 manifest 里看 <code>prediction_unmatched</code> 和候选数为 0 就能发现。</div></div>
+
+  <h3>报错对照表</h3>
+  <table>
+    <thead><tr><th style="width:300px">你看到的提示</th><th>原因与处理</th></tr></thead>
+    <tbody>
+      <tr><td>编码序列表：暂未找到</td><td>目录里确实没有四列齐全的表，或文件超过 64 MB 被跳过。点「从本机添加编码序列表…」单独补</td></tr>
+      <tr><td>缺少：变异序列（altered_cds）</td><td>表里少了这一列，或被当成别的角色了。在列映射面板里手动指定</td></tr>
+      <tr><td>这套映射一行肽都产不出来</td><td>十有八九是参考/改变后填反了，把两个下拉对调再试</td></tr>
+      <tr><td>HLA 型别格式不对</td><td>检查是否漏了 <code>HLA-</code> 前缀或 <code>*</code> 号</td></tr>
+      <tr><td>预测成功 0 条 / 失败若干条</td><td>外网不通，或 IEDB 临时不可用。看 manifest 的 <code>prediction_errors</code>；肽结果本身不受影响</td></tr>
+      <tr><td>上传大文件报 413</td><td>前面挂了 nginx。加 <code>client_max_body_size 2048m;</code>，或直连 8800 端口</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="step" id="s10">
+  <span class="badge">附录</span>
+  <h2>常见问题</h2>
+
+  <h3>为什么肽长只能是 8–11 mer？</h3>
+  <p>MHC-I 呈递的肽段经典长度就是 8–11 个氨基酸（9 mer 最常见），这是生物学约束，不是软件限制。更大的肽走 MHC-II 通路，预测器和判读标准都不一样。</p>
+
+  <h3>系统怎么算 ΔPSI？和我自己算的不一样</h3>
+  <p>系统不读 rMATS 的 <code>IncLevelDifference</code> 列，而是用 <code>IncLevel2 均值 − IncLevel1 均值</code> 重算，所以和文件里那一列可能有小数位差异。这样做的原因是不同版本 rMATS 对该列定义有过变化。</p>
+
+  <h3>没配大模型能用吗？</h3>
+  <p>能。分析、出图、生成肽、HLA 预测全部正常，只有"AI 解读"那段文字会退回规则模板。结果数值不受影响。</p>
+
+  <h3>结果能直接写进文章吗？</h3>
+  <p>方法学部分要写清三点：数据来自 rMATS JC 表；候选肽为<b>探索性</b>生成（读码框依赖上游外显子，仅凭剪接坐标无法唯一确定蛋白序列）；HLA 结合由 IEDB NetMHCpan 4.1 EL 预测，未做实验验证。要做到投稿级，用「剪接候选新抗原 → 高级选项 → 分阶段证据审计」那条七阶段流程，它把读码框、蛋白组过滤、表达过滤逐项做成可审计的证据链。</p>
+
+  <h3>同一份数据跑两次结果会变吗？</h3>
+  <p>不会。剪接分析、肽生成都是确定性的；HLA 预测结果来自 IEDB，网络重试可能让个别肽缺失，但已有结果写入磁盘缓存，重复请求会直接命中缓存。</p>
+
+  <h3>项目太多想清理</h3>
+  <p>仪表盘历史项目列表可以搜索；进项目详情点右上角「删除项目」会同时删库记录和项目目录，<b>不可恢复</b>，删前先确认报告和结果文件已经导出。</p>
+</section>
+
+<footer>
+  SpliceGAIP v0.1.0 · 本教程所有数字均来自 <code>E:/SpliceGAIP_data/datasets/data_public/peptide_test</code> 实跑结果<br>
+  详细字段定义见 <code>docs/USER_GUIDE.md</code>，数据来源见 <code>E:/SpliceGAIP_data/datasets/data_public/README.md</code>
+</footer>
+
+</div>
+</body>
+</html>

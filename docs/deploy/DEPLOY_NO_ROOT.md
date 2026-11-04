@@ -34,10 +34,10 @@ mkdir -p ~/test && rmdir ~/test
 
 ```bash
 # 在本地执行
-./deploy-to-server.sh user@your-server.com /home/user/splicegaip
+../../deploy-to-server.sh user@your-server.com /home/user/splicegaip
 
 # 首次部署后，更新只需重新运行脚本
-./deploy-to-server.sh user@your-server.com /home/user/splicegaip
+../../deploy-to-server.sh user@your-server.com /home/user/splicegaip
 ```
 
 **优点**：
@@ -304,7 +304,7 @@ deploy:
 4. **设置别名**（方便以后使用）：
    ```bash
    # 添加到 ~/.bashrc
-   alias deploy-splicegaip='./deploy-to-server.sh user@server /home/user/splicegaip'
+   alias deploy-splicegaip='../../deploy-to-server.sh user@server /home/user/splicegaip'
    
    # 以后只需输入
    deploy-splicegaip

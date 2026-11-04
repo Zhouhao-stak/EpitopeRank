@@ -342,8 +342,8 @@ SPLICEGAIP_METRICS_PORT=9090
 ## 📚 相关文档
 
 - [Coolify 官方文档](https://coolify.io/docs/)
-- [SpliceGAIP 测试指南](TESTING.md)
-- [SpliceGAIP API 文档](API_CONFIG.md)
+- [SpliceGAIP 测试指南](../dev/TESTING.md)
+- [SpliceGAIP API 文档](../dev/API_CONFIG.md)
 - [Docker 最佳实践](DOCKER_USAGE.md)
 
 ---

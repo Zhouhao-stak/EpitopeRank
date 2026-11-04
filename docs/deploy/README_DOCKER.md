@@ -108,4 +108,4 @@ MODEL_REASONING_EFFORT=low
 - **PyInstaller**: `.env` 放在 EXE 同目录
 - **Docker**: `.env` 通过环境变量或挂载传入
 
-详细配置说明见：`API_CONFIG.md`、`DOCKER_USAGE.md`
+详细配置说明见：`../dev/API_CONFIG.md`、`DOCKER_USAGE.md`

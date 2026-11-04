@@ -186,4 +186,4 @@ COMPOSE_PROJECT_NAME=splicegaip-dev docker-compose -f docker-compose.dev.yml up 
 docker-compose logs -f splicegaip
 ```
 
-或查看完整文档：`API_CONFIG.md`
+或查看完整文档：`../dev/API_CONFIG.md`

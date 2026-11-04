@@ -197,13 +197,17 @@ docker-run.bat rebuild
 
 ### Q4: 数据保存在哪里？
 
-**PyInstaller:**
-- 本地目录：`runtime/`
-- SQLite 数据库：`runtime/splicegaip.sqlite3`
+**桌面版 / 源码运行：**
+- 运行根目录：`%LOCALAPPDATA%\SpliceGAIP`（Windows）或 `~/.local/share/splicegaip`（Linux/macOS）
+- SQLite 数据库：`<运行根目录>/splicegaip.sqlite3`
+- 项目产物（图 / 报告）：`<运行根目录>/projects/<项目ID>/`
+- 可用 `SPLICEGAIP_RUNTIME_ROOT` 改到别处
 
 **Docker:**
-- Docker Volume: `splicegaip-data`
+- 命名卷：`splicegaip-data`（容器内 `/data`）
 - 备份：`docker volume inspect splicegaip-data`
+
+完整说明（含旧数据迁移、备份恢复、服务器部署、免费域名）见 [DATA_AND_DEPLOY.md](DATA_AND_DEPLOY.md)。
 
 ---
 

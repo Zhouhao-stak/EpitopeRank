@@ -10,13 +10,13 @@ tests/
 │   ├── test_schema.py      # Splicing schema tests
 │   ├── test_statistics.py  # Statistical analysis tests
 │   ├── test_config.py      # Configuration management tests
-│   └── test_splicing_parsers.py  # Parser tests (rMATS, SUPPA2)
+│   └── test_splicing_parsers.py  # Parser tests (rMATS only)
 ├── integration/             # Integration tests (API, database)
 │   └── test_api.py         # FastAPI endpoint tests
 ├── e2e/                    # End-to-end tests (full workflows)
 ├── fixtures/               # Test data files
 │   ├── rmats_se_sample.txt
-│   ├── suppa_psi_sample.txt
+│   ├── rmats_sample.txt
 │   └── config_test.yaml
 ├── conftest.py             # Pytest configuration and fixtures
 └── __init__.py
@@ -193,7 +193,7 @@ python -c "import splicegaip; print(splicegaip.__file__)"
 
 ## Future Improvements
 
-- [ ] Add more parser tests (MAJIQ, LeafCutter)
+- [ ] Add parser tests for A3SS/A5SS/MXE/RI tables
 - [ ] Add agent workflow tests
 - [ ] Add UI component tests (Streamlit)
 - [ ] Add performance benchmark tests

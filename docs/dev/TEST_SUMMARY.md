@@ -1,5 +1,8 @@
 # 测试基础设施完成报告
 
+> ⚠️ **历史快照**：本文写于 2026-10-16，当时平台还支持 SUPPA2 / MAJIQ / LeafCutter。
+> 现在只接受 rMATS 输入，涉及的解析器清单和测试条目已过时，仅作对比参考。
+
 **完成时间**: 2026-10-16  
 **任务**: 解决 BIOGAIP_COMPARISON.md 中 5.3 节指出的测试覆盖不足问题
 
@@ -344,7 +347,7 @@ TOTAL                                    7049   5116    27%
 
 ### 7.2 对 BIOGAIP 对比报告的回应
 
-在 [BIOGAIP_COMPARISON.md](BIOGAIP_COMPARISON.md) 的 5.3 节中，我们指出 SpliceGAIP 的"测试覆盖严重不足"是**最紧急的技术债务**。
+在 [BIOGAIP_COMPARISON.md](../BIOGAIP_COMPARISON.md) 的 5.3 节中，我们指出 SpliceGAIP 的"测试覆盖严重不足"是**最紧急的技术债务**。
 
 通过本次工作，我们已经：
 1. ✅ 建立了完整的测试框架
