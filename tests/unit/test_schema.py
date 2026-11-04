@@ -1,7 +1,7 @@
 """Tests for splicing schema and data models."""
 
 import pytest
-from splicegaip.splicing.schema import StandardEvent, _to_float, _to_int
+from epitoperank.splicing.schema import StandardEvent, _to_float, _to_int
 
 
 class TestStandardEvent:

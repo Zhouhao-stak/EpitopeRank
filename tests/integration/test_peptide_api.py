@@ -7,14 +7,14 @@ import csv
 import pytest
 from fastapi.testclient import TestClient
 
-from splicegaip.api.app import create_app
-from splicegaip.splicing.schema import CORE_EVENT_FIELDS
+from epitoperank.api.app import create_app
+from epitoperank.splicing.schema import CORE_EVENT_FIELDS
 
 
 @pytest.fixture
 def client(monkeypatch):
     # Allow temporary directories outside the runtime root for ingestion.
-    monkeypatch.setenv("SPLICEGAIP_INGEST_ALLOW_EXTERNAL", "1")
+    monkeypatch.setenv("EPITOPERANK_INGEST_ALLOW_EXTERNAL", "1")
     return TestClient(create_app())
 
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 
-from splicegaip.agent.tool_cache import ToolCache
+from epitoperank.agent.tool_cache import ToolCache
 
 
 def test_put_get_and_project_isolation(tmp_path) -> None:

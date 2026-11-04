@@ -1,6 +1,6 @@
-name: SpliceGAIP Release
+name: EpitopeRank Release
 
-# 自动发布 SpliceGAIP 的 Windows 便携版。
+# 自动发布 EpitopeRank 的 Windows 便携版。
 # 触发方式：
 #   1. 推送以 v 开头的 tag（如 v1.0.0）→ 自动打包并发布正式 Release
 #   2. 在 Actions 页面手动 Run workflow → 仅构建验证（不发布，用于测试工作流）
@@ -35,22 +35,22 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build with PyInstaller (desktop_ui.py → SpliceGAIP-Desktop.exe)
+      - name: Build with PyInstaller (desktop_ui.py → EpitopeRank-Desktop.exe)
         run: |
-          pyinstaller packaging\SpliceGAIP-Desktop-OneFile.spec --distpath dist --workpath packaging\build-temp --noconfirm
+          pyinstaller packaging\EpitopeRank-Desktop-OneFile.spec --distpath dist --workpath packaging\build-temp --noconfirm
 
       - name: Verify build output
         run: |
-          if (!(Test-Path dist\SpliceGAIP-Desktop.exe)) {
-            Write-Error "SpliceGAIP-Desktop.exe not found in dist/"
+          if (!(Test-Path dist\EpitopeRank-Desktop.exe)) {
+            Write-Error "EpitopeRank-Desktop.exe not found in dist/"
             exit 1
           }
 
       - name: Package portable ZIP
         run: |
-          $zip = "SpliceGAIP-${{ github.ref_name }}-windows.zip"
+          $zip = "EpitopeRank-${{ github.ref_name }}-windows.zip"
           New-Item -ItemType Directory -Force -Path release | Out-Null
-          Copy-Item dist\SpliceGAIP-Desktop.exe release\
+          Copy-Item dist\EpitopeRank-Desktop.exe release\
           Copy-Item .env.example release\ -ErrorAction SilentlyContinue
           Copy-Item "配置大模型.env.example" release\ -ErrorAction SilentlyContinue
           Compress-Archive -Path "release\*" -DestinationPath $zip -Force
@@ -59,8 +59,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: splicegaip-windows
-          path: SpliceGAIP-${{ github.ref_name }}-windows.zip
+          name: epitoperank-windows
+          path: EpitopeRank-${{ github.ref_name }}-windows.zip
           retention-days: 5
 
   release:
@@ -73,20 +73,20 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: splicegaip-windows
+          name: epitoperank-windows
           path: release-assets
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          name: SpliceGAIP ${{ github.ref_name }}
+          name: EpitopeRank ${{ github.ref_name }}
           generate_release_notes: true
           files: release-assets/*
           body: |
-            ## SpliceGAIP ${{ github.ref_name }}
+            ## EpitopeRank ${{ github.ref_name }}
 
-            Windows 便携版（免安装）。下载 `SpliceGAIP-${{ github.ref_name }}-windows.zip`，
-            解压后双击 `SpliceGAIP-Desktop.exe` 即可启动本地服务并自动打开浏览器界面
+            Windows 便携版（免安装）。下载 `EpitopeRank-${{ github.ref_name }}-windows.zip`，
+            解压后双击 `EpitopeRank-Desktop.exe` 即可启动本地服务并自动打开浏览器界面
             （地址形如 `http://127.0.0.1:8800/`）。无需安装 Python。
 
             ### 使用前配置
@@ -102,11 +102,11 @@ jobs:
             - 不配置也能跑：自治内核用规则做决策，全流程照常完成，只是没有大模型叙述性解读。
 
             ### 快速上手
-            见仓库内 [`docs/手把手教程.html`](https://github.com/Zhouhao-stak/SpliceGAIP/blob/master/docs/%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E7%A8%8B.html)。
+            见仓库内 [`docs/手把手教程.html`](https://github.com/Zhouhao-stak/EpitopeRank/blob/master/docs/%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E7%A8%8B.html)。
 
             ### 说明
             - 构建由 GitHub Actions 在云端完成，产物与仓库源码一致。
-            - 结果默认写入 `%LOCALAPPDATA%\SpliceGAIP`，每个项目另导出一份成果文件夹到 `results\`。
+            - 结果默认写入 `%LOCALAPPDATA%\EpitopeRank`，每个项目另导出一份成果文件夹到 `results\`。
             - 当前仅发布 Windows 版本；macOS / Linux 建议直接用源码或 Docker 运行。
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

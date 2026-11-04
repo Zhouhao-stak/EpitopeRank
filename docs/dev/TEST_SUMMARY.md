@@ -43,7 +43,7 @@ tests/
 ### 1.2 单元测试编写 ✅
 
 #### test_schema.py (15 个测试)
-**覆盖模块**: `splicegaip/splicing/schema.py`
+**覆盖模块**: `epitoperank/splicing/schema.py`
 
 **测试内容**:
 - StandardEvent 数据模型创建（最小/完整字段）
@@ -58,7 +58,7 @@ tests/
 **代码覆盖率**: 60%
 
 #### test_statistics.py (12 个测试)
-**覆盖模块**: `splicegaip/analysis/statistics.py`
+**覆盖模块**: `epitoperank/analysis/statistics.py`
 
 **测试内容**:
 - 卡方检验显著性检测
@@ -73,7 +73,7 @@ tests/
 **代码覆盖率**: 75%
 
 #### test_config.py (13 个测试)
-**覆盖模块**: `splicegaip/config.py`
+**覆盖模块**: `epitoperank/config.py`
 
 **测试内容**:
 - 默认配置加载
@@ -89,7 +89,7 @@ tests/
 **代码覆盖率**: 63%
 
 #### test_splicing_parsers.py (8 个测试)
-**覆盖模块**: `splicegaip/splicing/parsers/rmats.py`, `suppa.py`
+**覆盖模块**: `epitoperank/splicing/parsers/rmats.py`, `suppa.py`
 
 **测试内容**:
 - rMATS SE 事件解析
@@ -158,11 +158,11 @@ $ pytest tests/unit tests/integration -v --tb=no
 ```
 Name                                    Stmts   Miss  Cover
 -----------------------------------------------------------
-splicegaip/splicing/schema.py             103     41    60%
-splicegaip/analysis/statistics.py          40     10    75%
-splicegaip/config.py                      267     98    63%
-splicegaip/splicing/parsers/rmats.py       54     10    81%
-splicegaip/splicing/parsers/suppa.py       45      8    82%
+epitoperank/splicing/schema.py             103     41    60%
+epitoperank/analysis/statistics.py          40     10    75%
+epitoperank/config.py                      267     98    63%
+epitoperank/splicing/parsers/rmats.py       54     10    81%
+epitoperank/splicing/parsers/suppa.py       45      8    82%
 -----------------------------------------------------------
 TOTAL                                    7049   5116    27%
 ```
@@ -318,7 +318,7 @@ TOTAL                                    7049   5116    27%
 | `pytest.ini` | 15 | Pytest 配置 |
 | `requirements-dev.txt` | 15 | 开发依赖 |
 | `.github/workflows/test.yml` | 60 | CI 配置 |
-| `splicegaip/observability.py` | - | 结构化日志与请求关联 ID |
+| `epitoperank/observability.py` | - | 结构化日志与请求关联 ID |
 | `TESTING.md` | 200 | 测试文档 |
 | `TEST_SUMMARY.md` | - | 本报告 |
 
@@ -330,7 +330,7 @@ TOTAL                                    7049   5116    27%
 |------|----------|
 | `README.md` | 添加测试徽章、重写测试章节 |
 | `API_CONFIG.md` | 增加 API Key、请求 ID 与日志配置说明 |
-| `splicegaip/api/app.py` | 增加可选认证、安全响应头和请求日志 |
+| `epitoperank/api/app.py` | 增加可选认证、安全响应头和请求日志 |
 | `BIOGAIP_COMPARISON.md` | 问题已在此报告中回应 |
 
 ---
@@ -347,7 +347,7 @@ TOTAL                                    7049   5116    27%
 
 ### 7.2 对 BIOGAIP 对比报告的回应
 
-在 [BIOGAIP_COMPARISON.md](../BIOGAIP_COMPARISON.md) 的 5.3 节中，我们指出 SpliceGAIP 的"测试覆盖严重不足"是**最紧急的技术债务**。
+在 [BIOGAIP_COMPARISON.md](../BIOGAIP_COMPARISON.md) 的 5.3 节中，我们指出 EpitopeRank 的"测试覆盖严重不足"是**最紧急的技术债务**。
 
 通过本次工作，我们已经：
 1. ✅ 建立了完整的测试框架

@@ -1,4 +1,4 @@
-# SpliceGAIP 部署架构对比
+# EpitopeRank 部署架构对比
 
 ## 传统方式 vs Coolify 方式
 
@@ -56,9 +56,9 @@ sudo apt update && sudo apt install docker.io docker-compose
 vim docker-compose.yml
 docker compose up -d --build
 sudo apt install nginx
-vim /etc/nginx/sites-available/splicegaip
-sudo certbot --nginx -d splicegaip.your-domain.com
-docker logs -f splicegaip-api
+vim /etc/nginx/sites-available/epitoperank
+sudo certbot --nginx -d epitoperank.your-domain.com
+docker logs -f epitoperank-api
 # ... 还有更多 😓
 ```
 
@@ -155,7 +155,7 @@ curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
 # Projects → Add Project → Import Existing Container
 
 # 3. 验证一切正常后，停止旧的手动部署
-docker stop old-splicegaip-container
+docker stop old-epitoperank-container
 
 # 4. 享受自动化部署！🎉
 ```
@@ -173,7 +173,7 @@ docker stop old-splicegaip-container
 - 💰 **免费**: 开源软件，无订阅费用
 - 📊 **专业**: 企业级监控和管理功能
 
-**适合 SpliceGAIP 的原因**：
+**适合 EpitopeRank 的原因**：
 1. 科研团队通常没有专职运维
 2. 需要频繁更新分析算法
 3. 多个实验室可能共享服务器

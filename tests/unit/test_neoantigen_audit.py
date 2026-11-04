@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from splicegaip.data.loader import Dataset
-from splicegaip.splicing.schema import parse_event_row
-from splicegaip.neoantigen_audit import audit, filter_events
+from epitoperank.data.loader import Dataset
+from epitoperank.splicing.schema import parse_event_row
+from epitoperank.neoantigen_audit import audit, filter_events
 
 
 def test_audit_does_not_infer_missing_evidence():

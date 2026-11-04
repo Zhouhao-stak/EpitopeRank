@@ -1,5 +1,5 @@
 #!/bin/bash
-# SpliceGAIP Quick Deploy Script for Coolify
+# EpitopeRank Quick Deploy Script for Coolify
 # Usage: ./deploy-to-coolify.sh [server-ip]
 
 set -e  # Exit on error
@@ -10,7 +10,7 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}🚀 SpliceGAIP Coolify Deployment Helper${NC}"
+echo -e "${GREEN}🚀 EpitopeRank Coolify Deployment Helper${NC}"
 echo "=========================================="
 
 # Check if server IP is provided

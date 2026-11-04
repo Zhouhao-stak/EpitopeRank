@@ -5,7 +5,7 @@
 #   ./deploy/server/rollback-container.sh [.backup-YYYYmmdd-HHMMSS]
 set -euo pipefail
 
-ROOT="${SPLICEGAIP_ROOT:-$HOME/splicegaip}"
+ROOT="${EPITOPERANK_ROOT:-$HOME/epitoperank}"
 cd "$ROOT"
 
 BACKUP="${1:-$(ls -1dt .backup-* 2>/dev/null | head -n 1 || true)}"

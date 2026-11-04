@@ -27,12 +27,12 @@
 
 ## 二、当前部署形态
 
-已有的 `splicegaip` 容器是 2026-10-19 构建的。本次更新没有重新 `pip install`，
+已有的 `epitoperank` 容器是 2026-10-19 构建的。本次更新没有重新 `pip install`，
 而是**在旧镜像上叠一层源码**（`deploy/docker/Dockerfile.update`），依赖全部沿用旧镜像：
 
 ```
-splicegaip-splicegaip:prev-20261019   ← 更新前的镜像，回滚用
-splicegaip-splicegaip:latest          ← 当前运行（旧镜像 + 新代码）
+epitoperank-epitoperank:prev-20261019   ← 更新前的镜像，回滚用
+epitoperank-epitoperank:latest          ← 当前运行（旧镜像 + 新代码）
 ```
 
 运行结构（`docker compose ps` 可验证）：
@@ -49,27 +49,27 @@ splicegaip-splicegaip:latest          ← 当前运行（旧镜像 + 新代码�
 
 ## 三、日常操作
 
-全部在服务器上执行，工作目录 `~/splicegaip`：
+全部在服务器上执行，工作目录 `~/epitoperank`：
 
 ```bash
-cd ~/splicegaip
+cd ~/epitoperank
 
 # 看状态
 ~/bin/docker ps | head -3
 ~/bin/docker compose ps
 
 # 看日志（API）
-~/bin/docker logs -f --tail 100 splicegaip
+~/bin/docker logs -f --tail 100 epitoperank
 
 # 只看 streamlit
-~/bin/docker exec splicegaip tail -f /data/streamlit.log
+~/bin/docker exec epitoperank tail -f /data/streamlit.log
 
 # 重启
-~/bin/docker compose restart splicegaip
+~/bin/docker compose restart epitoperank
 
 # 停止 / 启动
-~/bin/docker compose stop splicegaip
-~/bin/docker compose start splicegaip
+~/bin/docker compose stop epitoperank
+~/bin/docker compose start epitoperank
 ```
 
 ### 更新代码（这台的专用流程）
@@ -83,11 +83,11 @@ tar -czf /c/Users/m1726/AppData/Local/Temp/sg_src.tar.gz \
 
 # 上传解压
 scp -P 39145 /c/Users/m1726/AppData/Local/Temp/sg_src.tar.gz wang_zi_wei@123.255.66.81:/tmp/
-ssh -p 39145 wang_zi_wei@123.255.66.81 'cd ~/splicegaip && tar -xzf /tmp/sg_src.tar.gz'
+ssh -p 39145 wang_zi_wei@123.255.66.81 'cd ~/epitoperank && tar -xzf /tmp/sg_src.tar.gz'
 
 # 服务器上重建镜像并只换容器（不联网、约 5 秒）
-cd ~/splicegaip
-~/bin/docker build -f deploy/docker/Dockerfile.update -t splicegaip-splicegaip:latest .
+cd ~/epitoperank
+~/bin/docker build -f deploy/docker/Dockerfile.update -t epitoperank-epitoperank:latest .
 ~/bin/docker compose up -d --no-build
 ```
 
@@ -96,8 +96,8 @@ cd ~/splicegaip
 ### 回滚
 
 ```bash
-cd ~/splicegaip
-~/bin/docker tag splicegaip-splicegaip:prev-20261019 splicegaip-splicegaip:latest
+cd ~/epitoperank
+~/bin/docker tag epitoperank-epitoperank:prev-20261019 epitoperank-epitoperank:latest
 ~/bin/docker compose up -d --no-build --force-recreate
 ```
 
@@ -128,7 +128,7 @@ tmux kill-session -t cloudflared            # 关闭（公网地址立即失效�
 
 > ⚠️ 这个地址是**公开且没有密码**的：拿到链接的人可以看你的全部分析结果，
 > 也能消耗你的 DeepSeek 额度。用完请 `tmux kill-session -t cloudflared` 关掉。
-> 不建议直接把 `SPLICEGAIP_API_KEY` 打开——它只认 `X-API-Key` 请求头，
+> 不建议直接把 `EPITOPERANK_API_KEY` 打开——它只认 `X-API-Key` 请求头，
 > 网页 UI 不带这个头，开了会连自己都打不开。
 
 ### 1. SSH 隧道（最稳，零依赖）
@@ -171,8 +171,8 @@ chmod +x cloudflared
 - 临时隧道每次重启换域名，且流量走 Cloudflare，数据会出国。
 - **公开前务必设访问密码**，否则任何人都能用你的 DeepSeek 额度：
   ```bash
-  # 在 ~/splicegaip/.env 里加
-  SPLICEGAIP_API_KEY=换成你自己的随机串
+  # 在 ~/epitoperank/.env 里加
+  EPITOPERANK_API_KEY=换成你自己的随机串
   ```
 
 ### 3. 请管理员开端口（一劳永逸）
@@ -197,7 +197,7 @@ sudo firewall-cmd --permanent --add-port=8800/tcp && sudo firewall-cmd --reload
 `docker-compose.override.yml` 把启动命令换成 `serve_ui.py --workers 8`，8 个独立进程，
 可以同时跑 8 个分析任务。实测 8 个 worker + streamlit 常驻内存 886 MB，128 核 / 503 G 完全吃得下。
 
-调大：`SPLICEGAIP_WORKERS=16`（每个 worker 约 300–400 MB）。
+调大：`EPITOPERANK_WORKERS=16`（每个 worker 约 300–400 MB）。
 
 ### 2. 把 BLAS 线程钉成 1（已做，最关键）
 
@@ -215,9 +215,9 @@ NUMEXPR_NUM_THREADS=1
 
 ### 3. SQLite 开 WAL（已做）
 
-8 个进程共用一个 `splicegaip.sqlite3`。WAL 让读不被写阻塞，避免分析期间刷新页面转圈。
+8 个进程共用一个 `epitoperank.sqlite3`。WAL 让读不被写阻塞，避免分析期间刷新页面转圈。
 `/data` 是本地 docker volume，WAL 安全；**如果哪天把数据目录改到 NFS，必须关掉它**
-（`SPLICEGAIP_SQLITE_WAL=0`），NFS 上 WAL 会损坏数据库。
+（`EPITOPERANK_SQLITE_WAL=0`），NFS 上 WAL 会损坏数据库。
 
 ### 还能再压榨的地方
 
@@ -236,43 +236,43 @@ NUMEXPR_NUM_THREADS=1
 
 | 内容 | 位置 | 说明 |
 |---|---|---|
-| 数据库 | 容器内 `/data/splicegaip.sqlite3` → 宿主机 `/var/lib/docker/volumes/splicegaip-data/_data/` | 命名卷 `splicegaip-data` |
+| 数据库 | 容器内 `/data/epitoperank.sqlite3` → 宿主机 `/var/lib/docker/volumes/epitoperank-data/_data/` | 命名卷 `epitoperank-data` |
 | 项目产物（图表/报告） | 容器内 `/data/runtime/projects/<项目ID>/` | 同上卷 |
-| 旧库（迁移前） | `/data/splicegaip.sqlite3` 是主库；`/data/runtime/splicegaip.sqlite3` 是备用位置 | 见 `/api/storage` |
+| 旧库（迁移前） | `/data/epitoperank.sqlite3` 是主库；`/data/runtime/epitoperank.sqlite3` 是备用位置 | 见 `/api/storage` |
 | streamlit 日志 | `/data/streamlit.log` | |
 
-**当前这个库几乎是空的**（60 KB，0 个项目）——你本机 `%LOCALAPPDATA%\SpliceGAIP`
+**当前这个库几乎是空的**（60 KB，0 个项目）——你本机 `%LOCALAPPDATA%\EpitopeRank`
 里那 83 个项目没有被带上来。要迁移的话见下面。
 
 ### 备份（在线安全）
 
 ```bash
-cd ~/splicegaip
-~/bin/docker exec splicegaip python - <<'EOF'
+cd ~/epitoperank
+~/bin/docker exec epitoperank python - <<'EOF'
 import sqlite3
-src = sqlite3.connect('/data/splicegaip.sqlite3')
+src = sqlite3.connect('/data/epitoperank.sqlite3')
 dst = sqlite3.connect('/data/backup.sqlite3')
 with dst: src.backup(dst)
 EOF
-~/bin/docker cp splicegaip:/data/backup.sqlite3 ~/splicegaip-backup-$(date +%F).sqlite3
+~/bin/docker cp epitoperank:/data/backup.sqlite3 ~/epitoperank-backup-$(date +%F).sqlite3
 ```
 
 ### 把本机历史项目迁上来
 
 ```bash
 # 本地 Windows
-cd /c/Users/m1726/AppData/Local/SpliceGAIP
-tar -czf /c/Users/m1726/AppData/Local/Temp/sg_data.tar.gz splicegaip.sqlite3 projects
+cd /c/Users/m1726/AppData/Local/EpitopeRank
+tar -czf /c/Users/m1726/AppData/Local/Temp/sg_data.tar.gz epitoperank.sqlite3 projects
 
 # 上传
 scp -P 39145 /c/Users/m1726/AppData/Local/Temp/sg_data.tar.gz wang_zi_wei@123.255.66.81:/tmp/
 
 # 服务器：先停容器，解到卷里，再起
-cd ~/splicegaip
-~/bin/docker compose stop splicegaip
-~/bin/docker run --rm -v splicegaip-data:/data -v /tmp:/in alpine sh -c \
+cd ~/epitoperank
+~/bin/docker compose stop epitoperank
+~/bin/docker run --rm -v epitoperank-data:/data -v /tmp:/in alpine sh -c \
   'cd /data && tar -xzf /in/sg_data.tar.gz'
-~/bin/docker compose start splicegaip
+~/bin/docker compose start epitoperank
 ```
 
 迁移后 `/api/projects` 里就能看到本机的项目。注意 `artifacts.path` 里存的是绝对路径，
@@ -285,7 +285,7 @@ cd ~/splicegaip
 `deploy/userland/` 里有一套不依赖 Docker 的安装器，适合“有 PyPI、没 Docker、没 root”的机器：
 
 ```bash
-tar -xzf sg_src.tar.gz -C ~/splicegaip && cd ~/splicegaip
+tar -xzf sg_src.tar.gz -C ~/epitoperank && cd ~/epitoperank
 bash deploy/userland/install.sh            # 自动选 Python/装依赖/定运行目录
 bash deploy/userland/sgctl doctor          # 环境体检
 bash deploy/userland/sgctl start           # 后台启动（systemd --user → tmux → nohup 自动降级）
@@ -294,7 +294,7 @@ bash deploy/userland/sgctl status
 
 它会做的事：
 
-- Python 低于 3.10 时在 `~/.splicegaip/.opt` 装 Miniconda（不碰系统 Python）
+- Python 低于 3.10 时在 `~/.epitoperank/.opt` 装 Miniconda（不碰系统 Python）
 - `venv` 建在项目目录里
 - **运行数据目录自动避开 NFS**：`/home` 是 NFS 时改放 `/scratch/$USER`、`/tmp/$USER` 等本地盘
 - worker 数按核数自动算（128 核 → 8）
@@ -310,7 +310,7 @@ bash deploy/userland/sgctl status
 | 现象 | 原因 | 处理 |
 |---|---|---|
 | 容器 `unhealthy` | 首次启动要合并旧库，超过 60 s | override 里已把 `start_period` 放到 180 s |
-| 页面 502 / 空 | worker 全部启动失败 | `docker logs splicegaip \| grep -i error` |
+| 页面 502 / 空 | worker 全部启动失败 | `docker logs epitoperank \| grep -i error` |
 | `address already in use` | 9100 端口被占 | 正常现象，后启动的 worker 会复用已有的 MCP 服务 |
 | 上传大文件 413 | 走了 Cloudflare 隧道（100 MB 上限） | 改用 SSH 隧道 |
 | 日志里 `Merged legacy runtime storage` | 首次启动把旧目录数据合并进新目录 | 正常，只发生一次 |

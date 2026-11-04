@@ -1,1 +1,1 @@
-# SpliceGAIP test package
+# EpitopeRank test package

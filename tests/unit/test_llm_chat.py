@@ -8,8 +8,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from splicegaip.config import LLMSettings, load_settings
-from splicegaip.llm.chat import ChatClient, ChatError
+from epitoperank.config import LLMSettings, load_settings
+from epitoperank.llm.chat import ChatClient, ChatError
 
 
 def make_settings(**overrides):

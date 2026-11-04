@@ -5,14 +5,14 @@
 #   .\deploy\server\push-from-windows.ps1 -SkipUpdate   # upload only
 #
 # It packages the source tree (no venv/dist/public_datasets), uploads it to
-# ~/splicegaip/.upload, and runs deploy/server/update-container.sh on the host.
+# ~/epitoperank/.upload, and runs deploy/server/update-container.sh on the host.
 # The container image is never rebuilt.
 
 param(
     [string]$TargetHost = "123.255.66.81",
     [int]$Port = 39145,
     [string]$User = "wang_zi_wei",
-    [string]$RemoteRoot = "splicegaip",
+    [string]$RemoteRoot = "epitoperank",
     [switch]$SkipUpdate
 )
 
@@ -21,12 +21,12 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 Push-Location $root
 try {
     $paths = @(
-        "splicegaip", "deploy", "docs", "examples", "scripts", "tests",
+        "epitoperank", "deploy", "docs", "examples", "scripts", "tests",
         "run.py", "serve_ui.py", "desktop_ui.py", "pytest.ini",
         "README.md", "requirements.txt", "requirements-dev.txt"
     )
     $ts = Get-Date -Format "yyyyMMdd-HHmmss"
-    $name = "splicegaip-server-$ts.tar.gz"
+    $name = "epitoperank-server-$ts.tar.gz"
     $bundle = Join-Path $root "dist\$name"
     New-Item -ItemType Directory -Force -Path (Join-Path $root "dist") | Out-Null
 

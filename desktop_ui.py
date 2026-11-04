@@ -1,4 +1,4 @@
-"""Windowed desktop launcher for the local SpliceGAIP application."""
+"""Windowed desktop launcher for the local EpitopeRank application."""
 
 from __future__ import annotations
 
@@ -13,11 +13,11 @@ import uvicorn
 import webview
 
 from serve_ui import _free_port, _load_local_env, _write_env_templates
-from splicegaip.api.app import create_app
+from epitoperank.api.app import create_app
 
-WINDOW_TITLE = "SpliceGAIP"
+WINDOW_TITLE = "EpitopeRank"
 
-# Title-bar palette mirrored from splicegaip/interface/web_ui.py (:root), so the
+# Title-bar palette mirrored from epitoperank/interface/web_ui.py (:root), so the
 # native window chrome continues the app's ocean-lab theme. Without this the
 # caption is painted white whenever Windows itself runs a light theme, and the
 # bright strip fights the dark UI underneath it.
@@ -156,7 +156,7 @@ def _install_dark_chrome(window: webview.Window) -> None:
             time.sleep(0.4)
             _apply_dark_window_chrome(_window_handle(window))
 
-    threading.Thread(target=worker, name="splicegaip-window-chrome", daemon=True).start()
+    threading.Thread(target=worker, name="epitoperank-window-chrome", daemon=True).start()
 
 
 def main() -> int:
@@ -165,7 +165,7 @@ def main() -> int:
     port = _free_port(8800)
     url = f"http://127.0.0.1:{port}/"
     server = uvicorn.Server(uvicorn.Config(create_app(), host="127.0.0.1", port=port, log_level="error"))
-    worker = threading.Thread(target=server.run, name="splicegaip-api", daemon=True)
+    worker = threading.Thread(target=server.run, name="epitoperank-api", daemon=True)
     worker.start()
 
     deadline = time.monotonic() + 60
@@ -206,5 +206,5 @@ if __name__ == "__main__":
         # A windowed executable has no console in which to show startup errors.
         import ctypes
 
-        ctypes.windll.user32.MessageBoxW(0, str(error), "SpliceGAIP 启动失败", 0x10)
+        ctypes.windll.user32.MessageBoxW(0, str(error), "EpitopeRank 启动失败", 0x10)
         raise

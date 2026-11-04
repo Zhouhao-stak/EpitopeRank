@@ -1,9 +1,9 @@
 @echo off
-REM SpliceGAIP Docker Start Script for Windows
+REM EpitopeRank Docker Start Script for Windows
 REM Usage: docker-start.bat
 
 echo ========================================
-echo   SpliceGAIP Docker Setup
+echo   EpitopeRank Docker Setup
 echo ========================================
 echo.
 
@@ -27,7 +27,7 @@ if not exist ".env" (
     set /p CREATE_ENV="Create sample .env file now? (y/n): "
     if /i "!CREATE_ENV!"=="y" (
         (
-            echo # SpliceGAIP Docker Configuration
+            echo # EpitopeRank Docker Configuration
             echo MODEL_API_BASE_URL=https://api.deepseek.com
             echo MODEL_NAME=deepseek-flash
             echo MODEL_API_KEY=sk-YOUR_API_KEY_HERE
@@ -73,7 +73,7 @@ if errorlevel 1 (
 echo.
 
 echo ========================================
-echo   SpliceGAIP is now running!
+echo   EpitopeRank is now running!
 echo ========================================
 echo.
 echo   Web UI:      http://localhost:8800/

@@ -10,7 +10,7 @@ pip install -r requirements-dev.txt
 pytest tests/unit tests/integration -v
 
 # 查看覆盖率报告
-pytest --cov=splicegaip --cov-report=html
+pytest --cov=epitoperank --cov-report=html
 start htmlcov\index.html  # Windows
 ```
 

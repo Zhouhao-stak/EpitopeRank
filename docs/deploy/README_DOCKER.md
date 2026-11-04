@@ -1,4 +1,4 @@
-# SpliceGAIP 打包方式对比
+# EpitopeRank 打包方式对比
 
 本项目支持两种打包部署方式，可根据使用场景选择：
 
@@ -17,15 +17,15 @@ build.bat
 
 **输出位置：**
 ```
-dist/SpliceGAIP/
-├── SpliceGAIP.exe      # 主程序 (26MB)
+dist/EpitopeRank/
+├── EpitopeRank.exe      # 主程序 (26MB)
 ├── _internal/          # 依赖库
 ├── .env                # API配置
 └── API_CONFIG.md       # 配置指南
 ```
 
 **分发方式：**
-直接复制整个 `dist/SpliceGAIP/` 文件夹
+直接复制整个 `dist/EpitopeRank/` 文件夹
 
 ---
 

@@ -12,7 +12,7 @@
 
 ### 方式二：通过 Web 界面配置
 
-1. 启动 SpliceGAIP
+1. 启动 EpitopeRank
 2. 点击左侧菜单 "AI 解读" → "模型配置"
 3. 选择预设 "DeepSeek V4.1-Flash"
 4. 填入你的 API Key
@@ -59,7 +59,7 @@
 API 默认保持本机开发的兼容行为；当服务需要被局域网或反向代理访问时，建议设置 API Key：
 
 ```dotenv
-SPLICEGAIP_API_KEY=替换为随机长字符串
+EPITOPERANK_API_KEY=替换为随机长字符串
 ```
 
 设置后，除 `/api/health` 外的 `/api/*` 请求必须携带下面任一种认证头：
@@ -74,14 +74,14 @@ X-API-Key: <your-key>
 Authorization: Bearer <your-key>
 ```
 
-未配置 `SPLICEGAIP_API_KEY` 时不会强制认证，适合本机启动和桌面 EXE 场景。当前浏览器 UI 不会自动读取服务器密钥；若需要保护浏览器 UI，请在反向代理层做认证，或保持 API Key 未配置并限制服务只监听本机。不要把密钥提交到 Git；生产环境应通过环境变量或未纳入版本控制的 `.env` 文件注入。
+未配置 `EPITOPERANK_API_KEY` 时不会强制认证，适合本机启动和桌面 EXE 场景。当前浏览器 UI 不会自动读取服务器密钥；若需要保护浏览器 UI，请在反向代理层做认证，或保持 API Key 未配置并限制服务只监听本机。不要把密钥提交到 Git；生产环境应通过环境变量或未纳入版本控制的 `.env` 文件注入。
 
-每个请求都会返回 `X-Request-ID`，并写入结构化 JSON 日志。默认日志位置为运行时目录下的 `logs/splicegaip.log`，支持轮转；可通过以下变量覆盖：
+每个请求都会返回 `X-Request-ID`，并写入结构化 JSON 日志。默认日志位置为运行时目录下的 `logs/epitoperank.log`，支持轮转；可通过以下变量覆盖：
 
 ```dotenv
-SPLICEGAIP_LOG_LEVEL=INFO
-SPLICEGAIP_LOG_FILE=/path/to/splicegaip.log
-SPLICEGAIP_RATE_LIMIT=120
+EPITOPERANK_LOG_LEVEL=INFO
+EPITOPERANK_LOG_FILE=/path/to/epitoperank.log
+EPITOPERANK_RATE_LIMIT=120
 ```
 
-`SPLICEGAIP_RATE_LIMIT` 是每个客户端 IP 每 60 秒允许的 API 请求数，默认 `0`（关闭）。超过限制返回 `429` 和 `Retry-After`；健康探针不计入限流。日志不会记录 API Key、Authorization 头或完整请求体。
+`EPITOPERANK_RATE_LIMIT` 是每个客户端 IP 每 60 秒允许的 API 请求数，默认 `0`（关闭）。超过限制返回 `429` 和 `Retry-After`；健康探针不计入限流。日志不会记录 API Key、Authorization 头或完整请求体。

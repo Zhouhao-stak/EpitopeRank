@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sgctl — 管理 SpliceGAIP 服务，全程不需要 root。
+# sgctl — 管理 EpitopeRank 服务，全程不需要 root。
 #
 #   bash deploy/userland/sgctl start|stop|restart|status|logs|url
 #   bash deploy/userland/sgctl doctor          # 排障用的环境体检
@@ -7,7 +7,7 @@
 #   bash deploy/userland/sgctl set workers 4   # 改并发进程数
 #
 # 常驻方式按可用性自动降级：systemd --user → tmux → setsid+nohup。
-# 想强制指定：SPLICEGAIP_MODE=systemd|tmux|nohup
+# 想强制指定：EPITOPERANK_MODE=systemd|tmux|nohup
 set -euo pipefail
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -21,7 +21,7 @@ LOG="$STATE_DIR/server.log"
 PID_FILE="$STATE_DIR/server.pid"
 MODE_FILE="$STATE_DIR/mode"
 RUNNER="$STATE_DIR/run.sh"
-UNIT_NAME="splicegaip"
+UNIT_NAME="epitoperank"
 UNIT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 UNIT_FILE="$UNIT_DIR/$UNIT_NAME.service"
 
@@ -45,8 +45,8 @@ write_runner() {
     printf '#!/usr/bin/env bash\n'
     printf 'cd %q || exit 1\n' "$APP_DIR"
     printf 'ulimit -n 65535 2>/dev/null || true\n'
-    printf 'export SPLICEGAIP_RUNTIME_ROOT=%q\n' "$RUNTIME_ROOT"
-    printf 'export SPLICEGAIP_SQLITE_WAL=%q\n' "$SQLITE_WAL"
+    printf 'export EPITOPERANK_RUNTIME_ROOT=%q\n' "$RUNTIME_ROOT"
+    printf 'export EPITOPERANK_SQLITE_WAL=%q\n' "$SQLITE_WAL"
     printf 'export MPLCONFIGDIR=%q\n' "$STATE_DIR/mpl"
     printf 'export PYTHONUNBUFFERED=1\n'
     # One thread per BLAS call: with N workers, the default (one thread per
@@ -96,7 +96,7 @@ current_mode() { cat "$MODE_FILE" 2>/dev/null || echo none; }
 
 # ------------------------------------------------------------------- 命令
 cmd_start() {
-  local mode="${SPLICEGAIP_MODE:-}"
+  local mode="${EPITOPERANK_MODE:-}"
   if [ "$(current_mode)" = systemd ] && systemd_user_ok && systemctl --user is-active --quiet "$UNIT_NAME"; then
     ok "已在运行（systemd --user）"; return 0
   fi
@@ -123,7 +123,7 @@ cmd_start() {
       mkdir -p "$UNIT_DIR"
       cat > "$UNIT_FILE" <<EOF
 [Unit]
-Description=SpliceGAIP web service
+Description=EpitopeRank web service
 After=default.target
 
 [Service]
@@ -151,12 +151,12 @@ EOF
       fi
       ;;
     tmux)
-      tmux has-session -t splicegaip 2>/dev/null && tmux kill-session -t splicegaip
-      tmux new-session -d -s splicegaip "bash $(printf '%q' "$RUNNER") >> $(printf '%q' "$LOG") 2>&1"
+      tmux has-session -t epitoperank 2>/dev/null && tmux kill-session -t epitoperank
+      tmux new-session -d -s epitoperank "bash $(printf '%q' "$RUNNER") >> $(printf '%q' "$LOG") 2>&1"
       sleep 1
-      tmux list-panes -t splicegaip -F '#{pane_pid}' > "$PID_FILE" 2>/dev/null || true
-      ok "已在 tmux 会话 splicegaip 中启动"
-      dim "查看：bash $HERE/sgctl logs    或    tmux attach -t splicegaip"
+      tmux list-panes -t epitoperank -F '#{pane_pid}' > "$PID_FILE" 2>/dev/null || true
+      ok "已在 tmux 会话 epitoperank 中启动"
+      dim "查看：bash $HERE/sgctl logs    或    tmux attach -t epitoperank"
       ;;
     nohup)
       setsid bash "$RUNNER" >> "$LOG" 2>&1 < /dev/null &
@@ -179,8 +179,8 @@ cmd_stop() {
     systemctl --user stop "$UNIT_NAME" && stopped=1
     ok "已停止（systemd --user）"
   fi
-  if have tmux && tmux has-session -t splicegaip 2>/dev/null; then
-    tmux kill-session -t splicegaip && stopped=1
+  if have tmux && tmux has-session -t epitoperank 2>/dev/null; then
+    tmux kill-session -t epitoperank && stopped=1
     ok "已停止（tmux 会话）"
   fi
   if running_pid; then
@@ -202,7 +202,7 @@ cmd_stop() {
 }
 
 cmd_status() {
-  printf 'SpliceGAIP  %s\n' "$(current_mode)"
+  printf 'EpitopeRank  %s\n' "$(current_mode)"
   dim "目录      $APP_DIR"
   dim "数据      $RUNTIME_ROOT"
   dim "worker    $WORKERS（$CORES 核机器）"
@@ -267,7 +267,7 @@ cmd_doctor() {
   dim "运行目录  $RUNTIME_ROOT"
   dim "文件系统  $(df -PT "$RUNTIME_ROOT" 2>/dev/null | awk 'NR==2 {print $2}')"
   dim "剩余空间  $(df -Ph "$RUNTIME_ROOT" 2>/dev/null | awk 'NR==2 {print $4 " / " $2}')"
-  dim "数据库    $(du -sh "$RUNTIME_ROOT/splicegaip.sqlite3" 2>/dev/null | cut -f1 || echo '无')"
+  dim "数据库    $(du -sh "$RUNTIME_ROOT/epitoperank.sqlite3" 2>/dev/null | cut -f1 || echo '无')"
   dim "项目产物  $(du -sh "$RUNTIME_ROOT/projects" 2>/dev/null | cut -f1 || echo '无')"
   dim "配额      $( (quota -s 2>/dev/null | tail -n +3 | head -3) || echo '查询不到（需要 quota 命令）')"
   printf '运行时\n'
@@ -291,11 +291,11 @@ cmd_doctor() {
 }
 
 cmd_backup() {
-  local dest="${1:-$HOME/splicegaip-backup-$(date +%Y%m%d-%H%M%S)}"
+  local dest="${1:-$HOME/epitoperank-backup-$(date +%Y%m%d-%H%M%S)}"
   mkdir -p "$dest"
   printf '备份到 %s\n' "$dest"
   # sqlite3 online backup: safe even while the service is writing.
-  "$VENV_PY" - "$RUNTIME_ROOT/splicegaip.sqlite3" "$dest/splicegaip.sqlite3" <<'PY'
+  "$VENV_PY" - "$RUNTIME_ROOT/epitoperank.sqlite3" "$dest/epitoperank.sqlite3" <<'PY'
 import sqlite3, sys
 src = sqlite3.connect(sys.argv[1])
 dst = sqlite3.connect(sys.argv[2])

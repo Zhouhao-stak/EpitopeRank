@@ -19,13 +19,13 @@ from pathlib import Path
 
 import pytest
 
-from splicegaip.interface import web_ui
+from epitoperank.interface import web_ui
 
 SCRIPT_RE = re.compile(r"<script>(.*?)</script>", re.DOTALL)
 
 
 def rendered_html() -> str:
-    response = web_ui.render("SpliceGAIP test")
+    response = web_ui.render("EpitopeRank test")
     return response.body.decode("utf-8")
 
 
@@ -100,7 +100,7 @@ class TestEncodingSafety:
         # reports the mismatch to the parent agent instead of asserting the
         # intended (but unimplemented) substitution.
         html = rendered_html()
-        assert "<title>SpliceGAIP" in html
+        assert "<title>EpitopeRank" in html
         assert "__TITLE__" not in html
 
 

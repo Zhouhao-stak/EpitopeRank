@@ -1,4 +1,4 @@
-# SpliceGAIP 快速启动指南
+# EpitopeRank 快速启动指南
 
 ## 🚀 选择你的启动方式
 
@@ -7,8 +7,8 @@
 **方式1：PyInstaller EXE（推荐新手）**
 ```bash
 # 直接运行已构建好的EXE
-cd dist/SpliceGAIP
-SpliceGAIP.exe
+cd dist/EpitopeRank
+EpitopeRank.exe
 ```
 
 **方式2：Docker（推荐团队使用）**
@@ -78,8 +78,8 @@ docker-compose logs -f
 
 **Windows EXE:**
 ```bash
-cd E:\SpliceGAIP\dist\SpliceGAIP
-.\SpliceGAIP.exe
+cd E:\EpitopeRank\dist\EpitopeRank
+.\EpitopeRank.exe
 ```
 
 **Docker:**
@@ -157,7 +157,7 @@ curl http://localhost:8800/api/health
 **PyInstaller:**
 ```bash
 # 检查是否有 .env 文件
-ls dist/SpliceGAIP/.env
+ls dist/EpitopeRank/.env
 
 # 检查端口是否被占用
 netstat -ano | findstr :8800
@@ -169,7 +169,7 @@ netstat -ano | findstr :8800
 docker info
 
 # 查看详细日志
-docker-compose logs splicegaip
+docker-compose logs epitoperank
 ```
 
 ### Q2: AI 功能未启用？
@@ -198,14 +198,14 @@ docker-run.bat rebuild
 ### Q4: 数据保存在哪里？
 
 **桌面版 / 源码运行：**
-- 运行根目录：`%LOCALAPPDATA%\SpliceGAIP`（Windows）或 `~/.local/share/splicegaip`（Linux/macOS）
-- SQLite 数据库：`<运行根目录>/splicegaip.sqlite3`
+- 运行根目录：`%LOCALAPPDATA%\EpitopeRank`（Windows）或 `~/.local/share/epitoperank`（Linux/macOS）
+- SQLite 数据库：`<运行根目录>/epitoperank.sqlite3`
 - 项目产物（图 / 报告）：`<运行根目录>/projects/<项目ID>/`
-- 可用 `SPLICEGAIP_RUNTIME_ROOT` 改到别处
+- 可用 `EPITOPERANK_RUNTIME_ROOT` 改到别处
 
 **Docker:**
-- 命名卷：`splicegaip-data`（容器内 `/data`）
-- 备份：`docker volume inspect splicegaip-data`
+- 命名卷：`epitoperank-data`（容器内 `/data`）
+- 备份：`docker volume inspect epitoperank-data`
 
 完整说明（含旧数据迁移、备份恢复、服务器部署、免费域名）见 [DATA_AND_DEPLOY.md](DATA_AND_DEPLOY.md)。
 
@@ -228,7 +228,7 @@ docker-run.bat rebuild
    docker-run.bat logs
    
    # EXE (控制台输出)
-   SpliceGAIP.exe --no-browser
+   EpitopeRank.exe --no-browser
    ```
 
 2. 检查配置文件：

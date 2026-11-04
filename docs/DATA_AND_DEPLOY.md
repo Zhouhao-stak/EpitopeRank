@@ -1,45 +1,45 @@
 # 数据存放 · 服务器部署 · 免费域名
 
 这一页回答三个问题：**数据存在哪**、**怎么放到服务器上**、**怎么弄一个不花钱的域名和 HTTPS**。
-内容与本仓库当前代码一致（`splicegaip/storage.py`、`Dockerfile`、`docker-compose.yml`）。
+内容与本仓库当前代码一致（`epitoperank/storage.py`、`Dockerfile`、`docker-compose.yml`）。
 
 ---
 
 ## 一、数据存在哪
 
-SpliceGAIP 的全部"业务数据"都在**一个运行根目录**里，三样东西：
+EpitopeRank 的全部"业务数据"都在**一个运行根目录**里，三样东西：
 
 | 内容 | 说明 |
 | --- | --- |
-| `splicegaip.sqlite3` | 项目表、事件表（百万级）、候选、富集、图表登记、流程日志、解读 |
+| `epitoperank.sqlite3` | 项目表、事件表（百万级）、候选、富集、图表登记、流程日志、解读 |
 | `literature.sqlite3` | 文献证据缓存 |
 | `projects/<项目ID>/` | 该项目的图（PNG/SVG）、`report.html`、`report.pdf`、中间表 |
-| `splicegaip_upload_*` | 上传的原始输入副本（分析完成后可删） |
+| `epitoperank_upload_*` | 上传的原始输入副本（分析完成后可删） |
 
 ### 各运行方式的路径
 
 | 你怎么跑 | 运行根目录 | 主数据库 |
 | --- | --- | --- |
-| 桌面版 exe | `%LOCALAPPDATA%\SpliceGAIP` | 同目录 `splicegaip.sqlite3` |
+| 桌面版 exe | `%LOCALAPPDATA%\EpitopeRank` | 同目录 `epitoperank.sqlite3` |
 | 源码 / `serve_ui.py` / `run.py` | 同上 | 同上 |
-| Docker / 服务器 | 容器内 `/data/runtime` | `/data/splicegaip.sqlite3`（挂载在命名卷 `splicegaip-data`） |
-| 自定义 | 环境变量 `SPLICEGAIP_RUNTIME_ROOT` | 可再加 `SPLICEGAIP_MEMORY_DB`、`SPLICEGAIP_LITERATURE_DB` |
+| Docker / 服务器 | 容器内 `/data/runtime` | `/data/epitoperank.sqlite3`（挂载在命名卷 `epitoperank-data`） |
+| 自定义 | 环境变量 `EPITOPERANK_RUNTIME_ROOT` | 可再加 `EPITOPERANK_MEMORY_DB`、`EPITOPERANK_LITERATURE_DB` |
 
-> **为什么改过位置**：旧版本把数据写在 `%TEMP%\splicegaip`，Windows 的存储感知 / 磁盘清理会把整个 `%TEMP%` 删掉，历史项目就这么没了。现在固定在上面这张表的位置，系统清理和更新 exe 都不会碰它。
+> **为什么改过位置**：旧版本把数据写在 `%TEMP%\epitoperank`，Windows 的存储感知 / 磁盘清理会把整个 `%TEMP%` 删掉，历史项目就这么没了。现在固定在上面这张表的位置，系统清理和更新 exe 都不会碰它。
 >
-> 旧目录（`%TEMP%\splicegaip`、exe 同级的 `splicegaip_runtime`、`/var/tmp/splicegaip`）在首次启动时会**自动合并**到新目录，数据库逐表 `INSERT OR IGNORE` 合并、项目文件夹复制、图表/报告路径重写。执行结果可以在 `GET /api/storage` 里看到。
+> 旧目录（`%TEMP%\epitoperank`、exe 同级的 `epitoperank_runtime`、`/var/tmp/epitoperank`）在首次启动时会**自动合并**到新目录，数据库逐表 `INSERT OR IGNORE` 合并、项目文件夹复制、图表/报告路径重写。执行结果可以在 `GET /api/storage` 里看到。
 
 ### 备份 / 恢复 / 换机器
 
 ```bash
 # 备份（先退出程序，保证 SQLite 没有写入）
 # Windows PowerShell
-Copy-Item "$env:LOCALAPPDATA\SpliceGAIP" "D:\backup\SpliceGAIP-$(Get-Date -f yyyyMMdd)" -Recurse
+Copy-Item "$env:LOCALAPPDATA\EpitopeRank" "D:\backup\EpitopeRank-$(Get-Date -f yyyyMMdd)" -Recurse
 
 # 服务器 / Docker
 docker compose stop
-docker run --rm -v splicegaip-data:/data -v "$PWD:/backup" alpine \
-    tar czf /backup/splicegaip-data.tar.gz -C /data .
+docker run --rm -v epitoperank-data:/data -v "$PWD:/backup" alpine \
+    tar czf /backup/epitoperank-data.tar.gz -C /data .
 docker compose start
 ```
 
@@ -48,7 +48,7 @@ docker compose start
 ### 想自己看/查数据库
 
 ```bash
-sqlite3 "$LOCALAPPDATA/SpliceGAIP/splicegaip.sqlite3" \
+sqlite3 "$LOCALAPPDATA/EpitopeRank/epitoperank.sqlite3" \
   "select project_id,name,source_format,created_at from projects order by created_at desc limit 10;"
 ```
 
@@ -63,17 +63,17 @@ sqlite3 "$LOCALAPPDATA/SpliceGAIP/splicegaip.sqlite3" \
 ```bash
 # 1. 把代码传上去
 rsync -av --exclude venv --exclude .git --exclude dist --exclude _archive \
-      ./ user@your-server:/opt/splicegaip/
+      ./ user@your-server:/opt/epitoperank/
 
 # 2. 在服务器上
-cd /opt/splicegaip
+cd /opt/epitoperank
 cat > .env <<'EOF'
 MODEL_API_BASE_URL=https://api.deepseek.com
 MODEL_NAME=deepseek-chat
 MODEL_API_KEY=sk-你的密钥
 # 对外开放时强烈建议加这两行：
-SPLICEGAIP_API_KEY=自己编一个长随机串
-SPLICEGAIP_RATE_LIMIT=60
+EPITOPERANK_API_KEY=自己编一个长随机串
+EPITOPERANK_RATE_LIMIT=60
 EOF
 
 # 3. 启动
@@ -81,7 +81,7 @@ docker compose up -d --build
 curl http://127.0.0.1:8800/api/health   # {"status":"ok",...}
 ```
 
-访问 `http://服务器IP:8800/`。数据落在命名卷 `splicegaip-data`，容器重建也不丢。
+访问 `http://服务器IP:8800/`。数据落在命名卷 `epitoperank-data`，容器重建也不丢。
 
 **镜像体积和构建时间**是第一次部署最大的坑：`requirements.txt` 里有 gseapy（要 rust）、matplotlib、reportlab，Alpine 上编译通常 8–20 分钟。国内服务器建议保留 Dockerfile 里的清华源。
 
@@ -89,8 +89,8 @@ curl http://127.0.0.1:8800/api/health   # {"status":"ok",...}
 
 ```bash
 python3.11 -m venv venv && ./venv/bin/pip install -r requirements.txt
-SPLICEGAIP_RUNTIME_ROOT=/opt/splicegaip-data \
-SPLICEGAIP_API_KEY=随机串 \
+EPITOPERANK_RUNTIME_ROOT=/opt/epitoperank-data \
+EPITOPERANK_API_KEY=随机串 \
 ./venv/bin/python serve_ui.py --host 0.0.0.0 --port 8800 --no-browser
 ```
 
@@ -98,14 +98,14 @@ SPLICEGAIP_API_KEY=随机串 \
 
 ```ini
 [Unit]
-Description=SpliceGAIP
+Description=EpitopeRank
 After=network.target
 
 [Service]
-WorkingDirectory=/opt/splicegaip
-Environment=SPLICEGAIP_RUNTIME_ROOT=/opt/splicegaip-data
-Environment=SPLICEGAIP_API_KEY=随机串
-ExecStart=/opt/splicegaip/venv/bin/python serve_ui.py --host 0.0.0.0 --port 8800 --no-browser
+WorkingDirectory=/opt/epitoperank
+Environment=EPITOPERANK_RUNTIME_ROOT=/opt/epitoperank-data
+Environment=EPITOPERANK_API_KEY=随机串
+ExecStart=/opt/epitoperank/venv/bin/python serve_ui.py --host 0.0.0.0 --port 8800 --no-browser
 Restart=always
 
 [Install]
@@ -114,7 +114,7 @@ WantedBy=multi-user.target
 
 ### 方案 C：反向代理 + 已有 HTTPS
 
-仓库自带 `nginx.conf`（Coolify 风格，示例域名 `splicegaip.your-domain.com`），把 `server_name`、证书路径换掉即可。**注意上传体积**：nginx 默认只放行 1 MB，rMATS 表动辄几十 MB，必须在 `server {}` 里加
+仓库自带 `nginx.conf`（Coolify 风格，示例域名 `epitoperank.your-domain.com`），把 `server_name`、证书路径换掉即可。**注意上传体积**：nginx 默认只放行 1 MB，rMATS 表动辄几十 MB，必须在 `server {}` 里加
 
 ```nginx
 client_max_body_size 2048m;
@@ -129,7 +129,7 @@ client_max_body_size 2048m;
 | 502 Bad Gateway | 容器没起来或端口不对，`docker compose logs --tail=100` |
 | 上传报 413 | 就是上面 `client_max_body_size` |
 | 分析跑一会儿就失败 | 内存不够。百万事件项目加载约 2–4 GB，Docker 默认可能不够，`deploy.resources.limits.memory` 调到 8G |
-| 历史项目全空 | 卷没挂上，或换了 `SPLICEGAIP_RUNTIME_ROOT`，旧数据在另一个目录 |
+| 历史项目全空 | 卷没挂上，或换了 `EPITOPERANK_RUNTIME_ROOT`，旧数据在另一个目录 |
 | 大模型解读不可用 | `.env` 里 `MODEL_API_KEY` 没读到；打开「AI 助手 → 模型配置」也能现场粘贴 |
 
 ---
@@ -172,9 +172,9 @@ cloudflared tunnel --url http://127.0.0.1:8800
 
 ```bash
 cloudflared tunnel login
-cloudflared tunnel create splicegaip
-cloudflared tunnel route dns splicegaip splice.your-domain.com
-cloudflared tunnel run --url http://127.0.0.1:8800 splicegaip
+cloudflared tunnel create epitoperank
+cloudflared tunnel route dns epitoperank splice.your-domain.com
+cloudflared tunnel run --url http://127.0.0.1:8800 epitoperank
 ```
 
 Cloudflare 的 CDN/SSL 本身免费，所以"免费域名 + 免费 HTTPS + 免公网 IP"这一套是能跑通的；真正要花钱的只有域名本身（`.top`/`.xyz` 首年常年在 10 元上下）。
@@ -188,7 +188,7 @@ Cloudflare 的 CDN/SSL 本身免费，所以"免费域名 + 免费 HTTPS + 免�
 | **Koyeb / Render** | 有免费层 | Render 免费实例会休眠，长分析会被打断 |
 | **Hugging Face Spaces** | Docker Space 免费 CPU | 需把端口改成 7860，且默认公开；只适合演示 |
 
-> 公开到公网前务必设置 `SPLICEGAIP_API_KEY` 和 `SPLICEGAIP_RATE_LIMIT`。这两个变量会让所有 `/api/*`（除 `/api/health`）要求请求头带密钥并限流；否则任何人都能用你的服务器和大模型额度。
+> 公开到公网前务必设置 `EPITOPERANK_API_KEY` 和 `EPITOPERANK_RATE_LIMIT`。这两个变量会让所有 `/api/*`（除 `/api/health`）要求请求头带密钥并限流；否则任何人都能用你的服务器和大模型额度。
 
 ---
 

@@ -9,9 +9,9 @@ echo   Cleaning Build Artifacts
 echo ========================================
 echo.
 
-REM Kill any running SpliceGAIP processes
+REM Kill any running EpitopeRank processes
 echo [1/4] Stopping running instances...
-taskkill /F /IM SpliceGAIP.exe 2>nul
+taskkill /F /IM EpitopeRank.exe 2>nul
 timeout /t 2 /nobreak >nul
 echo       Done.
 echo.
@@ -55,7 +55,7 @@ echo ========================================
 echo   Cleanup Complete!
 echo ========================================
 echo.
-echo   EXE location: dist\SpliceGAIP.exe
+echo   EXE location: dist\EpitopeRank.exe
 echo   To rebuild:   run build.bat
 echo.
 

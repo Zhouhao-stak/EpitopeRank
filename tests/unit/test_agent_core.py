@@ -3,9 +3,9 @@
 from pathlib import Path
 from types import SimpleNamespace
 
-from splicegaip.agent.profile import build_profile, profile_text
-from splicegaip.agent.reflector import MAX_RETRIES, reflect, remediate
-from splicegaip.agent.state import (
+from epitoperank.agent.profile import build_profile, profile_text
+from epitoperank.agent.reflector import MAX_RETRIES, reflect, remediate
+from epitoperank.agent.state import (
     BLOCKER,
     INFO,
     WARNING,
@@ -15,8 +15,8 @@ from splicegaip.agent.state import (
     StepRecord,
     default_criteria,
 )
-from splicegaip.data.loader import Dataset
-from splicegaip.splicing.schema import SampleMetadata, StandardEvent
+from epitoperank.data.loader import Dataset
+from epitoperank.splicing.schema import SampleMetadata, StandardEvent
 
 
 def _event(event_id: str = "E1", **overrides) -> StandardEvent:

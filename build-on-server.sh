@@ -1,17 +1,17 @@
 #!/bin/bash
-# Build and deploy SpliceGAIP on server
-cd /home/wang_zi_wei/splicegaip
+# Build and deploy EpitopeRank on server
+cd /home/wang_zi_wei/epitoperank
 
 echo "=== Checking files ==="
 ls -lh requirements.txt .env Dockerfile docker-compose.yml
 
 echo ""
 echo "=== Building Docker image ==="
-docker compose build --no-cache > /tmp/splicegaip-build.log 2>&1 &
+docker compose build --no-cache > /tmp/epitoperank-build.log 2>&1 &
 BUILD_PID=$!
 
 echo "Build started with PID: $BUILD_PID"
-echo "Monitor progress with: tail -f /tmp/splicegaip-build.log"
+echo "Monitor progress with: tail -f /tmp/epitoperank-build.log"
 
 # Wait for build to complete
 wait $BUILD_PID
@@ -35,7 +35,7 @@ else
     echo ""
     echo "=== Build failed ==="
     echo "Last 50 lines of build log:"
-    tail -50 /tmp/splicegaip-build.log
+    tail -50 /tmp/epitoperank-build.log
 fi
 
 exit $EXIT_CODE

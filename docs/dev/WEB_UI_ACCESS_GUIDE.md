@@ -1,4 +1,4 @@
-# SpliceGAIP Web UI 访问指南
+# EpitopeRank Web UI 访问指南
 
 ## ✅ 部署状态
 
@@ -75,7 +75,7 @@ MODEL_API_KEY=sk-your-api-key-here
 如需更换，编辑服务器上的 `.env` 文件：
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
-cd /home/wang_zi_wei/splicegaip
+cd /home/wang_zi_wei/epitoperank
 nano .env
 # 修改 MODEL_API_KEY
 docker compose restart
@@ -86,7 +86,7 @@ docker compose restart
 ### 查看容器状态
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
-docker ps | grep splicegaip
+docker ps | grep epitoperank
 ```
 
 ### 查看实时日志
@@ -101,7 +101,7 @@ docker compose restart
 
 ### 查看资源使用
 ```bash
-docker stats splicegaip
+docker stats epitoperank
 ```
 
 ## ⚠️ 注意事项
@@ -109,17 +109,17 @@ docker stats splicegaip
 1. **保持 SSH 会话打开**：如果使用 SSH 隧道方式，需要保持 SSH 会话一直打开
 2. **防火墙设置**：确保服务器防火墙允许 8501 和 8800 端口访问（或直接使用 SSH 隧道）
 3. **API Key 安全**：不要公开分享你的 DeepSeek API Key
-4. **数据持久化**：分析数据存储在 Docker volume `splicegaip-data` 中，即使容器删除也不会丢失
+4. **数据持久化**：分析数据存储在 Docker volume `epitoperank-data` 中，即使容器删除也不会丢失
 
 ## 🆘 故障排查
 
 ### UI 无法访问
 ```bash
 # 检查容器是否运行
-docker ps | grep splicegaip
+docker ps | grep epitoperank
 
 # 查看日志
-docker logs splicegaip --tail 50
+docker logs epitoperank --tail 50
 ```
 
 ### API 无响应
@@ -128,12 +128,12 @@ docker logs splicegaip --tail 50
 curl http://localhost:8800/api/health
 
 # 查看进程
-docker exec splicegaip ps aux
+docker exec epitoperank ps aux
 ```
 
 ### 重新构建和启动
 ```bash
-cd /home/wang_zi_wei/splicegaip
+cd /home/wang_zi_wei/epitoperank
 docker compose down
 docker compose build --no-cache
 docker compose up -d

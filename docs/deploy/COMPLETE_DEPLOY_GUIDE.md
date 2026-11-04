@@ -1,4 +1,4 @@
-# SpliceGAIP 完整部署指南
+# EpitopeRank 完整部署指南
 
 ## 当前状态
 
@@ -9,7 +9,7 @@
 ## 问题原因
 
 之前通过 SCP 上传的文件不完整，服务器上缺少：
-- `splicegaip/` Python 包目录（所有核心代码）
+- `epitoperank/` Python 包目录（所有核心代码）
 - `tests/` 测试目录
 - 其他关键 Python 文件
 
@@ -27,15 +27,15 @@
    - 协议：SFTP
 
 3. **上传整个项目**：
-   - 本地路径：`E:\SpliceGAIP\`
-   - 远程路径：`/home/wang_zi_wei/splicegaip/`
+   - 本地路径：`E:\EpitopeRank\`
+   - 远程路径：`/home/wang_zi_wei/epitoperank/`
    - 确保勾选"递归复制子目录"
    - 等待上传完成（可能需要几分钟）
 
 4. **重新构建和启动**：
    ```bash
    sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
-   cd /home/wang_zi_wei/splicegaip
+   cd /home/wang_zi_wei/epitoperank
    docker compose down
    docker compose build --no-cache
    docker compose up -d
@@ -46,29 +46,29 @@
 
 1. **在本地创建压缩包**：
    ```powershell
-   cd E:\SpliceGAIP
-   tar czf splicegaip-full.tar.gz ^
+   cd E:\EpitopeRank
+   tar czf epitoperank-full.tar.gz ^
      --exclude="venv" ^
      --exclude=".pytest_cache" ^
      --exclude="__pycache__" ^
      --exclude="*.pyc" ^
      --exclude=".coverage" ^
-     --exclude="SpliceGAIP项目汇报" ^
+     --exclude="EpitopeRank项目汇报" ^
      --exclude="*.pptx" ^
      .
    ```
 
 2. **使用 WinSCP 上传压缩包**：
-   - 上传 `splicegaip-full.tar.gz` 到服务器的 `/home/wang_zi_wei/`
+   - 上传 `epitoperank-full.tar.gz` 到服务器的 `/home/wang_zi_wei/`
 
 3. **在服务器上解压并重新部署**：
    ```bash
    sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
    cd /home/wang_zi_wei
-   rm -rf splicegaip
-   mkdir splicegaip
-   tar xzf splicegaip-full.tar.gz -C splicegaip
-   cd splicegaip
+   rm -rf epitoperank
+   mkdir epitoperank
+   tar xzf epitoperank-full.tar.gz -C epitoperank
+   cd epitoperank
    docker compose down
    docker compose build --no-cache
    docker compose up -d
@@ -78,7 +78,7 @@
 ### 方案 C：使用 rsync（如果可用）
 
 ```bash
-rsync -avz --exclude='venv' --exclude='.pytest_cache' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage' --exclude='SpliceGAIP项目汇报' --exclude='*.pptx' -e "ssh -p 39145" E:\SpliceGAIP\ wang_zi_wei@123.255.66.81:/home/wang_zi_wei/splicegaip/
+rsync -avz --exclude='venv' --exclude='.pytest_cache' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage' --exclude='EpitopeRank项目汇报' --exclude='*.pptx' -e "ssh -p 39145" E:\EpitopeRank\ wang_zi_wei@123.255.66.81:/home/wang_zi_wei/epitoperank/
 ```
 
 ## 验证部署
@@ -87,7 +87,7 @@ rsync -avz --exclude='venv' --exclude='.pytest_cache' --exclude='__pycache__' --
 
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
-cd /home/wang_zi_wei/splicegaip
+cd /home/wang_zi_wei/epitoperank
 
 # 检查容器状态
 docker compose ps
@@ -125,7 +125,7 @@ ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.6
 
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
-cd /home/wang_zi_wei/splicegaip
+cd /home/wang_zi_wei/epitoperank
 nano .env
 EOF
 ```
@@ -151,13 +151,13 @@ docker compose restart
 
 2. **Docker 镜像**：
    ```bash
-   docker images | grep splicegaip
+   docker images | grep epitoperank
    ```
 
 3. **文件完整性**：
    ```bash
-   ls -la /home/wang_zi_wei/splicegaip/splicegaip/
-   ls -la /home/wang_zi_wei/splicegaip/run.py
+   ls -la /home/wang_zi_wei/epitoperank/epitoperank/
+   ls -la /home/wang_zi_wei/epitoperank/run.py
    ```
 
 4. **网络连接**：

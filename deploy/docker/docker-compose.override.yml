@@ -3,15 +3,15 @@
 # Auto-merged with docker-compose.yml by `docker compose up -d`, so the tracked
 # base file stays untouched and this file can be deleted to roll back.
 services:
-  splicegaip:
+  epitoperank:
     # Multi-worker API instead of `run.py serve` (single process, single core).
     command: ["sh", "/app/deploy/docker/entrypoint.sh"]
     environment:
-      - SPLICEGAIP_WORKERS=8
+      - EPITOPERANK_WORKERS=8
       # /data is a local docker volume, so WAL is safe here and lets the 8
       # workers read while one of them writes analysis results.
-      - SPLICEGAIP_SQLITE_WAL=1
-      - SPLICEGAIP_ENABLE_STREAMLIT=1
+      - EPITOPERANK_SQLITE_WAL=1
+      - EPITOPERANK_ENABLE_STREAMLIT=1
       # One BLAS thread per process: without this each of the 8 workers tries
       # to use all 128 cores and they thrash each other.
       - OMP_NUM_THREADS=1

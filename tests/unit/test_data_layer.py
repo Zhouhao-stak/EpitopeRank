@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from splicegaip.data.loader import Dataset, load_dataset, load_differential_expression
-from splicegaip.data.validator import validate_dataset
-from splicegaip.splicing.filtering import FilterSettings, filter_significant_events
-from splicegaip.splicing.schema import SampleMetadata, StandardEvent
+from epitoperank.data.loader import Dataset, load_dataset, load_differential_expression
+from epitoperank.data.validator import validate_dataset
+from epitoperank.splicing.filtering import FilterSettings, filter_significant_events
+from epitoperank.splicing.schema import SampleMetadata, StandardEvent
 
 
 def _event(**overrides):

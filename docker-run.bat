@@ -1,5 +1,5 @@
 @echo off
-REM SpliceGAIP Docker Management Script
+REM EpitopeRank Docker Management Script
 REM Usage: docker-run.bat [command]
 
 setlocal enabledelayedexpansion
@@ -15,19 +15,19 @@ if "%1"=="rebuild" goto :rebuild
 goto :unknown_command
 
 :start
-    echo Starting SpliceGAIP...
+    echo Starting EpitopeRank...
     docker-compose up -d
     echo Done. Access at http://localhost:8800/
     goto :end
 
 :stop
-    echo Stopping SpliceGAIP...
+    echo Stopping EpitopeRank...
     docker-compose down
     echo Done.
     goto :end
 
 :restart
-    echo Restarting SpliceGAIP...
+    echo Restarting EpitopeRank...
     docker-compose restart
     echo Done.
     goto :end
@@ -42,7 +42,7 @@ goto :unknown_command
     docker-compose ps
     echo.
     echo Resource usage:
-    docker stats --no-stream splicegaip 2>nul || echo No running container
+    docker stats --no-stream epitoperank 2>nul || echo No running container
     goto :end
 
 :clean
@@ -52,7 +52,7 @@ goto :unknown_command
         echo Stopping containers...
         docker-compose down -v
         echo Removing images...
-        docker rmi splicegaip-splicegaip 2>nul
+        docker rmi epitoperank-epitoperank 2>nul
         echo Cleanup complete.
     ) else (
         echo Cancelled.
@@ -69,7 +69,7 @@ goto :unknown_command
 
 :show_help
     echo ========================================
-    echo   SpliceGAIP Docker Manager
+    echo   EpitopeRank Docker Manager
     echo ========================================
     echo.
     echo Usage: docker-run.bat [command]

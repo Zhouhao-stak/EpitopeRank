@@ -1,8 +1,8 @@
-# SpliceGAIP tool registry.
+# EpitopeRank tool registry.
 #
 # Tool declarations in the BioGAIP tradition (tool_config.yaml). Each tool is
 # implemented as a typed Python function bound to the run context and exposed
-# to the agents as an AutoGen FunctionTool; see splicegaip/tools/.
+# to the agents as an AutoGen FunctionTool; see epitoperank/tools/.
 
 tools:
   summarize_dataset:

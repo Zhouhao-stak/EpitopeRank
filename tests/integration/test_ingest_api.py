@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from splicegaip.api.app import create_app
+from epitoperank.api.app import create_app
 
 VENDOR_CSV = """Gene Name,Gene ID,Event Type,PSI Control,PSI Treatment,Delta PSI,p-value,q-value
 GeneA,ENSG000001,Exon Skipping,80,35,-45,0.0001,0.0002
@@ -15,7 +15,7 @@ GeneB,ENSG000002,Retained Intron,20,75,55,<0.001,0.002
 
 @pytest.fixture
 def client(monkeypatch):
-    monkeypatch.setenv("SPLICEGAIP_INGEST_ALLOW_EXTERNAL", "1")
+    monkeypatch.setenv("EPITOPERANK_INGEST_ALLOW_EXTERNAL", "1")
     return TestClient(create_app())
 
 
@@ -51,7 +51,7 @@ def test_empty_mapping_is_rejected(tmp_path, client):
 
 
 def test_external_directory_is_blocked_without_flag(tmp_path, monkeypatch):
-    monkeypatch.delenv("SPLICEGAIP_INGEST_ALLOW_EXTERNAL", raising=False)
+    monkeypatch.delenv("EPITOPERANK_INGEST_ALLOW_EXTERNAL", raising=False)
     (tmp_path / "vendor.csv").write_text(VENDOR_CSV, encoding="utf-8")
     client = TestClient(create_app())
 
@@ -64,7 +64,7 @@ def test_external_directory_is_blocked_without_flag(tmp_path, monkeypatch):
 
 
 def test_uploaded_expression_xls_is_read_but_not_mapped_to_splicing(tmp_path, monkeypatch):
-    monkeypatch.setenv("SPLICEGAIP_RUNTIME_ROOT", str(tmp_path))
+    monkeypatch.setenv("EPITOPERANK_RUNTIME_ROOT", str(tmp_path))
     client = TestClient(create_app())
     content = b"gene_id\tfpkm_OC_001\tfpkm_OC_002\ttpm_OC_001\ttpm_OC_002\nG1\t1\t2\t3\t4\n"
     uploaded = client.post("/api/upload", files={"files": ("rna_expression.xls", content, "application/octet-stream")})

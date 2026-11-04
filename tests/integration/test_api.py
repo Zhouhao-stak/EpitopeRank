@@ -4,7 +4,7 @@ import logging
 
 import pytest
 from fastapi.testclient import TestClient
-from splicegaip.api.app import create_app
+from epitoperank.api.app import create_app
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ class TestRootEndpoint:
         response = client.get("/")
         assert response.status_code == 200
         assert "text/html" in response.headers["content-type"]
-        assert "SpliceGAIP" in response.text
+        assert "EpitopeRank" in response.text
 
 
 class TestFavicon:
@@ -68,12 +68,12 @@ class TestProjectEndpoints:
         assert response.status_code == 404
 
     def test_neoantigen_reuses_project_and_original_cds(self, client, monkeypatch, tmp_path):
-        import splicegaip.api.app as api_module
-        import splicegaip.neoantigen as neo
+        import epitoperank.api.app as api_module
+        import epitoperank.neoantigen as neo
         source = tmp_path / 'standardized'; source.mkdir()
         cds = tmp_path / 'splice_orfs.tsv'
         cds.write_text('event_id\treference_cds\taltered_cds\tjunction_nt\nSE:1\tATG\tATG\t3\n', encoding='utf-8')
-        monkeypatch.setenv('SPLICEGAIP_INGEST_ALLOW_EXTERNAL', '1')
+        monkeypatch.setenv('EPITOPERANK_INGEST_ALLOW_EXTERNAL', '1')
         monkeypatch.setattr(api_module, 'project_status', lambda *_: {'project': {'source_dir': str(source)}})
         monkeypatch.setattr(neo, 'run', lambda directory, table, output, **kwargs: {'input_dir': str(directory), 'cds_table': str(table)})
         response = client.post('/api/neoantigen/run', json={'project_id': 'p1'})
@@ -85,12 +85,12 @@ class TestProjectEndpoints:
         assert '编码序列表' in response.json()['detail']
 
     def test_neoantigen_workflow_advances_one_stage_and_rejects_stale_request(self, client, monkeypatch, tmp_path):
-        import splicegaip.api.app as api_module
-        import splicegaip.data.loader as loader
-        from splicegaip.data.loader import Dataset
-        from splicegaip.splicing.schema import parse_event_row
+        import epitoperank.api.app as api_module
+        import epitoperank.data.loader as loader
+        from epitoperank.data.loader import Dataset
+        from epitoperank.splicing.schema import parse_event_row
         ds = Dataset('test', tmp_path, 'standard', [parse_event_row({'event_id': 'a'})], [])
-        monkeypatch.setenv('SPLICEGAIP_INGEST_ALLOW_EXTERNAL', '1')
+        monkeypatch.setenv('EPITOPERANK_INGEST_ALLOW_EXTERNAL', '1')
         monkeypatch.setattr(api_module, 'project_status', lambda *_: {'project': {'source_dir': str(tmp_path)}})
         monkeypatch.setattr(loader, 'load_dataset', lambda _: ds)
         started = client.post('/api/neoantigen/workflow/start', json={'project_id': 'p', 'evidence': {}})
@@ -105,9 +105,9 @@ class TestProjectEndpoints:
     def test_mopepgen_uses_project_files_and_keeps_results(self, tmp_path, client, monkeypatch):
         import json
         from pathlib import Path
-        import splicegaip.api.app as api_module
-        import splicegaip.mopepgen_docker as runner
-        monkeypatch.setenv('SPLICEGAIP_INGEST_ALLOW_EXTERNAL', '1')
+        import epitoperank.api.app as api_module
+        import epitoperank.mopepgen_docker as runner
+        monkeypatch.setenv('EPITOPERANK_INGEST_ALLOW_EXTERNAL', '1')
         monkeypatch.setattr(api_module, 'project_status', lambda *_: {'project': {'source_dir': str(tmp_path)}})
         for name in ('se.txt', 'genome.fa', 'reference.gtf', 'proteome.fa'):
             (tmp_path / name).write_text('example')
@@ -129,12 +129,12 @@ class TestProjectEndpoints:
         assert client.post('/api/neoantigen/mopepgen', json=payload).status_code == 422
 
     def test_neo_readiness_checks_project_and_cds_header(self, tmp_path, client, monkeypatch):
-        import splicegaip.api.app as api_module
-        import splicegaip.data.loader as loader
-        from splicegaip.data.loader import Dataset
-        from splicegaip.splicing.schema import parse_event_row
+        import epitoperank.api.app as api_module
+        import epitoperank.data.loader as loader
+        from epitoperank.data.loader import Dataset
+        from epitoperank.splicing.schema import parse_event_row
         ds = Dataset('test', tmp_path, 'standard', [parse_event_row({'event_id': 'a'})], [])
-        monkeypatch.setenv('SPLICEGAIP_INGEST_ALLOW_EXTERNAL', '1')
+        monkeypatch.setenv('EPITOPERANK_INGEST_ALLOW_EXTERNAL', '1')
         monkeypatch.setattr(api_module, 'project_status', lambda *_: {'project': {'source_dir': str(tmp_path), 'name': 'P'}})
         monkeypatch.setattr(loader, 'load_dataset', lambda _: ds)
         url = '/api/neoantigen/readiness/p'
@@ -230,7 +230,7 @@ class TestAPIHeaders:
         """The generated OpenAPI document exposes the public API contract."""
         response = client.get("/openapi.json")
         assert response.status_code == 200
-        assert response.json()["info"]["title"] == "SpliceGAIP API"
+        assert response.json()["info"]["title"] == "EpitopeRank API"
 
     def test_security_and_request_headers(self, client):
         """Responses expose a correlation id and baseline browser hardening."""
@@ -244,7 +244,7 @@ class TestAPIKeyAuthentication:
     """API key protection is opt-in for deployments exposed beyond localhost."""
 
     def test_configured_key_protects_api_routes(self, monkeypatch):
-        monkeypatch.setenv("SPLICEGAIP_API_KEY", "test-secret")
+        monkeypatch.setenv("EPITOPERANK_API_KEY", "test-secret")
         protected_client = TestClient(create_app())
 
         assert protected_client.get("/api/projects").status_code == 401
@@ -256,7 +256,7 @@ class TestAPIKeyAuthentication:
         ).status_code == 200
 
     def test_health_remains_available_for_probes(self, monkeypatch):
-        monkeypatch.setenv("SPLICEGAIP_API_KEY", "test-secret")
+        monkeypatch.setenv("EPITOPERANK_API_KEY", "test-secret")
         protected_client = TestClient(create_app())
 
         assert protected_client.get("/api/health").status_code == 200
@@ -266,7 +266,7 @@ class TestAPIRateLimit:
     """Rate limiting is opt-in for deployments exposed beyond localhost."""
 
     def test_configured_rate_limit_returns_retry_after(self, monkeypatch):
-        monkeypatch.setenv("SPLICEGAIP_RATE_LIMIT", "2")
+        monkeypatch.setenv("EPITOPERANK_RATE_LIMIT", "2")
         limited_client = TestClient(create_app())
 
         assert limited_client.get("/api/projects").status_code == 200
@@ -284,10 +284,10 @@ class TestHistoryEndpoints:
     @pytest.fixture
     def stored_project(self, tmp_path, monkeypatch):
         """Create an isolated runtime root with one persisted project."""
-        monkeypatch.setenv("SPLICEGAIP_RUNTIME_ROOT", str(tmp_path))
-        from splicegaip.config import load_prepared_settings
-        from splicegaip.memory.project_memory import ProjectMemory
-        from splicegaip.splicing.schema import StandardEvent
+        monkeypatch.setenv("EPITOPERANK_RUNTIME_ROOT", str(tmp_path))
+        from epitoperank.config import load_prepared_settings
+        from epitoperank.memory.project_memory import ProjectMemory
+        from epitoperank.splicing.schema import StandardEvent
 
         settings, _warnings = load_prepared_settings()
         memory = ProjectMemory(settings.paths.memory_db)
@@ -345,4 +345,4 @@ class TestHistoryEndpoints:
     def test_storage_endpoint_reports_runtime_root(self, stored_project, tmp_path):
         payload = stored_project.get("/api/storage").json()
         assert payload["runtime_root"] == str(tmp_path.resolve())
-        assert payload["databases"]["splicegaip.sqlite3"]["exists"] is True
+        assert payload["databases"]["epitoperank.sqlite3"]["exists"] is True

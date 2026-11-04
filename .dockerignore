@@ -47,7 +47,7 @@ test-venv/
 .coverage
 
 # PPT and presentation files
-SpliceGAIP项目汇报/
+EpitopeRank项目汇报/
 *.pptx
 create_ppt.py
 

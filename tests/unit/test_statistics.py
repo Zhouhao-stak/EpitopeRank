@@ -2,7 +2,7 @@
 
 import pytest
 import math
-from splicegaip.analysis.statistics import chi_square_p_value, benjamini_hochberg
+from epitoperank.analysis.statistics import chi_square_p_value, benjamini_hochberg
 
 
 class TestChiSquareTest:

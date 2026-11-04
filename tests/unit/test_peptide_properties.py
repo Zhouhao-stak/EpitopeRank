@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from splicegaip.peptide.properties import (
+from epitoperank.peptide.properties import (
     RESIDUE_MASS,
     aliphatic_index,
     aromaticity,
@@ -18,7 +18,7 @@ from splicegaip.peptide.properties import (
     net_charge,
     shannon_entropy,
 )
-from splicegaip.peptide.sequences import SequenceError
+from epitoperank.peptide.sequences import SequenceError
 
 
 def test_molecular_weight_of_known_nonamer() -> None:

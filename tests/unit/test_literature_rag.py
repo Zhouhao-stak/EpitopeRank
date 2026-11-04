@@ -7,7 +7,7 @@ from urllib.error import HTTPError
 
 import pytest
 
-from splicegaip.knowledge.literature_rag import (
+from epitoperank.knowledge.literature_rag import (
     BM25,
     RagError,
     chunk_sections,

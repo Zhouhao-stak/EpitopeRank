@@ -1,4 +1,4 @@
-"""Render two screen-style SpliceGAIP demo videos from verified UI workflow copy.
+"""Render two screen-style EpitopeRank demo videos from verified UI workflow copy.
 
 The B video is explicitly marked as a concept demonstration. All example rows
 are illustrative UI content, not scientific results.
@@ -28,7 +28,7 @@ def text(d, xy, s, n=20, color=INK, bold=False):
 def base(section, concept=False, sec=0):
     im = Image.new('RGB', (W,H), BG); d=ImageDraw.Draw(im)
     d.rectangle((0,0,222,H), fill=NAV)
-    text(d,(28,26),'◈  SpliceGAIP',24,WHITE,True)
+    text(d,(28,26),'◈  EpitopeRank',24,WHITE,True)
     text(d,(29,65),'AI Splicing Analysis',12,'#92a6c1')
     items=['仪表盘','智能接入','AI 流水线','事件浏览器','可视化','报告','剪接候选新抗原']
     for i,item in enumerate(items):
@@ -36,7 +36,7 @@ def base(section, concept=False, sec=0):
         if item==section: rounded(d,(12,y-8,208,y+40),'#243957',9)
         text(d,(30,y),item,17,WHITE if item==section else '#a7b8cf',item==section)
     d.rectangle((222,0,W,72), fill=WHITE)
-    text(d,(252,22),'SpliceGAIP  /  '+section,19,INK,True)
+    text(d,(252,22),'EpitopeRank  /  '+section,19,INK,True)
     rounded(d,(1050,20,1245,52),'#eaf0fa',18)
     text(d,(1071,28),'DEMO  ·  2026',13,MUTED)
     if concept:
@@ -132,7 +132,7 @@ def draw_scene(kind, scene, t, duration):
     return im
 
 A=[
- dict(section='仪表盘',title='SpliceGAIP｜当前版本演示',sub='真实核心能力 · 从可变剪接数据到可追溯分析',mode='overview'),
+ dict(section='仪表盘',title='EpitopeRank｜当前版本演示',sub='真实核心能力 · 从可变剪接数据到可追溯分析',mode='overview'),
  dict(section='智能接入',title='上传并识别剪接结果',sub='支持常见事件结果格式，先识别输入，再确认字段',mode='ingest'),
  dict(section='智能接入',title='人工确认样本分组',sub='保留真实实验设计，杜绝自动猜测造成的分组错误',mode='groups'),
  dict(section='AI 流水线',title='Agent 规划、分析与解释',sub='质量检查、阈值决策、筛选和解释形成完整轨迹',mode='agent'),
@@ -153,9 +153,9 @@ def render(name, scenes, seconds):
         index=min(len(scenes)-1,i*len(scenes)//total)
         im=draw_scene(name,scenes[index],i/fps,seconds)
         im.save(frames/f'{i:04d}.png',optimize=True)
-    cmd=['ffmpeg','-y','-loglevel','error','-framerate',str(fps),'-i',str(frames/'%04d.png'),'-c:v','libx264','-pix_fmt','yuv420p','-r','24','-vf','scale=1280:720',str(OUT/f'SpliceGAIP_demo_{name}.mp4')]
+    cmd=['ffmpeg','-y','-loglevel','error','-framerate',str(fps),'-i',str(frames/'%04d.png'),'-c:v','libx264','-pix_fmt','yuv420p','-r','24','-vf','scale=1280:720',str(OUT/f'EpitopeRank_demo_{name}.mp4')]
     subprocess.run(cmd,check=True)
-    print(OUT/f'SpliceGAIP_demo_{name}.mp4')
+    print(OUT/f'EpitopeRank_demo_{name}.mp4')
 
 if __name__=='__main__':
     render('A',A,90)

@@ -2,7 +2,7 @@
 
 ## 新增功能概述
 
-基于BioAgents的设计理念，SpliceGAIP v4新增了**Agent实时对话面板**和**日志查看器**，让用户能够：
+基于BioAgents的设计理念，EpitopeRank v4新增了**Agent实时对话面板**和**日志查看器**，让用户能够：
 1. 看到Agent的思考过程和决策逻辑
 2. 与Agent进行自然语言交互
 3. 实时监控分析进度和系统状态
@@ -85,7 +85,7 @@
 
 **日志格式**:
 ```
-[14:30:25] [系统] SpliceGAIP v4.0 已启动 - Agent对话增强版
+[14:30:25] [系统] EpitopeRank v4.0 已启动 - Agent对话增强版
 [14:32:10] [数据Agent] 开始验证文件: sample1.bam
 [14:32:15] [数据Agent] ✓ 文件格式正确
 [14:33:00] [工作流] 质控Agent - 运行中
@@ -231,18 +231,18 @@ updateProgress(50, '正在进行剪接检测...')
 如需回退到v3（无对话面板版本）：
 
 ```bash
-cd E:/SpliceGAIP
-git checkout v3-professional-ui -- splicegaip/interface/
+cd E:/EpitopeRank
+git checkout v3-professional-ui -- epitoperank/interface/
 ```
 
 然后重新打包：
 ```bash
-./venv/Scripts/python.exe -m PyInstaller packaging/SpliceGAIP-Web.spec \
+./venv/Scripts/python.exe -m PyInstaller packaging/EpitopeRank-Web.spec \
   --distpath packaging/dist-rollback --workpath packaging/build-rollback
 ```
 
 ---
 
 **创建日期**: 2026-10-16
-**维护者**: SpliceGAIP Team
+**维护者**: EpitopeRank Team
 **参考设计**: BioAgents (Nature Scientific Reports, 2025)

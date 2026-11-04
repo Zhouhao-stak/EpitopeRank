@@ -1,4 +1,4 @@
-# SpliceGAIP requirements (Python >= 3.10).
+# EpitopeRank requirements (Python >= 3.10).
 # The multi-agent runtime (AutoGen) is the core dependency inherited from
 # BioGAIP; the data/analysis stack is shared with SplicingNexus.
 
@@ -43,7 +43,7 @@ httpx>=0.27       # Async HTTP client for MCP tool calls
 
 # --- optional agent backends (Phase 2) -------------------------------------------
 # Both are optional: the agent detects them at runtime and falls back to the
-# built-in implementation when they are missing (see splicegaip/integrations).
+# built-in implementation when they are missing (see epitoperank/integrations).
 gseapy>=1.1       # GO/KEGG/Reactome/MSigDB enrichment via Enrichr
 mygene>=3.2       # MyGene.info gene annotation client
 

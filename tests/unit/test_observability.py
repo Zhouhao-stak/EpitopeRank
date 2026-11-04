@@ -3,11 +3,11 @@
 import json
 import logging
 
-from splicegaip.observability import configure_logging
+from epitoperank.observability import configure_logging
 
 
 def test_configure_logging_writes_structured_event_without_secrets(tmp_path):
-    log_path = tmp_path / "logs" / "splicegaip.log"
+    log_path = tmp_path / "logs" / "epitoperank.log"
     configure_logging(log_path=log_path, level="INFO")
 
     logger = logging.getLogger("tests.observability")
@@ -23,7 +23,7 @@ def test_configure_logging_writes_structured_event_without_secrets(tmp_path):
 
 
 def test_configure_logging_rejects_unknown_level(tmp_path):
-    log_path = tmp_path / "splicegaip.log"
+    log_path = tmp_path / "epitoperank.log"
     configure_logging(log_path=log_path, level="not-a-level")
 
     assert logging.getLogger().level == logging.INFO

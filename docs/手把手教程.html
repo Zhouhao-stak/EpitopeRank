@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SpliceGAIP 手把手教程 · 从原始 rMATS 表到候选新抗原肽</title>
+<title>EpitopeRank 手把手教程 · 从原始 rMATS 表到候选新抗原肽</title>
 <style>
   :root{
     --ink:#16202a; --ink-2:#3d4a57; --ink-3:#6b7887;
@@ -104,7 +104,7 @@
 
 <header class="top">
   <div class="wrap">
-    <h1>SpliceGAIP 手把手教程</h1>
+    <h1>EpitopeRank 手把手教程</h1>
     <p>从 rMATS 原始表 → 剪接事件 → 候选新抗原肽 → HLA 结合预测，全程用一套真实公开数据走通</p>
     <div class="meta">
       <span>适用版本 v0.1.0</span>
@@ -149,7 +149,7 @@
     </tbody>
   </table>
 
-  <p>本教程用项目自带的真实数据包演示，路径在 <code>E:/SpliceGAIP_data/datasets/data_public/peptide_test/</code>，里面有三套等价的输入目录，用来证明"CDS 表叫什么名字、列名写成什么样都能用"：</p>
+  <p>本教程用项目自带的真实数据包演示，路径在 <code>E:/EpitopeRank_data/datasets/data_public/peptide_test/</code>，里面有三套等价的输入目录，用来证明"CDS 表叫什么名字、列名写成什么样都能用"：</p>
 
   <table>
     <thead><tr><th style="width:180px">目录</th><th>编码序列表长什么样</th><th>用途</th></tr></thead>
@@ -171,11 +171,11 @@
   <p class="lede">两种方式，选一种。桌面版适合日常使用，命令行版适合排查问题。</p>
 
   <h3><span class="num">A.</span>桌面版（推荐）</h3>
-  <p>双击 <code>dist\SpliceGAIP-Desktop.exe</code>。程序会在本机启动服务并弹出应用窗口（同时可用浏览器访问控制台里打印的地址，形如 <code>http://127.0.0.1:8800/</code>）。关闭窗口即停止服务。</p>
+  <p>双击 <code>dist\EpitopeRank-Desktop.exe</code>。程序会在本机启动服务并弹出应用窗口（同时可用浏览器访问控制台里打印的地址，形如 <code>http://127.0.0.1:8800/</code>）。关闭窗口即停止服务。</p>
   <p>这个 exe 由当前源码打包，界面与本教程截图一致。如果哪一天发现界面比教程旧（比如找不到「确认列的含义」面板），说明手上是旧构建，重跑一次 <code>build.bat</code> 即可——该脚本已会自动清理 <code>__pycache__</code>，避免把旧字节码打进包里。</p>
 
   <h3><span class="num">B.</span>命令行版（源码运行）</h3>
-<pre><code>cd E:\SpliceGAIP
+<pre><code>cd E:\EpitopeRank
 venv\Scripts\python.exe serve_ui.py --port 8800
 </code></pre>
   <p>启动成功会打印一段横幅，注意看其中三行：</p>
@@ -223,7 +223,7 @@ venv\Scripts\python.exe serve_ui.py --port 8800
   <h2>准备数据目录</h2>
   <p class="lede">把要用的文件放进同一个文件夹。系统不要求固定文件名，但 rMATS 的五个表必须保持官方名字。</p>
 
-  <p>以 <code>E:/SpliceGAIP_data/datasets/data_public/peptide_test/run_input_wild/</code> 为例，目录内容如下：</p>
+  <p>以 <code>E:/EpitopeRank_data/datasets/data_public/peptide_test/run_input_wild/</code> 为例，目录内容如下：</p>
 <pre><code>run_input_wild/
 ├── SE.MATS.JC.txt          1882 个外显子跳跃事件
 ├── A5SS.MATS.JC.txt         455 个 5' 可变剪接位点
@@ -471,7 +471,7 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
 
   <h3><span class="num">0.</span>每个项目一个成果文件夹（最省事）</h3>
   <p>分析跑完后，系统会自动把报告和图复制到 <b>项目根目录下的 <code>results\</code></b>，一个项目一个文件夹，名字就是「项目名_编号」，直接能看懂：</p>
-<pre><code>E:\SpliceGAIP\results\
+<pre><code>E:\EpitopeRank\results\
 ├── pDC活化后剪接变化_SPN-B3AA05B4\
 │   ├── report.html          ← 双击就能看
 │   ├── report.pdf
@@ -480,11 +480,11 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
 └── 另一个项目_SPN-XXXXXXXX\
 </code></pre>
   <p>在「历史项目详情」页有三个按钮：<b>📁 成果文件夹</b>（直接在资源管理器打开）、<b>📦 打包 ZIP</b>（压成压缩包，方便发给同事或存云盘）、<b>📄 打开报告</b>。一个项目的全部产物约 <b>4 MB</b>，不会越跑越大——体积大的是历史项目累积的数据库，删项目时一并清掉。</p>
-  <div class="box tip"><b>想换位置？</b>在 <code>.env</code> 里设 <code>SPLICEGAIP_RESULTS_ROOT=D:\某目录</code> 即可。桌面版默认放在 exe 同级的 <code>results\</code>。</div>
+  <div class="box tip"><b>想换位置？</b>在 <code>.env</code> 里设 <code>EPITOPERANK_RESULTS_ROOT=D:\某目录</code> 即可。桌面版默认放在 exe 同级的 <code>results\</code>。</div>
 
   <h3><span class="num">1.</span>结果文件在哪</h3>
   <p>结果写在项目原始数据目录下的 <code>neoantigen_results/</code>。最省事的办法是点结果面板右上角「<b>打开结果目录</b>」，资源管理器直接定位过去。本例是：</p>
-<pre><code>E:\SpliceGAIP_data\datasets\data_public\peptide_test\run_input_wild\neoantigen_results\
+<pre><code>E:\EpitopeRank_data\datasets\data_public\peptide_test\run_input_wild\neoantigen_results\
 ├── splice_peptides.tsv
 ├── mhc_i_predictions.tsv
 └── neoantigen_manifest.json
@@ -554,8 +554,8 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
 </section>
 
 <footer>
-  SpliceGAIP v0.1.0 · 本教程所有数字均来自 <code>E:/SpliceGAIP_data/datasets/data_public/peptide_test</code> 实跑结果<br>
-  详细字段定义见 <code>docs/USER_GUIDE.md</code>，数据来源见 <code>E:/SpliceGAIP_data/datasets/data_public/README.md</code>
+  EpitopeRank v0.1.0 · 本教程所有数字均来自 <code>E:/EpitopeRank_data/datasets/data_public/peptide_test</code> 实跑结果<br>
+  详细字段定义见 <code>docs/USER_GUIDE.md</code>，数据来源见 <code>E:/EpitopeRank_data/datasets/data_public/README.md</code>
 </footer>
 
 </div>

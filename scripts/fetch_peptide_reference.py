@@ -6,7 +6,7 @@ Usage::
     python scripts/fetch_peptide_reference.py
     python scripts/fetch_peptide_reference.py --epitopes-per-allele 100
 
-The script writes, under ``splicegaip/peptide/reference``:
+The script writes, under ``epitoperank/peptide/reference``:
 
 * ``hla_class1_alleles.tsv`` — allele names the IEDB MHC-I tools accept
 * ``hla_class2_alleles.tsv`` — allele names the IEDB MHC-II tools accept
@@ -30,11 +30,11 @@ from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUTPUT = ROOT / "splicegaip" / "peptide" / "reference"
+DEFAULT_OUTPUT = ROOT / "epitoperank" / "peptide" / "reference"
 
 TOOLS = "https://tools-cluster-interface.iedb.org/tools_api/"
 QUERY = "https://query-api.iedb.org/"
-UA = "SpliceGAIP-reference-fetch/1.0"
+UA = "EpitopeRank-reference-fetch/1.0"
 
 #: Alleles sampled for the known-epitope extract (common, well-studied).
 EPITOPE_ALLELES = [

@@ -3,7 +3,7 @@
 
 import pytest
 from pathlib import Path
-from splicegaip.splicing.parsers.rmats import parse_rmats_file
+from epitoperank.splicing.parsers.rmats import parse_rmats_file
 
 
 class TestRmatsParser:

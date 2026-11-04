@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from splicegaip.llm.structured import (
+from epitoperank.llm.structured import (
     ANSWER_SCHEMA,
     coerce_answer,
     grounding_report,

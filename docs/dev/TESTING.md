@@ -1,6 +1,6 @@
-# Testing Guide for SpliceGAIP
+# Testing Guide for EpitopeRank
 
-This document describes the testing infrastructure and how to run tests for SpliceGAIP.
+This document describes the testing infrastructure and how to run tests for EpitopeRank.
 
 ## Test Structure
 
@@ -37,7 +37,7 @@ pytest
 pytest tests/unit/
 
 # Run with coverage report
-pytest --cov=splicegaip --cov-report=html
+pytest --cov=epitoperank --cov-report=html
 
 # View HTML coverage report
 open htmlcov/index.html  # macOS/Linux
@@ -163,7 +163,7 @@ See `.github/workflows/test.yml` for CI configuration.
 If you see `ImportError: cannot import name 'X'`:
 ```bash
 # Make sure you're in the project root
-cd E:\SpliceGAIP
+cd E:\EpitopeRank
 
 # Reinstall package in development mode
 pip install -e .
@@ -185,10 +185,10 @@ pytest --cache-clear
 If coverage report shows 0%:
 ```bash
 # Make sure --cov flag is used
-pytest --cov=splicegaip
+pytest --cov=epitoperank
 
-# Check that splicegaip is importable
-python -c "import splicegaip; print(splicegaip.__file__)"
+# Check that epitoperank is importable
+python -c "import epitoperank; print(epitoperank.__file__)"
 ```
 
 ## Future Improvements

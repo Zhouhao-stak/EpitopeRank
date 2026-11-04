@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from splicegaip.peptide.hla import (
+from epitoperank.peptide.hla import (
     CLASS_I_PANEL,
     CLASS_II_PANEL,
     HlaError,

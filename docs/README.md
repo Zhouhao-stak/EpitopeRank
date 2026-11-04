@@ -1,4 +1,4 @@
-# SpliceGAIP 文档索引
+# EpitopeRank 文档索引
 
 根目录只保留 [`README.md`](../README.md) 作为入口，其余文档按用途归档在这里。
 

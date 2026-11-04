@@ -36,7 +36,7 @@ jobs:
 
       - name: Run test suite with coverage
         run: |
-          pytest tests/unit tests/integration -v --cov=splicegaip --cov-report=xml --cov-report=term-missing --cov-fail-under=20
+          pytest tests/unit tests/integration -v --cov=epitoperank --cov-report=xml --cov-report=term-missing --cov-fail-under=20
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -63,12 +63,12 @@ jobs:
 
       - name: Run Black code style check
         run: |
-          black --check splicegaip/ tests/ || echo "Black formatting issues found"
+          black --check epitoperank/ tests/ || echo "Black formatting issues found"
 
       - name: Run Flake8 linting
         run: |
-          flake8 splicegaip/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
+          flake8 epitoperank/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
 
       - name: Run MyPy type checking
         run: |
-          mypy splicegaip/ --ignore-missing-imports || echo "Type checking completed"
+          mypy epitoperank/ --ignore-missing-imports || echo "Type checking completed"

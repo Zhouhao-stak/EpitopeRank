@@ -7,8 +7,8 @@ import csv
 import pytest
 from fastapi.testclient import TestClient
 
-from splicegaip.api.app import create_app
-from splicegaip.splicing.schema import CORE_EVENT_FIELDS
+from epitoperank.api.app import create_app
+from epitoperank.splicing.schema import CORE_EVENT_FIELDS
 
 REFERENCE = "ATG" + "GCT" * 20
 ALTERED = "ATG" + "GCT" * 6 + "TGG" * 8
@@ -16,12 +16,12 @@ ALTERED = "ATG" + "GCT" * 6 + "TGG" * 8
 
 @pytest.fixture
 def client(monkeypatch):
-    monkeypatch.setenv("SPLICEGAIP_INGEST_ALLOW_EXTERNAL", "1")
+    monkeypatch.setenv("EPITOPERANK_INGEST_ALLOW_EXTERNAL", "1")
     return TestClient(create_app())
 
 
 def _project(monkeypatch, directory):
-    import splicegaip.api.app as api_module
+    import epitoperank.api.app as api_module
 
     monkeypatch.setattr(api_module, "project_status",
                         lambda *_: {"project": {"source_dir": str(directory), "name": "P"}})
@@ -99,7 +99,7 @@ def test_mapping_rejects_an_unknown_column(client, monkeypatch, tmp_path):
 
 def test_many_peptide_allele_pairs_are_predicted_in_batches(monkeypatch, tmp_path):
     """592 pairs used to be refused at 200; they must now be batched instead."""
-    import splicegaip.neoantigen as neo
+    import epitoperank.neoantigen as neo
 
     calls: list[tuple[int, str]] = []
 
@@ -109,7 +109,7 @@ def test_many_peptide_allele_pairs_are_predicted_in_batches(monkeypatch, tmp_pat
             return [{"peptide": peptide, "allele": alleles[0], "score": 0.5,
                      "percentile_rank": 1.0, "raw": {}} for peptide in peptides]
 
-    monkeypatch.setattr("splicegaip.peptide.iedb.IedbClient", FakeClient)
+    monkeypatch.setattr("epitoperank.peptide.iedb.IedbClient", FakeClient)
     peptides = [f"PEPTIDE{index:02d}" for index in range(296)]
     scores, errors = neo._predict_batched([(peptide, allele) for peptide in peptides
                                            for allele in ("HLA-A*02:01", "HLA-B*07:02")])

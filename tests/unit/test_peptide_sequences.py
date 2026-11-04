@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from splicegaip.peptide.sequences import (
+from epitoperank.peptide.sequences import (
     AA_ALPHABET,
     SequenceError,
     SelfReference,

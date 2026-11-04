@@ -6,7 +6,7 @@ import csv
 
 import pytest
 
-from splicegaip.neoantigen import (
+from epitoperank.neoantigen import (
     CDS_FIELDS,
     canonical_cds_fields,
     discover_cds_tables,
@@ -14,7 +14,7 @@ from splicegaip.neoantigen import (
     pick_cds_table,
     run,
 )
-from splicegaip.splicing.schema import CORE_EVENT_FIELDS
+from epitoperank.splicing.schema import CORE_EVENT_FIELDS
 
 REFERENCE = "ATG" + "GCT" * 20
 ALTERED = "ATG" + "GCT" * 6 + "TGG" * 8

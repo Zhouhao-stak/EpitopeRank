@@ -1,10 +1,10 @@
-# BioGAIP vs SpliceGAIP 全面对比分析报告
+# BioGAIP vs EpitopeRank 全面对比分析报告
 
 > ⚠️ **历史快照**：本文写于 2026-10-16，当时平台还支持 SUPPA2 / MAJIQ / LeafCutter。
 > 现在只接受 rMATS 输入，涉及的解析器清单和测试条目已过时，仅作对比参考。
 
 > **生成日期**: 2026-10-16  
-> **分析对象**: BioGAIP (开源项目) vs SpliceGAIP (当前项目)  
+> **分析对象**: BioGAIP (开源项目) vs EpitopeRank (当前项目)  
 > **分析目的**: 识别可借鉴提升的关键领域，指导项目优化方向
 
 ---
@@ -32,7 +32,7 @@
 - 🔌 **动态扩展**: 通过 RAG 实时检索新工具和文献
 - 📦 **开箱即用**: 强调零配置部署体验
 
-### 1.2 SpliceGAIP - 剪接领域专用 AI 平台
+### 1.2 EpitopeRank - 剪接领域专用 AI 平台
 
 **核心定位**: 专注于**可变剪接分析**的领域专用多智能体系统
 
@@ -55,7 +55,7 @@
 
 ### 1.3 定位差异总结
 
-| 维度 | BioGAIP | SpliceGAIP |
+| 维度 | BioGAIP | EpitopeRank |
 |------|---------|------------|
 | **广度 vs 深度** | 广（多任务类型） | 深（单一领域极致） |
 | **自动化程度** | 全自动，用户干预最少 | 半自动，支持人在回路 |
@@ -63,7 +63,7 @@
 | **可扩展性** | 横向扩展新任务类型 | 纵向深化剪接分析方法 |
 | **目标市场** | 教育/入门用户 | 专业科研团队 |
 
-**启示**: SpliceGAIP 不需要模仿 BioGAIP 的通用性，而应继续强化**领域专业性**和**科研严谨性**。
+**启示**: EpitopeRank 不需要模仿 BioGAIP 的通用性，而应继续强化**领域专业性**和**科研严谨性**。
 
 ---
 
@@ -100,7 +100,7 @@
 - ❓ 智能体间通信机制不明确
 - ❓ 未见明确的反思/质疑机制
 
-#### SpliceGAIP 架构（实际）
+#### EpitopeRank 架构（实际）
 
 ```
 ┌──────────────────────────────────────────┐
@@ -131,7 +131,7 @@
 - ✅ **人在回路**: Interactive 模块支持用户干预
 
 **对比结论**: 
-> **SpliceGAIP 的智能体架构更先进**，具备自我质疑和经验学习能力，这是 BioGAIP 未明确提供的。
+> **EpitopeRank 的智能体架构更先进**，具备自我质疑和经验学习能力，这是 BioGAIP 未明确提供的。
 
 ### 2.2 RAG (检索增强生成) 实现
 
@@ -141,9 +141,9 @@
 - **优势**: 知识库保持时效性
 - **劣势**: 依赖外部向量数据库，增加部署复杂度
 
-#### SpliceGAIP: 静态 + 动态混合
+#### EpitopeRank: 静态 + 动态混合
 
-**实现位置**: `splicegaip/knowledge/`
+**实现位置**: `epitoperank/knowledge/`
 
 ```python
 knowledge/
@@ -179,9 +179,9 @@ class BioinformaticsTool(ABC):
 - 插件化设计，易于扩展新工具
 - 自动化工具发现和配置
 
-#### SpliceGAIP: 解析器注册表
+#### EpitopeRank: 解析器注册表
 
-**实际实现**: `splicegaip/splicing/parsers/`
+**实际实现**: `epitoperank/splicing/parsers/`
 
 ```python
 parsers/
@@ -224,13 +224,13 @@ parsers/
 - 对小型团队/个人用户门槛较高
 - 需要运维专业知识
 
-### 3.2 SpliceGAIP 部署方式（实际）
+### 3.2 EpitopeRank 部署方式（实际）
 
 #### 方案一: PyInstaller EXE（Windows 便携版）
 
 ```bash
 build.bat
-# 输出: dist/SpliceGAIP.exe (~62MB)
+# 输出: dist/EpitopeRank.exe (~62MB)
 ```
 
 **优势**:
@@ -249,11 +249,11 @@ build.bat
 # docker-compose.yml
 services:
   api:
-    image: ghcr.io/yourname/splicegaip:latest
+    image: ghcr.io/yourname/epitoperank:latest
     ports:
       - "8800:8800"
   streamlit:
-    image: ghcr.io/yourname/splicegaip:latest
+    image: ghcr.io/yourname/epitoperank:latest
     ports:
       - "8501:8501"
 ```
@@ -286,12 +286,12 @@ python run.py analyze --input examples/demo_rmats
 
 ### 3.3 部署方式对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
-| **易用性** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | SpliceGAIP 的 EXE 方案更适合非技术用户 |
-| **跨平台** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | BioGAIP 的云原生更好，SpliceGAIP Docker 也不错 |
+| **易用性** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | EpitopeRank 的 EXE 方案更适合非技术用户 |
+| **跨平台** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | BioGAIP 的云原生更好，EpitopeRank Docker 也不错 |
 | **可扩展性** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | BioGAIP 的 K8s 支持更强 |
-| **运维成本** | ⭐⭐ | ⭐⭐⭐⭐ | SpliceGAIP 几乎零运维 |
+| **运维成本** | ⭐⭐ | ⭐⭐⭐⭐ | EpitopeRank 几乎零运维 |
 | **适合场景** | 企业/机构 | 个人/小团队 | 各有侧重 |
 
 ### 3.4 可借鉴之处
@@ -300,7 +300,7 @@ python run.py analyze --input examples/demo_rmats
 
 1. **Kubernetes Helm Chart**
    ```yaml
-   # 建议添加: helm/splicegaip/values.yaml
+   # 建议添加: helm/epitoperank/values.yaml
    replicaCount: 1
    resources:
      limits:
@@ -316,7 +316,7 @@ python run.py analyze --input examples/demo_rmats
    ```bash
    # 建议添加: deploy/aws-deploy.sh
    aws cloudformation create-stack \
-     --stack-name splicegaip \
+     --stack-name epitoperank \
      --template-body file://cloudformation.yml
    ```
    **价值**: 降低云上部署门槛
@@ -328,7 +328,7 @@ python run.py analyze --input examples/demo_rmats
    ```
    **价值**: 支持 Apple Silicon Mac 用户
 
-**SpliceGAIP 已有优势**:
+**EpitopeRank 已有优势**:
 - ✅ EXE 打包是 BioGAIP 未提供的，非常适合目标用户群体
 - ✅ Docker Compose 已包含健康检查和资源限制
 - ✅ CI/CD 自动发布流程完善
@@ -356,12 +356,12 @@ python run.py analyze --input examples/demo_rmats
 - ✅ 敏感信息隔离
 - ⚠️ 配置层级过多可能混淆
 
-### 4.2 SpliceGAIP 配置策略（实际）
+### 4.2 EpitopeRank 配置策略（实际）
 
 **配置加载优先级**:
 ```
 1. config/config.yaml          (项目自带，默认值)
-2. 环境变量 SPLICEGAIP_*      (运行时覆盖)
+2. 环境变量 EPITOPERANK_*      (运行时覆盖)
 3. .env 文件                   (敏感信息)
 ```
 
@@ -403,12 +403,12 @@ agent:
 
 ### 4.3 配置管理对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
-| **复杂度** | 高（多层级） | 中（三层加载） | SpliceGAIP 更易理解 |
+| **复杂度** | 高（多层级） | 中（三层加载） | EpitopeRank 更易理解 |
 | **灵活性** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | BioGAIP 更细粒度 |
-| **安全性** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | SpliceGAIP 的 .env 隔离更好 |
-| **文档** | ❓ 未知 | ⭐⭐⭐⭐ | SpliceGAIP 有 API_CONFIG.md |
+| **安全性** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | EpitopeRank 的 .env 隔离更好 |
+| **文档** | ❓ 未知 | ⭐⭐⭐⭐ | EpitopeRank 有 API_CONFIG.md |
 
 ### 4.4 可借鉴之处
 
@@ -437,7 +437,7 @@ agent:
    ```
    **价值**: 提升开发效率
 
-**SpliceGAIP 已有优势**:
+**EpitopeRank 已有优势**:
 - ✅ 配置结构更简洁，用户学习成本低
 - ✅ 敏感信息管理更安全
 - ✅ 降级策略完善（LLM 不可用时自动切换到离线模式）
@@ -464,7 +464,7 @@ tests/
 
 **预期覆盖率**: 70-80%（成熟开源项目标准）
 
-### 5.2 SpliceGAIP 测试现状（实际）
+### 5.2 EpitopeRank 测试现状（实际）
 
 **重要发现**: ⚠️ **项目中未发现独立的 `tests/` 目录**
 
@@ -486,13 +486,13 @@ scripts/validate_ui.py  # Streamlit UI 无头测试
 
 ### 5.3 测试覆盖对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
 | **单元测试** | ⭐⭐⭐⭐ (推测) | ❌ 未发现 | **严重差距** |
 | **集成测试** | ⭐⭐⭐⭐ (推测) | ❌ 未发现 | **严重差距** |
 | **E2E 测试** | ⭐⭐⭐ (推测) | ⭐ (validate_ui.py) | 差距明显 |
 | **性能测试** | ⭐⭐⭐ (推测) | ❌ 未发现 | 差距明显 |
-| **CI 集成** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | SpliceGAIP 有 GitHub Actions |
+| **CI 集成** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | EpitopeRank 有 GitHub Actions |
 
 ### 5.4 紧急改进建议
 
@@ -509,7 +509,7 @@ scripts/validate_ui.py  # Streamlit UI 无头测试
    ```python
    # tests/test_splicing_parsers.py
    import pytest
-   from splicegaip.splicing.parsers.rmats import RmatsParser
+   from epitoperank.splicing.parsers.rmats import RmatsParser
    
    def test_rmats_parser():
        parser = RmatsParser()
@@ -524,14 +524,14 @@ scripts/validate_ui.py  # Streamlit UI 无头测试
    [pytest]
    testpaths = tests
    python_files = test_*.py
-   addopts = --cov=splicegaip --cov-report=html
+   addopts = --cov=epitoperank --cov-report=html
    ```
 
 4. **补充 FastAPI 接口测试**
    ```python
    # tests/test_api.py
    from fastapi.testclient import TestClient
-   from splicegaip.api.app import app
+   from epitoperank.api.app import app
    
    client = TestClient(app)
    
@@ -551,7 +551,7 @@ scripts/validate_ui.py  # Streamlit UI 无头测试
        steps:
          - uses: actions/checkout@v4
          - run: pip install -r requirements-dev.txt
-         - run: pytest --cov=splicegaip
+         - run: pytest --cov=epitoperank
    ```
 
 **目标**: 3 个月内达到 60% 代码覆盖率，6 个月达到 80%。
@@ -585,7 +585,7 @@ if production:
 - ✅ 日志轮转（避免单文件过大）
 - ✅ 结构化日志（JSON 格式，便于 ELK 分析）
 
-### 6.2 SpliceGAIP 日志现状（实际）
+### 6.2 EpitopeRank 日志现状（实际）
 
 **发现**: 仅在 **9 个文件**中使用 `logging` 模块：
 
@@ -616,12 +616,12 @@ logger.info("Analysis started")
 
 ### 6.3 日志系统对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
-| **一致性** | ⭐⭐⭐⭐ (推测) | ⭐⭐ | SpliceGAIP 各模块不一致 |
-| **持久化** | ⭐⭐⭐⭐⭐ | ⭐ | SpliceGAIP 无文件日志 |
-| **可分析性** | ⭐⭐⭐⭐⭐ | ⭐⭐ | SpliceGAIP 纯文本难解析 |
-| **运维友好** | ⭐⭐⭐⭐⭐ | ⭐⭐ | SpliceGAIP 不利于故障排查 |
+| **一致性** | ⭐⭐⭐⭐ (推测) | ⭐⭐ | EpitopeRank 各模块不一致 |
+| **持久化** | ⭐⭐⭐⭐⭐ | ⭐ | EpitopeRank 无文件日志 |
+| **可分析性** | ⭐⭐⭐⭐⭐ | ⭐⭐ | EpitopeRank 纯文本难解析 |
+| **运维友好** | ⭐⭐⭐⭐⭐ | ⭐⭐ | EpitopeRank 不利于故障排查 |
 
 ### 6.4 紧急改进建议
 
@@ -629,7 +629,7 @@ logger.info("Analysis started")
 
 1. **创建统一日志配置模块**
    ```python
-   # splicegaip/logging_config.py
+   # epitoperank/logging_config.py
    import logging
    import logging.handlers
    from pathlib import Path
@@ -640,7 +640,7 @@ logger.info("Analysis started")
        log_path.mkdir(exist_ok=True)
        
        # 根 logger
-       root_logger = logging.getLogger("splicegaip")
+       root_logger = logging.getLogger("epitoperank")
        root_logger.setLevel(getattr(logging, level.upper()))
        
        # 控制台处理器
@@ -652,7 +652,7 @@ logger.info("Analysis started")
        
        # 文件处理器（带轮转）
        file_handler = logging.handlers.RotatingFileHandler(
-           log_path / "splicegaip.log",
+           log_path / "epitoperank.log",
            maxBytes=10*1024*1024,  # 10MB
            backupCount=5,
            encoding='utf-8'
@@ -667,7 +667,7 @@ logger.info("Analysis started")
 
 2. **在应用入口初始化**
    ```python
-   # splicegaip/__init__.py
+   # epitoperank/__init__.py
    from .logging_config import setup_logging
    logger = setup_logging()
    ```
@@ -675,7 +675,7 @@ logger.info("Analysis started")
 3. **支持环境变量控制日志级别**
    ```python
    # 从环境变量读取
-   level = os.getenv("SPLICEGAIP_LOG_LEVEL", "INFO")
+   level = os.getenv("EPITOPERANK_LOG_LEVEL", "INFO")
    setup_logging(level=level)
    ```
 
@@ -684,7 +684,7 @@ logger.info("Analysis started")
    # 安装: pip install python-json-logger
    from pythonjsonlogger.jsonlogger import JsonFormatter
    
-   if os.getenv("SPLICEGAIP_ENV") == "production":
+   if os.getenv("EPITOPERANK_ENV") == "production":
        handler.setFormatter(JsonFormatter())
    ```
 
@@ -708,7 +708,7 @@ logger.info("Analysis started")
 - ✅ HTTPS 强制
 - ✅ 审计日志
 
-### 7.2 SpliceGAIP 安全现状（实际）
+### 7.2 EpitopeRank 安全现状（实际）
 
 **已实施的安全措施** ✅:
 
@@ -776,13 +776,13 @@ logger.info("Analysis started")
 
 ### 7.3 安全性对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
 | **认证授权** | ⭐⭐⭐⭐⭐ (推测) | ⭐⭐ | **严重差距** |
 | **输入验证** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | 需要加强 |
 | **速率限制** | ⭐⭐⭐⭐⭐ | ⭐⭐ | **需要补充** |
-| **敏感信息** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | SpliceGAIP 做得不错 |
-| **审计日志** | ⭐⭐⭐⭐⭐ | ⭐⭐ | SpliceGAIP 日志系统薄弱 |
+| **敏感信息** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | EpitopeRank 做得不错 |
+| **审计日志** | ⭐⭐⭐⭐⭐ | ⭐⭐ | EpitopeRank 日志系统薄弱 |
 
 ### 7.4 紧急改进建议
 
@@ -793,7 +793,7 @@ logger.info("Analysis started")
    # api/middleware.py
    from fastapi import Request, HTTPException
    
-   API_KEYS = os.getenv("SPLICEGAIP_API_KEYS", "").split(",")
+   API_KEYS = os.getenv("EPITOPERANK_API_KEYS", "").split(",")
    
    async def verify_api_key(request: Request):
        key = request.headers.get("X-API-Key")
@@ -872,7 +872,7 @@ docs/
 
 **预期评分**: ⭐⭐⭐⭐ (成熟开源项目标准)
 
-### 8.2 SpliceGAIP 文档（实际）
+### 8.2 EpitopeRank 文档（实际）
 
 **现有文档清单**:
 
@@ -928,7 +928,7 @@ docs/
 
 ### 8.3 文档完整度对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
 | **用户文档** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 相当 |
 | **API 文档** | ⭐⭐⭐⭐⭐ | ⭐⭐ | **严重差距** |
@@ -946,7 +946,7 @@ docs/
    from fastapi import FastAPI
    
    app = FastAPI(
-       title="SpliceGAIP API",
+       title="EpitopeRank API",
        description="AI-driven Alternative Splicing Analysis Platform",
        version="0.1.0",
        docs_url="/docs",  # 自动生成交互式文档
@@ -957,7 +957,7 @@ docs/
 
 2. **创建 CONTRIBUTING.md**
    ```markdown
-   # Contributing to SpliceGAIP
+   # Contributing to EpitopeRank
    
    ## Development Setup
    ```bash
@@ -973,7 +973,7 @@ docs/
    
    ## Testing
    ```bash
-   pytest --cov=splicegaip
+   pytest --cov=epitoperank
    ```
    
    ## Pull Request Process
@@ -999,7 +999,7 @@ docs/
       Check logs for migration message.
    
    ### Q: Docker container exits immediately
-   A: Run `docker logs splicegaip` to see error messages.
+   A: Run `docker logs epitoperank` to see error messages.
       Common causes: missing .env file, port conflict.
    ```
 
@@ -1016,7 +1016,7 @@ docs/
    
    ## Dataset: 1000 samples, 50k events
    
-   | Metric | SpliceGAIP | rMATS CLI | Speedup |
+   | Metric | EpitopeRank | rMATS CLI | Speedup |
    |--------|-----------|-----------|---------|
    | Total Time | 45 min | 120 min | 2.7x |
    | Memory Peak | 8 GB | 12 GB | -33% |
@@ -1038,7 +1038,7 @@ docs/
 - ✅ 一键式分析流程
 - ✅ 详细日志可追溯
 
-### 9.2 SpliceGAIP UX 设计（实际）
+### 9.2 EpitopeRank UX 设计（实际）
 
 **设计理念**: Professional Minimalist（专业极简主义）
 
@@ -1082,12 +1082,12 @@ docs/
 
 ### 9.3 UX 对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
-| **视觉设计** | ⭐⭐⭐⭐ (推测) | ⭐⭐⭐⭐⭐ | SpliceGAIP 的黑白极简更专业 |
+| **视觉设计** | ⭐⭐⭐⭐ (推测) | ⭐⭐⭐⭐⭐ | EpitopeRank 的黑白极简更专业 |
 | **交互流畅度** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 相当 |
-| **透明度** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | SpliceGAIP 的 Agent 对话面板更好 |
-| **可访问性** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | SpliceGAIP 缺少深色模式和移动端适配 |
+| **透明度** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | EpitopeRank 的 Agent 对话面板更好 |
+| **可访问性** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | EpitopeRank 缺少深色模式和移动端适配 |
 | **学习曲线** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | BioGAIP 可能更简单 |
 
 ### 9.4 改进建议
@@ -1166,7 +1166,7 @@ docs/
 - ✅ 增量处理（断点续传）
 - ✅ 资源动态分配
 
-### 10.2 SpliceGAIP 性能现状（实际）
+### 10.2 EpitopeRank 性能现状（实际）
 
 **已实施的优化** ✅:
 
@@ -1202,13 +1202,13 @@ docs/
 
 ### 10.3 性能对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
 | **并行处理** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 相当 |
-| **缓存策略** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | SpliceGAIP 可加强 |
+| **缓存策略** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | EpitopeRank 可加强 |
 | **资源监控** | ⭐⭐⭐⭐⭐ | ⭐⭐ | **需要补充** |
 | **大数据支持** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | 差距明显 |
-| **离线能力** | ⭐⭐⭐ | ⭐⭐⭐⭐ | SpliceGAIP 降级策略更好 |
+| **离线能力** | ⭐⭐⭐ | ⭐⭐⭐⭐ | EpitopeRank 降级策略更好 |
 
 ### 10.4 改进建议
 
@@ -1294,16 +1294,16 @@ docs/
 - ✅ 年度研讨会
 - ✅ 学术论文引用
 
-### 11.2 SpliceGAIP 生态（实际）
+### 11.2 EpitopeRank 生态（实际）
 
 **现有生态组件** ✅:
 
 1. **MCP 协议支持**
-   - `splicegaip/mcp/client.py`
+   - `epitoperank/mcp/client.py`
    - 可与支持 MCP 的工具集成
 
 2. **外部技能桥接**
-   - `splicegaip/agent/skills_bridge.py`
+   - `epitoperank/agent/skills_bridge.py`
    - 支持动态加载外部知识源
 
 3. **开源许可证**
@@ -1327,12 +1327,12 @@ docs/
 
 ### 11.3 生态对比总结
 
-| 维度 | BioGAIP | SpliceGAIP | 评价 |
+| 维度 | BioGAIP | EpitopeRank | 评价 |
 |------|---------|------------|------|
 | **插件系统** | ⭐⭐⭐⭐⭐ | ⭐⭐ | **严重差距** |
 | **社区活跃度** | ⭐⭐⭐⭐⭐ | ⭐⭐ | 需要建设 |
 | **商业化** | ⭐⭐⭐⭐ | ⭐⭐ | 需要规划 |
-| **学术影响** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | SpliceGAIP 需发表论文 |
+| **学术影响** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | EpitopeRank 需发表论文 |
 
 ### 11.4 改进建议
 
@@ -1340,7 +1340,7 @@ docs/
 
 1. **设计插件架构**
    ```python
-   # splicegaip/plugins/base.py
+   # epitoperank/plugins/base.py
    from abc import ABC, abstractmethod
    
    class Plugin(ABC):
@@ -1382,7 +1382,7 @@ docs/
 
 ### 12.1 SWOT 分析
 
-#### SpliceGAIP 的优势 (Strengths) ✅
+#### EpitopeRank 的优势 (Strengths) ✅
 
 1. **领域专业性极强**
    - 深度支持 5 种主流剪接分析工具
@@ -1404,7 +1404,7 @@ docs/
    - Agent 工作流可视化
    - 多轮追问支持
 
-#### SpliceGAIP 的劣势 (Weaknesses) ❌
+#### EpitopeRank 的劣势 (Weaknesses) ❌
 
 1. **测试覆盖严重不足**
    - 未见独立测试目录
@@ -1552,7 +1552,7 @@ docs/
 
 经过全面对比分析，得出以下结论：
 
-1. **SpliceGAIP 在领域专业性上领先**
+1. **EpitopeRank 在领域专业性上领先**
    - 剪接分析的深度远超 BioGAIP 的通用方案
    - 自我质疑和统计严谨性是独特优势
    - 可复现性设计符合科研高标准
@@ -1563,7 +1563,7 @@ docs/
    - 插件化架构支持生态扩展
    - Kubernetes 部署适合大规模应用
 
-3. **SpliceGAIP 不需要盲目模仿 BioGAIP**
+3. **EpitopeRank 不需要盲目模仿 BioGAIP**
    - 保持领域专注是正确战略
    - 应借鉴工程实践而非产品定位
    - 差异化竞争优于正面交锋
@@ -1587,12 +1587,12 @@ docs/
 
 ### 13.3 最后的话
 
-SpliceGAIP 已经是一个**架构优秀、功能完整**的专业级工具。通过补齐测试、日志、安全性这三个短板，并借鉴 BioGAIP 的工程最佳实践，有望成为**剪接分析领域的标杆产品**。
+EpitopeRank 已经是一个**架构优秀、功能完整**的专业级工具。通过补齐测试、日志、安全性这三个短板，并借鉴 BioGAIP 的工程最佳实践，有望成为**剪接分析领域的标杆产品**。
 
 关键在于：**保持专注，持续迭代，重视质量，建设生态**。
 
 ---
 
 **报告生成时间**: 2026-10-16  
-**分析依据**: BioGAIP 公开资料 + SpliceGAIP 代码库实地调研  
+**分析依据**: BioGAIP 公开资料 + EpitopeRank 代码库实地调研  
 **下一步行动**: 召开团队会议，确定第一阶段改进任务的负责人和时间表

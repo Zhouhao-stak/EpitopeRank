@@ -2,10 +2,10 @@ import csv
 
 import pytest
 
-from splicegaip.neoantigen import junction_peptides, run, translate, predict_iedb
+from epitoperank.neoantigen import junction_peptides, run, translate, predict_iedb
 from urllib.parse import parse_qs
 from io import BytesIO
-from splicegaip.splicing.schema import CORE_EVENT_FIELDS
+from epitoperank.splicing.schema import CORE_EVENT_FIELDS
 
 
 def test_translation_and_junction_candidates() -> None:

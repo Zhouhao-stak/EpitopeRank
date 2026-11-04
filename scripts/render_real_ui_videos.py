@@ -1,4 +1,4 @@
-"""Render actual SpliceGAIP browser captures into two short screen demos."""
+"""Render actual EpitopeRank browser captures into two short screen demos."""
 from pathlib import Path
 import subprocess
 from PIL import Image, ImageDraw, ImageFont
@@ -43,7 +43,7 @@ def render(name,scenes,seconds):
         src,title,detail=scenes[min(len(scenes)-1,i*len(scenes)//n)]
         im=frame(src,title,detail,i/n,name=='B')
         im.save(folder/f'{i:04d}.png',optimize=True)
-    target=OUT/f'SpliceGAIP_real_UI_demo_{name}.mp4'
+    target=OUT/f'EpitopeRank_real_UI_demo_{name}.mp4'
     subprocess.run(['ffmpeg','-y','-loglevel','error','-framerate',str(fps),'-i',str(folder/'%04d.png'),'-c:v','libx264','-pix_fmt','yuv420p','-r','24',str(target)],check=True)
     print(target)
 

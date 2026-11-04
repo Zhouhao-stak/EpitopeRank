@@ -1,4 +1,4 @@
-# SpliceGAIP Docker Image
+# EpitopeRank Docker Image
 # Based on Alpine for minimal size and reliable package management
 
 FROM python:3.11-alpine AS builder
@@ -20,15 +20,15 @@ FROM python:3.11-alpine AS runtime
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    SPLICEGAIP_RUNTIME_ROOT=/data/runtime \
-    SPLICEGAIP_MEMORY_DB=/data/splicegaip.sqlite3 \
-    SPLICEGAIP_LITERATURE_DB=/data/literature.sqlite3
+    EPITOPERANK_RUNTIME_ROOT=/data/runtime \
+    EPITOPERANK_MEMORY_DB=/data/epitoperank.sqlite3 \
+    EPITOPERANK_LITERATURE_DB=/data/literature.sqlite3
 
 # Install runtime dependencies (libgomp for OpenMP support)
 RUN apk add --no-cache libgomp
 
 # Create non-root user
-RUN addgroup -S splicegaip && adduser -S splicegaip -G splicegaip
+RUN addgroup -S epitoperank && adduser -S epitoperank -G epitoperank
 
 WORKDIR /app
 
@@ -39,7 +39,7 @@ COPY --from=builder /install /usr/local
 COPY . .
 
 # Create data directory and set permissions
-RUN mkdir -p /data && chown -R splicegaip:splicegaip /data /app
+RUN mkdir -p /data && chown -R epitoperank:epitoperank /data /app
 
 # Expose ports
 EXPOSE 8800 8501
@@ -49,7 +49,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8800/api/health')" || exit 1
 
 # Switch to non-root user
-USER splicegaip
+USER epitoperank
 
 # Default command
 CMD ["python", "run.py", "serve", "--api", "--ui", "--port", "8800"]

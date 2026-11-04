@@ -1,9 +1,9 @@
-# SpliceGAIP
+# EpitopeRank
 
 **AI 驱动的可变剪接分析 + 剪接新抗原候选肽生成平台**
 
-[![Tests](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml)
-[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/SpliceGAIP?display_name=tag)](https://github.com/Zhouhao-stak/SpliceGAIP/releases)
+[![Tests](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/EpitopeRank?display_name=tag)](https://github.com/Zhouhao-stak/EpitopeRank/releases)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 
@@ -45,8 +45,8 @@ rMATS JC 五类事件表 + 样本元数据
 
 ## 下载即用
 
-到 [Releases](https://github.com/Zhouhao-stak/SpliceGAIP/releases) 下载最新的
-`SpliceGAIP-*-windows.zip`，解压后双击 `SpliceGAIP-Desktop.exe`。
+到 [Releases](https://github.com/Zhouhao-stak/EpitopeRank/releases) 下载最新的
+`EpitopeRank-*-windows.zip`，解压后双击 `EpitopeRank-Desktop.exe`。
 
 程序会在本机起一个服务并自动打开浏览器（地址形如 `http://127.0.0.1:8800/`），
 **不需要装 Python，也不需要联网**——只有想用 AI 解读或跑 HLA 预测时才需要网络。
@@ -192,16 +192,16 @@ python run.py peptide --input examples/peptide_demo \
 一个项目约 **4MB**。项目详情页有两个按钮：**📁 成果文件夹**（直接打开）和
 **📦 打包 ZIP**（生成可发人的压缩包）。
 
-**运行根目录**：Windows `%LOCALAPPDATA%\SpliceGAIP`，Linux `~/.local/share/splicegaip`，
-Docker 容器内 `/data`（命名卷 `splicegaip-data`），可用 `SPLICEGAIP_RUNTIME_ROOT` 覆盖。
-结果根可用 `SPLICEGAIP_RESULTS_ROOT` 单独指定，默认在运行根下的 `results/`。
+**运行根目录**：Windows `%LOCALAPPDATA%\EpitopeRank`，Linux `~/.local/share/epitoperank`，
+Docker 容器内 `/data`（命名卷 `epitoperank-data`），可用 `EPITOPERANK_RUNTIME_ROOT` 覆盖。
+结果根可用 `EPITOPERANK_RESULTS_ROOT` 单独指定，默认在运行根下的 `results/`。
 
 云端备份是可选的：服务器上部署后会暴露 `POST /api/cloud/upload`，
-客户端在 `.env` 填 `SPLICEGAIP_CLOUD_URL` 即可把成果 ZIP 推上去。
+客户端在 `.env` 填 `EPITOPERANK_CLOUD_URL` 即可把成果 ZIP 推上去。
 
 ## 架构
 
-### 自治内核（`splicegaip/agent/`，默认启用）
+### 自治内核（`epitoperank/agent/`，默认启用）
 
 ```
 观察(Profile) → 校验(Verify) → 决策(Decide) → 执行(Act) → 记录(Trace)
@@ -253,7 +253,7 @@ Docker 容器内 `/data`（命名卷 `splicegaip-data`），可用 `SPLICEGAIP_R
 ## 项目结构
 
 ```
-SpliceGAIP/
+EpitopeRank/
 ├── agent/             # 自治内核：状态/画像/决策/校验/反思/循环/经验记忆
 │                      # + copilot.py / planner.py / hypothesis.py / skills_bridge.py
 ├── agents/            # 3 个核心 Agent + 确定性策略（scripted 模式）
@@ -283,7 +283,7 @@ SpliceGAIP/
 pip install -r requirements-dev.txt
 
 pytest tests/unit tests/integration -v
-pytest --cov=splicegaip --cov-report=html
+pytest --cov=epitoperank --cov-report=html
 ```
 
 当前 **350 个测试全部通过**（单元 + API/UI 集成，含 copilot 黄金样本回归）。

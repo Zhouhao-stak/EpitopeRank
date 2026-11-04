@@ -1,13 +1,13 @@
-# SpliceGAIP 构建指南
+# EpitopeRank 构建指南
 
 ## 📁 目录结构（已简化）
 
 ```
-SpliceGAIP/
+EpitopeRank/
 ├── dist/                        ← 唯一的EXE输出目录
-│   └── SpliceGAIP-Desktop.exe  ← 你的可执行文件在这里
+│   └── EpitopeRank-Desktop.exe  ← 你的可执行文件在这里
 ├── packaging/                   ← 只保留配置文件
-│   ├── SpliceGAIP-Desktop-OneFile.spec ← PyInstaller配置（唯一 spec）
+│   ├── EpitopeRank-Desktop-OneFile.spec ← PyInstaller配置（唯一 spec）
 │   ├── icon.ico                ← 应用图标
 │   └── rthook_runtime.py       ← 运行时钩子
 ├── build.bat                    ← 一键构建脚本
@@ -32,13 +32,13 @@ build.bat
 
 或手动执行：
 ```bash
-cd E:/SpliceGAIP
-./venv/Scripts/python.exe -m PyInstaller packaging/SpliceGAIP-Desktop-OneFile.spec \
+cd E:/EpitopeRank
+./venv/Scripts/python.exe -m PyInstaller packaging/EpitopeRank-Desktop-OneFile.spec \
     --distpath dist \
     --workpath packaging/build-temp
 ```
 
-**输出位置**：`dist/SpliceGAIP-Desktop.exe`（单文件，~145MB；约 4 分钟）
+**输出位置**：`dist/EpitopeRank-Desktop.exe`（单文件，~145MB；约 4 分钟）
 
 ---
 
@@ -55,7 +55,7 @@ clean_builds.bat
 - ✅ `packaging/build-temp` 临时目录
 
 **保留**：
-- ✅ `dist/SpliceGAIP-Desktop.exe` 你的EXE
+- ✅ `dist/EpitopeRank-Desktop.exe` 你的EXE
 - ✅ `packaging/*.spec` 配置文件
 - ✅ `packaging/*.md` 文档
 
@@ -78,7 +78,7 @@ clean_builds.bat
 git tag -l
 
 # 恢复UI文件到v3
-git checkout v3-professional-ui -- splicegaip/interface/
+git checkout v3-professional-ui -- epitoperank/interface/
 
 # 重新构建
 build.bat
@@ -95,7 +95,7 @@ build.bat
 - [ ] `.env.example` 文件存在
 
 构建后验证：
-- [ ] `dist/SpliceGAIP-Desktop.exe` 存在
+- [ ] `dist/EpitopeRank-Desktop.exe` 存在
 - [ ] 文件大小 ~145MB
 - [ ] 能正常启动（双击后出现深色标题栏的窗口，可访问 `http://127.0.0.1:8800/`）
 - [ ] Web UI可访问（默认端口8800+）
@@ -127,4 +127,4 @@ git tag -a v5-xxx -m "版本说明"
 ---
 
 **最后更新**: 2026-10-16  
-**维护者**: SpliceGAIP Team
+**维护者**: EpitopeRank Team

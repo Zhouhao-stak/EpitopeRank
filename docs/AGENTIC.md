@@ -1,7 +1,7 @@
 # 智能体化升级：从「一次提示词」到「工具调用循环」
 
-> 适用版本：SpliceGAIP 0.2.x（`splicegaip/agent/copilot.py`）
-> 相关模块：`splicegaip/llm/chat.py`、`splicegaip/llm/structured.py`、`splicegaip/agent/copilot.py`
+> 适用版本：EpitopeRank 0.2.x（`epitoperank/agent/copilot.py`）
+> 相关模块：`epitoperank/llm/chat.py`、`epitoperank/llm/structured.py`、`epitoperank/agent/copilot.py`
 
 ## 1. 之前的问题
 
@@ -19,7 +19,7 @@
    │
    ▼
 ┌──────────────────────────────────────────────────────────┐
-│ Copilot 循环（splicegaip/agent/copilot.py）               │
+│ Copilot 循环（epitoperank/agent/copilot.py）               │
 │                                                          │
 │  system prompt + 历史 + 问题                              │
 │        │                                                 │
@@ -44,7 +44,7 @@
 | 原生工具调用 | OpenAI 兼容 `tools` / `tool_calls`，不解析文本里的伪 JSON |
 | 多轮 | 工具结果作为 `role=tool` 消息回填，模型基于观察继续决策 |
 | 预算 | 最多 6 步、每步 6 个工具、全局 24 次、单结果 6000 字符 |
-| 参数校验 | `splicegaip/llm/structured.py::validate_schema`（type/required/enum/上下界） |
+| 参数校验 | `epitoperank/llm/structured.py::validate_schema`（type/required/enum/上下界） |
 | 数字护栏 | `grounding_report` 把回答中的数字与工具返回事实比对，标出未溯源数字 |
 | 可审计 | 每次工具调用记录参数、耗时、成功/失败、摘要 |
 | 离线降级 | 无模型时执行确定性 briefing，并明确标注「未配置模型」 |
@@ -114,7 +114,7 @@ curl -s -X POST http://127.0.0.1:8800/api/copilot/chat \
 
 ### MCP
 
-`splicegaip.mcp.splice_server` 新增：
+`epitoperank.mcp.splice_server` 新增：
 
 - `copilot_tools()` — 工具清单与模型就绪状态
 - `ask_copilot(question, project_id, max_steps)` — 直接调用分析助手

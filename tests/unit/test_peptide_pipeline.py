@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from splicegaip.peptide.filters import annotate_candidates, scan_proteomes
-from splicegaip.peptide.pipeline import (
+from epitoperank.peptide.filters import annotate_candidates, scan_proteomes
+from epitoperank.peptide.pipeline import (
     PeptideOptions,
     _client,
     aggregate,
@@ -17,21 +17,21 @@ from splicegaip.peptide.pipeline import (
     load_peptide_table,
     run,
 )
-from splicegaip.peptide.scoring import (
+from epitoperank.peptide.scoring import (
     component_scores,
     composite,
     describe,
     evidence_tier,
     rank,
 )
-from splicegaip.peptide.sequences import file_sha256
-from splicegaip.splicing.schema import CORE_EVENT_FIELDS
+from epitoperank.peptide.sequences import file_sha256
+from epitoperank.splicing.schema import CORE_EVENT_FIELDS
 
 
 def test_client_keeps_default_cache_and_reads_deployment_env(tmp_path, monkeypatch) -> None:
     """Explicit ``cache_dir=None`` used to disable the cache for every API call."""
-    monkeypatch.setenv("SPLICEGAIP_PEPTIDE_CACHE", str(tmp_path / "cache"))
-    monkeypatch.setenv("SPLICEGAIP_PEPTIDE_TIMEOUT", "120")
+    monkeypatch.setenv("EPITOPERANK_PEPTIDE_CACHE", str(tmp_path / "cache"))
+    monkeypatch.setenv("EPITOPERANK_PEPTIDE_TIMEOUT", "120")
     client = _client(PeptideOptions())
     assert client.cache_dir == tmp_path / "cache"
     assert client.timeout == 120.0

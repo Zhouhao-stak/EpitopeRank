@@ -22,10 +22,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from splicegaip.agent.evaluation import evaluate, load_cases, write_report  # noqa: E402
-from splicegaip.config import load_prepared_settings  # noqa: E402
-from splicegaip.llm.chat import ChatClient  # noqa: E402
-from splicegaip.pipeline import list_projects, run_analysis  # noqa: E402
+from epitoperank.agent.evaluation import evaluate, load_cases, write_report  # noqa: E402
+from epitoperank.config import load_prepared_settings  # noqa: E402
+from epitoperank.llm.chat import ChatClient  # noqa: E402
+from epitoperank.pipeline import list_projects, run_analysis  # noqa: E402
 
 
 def resolve_project(settings, explicit: str | None, *, demo: bool) -> str | None:

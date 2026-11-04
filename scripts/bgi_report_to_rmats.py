@@ -5,7 +5,7 @@ BGI ships one rMATS run *per sample* (``as_ijc_sample_2_NA``), so the report
 holds per-sample inclusion levels but no between-group statistics. This script
 unions the per-sample event tables, splits the samples with a user supplied
 group table, and recomputes the group-level counts, PSI, p-value and FDR that
-SpliceGAIP's native rMATS parser expects.
+EpitopeRank's native rMATS parser expects.
 
     python scripts/bgi_report_to_rmats.py \
         --report "E:\\Report_F24A040009852_HUMkcvaT\\Report_F24A040009852_HUMkcvaT" \
@@ -16,7 +16,7 @@ copied into the emitted ``sample_metadata.tsv``.
 
 Statistics: the reported p-value is the *more conservative* of
 
-* a pooled 2x2 chi-square on summed junction counts (the test SpliceGAIP's own
+* a pooled 2x2 chi-square on summed junction counts (the test EpitopeRank's own
   ``analysis.statistics`` implements), and
 * a per-replicate Mann-Whitney U test on the sample-level PSI values,
 
@@ -40,7 +40,7 @@ from scipy.stats import mannwhitneyu
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from splicegaip.analysis.statistics import (  # noqa: E402
+from epitoperank.analysis.statistics import (  # noqa: E402
     benjamini_hochberg,
     chi_square_p_value,
 )
@@ -48,7 +48,7 @@ from splicegaip.analysis.statistics import (  # noqa: E402
 EVENT_TYPES = ("SE", "A3SS", "A5SS", "MXE", "RI")
 
 #: BGI column -> rMATS column, per event type. Coordinates use the rMATS names
-#: because SpliceGAIP rebuilds ``chr:start-end`` from them.
+#: because EpitopeRank rebuilds ``chr:start-end`` from them.
 COORD_COLUMNS: dict[str, tuple[tuple[str, str], ...]] = {
     "SE": (
         ("as_exonstart_0base", "exonStart_0base"),
@@ -383,7 +383,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         if len(labels) != 2:
             raise SystemExit(
-                f"found {len(labels)} group labels {labels}; SpliceGAIP compares exactly two. "
+                f"found {len(labels)} group labels {labels}; EpitopeRank compares exactly two. "
                 "Pick a pair with --group-a/--group-b."
             )
         group1_label, group2_label = labels
@@ -397,7 +397,7 @@ def main(argv: list[str] | None = None) -> int:
     group1_cols = [sample_column[s] for s in group1]
     group2_cols = [sample_column[s] for s in group2]
 
-    # SpliceGAIP's loader sorts group labels alphabetically: the first label is
+    # EpitopeRank's loader sorts group labels alphabetically: the first label is
     # group 1 and dPSI is group2 - group1, so the emitted metadata must agree.
     if sorted([group1_label, group2_label]) != [group1_label, group2_label]:
         group1, group2 = group2, group1

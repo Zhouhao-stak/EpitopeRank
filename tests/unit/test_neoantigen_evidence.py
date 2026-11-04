@@ -1,6 +1,6 @@
 import pytest
 
-from splicegaip.neoantigen_evidence import normal_protein_filter, expression_evidence, supplied_orf_candidates, assess_nmd, gtex_junction_filter, normal_tissue_expression
+from epitoperank.neoantigen_evidence import normal_protein_filter, expression_evidence, supplied_orf_candidates, assess_nmd, gtex_junction_filter, normal_tissue_expression
 
 
 def test_normal_databases_are_required_and_accounted(tmp_path):

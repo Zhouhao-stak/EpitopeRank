@@ -15,18 +15,18 @@
 #   COMPOSE_FILE=docker-compose.yml:docker-compose.override.yml:docker-compose.server.yml
 
 services:
-  splicegaip:
+  epitoperank:
     volumes:
       # Whole source tree, read-only. Nested mounts (./config, /data) from the
       # base file still take precedence because they have longer target paths.
       - ./:/app:ro
     environment:
       # Peptide prediction cache lives on the local docker volume, not NFS.
-      - SPLICEGAIP_PEPTIDE_CACHE=/data/runtime/peptide_cache
+      - EPITOPERANK_PEPTIDE_CACHE=/data/runtime/peptide_cache
       # IEDB is slow from this network (30-90 s for a cold request); give the
       # first call room instead of timing out and retrying.
-      - SPLICEGAIP_PEPTIDE_TIMEOUT=120
-      - SPLICEGAIP_PEPTIDE_RETRIES=1
+      - EPITOPERANK_PEPTIDE_TIMEOUT=120
+      - EPITOPERANK_PEPTIDE_RETRIES=1
       # Report/UI timestamps in the operator's timezone.
       - TZ=Asia/Shanghai
       # Never write __pycache__ into the read-only bind mount.

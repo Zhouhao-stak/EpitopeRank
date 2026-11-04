@@ -2,7 +2,7 @@
 
 import asyncio
 
-from splicegaip.llm.fallback import (
+from epitoperank.llm.fallback import (
     TERMINATION_TOKEN,
     DeterministicClient,
     DeterministicSelectorClient,

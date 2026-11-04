@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from splicegaip.data.bgi_report import apply, preview
-from splicegaip.data.loader import load_dataset
+from epitoperank.data.bgi_report import apply, preview
+from epitoperank.data.loader import load_dataset
 
 
 def test_bgi_report_merges_samples_without_inventing_significance(tmp_path: Path) -> None:

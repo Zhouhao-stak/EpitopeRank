@@ -3,7 +3,7 @@
 import pytest
 import os
 from pathlib import Path
-from splicegaip.config import Settings, ConfigError, load_settings
+from epitoperank.config import Settings, ConfigError, load_settings
 
 
 class TestSettings:
@@ -33,13 +33,13 @@ class TestSettings:
 
     def test_llm_disabled_via_env(self):
         """Test LLM can be disabled via environment variable."""
-        os.environ['SPLICEGAIP_LLM_ENABLED'] = 'false'
+        os.environ['EPITOPERANK_LLM_ENABLED'] = 'false'
         try:
             settings = load_settings()
             assert settings.llm.enabled is False
         finally:
-            if 'SPLICEGAIP_LLM_ENABLED' in os.environ:
-                del os.environ['SPLICEGAIP_LLM_ENABLED']
+            if 'EPITOPERANK_LLM_ENABLED' in os.environ:
+                del os.environ['EPITOPERANK_LLM_ENABLED']
 
     def test_settings_from_yaml(self, tmp_path):
         """Test loading settings from YAML file."""
@@ -67,7 +67,7 @@ agent:
 
     def test_invalid_config_file(self):
         """Test handling of invalid config file path."""
-        from splicegaip.config import ConfigError
+        from epitoperank.config import ConfigError
         with pytest.raises(ConfigError):
             load_settings(Path("/nonexistent/path/config.yaml"))
 

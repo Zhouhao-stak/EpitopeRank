@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SpliceGAIP — install on a shared Linux server WITHOUT root.
+# EpitopeRank — install on a shared Linux server WITHOUT root.
 #
 #   bash deploy/userland/install.sh                  # auto-detect everything
 #   bash deploy/userland/install.sh --workers 8      # pin the worker count
@@ -150,7 +150,7 @@ index_url() {
     pypi|none) printf '' ;;
     *)
       # Auto: Chinese hosts get the Tsinghua mirror, everything else goes direct.
-      if [ -n "${SPLICEGAIP_PIP_INDEX:-}" ]; then printf '%s' "$SPLICEGAIP_PIP_INDEX"
+      if [ -n "${EPITOPERANK_PIP_INDEX:-}" ]; then printf '%s' "$EPITOPERANK_PIP_INDEX"
       elif [ -n "${TZ:-}" ] && [ "${TZ#Asia/}" != "$TZ" ]; then printf 'https://pypi.tuna.tsinghua.edu.cn/simple'
       elif curl -fsS --max-time 4 -o /dev/null https://pypi.org/simple/ 2>/dev/null; then printf ''
       else printf 'https://pypi.tuna.tsinghua.edu.cn/simple'; fi
@@ -182,24 +182,24 @@ writable() { mkdir -p "$1" 2>/dev/null && [ -w "$1" ]; }
 
 pick_runtime_root() {
   if [ -n "$RUNTIME_ROOT" ]; then printf '%s\n' "$RUNTIME_ROOT"; return; fi
-  if [ -n "${SPLICEGAIP_RUNTIME_ROOT:-}" ]; then printf '%s\n' "$SPLICEGAIP_RUNTIME_ROOT"; return; fi
+  if [ -n "${EPITOPERANK_RUNTIME_ROOT:-}" ]; then printf '%s\n' "$EPITOPERANK_RUNTIME_ROOT"; return; fi
 
   local home_fs candidate
   home_fs="$(fstype_of "$HOME")"
   if ! is_network_fs "$home_fs"; then
-    printf '%s\n' "$HOME/.local/share/splicegaip"
+    printf '%s\n' "$HOME/.local/share/epitoperank"
     return
   fi
   # Home is on NFS/SMB: SQLite locking and WAL are unsafe there, and analysis
   # writes tens of thousands of small files. Look for local scratch space.
-  for candidate in "${SPLICEGAIP_LOCAL_DISK:-}" /scratch/"$USER" /scratch /local/"$USER" /work/"$USER" /data/"$USER" /tmp/"$USER"; do
+  for candidate in "${EPITOPERANK_LOCAL_DISK:-}" /scratch/"$USER" /scratch /local/"$USER" /work/"$USER" /data/"$USER" /tmp/"$USER"; do
     [ -n "$candidate" ] || continue
     if writable "$candidate" && ! is_network_fs "$(fstype_of "$candidate")"; then
-      printf '%s\n' "$candidate/splicegaip"
+      printf '%s\n' "$candidate/epitoperank"
       return
     fi
   done
-  printf '%s\n' "$HOME/.local/share/splicegaip"
+  printf '%s\n' "$HOME/.local/share/epitoperank"
 }
 
 step "[4/6] 选择运行数据目录"
@@ -272,8 +272,8 @@ step "[6/6] 自检"
 import sys
 sys.path.insert(0, ".")
 import fastapi, uvicorn, pandas, numpy, matplotlib, reportlab  # noqa: F401
-import splicegaip
-from splicegaip.storage import storage_info
+import epitoperank
+from epitoperank.storage import storage_info
 print(f"    Python      {sys.version.split()[0]}")
 print(f"    FastAPI     {fastapi.__version__}")
 print(f"    pandas      {pandas.__version__}")

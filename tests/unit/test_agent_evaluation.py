@@ -7,8 +7,8 @@ import json
 
 import pytest
 
-from splicegaip.agent.copilot import CopilotAnswer
-from splicegaip.agent.evaluation import (
+from epitoperank.agent.copilot import CopilotAnswer
+from epitoperank.agent.evaluation import (
     Case,
     evaluate,
     load_cases,
@@ -17,9 +17,9 @@ from splicegaip.agent.evaluation import (
     script_for_case,
     write_report,
 )
-from splicegaip.config import LLMSettings, load_settings
-from splicegaip.llm.scripted import ScriptedChat
-from splicegaip.memory.project_memory import ProjectMemory
+from epitoperank.config import LLMSettings, load_settings
+from epitoperank.llm.scripted import ScriptedChat
+from epitoperank.memory.project_memory import ProjectMemory
 
 PROJECT = "SPN-EVAL0001"
 

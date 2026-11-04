@@ -1,4 +1,4 @@
-# SpliceGAIP (refactored from BioGAIP)
+# EpitopeRank (refactored from BioGAIP)
 
 # Python
 __pycache__/
@@ -18,7 +18,7 @@ htmlcov/
 
 # Runtime state (SQLite databases, project outputs) — local disk only
 runtime/
-/var/tmp/splicegaip/
+/var/tmp/epitoperank/
 deploy.tar.gz
 
 # Environments & secrets

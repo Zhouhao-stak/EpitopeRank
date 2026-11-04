@@ -10,10 +10,10 @@
 
 ```powershell
 # 1. 进入项目目录
-cd E:\SpliceGAIP
+cd E:\EpitopeRank
 
 # 2. 创建部署包（排除不需要的文件）
-tar czf splicegaip-deploy.tar.gz ^
+tar czf epitoperank-deploy.tar.gz ^
   --exclude='.git' ^
   --exclude='venv' ^
   --exclude='__pycache__' ^
@@ -61,11 +61,11 @@ ssh -p 39145 wang_zi_wei@123.255.66.81
 
 ```bash
 # 1. 创建部署目录
-mkdir -p ~/splicegaip
-cd ~/splicegaip
+mkdir -p ~/epitoperank
+cd ~/epitoperank
 
 # 2. 解压上传的文件（假设上传到了 ~）
-tar xzf ~/splicegaip-deploy.tar.gz -C ~/splicegaip/
+tar xzf ~/epitoperank-deploy.tar.gz -C ~/epitoperank/
 
 # 3. 验证文件
 ls -la
@@ -90,8 +90,8 @@ DEEPSEEK_API_KEY=sk-your-deepseek-api-key-here
 ##  第四步：启动服务
 
 ```bash
-# 确保在 splicegaip 目录
-cd ~/splicegaip
+# 确保在 epitoperank 目录
+cd ~/epitoperank
 
 # 1. 拉取最新镜像
 docker compose pull
@@ -104,7 +104,7 @@ docker compose ps
 
 # 期望看到:
 # NAME                STATUS
-# splicegaip-api-1    Up (healthy)
+# epitoperank-api-1    Up (healthy)
 ```
 
 ---
@@ -170,8 +170,8 @@ ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.6
 
 ```bash
 # 1. 在本地重新打包
-cd E:\SpliceGAIP
-tar czf splicegaip-deploy.tar.gz --exclude='.git' --exclude='venv' ... .
+cd E:\EpitopeRank
+tar czf epitoperank-deploy.tar.gz --exclude='.git' --exclude='venv' ... .
 
 # 2. 上传到服务器（使用 WinSCP 覆盖旧文件）
 
@@ -179,8 +179,8 @@ tar czf splicegaip-deploy.tar.gz --exclude='.git' --exclude='venv' ... .
 ssh -p 39145 wang_zi_wei@123.255.66.81
 
 # 4. 解压并重启
-cd ~/splicegaip
-tar xzf ~/splicegaip-deploy.tar.gz -C ~/splicegaip/
+cd ~/epitoperank
+tar xzf ~/epitoperank-deploy.tar.gz -C ~/epitoperank/
 docker compose up -d --build
 docker compose logs -f
 ```
@@ -214,7 +214,7 @@ vim docker-compose.coolify.yml
 
 ```bash
 # 查看详细日志
-docker compose logs splicegaip-api
+docker compose logs epitoperank-api
 
 # 常见原因：
 # - .env 文件缺失或 API Key 错误
@@ -255,7 +255,7 @@ sudo iptables -L -n | grep -E '(8800|8501)'
 3. **备份数据**：
    ```bash
    # 定期备份 SQLite 数据库
-   cp ~/splicegaip-data/splicegaip.sqlite3 ~/backup-$(date +%Y%m%d).sqlite3
+   cp ~/epitoperank-data/epitoperank.sqlite3 ~/backup-$(date +%Y%m%d).sqlite3
    ```
 
 ---

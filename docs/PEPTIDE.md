@@ -10,7 +10,7 @@
 
 ## 1. 它做什么
 
-`splicegaip/peptide/` 是独立于既有剪接分析流水线的肽预测层，包含：
+`epitoperank/peptide/` 是独立于既有剪接分析流水线的肽预测层，包含：
 
 | 能力 | 实现 | 是否需要联网 |
 | --- | --- | --- |
@@ -196,10 +196,10 @@ IEDB processing 服务在“FASTA 批量 + 多个长度”组合下会返回 HTT
 
 ## 7. 缓存与溯源
 
-- 缓存目录：`SPLICEGAIP_PEPTIDE_CACHE`；未设置时用
+- 缓存目录：`EPITOPERANK_PEPTIDE_CACHE`；未设置时用
   `default_runtime_root()/peptide_cache`（Windows 默认
-  `%LOCALAPPDATA%\SpliceGAIP\peptide_cache`；Linux 默认
-  `$XDG_DATA_HOME/splicegaip/peptide_cache` 或 `~/.local/share/splicegaip/peptide_cache`）。
+  `%LOCALAPPDATA%\EpitopeRank\peptide_cache`；Linux 默认
+  `$XDG_DATA_HOME/epitoperank/peptide_cache` 或 `~/.local/share/epitoperank/peptide_cache`）。
 - 缓存键：`sha256(json([url, sorted(payload)]))[:32]`，即 `request_id`。同一请求命中缓存时
   不再访问网络（`calls` 里记为 `cached: true`）。
 - 每个预测记录带：`method`、`method_label`、`source`（`IEDB`/`mhcflurry`）、`request_id`、
@@ -214,7 +214,7 @@ IEDB processing 服务在“FASTA 批量 + 多个长度”组合下会返回 HTT
 
 ## 8. 参考数据（内置）
 
-`splicegaip/peptide/reference/`：
+`epitoperank/peptide/reference/`：
 
 | 文件 | 行数 | 内容 |
 | --- | --- | --- |
@@ -243,11 +243,11 @@ python scripts/fetch_peptide_reference.py --skip-epitopes
 
 ## 9. API（FastAPI）
 
-> 以仓库实现为准；字段若与 `splicegaip/api/app.py` 不一致，以后者为准。
+> 以仓库实现为准；字段若与 `epitoperank/api/app.py` 不一致，以后者为准。
 
 | 方法 | 路径 | 请求 | 返回 |
 | --- | --- | --- | --- |
-| GET | `/api/peptide/capabilities` | — | `splicegaip.peptide.capabilities()` |
+| GET | `/api/peptide/capabilities` | — | `epitoperank.peptide.capabilities()` |
 | GET | `/api/peptide/reference` | `mhc_class=1\|2`、`search=`、`limit=500`（上限 5000） | `{"total", "items":[{"allele","locus","supertype","mhc_class","source"}], "manifest":{...}}` |
 | POST | `/api/peptide/predict` | `{"peptides":[...], "alleles":[...], "mhc_class":"class1\|class2\|both", "predictor":"iedb\|local\|auto\|none", "processing":bool（默认 true）, "lookup_epitopes":bool}` | `{"candidate_count","prediction_count","predictions":[...],"errors":[...],"methods":{...},"epitope_matches":[...]}` |
 | POST | `/api/peptide/run` | `{"project_id"?,"input_dir"?,"cds_table"?,"peptides_file"?,"alleles":[...],"mhc_class"?,"predictor"?,"processing"?,"self_fastas"?:[...],"class2_window"?,"lookup_epitopes"?}` | `run()` 结果（含 `manifest`）；输出目录固定 `<input_dir>/peptide_results` |
@@ -268,7 +268,7 @@ python scripts/fetch_peptide_reference.py --skip-epitopes
 启动：
 
 ```bash
-python -m splicegaip.mcp.splice_server
+python -m epitoperank.mcp.splice_server
 ```
 
 新增工具（均惰性导入，模块导入本身不需要网络）：

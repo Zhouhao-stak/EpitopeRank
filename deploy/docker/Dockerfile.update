@@ -1,4 +1,4 @@
-# Update an existing SpliceGAIP image **without network access**.
+# Update an existing EpitopeRank image **without network access**.
 #
 # The build host this runs on cannot reach PyPI or Docker Hub (both are blocked
 # by the cluster firewall), so a normal `docker build` from Dockerfile is
@@ -6,11 +6,11 @@
 # code-only updates need no new packages, so this layers the current source on
 # top of that image instead of reinstalling anything.
 #
-#   docker build -f deploy/docker/Dockerfile.update -t splicegaip-splicegaip:latest .
+#   docker build -f deploy/docker/Dockerfile.update -t epitoperank-epitoperank:latest .
 #
 # If a future update *does* add a dependency, this will fail at import time;
 # build it on a machine with PyPI access and `docker save`/`docker load` it.
-ARG BASE=splicegaip-splicegaip:latest
+ARG BASE=epitoperank-epitoperank:latest
 FROM ${BASE}
 
 USER root
@@ -21,7 +21,7 @@ COPY . /app
 
 RUN chmod +x /app/deploy/docker/entrypoint.sh || true
 
-USER splicegaip
+USER epitoperank
 WORKDIR /app
 
 CMD ["sh", "/app/deploy/docker/entrypoint.sh"]

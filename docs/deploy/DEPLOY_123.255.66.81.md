@@ -10,7 +10,7 @@
 - **用户**: wang_zi_wei
 - **Docker**: ✅ 已安装 (v26.1.3)
 - **Docker Compose**: ✅ 已安装 (v2.27.0)
-- **部署目录**: /home/wang_zi_wei/splicegaip
+- **部署目录**: /home/wang_zi_wei/epitoperank
 - **API 端口**: 8800
 - **UI 端口**: 8501
 
@@ -54,7 +54,7 @@
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
 
 # 编辑配置文件
-vim /home/wang_zi_wei/splicegaip/.env
+vim /home/wang_zi_wei/epitoperank/.env
 
 # 添加你的 DeepSeek API Key
 DEEPSEEK_API_KEY=sk-your-actual-key-here
@@ -62,7 +62,7 @@ DEEPSEEK_API_KEY=sk-your-actual-key-here
 # 保存退出 (:wq)
 
 # 重启服务使配置生效
-cd /home/wang_zi_wei/splicegaip
+cd /home/wang_zi_wei/epitoperank
 docker compose restart
 ```
 
@@ -107,11 +107,11 @@ http://123.255.66.81:8501
 ```bash
 # 实时日志
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker compose logs -f"
+  "cd /home/wang_zi_wei/epitoperank && docker compose logs -f"
 
 # 最近 100 行
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker compose logs --tail 100"
+  "cd /home/wang_zi_wei/epitoperank && docker compose logs --tail 100"
 ```
 
 ---
@@ -122,37 +122,37 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker compose restart"
+  "cd /home/wang_zi_wei/epitoperank && docker compose restart"
 ```
 
 ### 停止服务
 
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker compose down"
+  "cd /home/wang_zi_wei/epitoperank && docker compose down"
 ```
 
 ### 查看容器状态
 
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker compose ps"
+  "cd /home/wang_zi_wei/epitoperank && docker compose ps"
 ```
 
 ### 查看资源使用
 
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker stats splicegaip-api"
+  "cd /home/wang_zi_wei/epitoperank && docker stats epitoperank-api"
 ```
 
 ### 备份数据库
 
 ```bash
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && \
-   docker compose exec splicegaip-api cp /data/splicegaip.sqlite3 /tmp/backup.sqlite3 && \
-   docker cp splicegaip-splicegaip-api-1:/tmp/backup.sqlite3 ./backup-$(date +%Y%m%d).sqlite3"
+  "cd /home/wang_zi_wei/epitoperank && \
+   docker compose exec epitoperank-api cp /data/epitoperank.sqlite3 /tmp/backup.sqlite3 && \
+   docker cp epitoperank-epitoperank-api-1:/tmp/backup.sqlite3 ./backup-$(date +%Y%m%d).sqlite3"
 ```
 
 ---
@@ -197,15 +197,15 @@ deploy:
 ```bash
 # 检查 .env 文件
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cat /home/wang_zi_wei/splicegaip/.env | grep DEEPSEEK"
+  "cat /home/wang_zi_wei/epitoperank/.env | grep DEEPSEEK"
 
 # 编辑并添加正确的 API Key
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "vim /home/wang_zi_wei/splicegaip/.env"
+  "vim /home/wang_zi_wei/epitoperank/.env"
 
 # 重启服务
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker compose restart"
+  "cd /home/wang_zi_wei/epitoperank && docker compose restart"
 ```
 
 ### 问题 4：健康检查失败
@@ -216,11 +216,11 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 ```bash
 # 手动测试健康检查
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "docker exec splicegaip-splicegaip-api-1 curl http://localhost:8800/api/health"
+  "docker exec epitoperank-epitoperank-api-1 curl http://localhost:8800/api/health"
 
 # 查看详细日志
 sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "cd /home/wang_zi_wei/splicegaip && docker compose logs splicegaip-api"
+  "cd /home/wang_zi_wei/epitoperank && docker compose logs epitoperank-api"
 ```
 
 ---
@@ -237,7 +237,7 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
 crontab -e
 
 # 添加每日凌晨 2 点备份
-0 2 * * * cd /home/wang_zi_wei/splicegaip && docker compose exec splicegaip-api cp /data/splicegaip.sqlite3 /tmp/backup-$(date +\%Y\%m\%d).sqlite3
+0 2 * * * cd /home/wang_zi_wei/epitoperank && docker compose exec epitoperank-api cp /data/epitoperank.sqlite3 /tmp/backup-$(date +\%Y\%m\%d).sqlite3
 ```
 
 ### 磁盘空间监控
@@ -273,7 +273,7 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
    - 参考 `nginx.conf` 文件
    - 或使用 Let's Encrypt 免费证书
 
-4. **定期更新**: 每月检查一次 SpliceGAIP 和 Docker 镜像更新
+4. **定期更新**: 每月检查一次 EpitopeRank 和 Docker 镜像更新
 
 ---
 

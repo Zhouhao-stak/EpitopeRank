@@ -34,10 +34,10 @@ mkdir -p ~/test && rmdir ~/test
 
 ```bash
 # 在本地执行
-../../deploy-to-server.sh user@your-server.com /home/user/splicegaip
+../../deploy-to-server.sh user@your-server.com /home/user/epitoperank
 
 # 首次部署后，更新只需重新运行脚本
-../../deploy-to-server.sh user@your-server.com /home/user/splicegaip
+../../deploy-to-server.sh user@your-server.com /home/user/epitoperank
 ```
 
 **优点**：
@@ -86,7 +86,7 @@ docker ps
 
 您好，
 
-我需要在服务器上部署 SpliceGAIP 应用，需要安装 Docker。
+我需要在服务器上部署 EpitopeRank 应用，需要安装 Docker。
 
 安装命令（Ubuntu/Debian）：
 sudo apt update
@@ -107,16 +107,16 @@ sudo usermod -aG docker $USER
 ssh user@your-server.com
 
 # 1. 创建项目目录
-mkdir -p ~/splicegaip
-cd ~/splicegaip
+mkdir -p ~/epitoperank
+cd ~/epitoperank
 
 # 2. 上传代码（从本地）
 # 在本地执行：
-scp -r * user@your-server.com:~/splicegaip/
+scp -r * user@your-server.com:~/epitoperank/
 
 # 3. 在服务器上设置
 ssh user@your-server.com
-cd ~/splicegaip
+cd ~/epitoperank
 
 # 创建虚拟环境
 python3 -m venv venv
@@ -130,10 +130,10 @@ cp .env.production.example .env
 vim .env  # 编辑添加 API Keys
 
 # 启动服务
-nohup python run.py serve --api --ui --port 8800 > splicegaip.log 2>&1 &
+nohup python run.py serve --api --ui --port 8800 > epitoperank.log 2>&1 &
 
 # 查看日志
-tail -f splicegaip.log
+tail -f epitoperank.log
 ```
 
 **缺点**：
@@ -152,7 +152,7 @@ tail -f splicegaip.log
 1. 访问 https://railway.app
 2. 用 GitHub 登录
 3. 点击 "New Project" → "Deploy from GitHub repo"
-4. 选择你的 SpliceGAIP 仓库
+4. 选择你的 EpitopeRank 仓库
 5. 添加环境变量（API Keys 等）
 6. 自动部署完成！
 
@@ -253,7 +253,7 @@ ssh -v user@your-server.com
 sudo apt install rsync
 
 # 或者改用 scp（较慢）
-scp -r ./ user@server:~/splicegaip/
+scp -r ./ user@server:~/epitoperank/
 ```
 
 ### 问题 3：端口被占用
@@ -292,22 +292,22 @@ deploy:
 2. **定期备份**：
    ```bash
    # 备份数据库
-   ssh user@server "cp ~/splicegaip/data/*.sqlite3 ~/backup/"
+   ssh user@server "cp ~/epitoperank/data/*.sqlite3 ~/backup/"
    ```
 
 3. **监控日志**：
    ```bash
    # 实时查看日志
-   ssh user@server "tail -f ~/splicegaip/splicegaip.log"
+   ssh user@server "tail -f ~/epitoperank/epitoperank.log"
    ```
 
 4. **设置别名**（方便以后使用）：
    ```bash
    # 添加到 ~/.bashrc
-   alias deploy-splicegaip='../../deploy-to-server.sh user@server /home/user/splicegaip'
+   alias deploy-epitoperank='../../deploy-to-server.sh user@server /home/user/epitoperank'
    
    # 以后只需输入
-   deploy-splicegaip
+   deploy-epitoperank
    ```
 
 ---

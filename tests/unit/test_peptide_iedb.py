@@ -8,7 +8,7 @@ from urllib.parse import parse_qs
 
 import pytest
 
-from splicegaip.peptide.iedb import (
+from epitoperank.peptide.iedb import (
     IedbClient,
     IedbResponseError,
 )

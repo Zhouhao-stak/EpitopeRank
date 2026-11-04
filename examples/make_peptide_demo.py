@@ -27,7 +27,7 @@ import csv
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCE = ROOT / "splicegaip" / "peptide" / "reference" / "known_epitopes.tsv"
+REFERENCE = ROOT / "epitoperank" / "peptide" / "reference" / "known_epitopes.tsv"
 OUTPUT = ROOT / "examples" / "peptide_demo"
 
 #: Human-preferred codons (a fixed, deterministic choice for the demo only).

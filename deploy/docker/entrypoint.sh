@@ -7,10 +7,10 @@
 # the API is started as N separate uvicorn workers instead.
 set -eu
 
-WORKERS="${SPLICEGAIP_WORKERS:-1}"
-PORT="${SPLICEGAIP_PORT:-8800}"
-STREAMLIT_PORT="${SPLICEGAIP_STREAMLIT_PORT:-8501}"
-ENABLE_STREAMLIT="${SPLICEGAIP_ENABLE_STREAMLIT:-1}"
+WORKERS="${EPITOPERANK_WORKERS:-1}"
+PORT="${EPITOPERANK_PORT:-8800}"
+STREAMLIT_PORT="${EPITOPERANK_STREAMLIT_PORT:-8501}"
+ENABLE_STREAMLIT="${EPITOPERANK_ENABLE_STREAMLIT:-1}"
 
 # matplotlib builds a font cache on first use; several workers doing that at
 # once corrupts it. One shared, pre-warmed directory avoids the race.
@@ -25,7 +25,7 @@ export MKL_NUM_THREADS="${MKL_NUM_THREADS:-1}"
 export NUMEXPR_NUM_THREADS="${NUMEXPR_NUM_THREADS:-1}"
 
 if [ "$ENABLE_STREAMLIT" = "1" ]; then
-  python -m streamlit run splicegaip/interface/streamlit_app.py \
+  python -m streamlit run epitoperank/interface/streamlit_app.py \
     --server.port "$STREAMLIT_PORT" \
     --server.address 0.0.0.0 \
     --server.headless true \

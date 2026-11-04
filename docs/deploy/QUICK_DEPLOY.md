@@ -1,4 +1,4 @@
-# SpliceGAIP 一键部署命令（复制粘贴版）
+# EpitopeRank 一键部署命令（复制粘贴版）
 
 > 当你的网络连接稳定时，直接复制这些命令到 Git Bash 或 WSL 执行
 
@@ -13,13 +13,13 @@
 SERVER="wang_zi_wei@123.255.66.81"
 PORT="39145"
 PASS="REDACTED-SSH-PASSWORD"
-REMOTE_DIR="/home/wang_zi_wei/splicegaip"
+REMOTE_DIR="/home/wang_zi_wei/epitoperank"
 
 # ===== 第2步：创建远程目录 =====
 sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "mkdir -p $REMOTE_DIR"
 
 # ===== 第3步：上传文件（使用 tar 管道）=====
-cd /e/SpliceGAIP
+cd /e/EpitopeRank
 tar czf - \
   --exclude='.git' \
   --exclude='venv' \
@@ -46,7 +46,7 @@ fi
 # ===== 第5步：启动服务 =====
 sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "
 cd $REMOTE_DIR
-echo 'Starting SpliceGAIP...'
+echo 'Starting EpitopeRank...'
 docker compose pull
 docker compose up -d --build
 echo ''
@@ -78,7 +78,7 @@ ssh -p 39145 wang_zi_wei@123.255.66.81
 # 密码: REDACTED-SSH-PASSWORD
 
 # 编辑配置文件
-cd ~/splicegaip
+cd ~/epitoperank
 vim .env
 
 # 添加这一行（按 i 进入编辑模式）：
@@ -106,12 +106,12 @@ docker compose logs -f
 SERVER="wang_zi_wei@123.255.66.81"
 PORT="39145"
 PASS="REDACTED-SSH-PASSWORD"
-REMOTE_DIR="/home/wang_zi_wei/splicegaip"
+REMOTE_DIR="/home/wang_zi_wei/epitoperank"
 
-echo "Updating SpliceGAIP..."
+echo "Updating EpitopeRank..."
 
 # Upload files
-cd /e/SpliceGAIP
+cd /e/EpitopeRank
 tar czf - --exclude='.git' --exclude='venv' --exclude='__pycache__' --exclude='*.pyc' --exclude='.env' --exclude='node_modules' --exclude='htmlcov' --exclude='dist' --exclude='build' . | \
   sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
 
@@ -143,7 +143,7 @@ curl http://123.255.66.81:8800/api/health
 {"status":"ok","version":"0.1.0"}
 
 # 查看日志
-ssh -p 39145 wang_zi_wei@123.255.66.81 "cd ~/splicegaip && docker compose logs -f"
+ssh -p 39145 wang_zi_wei@123.255.66.81 "cd ~/epitoperank && docker compose logs -f"
 ```
 
 ---
@@ -158,7 +158,7 @@ ssh -p 39145 wang_zi_wei@123.255.66.81 "cd ~/splicegaip && docker compose logs -
    - 端口: `39145`
    - 用户: `wang_zi_wei`
    - 密码: `REDACTED-SSH-PASSWORD`
-3. 将 `E:\SpliceGAIP\` 文件夹拖拽到服务器的 `/home/wang_zi_wei/splicegaip/`
+3. 将 `E:\EpitopeRank\` 文件夹拖拽到服务器的 `/home/wang_zi_wei/epitoperank/`
 4. 然后 SSH 登录执行第5步（启动服务）
 
 ### 方案 B：分批上传
@@ -167,12 +167,12 @@ ssh -p 39145 wang_zi_wei@123.255.66.81 "cd ~/splicegaip && docker compose logs -
 
 ```bash
 # 先上传核心代码
-tar czf - splicegaip/*.py requirements.txt Dockerfile docker-compose*.yml | \
+tar czf - epitoperank/*.py requirements.txt Dockerfile docker-compose*.yml | \
   sshpass -p "$PASS" ssh -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
 
 # 再上传子目录
 for dir in agent analysis api interface llm splicing; do
-    tar czf - splicegaip/$dir/ | \
+    tar czf - epitoperank/$dir/ | \
       sshpass -p "$PASS" ssh -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
     echo "Uploaded $dir"
 done

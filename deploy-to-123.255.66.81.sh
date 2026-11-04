@@ -1,5 +1,5 @@
 #!/bin/bash
-# SpliceGAIP Deployment Script for 123.255.66.81:39145
+# EpitopeRank Deployment Script for 123.255.66.81:39145
 # User: wang_zi_wei
 # No root required - uses existing Docker installation
 
@@ -8,12 +8,12 @@ set -e
 # Server Configuration
 SERVER="wang_zi_wei@123.255.66.81"
 PORT="39145"
-REMOTE_DIR="/home/wang_zi_wei/splicegaip"
+REMOTE_DIR="/home/wang_zi_wei/epitoperank"
 API_PORT="8800"
 UI_PORT="8501"
 
 echo "=========================================="
-echo "🚀 SpliceGAIP Deployment to 123.255.66.81"
+echo "🚀 EpitopeRank Deployment to 123.255.66.81"
 echo "=========================================="
 echo ""
 
@@ -94,7 +94,7 @@ ssh_cmd "cd $REMOTE_DIR && \
     fi"
 
 # Step 7: Deploy
-echo "[7/7] Deploying SpliceGAIP..."
+echo "[7/7] Deploying EpitopeRank..."
 ssh_cmd "cd $REMOTE_DIR && \
     echo 'Pulling latest images...' && \
     docker compose pull && \

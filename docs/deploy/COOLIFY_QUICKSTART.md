@@ -31,17 +31,17 @@ https://your-server-ip:8000
 
 ---
 
-### 第 2 步：配置 SpliceGAIP 项目（2 分钟）
+### 第 2 步：配置 EpitopeRank 项目（2 分钟）
 
 **在 Coolify Web UI 中操作**：
 
 1. **连接 GitHub**
    - Sources → Add Source → GitHub
-   - 授权访问你的 SpliceGAIP 仓库
+   - 授权访问你的 EpitopeRank 仓库
 
 2. **创建项目**
    - Projects → Add Project
-   - Name: `SpliceGAIP`
+   - Name: `EpitopeRank`
    - Source: 选择你的仓库
    - Branch: `main`
 
@@ -51,9 +51,9 @@ https://your-server-ip:8000
    DEEPSEEK_API_KEY=sk-your-key-here
 
    # 推荐
-   SPLICEGAIP_ENABLE_PUBMED=true
-   SPLICEGAIP_LOG_LEVEL=INFO
-   SPLICEGAIP_API_KEY=<生成随机密钥>
+   EPITOPERANK_ENABLE_PUBMED=true
+   EPITOPERANK_LOG_LEVEL=INFO
+   EPITOPERANK_API_KEY=<生成随机密钥>
    ```
 
 ---
@@ -75,7 +75,7 @@ git push origin main
 
 访问你的应用：
 ```
-https://splicegaip.your-domain.com
+https://epitoperank.your-domain.com
 ```
 
 **享受的功能**：

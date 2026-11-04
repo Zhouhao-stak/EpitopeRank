@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from splicegaip import storage
+from epitoperank import storage
 
 
 SCHEMA = """
@@ -46,7 +46,7 @@ def test_default_runtime_root_is_not_a_temp_directory(monkeypatch):
     monkeypatch.setenv("LOCALAPPDATA", r"C:\Users\tester\AppData\Local")
     monkeypatch.setattr(storage.os, "name", "nt")
     root = storage.default_runtime_root()
-    assert root == Path(r"C:\Users\tester\AppData\Local") / "SpliceGAIP"
+    assert root == Path(r"C:\Users\tester\AppData\Local") / "EpitopeRank"
     assert "Temp" not in str(root)
 
 
@@ -97,7 +97,7 @@ def test_merge_copies_the_database_when_target_is_absent(tmp_path):
 def test_migrate_legacy_storage_copies_projects_and_rewrites_paths(tmp_path, monkeypatch):
     legacy = tmp_path / "legacy-root"
     _make_db(
-        legacy / "splicegaip.sqlite3",
+        legacy / "epitoperank.sqlite3",
         [("P1", "first")],
         [("P1", "figure:volcano", str(legacy / "projects" / "P1" / "figures" / "volcano.png"))],
     )
@@ -110,16 +110,16 @@ def test_migrate_legacy_storage_copies_projects_and_rewrites_paths(tmp_path, mon
     report = storage.migrate_legacy_storage(target)
 
     assert report["migrated_from"] == [str(legacy.resolve())]
-    assert (target / "splicegaip.sqlite3").is_file()
+    assert (target / "epitoperank.sqlite3").is_file()
     assert (target / "projects" / "P1" / "figures" / "volcano.png").is_file()
-    artifact_path = _rows(target / "splicegaip.sqlite3", "artifacts")[0][3]
+    artifact_path = _rows(target / "epitoperank.sqlite3", "artifacts")[0][3]
     assert artifact_path.startswith(str(target.resolve()))
     assert str(legacy) not in artifact_path
 
 
 def test_migration_runs_only_once(tmp_path, monkeypatch):
     legacy = tmp_path / "legacy-root"
-    _make_db(legacy / "splicegaip.sqlite3", [("P1", "first")], [])
+    _make_db(legacy / "epitoperank.sqlite3", [("P1", "first")], [])
     target = tmp_path / "new-root"
     monkeypatch.setattr(storage, "legacy_runtime_roots", lambda _target=None: [legacy])
 
@@ -128,16 +128,16 @@ def test_migration_runs_only_once(tmp_path, monkeypatch):
 
     assert first["migrated_from"]
     assert second["migrated_from"] == []
-    assert len(_rows(target / "splicegaip.sqlite3", "projects")) == 1
+    assert len(_rows(target / "epitoperank.sqlite3", "projects")) == 1
 
 
 def test_storage_info_reports_layout(tmp_path):
     root = tmp_path / "root"
-    _make_db(root / "splicegaip.sqlite3", [("P1", "first")], [])
+    _make_db(root / "epitoperank.sqlite3", [("P1", "first")], [])
     (root / "projects" / "P1").mkdir(parents=True)
 
     info = storage.storage_info(root)
 
     assert info["runtime_root"] == str(root.resolve())
-    assert info["databases"]["splicegaip.sqlite3"]["exists"] is True
+    assert info["databases"]["epitoperank.sqlite3"]["exists"] is True
     assert info["project_count"] == 1

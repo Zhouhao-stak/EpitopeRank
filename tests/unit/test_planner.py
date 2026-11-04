@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from splicegaip.agent.planner import (
+from epitoperank.agent.planner import (
     Plan,
     critique_answer,
     deterministic_critique,
@@ -14,7 +14,7 @@ from splicegaip.agent.planner import (
     make_plan,
     revision_instruction,
 )
-from splicegaip.llm.scripted import ScriptedChat
+from epitoperank.llm.scripted import ScriptedChat
 
 TOOLS = [
     {"type": "function", "function": {"name": "project_overview", "description": "overview",

@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from splicegaip.data.loader import Dataset
-from splicegaip.splicing.schema import parse_event_row
-from splicegaip.neoantigen_workflow import start, advance
+from epitoperank.data.loader import Dataset
+from epitoperank.splicing.schema import parse_event_row
+from epitoperank.neoantigen_workflow import start, advance
 
 
 def test_stages_require_confirmation_and_stop_on_empty_filter(tmp_path):

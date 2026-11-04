@@ -1,4 +1,4 @@
-# SpliceGAIP WinSCP 一键部署方案
+# EpitopeRank WinSCP 一键部署方案
 
 > 像扣子一样简单：WinSCP 拖拽上传 + SSH 一条命令启动
 
@@ -8,12 +8,12 @@
 
 ### 1. 下载部署包
 
-文件已准备好：**`C:\tmp\splicegaip-deploy-package.tar.gz`** (2.5MB)
+文件已准备好：**`C:\tmp\epitoperank-deploy-package.tar.gz`** (2.5MB)
 
 如果文件不存在，在 Git Bash 执行：
 ```bash
-cd /e/SpliceGAIP
-tar czf /tmp/splicegaip-deploy-package.tar.gz \
+cd /e/EpitopeRank
+tar czf /tmp/epitoperank-deploy-package.tar.gz \
   --exclude='.git' --exclude='venv' --exclude='__pycache__' \
   --exclude='*.pyc' --exclude='.env' --exclude='node_modules' \
   --exclude='htmlcov' --exclude='dist' --exclude='build' \
@@ -39,8 +39,8 @@ tar czf /tmp/splicegaip-deploy-package.tar.gz \
    - 端口: `39145`
    - 用户: `wang_zi_wei`
    - 密码: `REDACTED-SSH-PASSWORD`
-3. 在右侧创建文件夹 `/home/wang_zi_wei/splicegaip`
-4. 将 `C:\tmp\splicegaip-deploy-package.tar.gz` **拖拽**到该文件夹
+3. 在右侧创建文件夹 `/home/wang_zi_wei/epitoperank`
+4. 将 `C:\tmp\epitoperank-deploy-package.tar.gz` **拖拽**到该文件夹
 5. 等待上传完成 ✅
 
 ### 第 2 步：SSH 一键启动（2分钟）
@@ -55,8 +55,8 @@ ssh -p 39145 wang_zi_wei@123.255.66.81
 # ===== 从这里开始复制 =====
 
 # 解压文件
-cd ~/splicegaip
-tar xzf splicegaip-deploy-package.tar.gz && rm splicegaip-deploy-package.tar.gz
+cd ~/epitoperank
+tar xzf epitoperank-deploy-package.tar.gz && rm epitoperank-deploy-package.tar.gz
 
 # 首次部署需要配置 API Key
 if [ ! -f .env ]; then
@@ -71,7 +71,7 @@ if [ ! -f .env ]; then
 fi
 
 # 启动服务（自动构建+后台运行）
-echo "🚀 Starting SpliceGAIP..."
+echo "🚀 Starting EpitopeRank..."
 docker compose pull
 docker compose up -d --build
 
@@ -128,8 +128,8 @@ ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.6
 
 ### 1. 重新打包（本地）
 ```bash
-cd /e/SpliceGAIP
-tar czf /tmp/splicegaip-deploy-package.tar.gz \
+cd /e/EpitopeRank
+tar czf /tmp/epitoperank-deploy-package.tar.gz \
   --exclude='.git' --exclude='venv' --exclude='__pycache__' \
   --exclude='*.pyc' --exclude='.env' --exclude='node_modules' \
   --exclude='htmlcov' --exclude='dist' --exclude='build' \
@@ -137,15 +137,15 @@ tar czf /tmp/splicegaip-deploy-package.tar.gz \
 ```
 
 ### 2. WinSCP 上传
-- 拖拽新的 tar.gz 到服务器的 `~/splicegaip/`
+- 拖拽新的 tar.gz 到服务器的 `~/epitoperank/`
 - 覆盖旧文件
 
 ### 3. SSH 重启（一条命令）
 ```bash
 ssh -p 39145 wang_zi_wei@123.255.66.81 "
-cd ~/splicegaip && \
-tar xzf splicegaip-deploy-package.tar.gz && \
-rm splicegaip-deploy-package.tar.gz && \
+cd ~/epitoperank && \
+tar xzf epitoperank-deploy-package.tar.gz && \
+rm epitoperank-deploy-package.tar.gz && \
 docker compose up -d --build && \
 docker compose ps
 "
@@ -157,7 +157,7 @@ docker compose ps
 
 ##  像扣子一样的体验
 
-| 扣子功能 | SpliceGAIP 实现 |
+| 扣子功能 | EpitopeRank 实现 |
 |---------|----------------|
 | 拖拽上传 | ✅ WinSCP 图形界面 |
 | 一键部署 | ✅ `docker compose up -d --build` |
@@ -187,14 +187,14 @@ docker compose restart
 docker compose down
 
 # 查看资源使用
-docker stats splicegaip-api
+docker stats epitoperank-api
 
 # 进入容器内部
-docker compose exec splicegaip-api bash
+docker compose exec epitoperank-api bash
 
 # 备份数据库
-docker compose exec splicegaip-api cp /data/splicegaip.sqlite3 /tmp/backup.sqlite3
-docker cp splicegaip-splicegaip-api-1:/tmp/backup.sqlite3 ./backup.sqlite3
+docker compose exec epitoperank-api cp /data/epitoperank.sqlite3 /tmp/backup.sqlite3
+docker cp epitoperank-epitoperank-api-1:/tmp/backup.sqlite3 ./backup.sqlite3
 ```
 
 ---
@@ -208,7 +208,7 @@ docker cp splicegaip-splicegaip-api-1:/tmp/backup.sqlite3 ./backup.sqlite3
 ssh -p 39145 wang_zi_wei@123.255.66.81
 
 # 编辑配置
-cd ~/splicegaip
+cd ~/epitoperank
 nano .env
 
 # 添加这一行（替换为你的真实密钥）

@@ -17,7 +17,7 @@
 | GSE319608 小鼠剪接 PSI | `public_datasets/GSE319608_rmats/` | PSI 矩阵（Excel） | ❌ 不能（非事件表，无 p/FDR） |
 | HCC1395 pVACtools 输入 | `public_datasets/HCC1395_pVACtools/` | VCF / junction / GTF / 蛋白 FASTA / HLA | ❌ 不能（非剪接事件表） |
 | splice2neo 源码与 toy 数据 | `public_datasets/splice2neo_public/` | R 包 + `.rda` toy 数据 | ❌ 不能（R 数据对象） |
-| 肽参考表 | `splicegaip/peptide/reference/` | HLA 等位基因 / IEDB assay 抽取 | —（肽预测用） |
+| 肽参考表 | `epitoperank/peptide/reference/` | HLA 等位基因 / IEDB assay 抽取 | —（肽预测用） |
 | 肽演示数据 | `examples/peptide_demo/` | 真实 IEDB 肽表 + 合成阳性对照 CDS | —（肽预测 demo） |
 
 ---
@@ -243,7 +243,7 @@ STAR + GTF + 基因组 FASTA（或用 moPepGen / pVACsplice / splice2neo）重�
 
 ## 8. 肽参考数据（本仓库新增）
 
-`splicegaip/peptide/reference/`：
+`epitoperank/peptide/reference/`：
 
 | 文件 | 行数 | 内容 | 来源 |
 | --- | --- | --- | --- |
@@ -273,7 +273,7 @@ STAR + GTF + 基因组 FASTA（或用 moPepGen / pVACsplice / splice2neo）重�
 | `README.md` | 说明数据性质 | 必读 |
 
 生成脚本：`python examples/make_peptide_demo.py`（依赖
-`splicegaip/peptide/reference/known_epitopes.tsv`）。合成数据只用于流程验证，
+`epitoperank/peptide/reference/known_epitopes.tsv`）。合成数据只用于流程验证，
 **不能**作为生物学发现写进报告。
 
 ```bash

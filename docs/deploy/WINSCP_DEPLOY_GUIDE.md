@@ -1,4 +1,4 @@
-# WinSCP 部署 SpliceGAIP 完整指南
+# WinSCP 部署 EpitopeRank 完整指南
 
 > 最简单可靠的部署方式 - 图形界面操作，无需命令行
 
@@ -8,12 +8,12 @@
 
 部署包已为你准备好：
 
-**文件位置**: `C:\tmp\splicegaip-deploy-package.tar.gz` (2.5MB)
+**文件位置**: `C:\tmp\epitoperank-deploy-package.tar.gz` (2.5MB)
 
 如果文件不存在，在 Git Bash 中执行：
 ```bash
-cd /e/SpliceGAIP
-tar czf /tmp/splicegaip-deploy-package.tar.gz \
+cd /e/EpitopeRank
+tar czf /tmp/epitoperank-deploy-package.tar.gz \
   --exclude='.git' \
   --exclude='venv' \
   --exclude='__pycache__' \
@@ -69,15 +69,15 @@ tar czf /tmp/splicegaip-deploy-package.tar.gz \
 **在右侧面板（服务器）操作**：
 1. 导航到 `/home/wang_zi_wei/`
 2. 右键 → 新建 → 目录
-3. 输入目录名: `splicegaip`
+3. 输入目录名: `epitoperank`
 4. 回车确认
 
 ### 4.2 上传部署包
 
 **在左侧面板（本地）操作**：
 1. 导航到 `C:\tmp\`
-2. 找到 `splicegaip-deploy-package.tar.gz` 文件
-3. **拖拽**这个文件到右侧的 `splicegaip` 文件夹中
+2. 找到 `epitoperank-deploy-package.tar.gz` 文件
+3. **拖拽**这个文件到右侧的 `epitoperank` 文件夹中
 
 或者：
 1. 右键点击文件
@@ -116,17 +116,17 @@ ssh -p 39145 wang_zi_wei@123.255.66.81
 
 ```bash
 # 1. 进入部署目录
-cd ~/splicegaip
+cd ~/epitoperank
 
 # 2. 解压文件
-tar xzf splicegaip-deploy-package.tar.gz
+tar xzf epitoperank-deploy-package.tar.gz
 
 # 3. 验证文件
 ls -la
-# 应该看到 Dockerfile, docker-compose.yml, requirements.txt, splicegaip/ 等
+# 应该看到 Dockerfile, docker-compose.yml, requirements.txt, epitoperank/ 等
 
 # 4. 删除压缩包（节省空间）
-rm splicegaip-deploy-package.tar.gz
+rm epitoperank-deploy-package.tar.gz
 
 # 5. 创建环境变量文件
 cp .env.production.example .env
@@ -163,8 +163,8 @@ DEEPSEEK_API_KEY=sk-your-deepseek-api-key-here
 继续在 SSH 终端中执行：
 
 ```bash
-# 确保在 splicegaip 目录
-cd ~/splicegaip
+# 确保在 epitoperank 目录
+cd ~/epitoperank
 
 # 1. 拉取最新 Docker 镜像
 docker compose pull
@@ -179,7 +179,7 @@ docker compose ps
 **期望输出**：
 ```
 NAME                IMAGE          STATUS
-splicegaip-api-1    ...            Up (healthy)
+epitoperank-api-1    ...            Up (healthy)
 ```
 
 ```bash
@@ -245,8 +245,8 @@ ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.6
 
 在本地 Git Bash 执行：
 ```bash
-cd /e/SpliceGAIP
-tar czf /tmp/splicegaip-deploy-package.tar.gz \
+cd /e/EpitopeRank
+tar czf /tmp/epitoperank-deploy-package.tar.gz \
   --exclude='.git' --exclude='venv' --exclude='__pycache__' \
   --exclude='*.pyc' --exclude='.env' --exclude='node_modules' \
   --exclude='htmlcov' --exclude='dist' --exclude='build' \
@@ -256,7 +256,7 @@ tar czf /tmp/splicegaip-deploy-package.tar.gz \
 ### 步骤 2：上传新包
 
 在 WinSCP 中：
-1. 将新的 `splicegaip-deploy-package.tar.gz` 拖到服务器的 `~/splicegaip/`
+1. 将新的 `epitoperank-deploy-package.tar.gz` 拖到服务器的 `~/epitoperank/`
 2. 覆盖旧文件
 
 ### 步骤 3：SSH 解压重启
@@ -264,9 +264,9 @@ tar czf /tmp/splicegaip-deploy-package.tar.gz \
 ```bash
 ssh -p 39145 wang_zi_wei@123.255.66.81
 
-cd ~/splicegaip
-tar xzf splicegaip-deploy-package.tar.gz
-rm splicegaip-deploy-package.tar.gz
+cd ~/epitoperank
+tar xzf epitoperank-deploy-package.tar.gz
+rm epitoperank-deploy-package.tar.gz
 docker compose up -d --build
 docker compose logs -f
 ```
@@ -280,7 +280,7 @@ docker compose logs -f
 避免每次都输入信息：
 1. 在 WinSCP 登录界面填写好信息
 2. 点击 "保存"
-3. 输入会话名称（如 "SpliceGAIP Server"）
+3. 输入会话名称（如 "EpitopeRank Server"）
 4. 下次直接双击会话名即可连接
 
 ### 2. 使用 WinSCP 内置终端
@@ -330,7 +330,7 @@ ssh -p 39145 wang_zi_wei@123.255.66.81
 
 **检查**：
 ```bash
-cd ~/splicegaip
+cd ~/epitoperank
 ls -la
 # 应该看到完整的文件结构
 ```
@@ -343,7 +343,7 @@ ls -la
 
 **查看详细日志**：
 ```bash
-docker compose logs splicegaip-api
+docker compose logs epitoperank-api
 ```
 
 **常见原因**：

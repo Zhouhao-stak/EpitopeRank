@@ -2,10 +2,10 @@
 setlocal EnableExtensions EnableDelayedExpansion
 
 cd /d "%~dp0"
-title SpliceGAIP - One-click Startup
+title EpitopeRank - One-click Startup
 
 echo ========================================
-echo   SpliceGAIP One-click Startup
+echo   EpitopeRank One-click Startup
 echo ========================================
 echo.
 
@@ -33,7 +33,7 @@ echo [2/3] Waiting for the API health check...
 set "HEALTHY="
 for /L %%N in (1,1,30) do (
     set "HEALTH_STATUS="
-    for /f "delims=" %%S in ('docker inspect --format="{{.State.Health.Status}}" splicegaip 2^>nul') do set "HEALTH_STATUS=%%S"
+    for /f "delims=" %%S in ('docker inspect --format="{{.State.Health.Status}}" epitoperank 2^>nul') do set "HEALTH_STATUS=%%S"
     if /I "!HEALTH_STATUS!"=="healthy" (
         set "HEALTHY=1"
         goto :healthy
@@ -50,7 +50,7 @@ if not defined HEALTHY (
     goto :failed
 )
 
-echo [3/3] SpliceGAIP is ready.
+echo [3/3] EpitopeRank is ready.
 echo.
 echo   Web UI: http://127.0.0.1:8800/
 echo   API:    http://127.0.0.1:8800/api/health

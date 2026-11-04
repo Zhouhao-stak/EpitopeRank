@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from splicegaip.api.app import create_app
+from epitoperank.api.app import create_app
 
 
 @pytest.fixture

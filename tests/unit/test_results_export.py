@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from splicegaip.results_export import export_bundle, safe_folder_name
+from epitoperank.results_export import export_bundle, safe_folder_name
 
 
 def _fake_project(root: Path, project_id: str = "SPN-TEST0001") -> Path:
@@ -93,7 +93,7 @@ def test_folder_name_is_explorer_safe_and_unique():
 
 
 def test_package_bundle_creates_zip(tmp_path):
-    from splicegaip.results_export import package_bundle
+    from epitoperank.results_export import package_bundle
 
     project_dir = _fake_project(tmp_path / "runtime")
     bundle = export_bundle(
@@ -111,16 +111,16 @@ def test_package_bundle_creates_zip(tmp_path):
 
 
 def test_upload_without_configuration_reports_clearly(tmp_path, monkeypatch):
-    from splicegaip.results_export import upload_bundle
+    from epitoperank.results_export import upload_bundle
 
-    monkeypatch.delenv("SPLICEGAIP_CLOUD_URL", raising=False)
+    monkeypatch.delenv("EPITOPERANK_CLOUD_URL", raising=False)
     result = upload_bundle(tmp_path / "nothing.zip")
     assert result["ok"] is False
-    assert "SPLICEGAIP_CLOUD_URL" in result["detail"]
+    assert "EPITOPERANK_CLOUD_URL" in result["detail"]
 
 
 def test_package_bundle_creates_zip(tmp_path):
-    from splicegaip.results_export import package_bundle
+    from epitoperank.results_export import package_bundle
 
     project_dir = _fake_project(tmp_path / "runtime")
     bundle = export_bundle(
@@ -138,9 +138,9 @@ def test_package_bundle_creates_zip(tmp_path):
 
 
 def test_upload_without_configuration_reports_clearly(tmp_path, monkeypatch):
-    from splicegaip.results_export import upload_bundle
+    from epitoperank.results_export import upload_bundle
 
-    monkeypatch.delenv("SPLICEGAIP_CLOUD_URL", raising=False)
+    monkeypatch.delenv("EPITOPERANK_CLOUD_URL", raising=False)
     result = upload_bundle(tmp_path / "nothing.zip")
     assert result["ok"] is False
-    assert "SPLICEGAIP_CLOUD_URL" in result["detail"]
+    assert "EPITOPERANK_CLOUD_URL" in result["detail"]

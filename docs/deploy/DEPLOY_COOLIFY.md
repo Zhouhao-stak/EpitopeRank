@@ -1,4 +1,4 @@
-# SpliceGAIP Coolify 部署指南
+# EpitopeRank Coolify 部署指南
 
 > **Coolify** = 开源的自托管 PaaS 平台，让你在自己的服务器上享受类似 Vercel/Coze 的一键部署体验
 
@@ -20,7 +20,7 @@
 
 ```bash
 # 在域名服务商处添加 A 记录
-# 示例：splicegaip.your-domain.com → 你的服务器IP
+# 示例：epitoperank.your-domain.com → 你的服务器IP
 ```
 
 ---
@@ -63,13 +63,13 @@ https://coolify.your-domain.com  # 如果配置了域名
 1. 登录 Coolify 控制台
 2. 点击 **"Sources"** → **"Add Source"**
 3. 选择 **"GitHub"**
-4. 授权访问你的 SpliceGAIP 仓库
+4. 授权访问你的 EpitopeRank 仓库
 
 ### 2.2 创建新项目
 
 1. 点击 **"Projects"** → **"Add Project"**
 2. 填写信息：
-   - **Name**: `SpliceGAIP`
+   - **Name**: `EpitopeRank`
    - **Description**: AI-driven Alternative Splicing Analysis Platform
    - **Source**: 选择刚才连接的 GitHub 仓库
    - **Branch**: `main` (或你的生产分支)
@@ -87,17 +87,17 @@ MOONSHOT_API_KEY=sk-moonshot-key
 DASHSCOPE_API_KEY=sk-dashscope-key
 
 # 应用配置
-SPLICEGAIP_HOST=0.0.0.0
-SPLICEGAIP_PORT=8800
-SPLICEGAIP_ENABLE_PUBMED=true
+EPITOPERANK_HOST=0.0.0.0
+EPITOPERANK_PORT=8800
+EPITOPERANK_ENABLE_PUBMED=true
 
 # 安全配置（强烈建议）
-SPLICEGAIP_API_KEY=generate-a-random-secret-key
-SPLICEGAIP_CORS_ORIGINS=https://splicegaip.your-domain.com
+EPITOPERANK_API_KEY=generate-a-random-secret-key
+EPITOPERANK_CORS_ORIGINS=https://epitoperank.your-domain.com
 
 # 日志配置
-SPLICEGAIP_LOG_LEVEL=INFO
-SPLICEGAIP_JSON_LOGGING=true
+EPITOPERANK_LOG_LEVEL=INFO
+EPITOPERANK_JSON_LOGGING=true
 ```
 
 **生成安全的 API Key**：
@@ -151,7 +151,7 @@ Coolify 会自动检测到这些文件！
 
 ```bash
 # 测试 API 端点
-curl https://splicegaip.your-domain.com/api/health
+curl https://epitoperank.your-domain.com/api/health
 
 # 期望输出
 {"status": "ok", "version": "0.1.0"}
@@ -159,7 +159,7 @@ curl https://splicegaip.your-domain.com/api/health
 
 访问 Web UI：
 ```
-https://splicegaip.your-domain.com
+https://epitoperank.your-domain.com
 ```
 
 ---
@@ -171,7 +171,7 @@ Coolify 会自动处理 SSL 证书！
 ### 4.1 配置自定义域名
 
 1. 在项目设置中点击 **"Domains"**
-2. 添加你的域名：`splicegaip.your-domain.com`
+2. 添加你的域名：`epitoperank.your-domain.com`
 3. Coolify 自动申请 Let's Encrypt 证书
 4. 等待 1-2 分钟，HTTPS 自动生效
 
@@ -179,7 +179,7 @@ Coolify 会自动处理 SSL 证书！
 
 ```bash
 # 检查证书
-curl -I https://splicegaip.your-domain.com
+curl -I https://epitoperank.your-domain.com
 
 # 应该看到
 HTTP/2 200
@@ -194,10 +194,10 @@ strict-transport-security: max-age=31536000
 
 ```bash
 # 在 Coolify Web UI 中
-Projects → SpliceGAIP → Logs
+Projects → EpitopeRank → Logs
 
 # 或通过命令行
-docker logs -f splicegaip-api --tail 100
+docker logs -f epitoperank-api --tail 100
 ```
 
 ### 更新部署
@@ -223,11 +223,11 @@ git push origin main
 
 ```bash
 # 备份 SQLite 数据库
-docker exec splicegaip-api cp /data/splicegaip.sqlite3 /tmp/backup.sqlite3
-docker cp splicegaip-api:/tmp/backup.sqlite3 ./backup-$(date +%Y%m%d).sqlite3
+docker exec epitoperank-api cp /data/epitoperank.sqlite3 /tmp/backup.sqlite3
+docker cp epitoperank-api:/tmp/backup.sqlite3 ./backup-$(date +%Y%m%d).sqlite3
 
 # 或使用 Coolify 的自动备份功能
-Projects → SpliceGAIP → Backups → Enable Automatic Backup
+Projects → EpitopeRank → Backups → Enable Automatic Backup
 ```
 
 ### 重启服务
@@ -235,7 +235,7 @@ Projects → SpliceGAIP → Backups → Enable Automatic Backup
 ```bash
 # 在 Coolify UI 中点击 "Restart"
 # 或通过命令行
-docker restart splicegaip-api
+docker restart epitoperank-api
 ```
 
 ---
@@ -264,10 +264,10 @@ docker compose -f docker-compose.coolify.yml logs --tail 200
 **解决**：
 ```bash
 # 手动测试健康检查
-docker exec splicegaip-api python -c "import urllib.request; urllib.request.urlopen('http://localhost:8800/api/health')"
+docker exec epitoperank-api python -c "import urllib.request; urllib.request.urlopen('http://localhost:8800/api/health')"
 
 # 检查 API 是否启动
-docker exec splicegaip-api curl http://localhost:8800/api/health
+docker exec epitoperank-api curl http://localhost:8800/api/health
 ```
 
 ### 问题 3：API 返回 502 Bad Gateway
@@ -277,13 +277,13 @@ docker exec splicegaip-api curl http://localhost:8800/api/health
 **解决**：
 ```bash
 # 检查后端服务
-docker ps | grep splicegaip-api
+docker ps | grep epitoperank-api
 
 # 检查网络连接
-docker network inspect splicegaip-network
+docker network inspect epitoperank-network
 
 # 重启 Nginx
-docker restart splicegaip-nginx
+docker restart epitoperank-nginx
 ```
 
 ### 问题 4：数据库锁定
@@ -293,11 +293,11 @@ docker restart splicegaip-nginx
 **解决**：
 ```bash
 # 检查 NFS 兼容性（已在代码中处理）
-docker exec splicegaip-api ls -la /data/
+docker exec epitoperank-api ls -la /data/
 
 # 如果仍有问题，迁移到本地临时目录
 # 在环境变量中添加
-SPLICEGAIP_RUNTIME_ROOT=/tmp/splicegaip-runtime
+EPITOPERANK_RUNTIME_ROOT=/tmp/epitoperank-runtime
 ```
 
 ---
@@ -331,8 +331,8 @@ deploy:
 ```bash
 # 添加 Prometheus 指标端点
 # 在环境变量中启用
-SPLICEGAIP_METRICS_ENABLED=true
-SPLICEGAIP_METRICS_PORT=9090
+EPITOPERANK_METRICS_ENABLED=true
+EPITOPERANK_METRICS_PORT=9090
 ```
 
 然后在 Coolify 中配置 Grafana 面板。
@@ -342,8 +342,8 @@ SPLICEGAIP_METRICS_PORT=9090
 ## 📚 相关文档
 
 - [Coolify 官方文档](https://coolify.io/docs/)
-- [SpliceGAIP 测试指南](../dev/TESTING.md)
-- [SpliceGAIP API 文档](../dev/API_CONFIG.md)
+- [EpitopeRank 测试指南](../dev/TESTING.md)
+- [EpitopeRank API 文档](../dev/API_CONFIG.md)
 - [Docker 最佳实践](DOCKER_USAGE.md)
 
 ---
@@ -351,7 +351,7 @@ SPLICEGAIP_METRICS_PORT=9090
 ## 💡 提示
 
 1. **首次部署后**：立即备份 `.env.production` 文件到安全位置
-2. **定期更新**：每月检查一次 Coolify 和 SpliceGAIP 更新
+2. **定期更新**：每月检查一次 Coolify 和 EpitopeRank 更新
 3. **监控告警**：在 Coolify 中配置邮件/Slack 通知
 4. **成本控制**：根据实际使用情况调整资源限制
 
@@ -361,4 +361,4 @@ SPLICEGAIP_METRICS_PORT=9090
 
 如有问题，请查看：
 - Coolify 社区：https://github.com/coollabsio/coolify/discussions
-- SpliceGAIP Issues：https://github.com/yourname/splicegaip/issues
+- EpitopeRank Issues：https://github.com/yourname/epitoperank/issues

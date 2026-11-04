@@ -1,6 +1,6 @@
-# SpliceGAIP 完整使用文档
+# EpitopeRank 完整使用文档
 
-> SpliceGAIP 是一个基于 AI 的 RNA 可变剪接分析与新抗原（候选肽）生成平台。
+> EpitopeRank 是一个基于 AI 的 RNA 可变剪接分析与新抗原（候选肽）生成平台。
 > 数据格式：**只支持 rMATS 输出格式**（其他格式请先用 rMATS 产出，或走「智能接入」重映射）。
 
 > 🚩 **第一次用？先看图文教程** [`手把手教程.html`](手把手教程.html)：从启动到出肽，
@@ -25,7 +25,7 @@
 
 | 方式 | 启动命令 | 访问地址 |
 |---|---|---|
-| **Windows 桌面版**（推荐本机用） | 双击 `dist\SpliceGAIP\SpliceGAIP.exe` | 自动弹出深色窗口 |
+| **Windows 桌面版**（推荐本机用） | 双击 `dist\EpitopeRank\EpitopeRank.exe` | 自动弹出深色窗口 |
 | **源码网页版** | `python serve_ui.py --port 8800` | http://localhost:8800/ |
 | **Docker 部署** | `cd deploy/docker && docker-compose up -d` | http://服务器IP:8800/ |
 | **公网访问**（本服务器已部署） | 隧道已运行于服务器 tmux 会话 `cloudflared` | https://signing-viewing-uniprotkb-coalition.trycloudflare.com（临时域名，重启隧道会变） |
@@ -70,7 +70,7 @@
 2. **单个 JC 表**：如只分析 SE 一类，直接上传 `SE.MATS.JC.txt`；
 3. **内部标准表**：`AS_event_master.tsv`（本系统分析后的标准事件表，可用于复分析）。
 
-**关键列**（解析器 `splicegaip/splicing/parsers/rmats.py`）：
+**关键列**（解析器 `epitoperank/splicing/parsers/rmats.py`）：
 
 | 列名 | 含义 | 必需 |
 |---|---|---|
@@ -245,31 +245,31 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
 
 | 运行方式 | 运行根目录 |
 |---|---|
-| Windows 桌面版 / 源码 | `%LOCALAPPDATA%\SpliceGAIP`（旧版临时目录数据已自动迁移） |
-| Linux 源码 | `~/.local/share/splicegaip` |
-| Docker | 容器内 `/data`，对应命名卷 `splicegaip-data` |
+| Windows 桌面版 / 源码 | `%LOCALAPPDATA%\EpitopeRank`（旧版临时目录数据已自动迁移） |
+| Linux 源码 | `~/.local/share/epitoperank` |
+| Docker | 容器内 `/data`，对应命名卷 `epitoperank-data` |
 
-目录结构：`splicegaip.sqlite3`（主库：项目/事件/工件）、`projects/<project_id>/`（图表、报告）、`neoantigen_workflows/`、`logs/`。可用环境变量 `SPLICEGAIP_RUNTIME_ROOT` 覆盖。
+目录结构：`epitoperank.sqlite3`（主库：项目/事件/工件）、`projects/<project_id>/`（图表、报告）、`neoantigen_workflows/`、`logs/`。可用环境变量 `EPITOPERANK_RUNTIME_ROOT` 覆盖。
 
 ### 备份与恢复（服务器）
 
 ```bash
-docker run --rm -v splicegaip-data:/data -v $PWD:/bak alpine tar -czf /bak/sg_backup.tar.gz /data
+docker run --rm -v epitoperank-data:/data -v $PWD:/bak alpine tar -czf /bak/sg_backup.tar.gz /data
 # 恢复：
-docker run --rm -v splicegaip-data:/data -v $PWD:/bak alpine sh -c "cd / && tar -xzf /bak/sg_backup.tar.gz"
+docker run --rm -v epitoperank-data:/data -v $PWD:/bak alpine sh -c "cd / && tar -xzf /bak/sg_backup.tar.gz"
 ```
 
 > ⚠️ `docker compose down -v` 会**删除数据卷**，慎用。
 
 ### 历史项目操作
 
-仪表盘点任意历史项目 → 查看详情 / 打开 HTML 报告 / 下载 PDF / 浏览全部事件 / **删除**（同时删库行与项目目录，不可恢复）。聊天记录按项目保存在浏览器 `localStorage`（`splicegaip.chat.<projectId>`，上限 200 条）。
+仪表盘点任意历史项目 → 查看详情 / 打开 HTML 报告 / 下载 PDF / 浏览全部事件 / **删除**（同时删库行与项目目录，不可恢复）。聊天记录按项目保存在浏览器 `localStorage`（`epitoperank.chat.<projectId>`，上限 200 条）。
 
 ---
 
 ## 7. API 速查表
 
-设了 `SPLICEGAIP_API_KEY` 后，除 `/api/health` 外所有 `/api/*` 需带 `X-API-Key` 请求头（或 Bearer Token）。
+设了 `EPITOPERANK_API_KEY` 后，除 `/api/health` 外所有 `/api/*` 需带 `X-API-Key` 请求头（或 Bearer Token）。
 
 | 端点 | 方法 | 说明 |
 |---|---|---|
@@ -303,7 +303,7 @@ nginx 前置时必须设置 `client_max_body_size 2048m;`（见 `deploy/nginx.co
 能，走「智能接入」：上传后确认列映射与分组即可转成标准 rMATS 风格表。但内部只保留 rMATS 事件模型（SE/A5SS/A3SS/MXE/RI）。
 
 **Q4：服务器是 NFS 存储，SQLite 会不会坏？**
-默认已关闭 WAL（`SPLICEGAIP_SQLITE_WAL` 默认 0）；本地磁盘部署可设 `SPLICEGAIP_SQLITE_WAL=1` 提升并发。
+默认已关闭 WAL（`EPITOPERANK_SQLITE_WAL` 默认 0）；本地磁盘部署可设 `EPITOPERANK_SQLITE_WAL=1` 提升并发。
 
 **Q5：历史记录找不到了？**
 旧版数据在临时目录，新版启动时自动迁移到持久目录（逐表 `INSERT OR IGNORE` 幂等迁移），可用 `GET /api/storage` 确认迁移状态。

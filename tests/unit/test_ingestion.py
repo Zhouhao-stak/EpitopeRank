@@ -6,9 +6,9 @@ import json
 
 import pytest
 
-from splicegaip.data.ingestion import apply_ingestion, apply_native_groups, preview_ingestion
-from splicegaip.data.loader import load_dataset
-from splicegaip.data.validator import validate_dataset
+from epitoperank.data.ingestion import apply_ingestion, apply_native_groups, preview_ingestion
+from epitoperank.data.loader import load_dataset
+from epitoperank.data.validator import validate_dataset
 
 MESSY_VENDOR = """Vendor RNA Splicing Report
 Generated 2026-10-21
@@ -107,7 +107,7 @@ def test_excel_and_gzip_event_tables_are_profiled(tmp_path):
     sheet.save(str(tmp_path / "events.xls"))
     with gzip.open(tmp_path / "events.tsv.gz", "wt", encoding="utf-8") as handle:
         handle.write("Gene\tType\tDelta PSI\tp\nGENE1\tSE\t0.4\t0.001\n")
-    from splicegaip.data.ingestion import profile_file
+    from epitoperank.data.ingestion import profile_file
     for name, kind in (("events.xlsx", "xlsx"), ("events.xls", "xls"), ("events.tsv.gz", "delimited")):
         profile = profile_file(tmp_path / name)
         assert profile.supported and profile.file_kind == kind
@@ -197,7 +197,7 @@ def test_confirmed_groups_create_sample_metadata_for_unlabeled_samples(tmp_path)
     dataset = load_dataset(result["path"])
     assert dataset.groups == {"Baseline": ["S1", "S2"], "Drug": ["S3", "S4"]}
     assert dataset.events[0].psi_by_sample["S4"] == pytest.approx(0.8)
-    from splicegaip.analysis.visualization import plot_psi_distribution, plot_psi_heatmap
+    from epitoperank.analysis.visualization import plot_psi_distribution, plot_psi_heatmap
 
     figures = tmp_path / "figures"
     heatmap = plot_psi_heatmap(dataset.events, dataset.samples, figures)
@@ -347,8 +347,8 @@ def test_native_llm_group_suggestion_is_reviewable(tmp_path):
 
 
 def test_identical_previous_upload_prefills_groups(tmp_path):
-    old = tmp_path / "splicegaip_upload_old"
-    new = tmp_path / "splicegaip_upload_new"
+    old = tmp_path / "epitoperank_upload_old"
+    new = tmp_path / "epitoperank_upload_new"
     old.mkdir()
     new.mkdir()
     events = "event_id,gene_id,gene_symbol,event_type,delta_PSI,FDR,PSI_S1,PSI_S2\nE1,G1,GENE1,SE,0.4,0.001,0.2,0.8\n"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# SpliceGAIP Server Deployment Script (No Root Required)
+# EpitopeRank Server Deployment Script (No Root Required)
 # Prerequisites: Docker installed on server, user in docker group
 # Usage: ./deploy-to-server.sh [user@server] [remote_dir]
 
@@ -7,11 +7,11 @@ set -e
 
 # Configuration
 SERVER="${1:-user@your-server.com}"
-REMOTE_DIR="${2:-/home/$USER/splicegaip}"
+REMOTE_DIR="${2:-/home/$USER/epitoperank}"
 LOCAL_PORT="8800"
 REMOTE_PORT="8800"
 
-echo " SpliceGAIP Server Deployment"
+echo " EpitopeRank Server Deployment"
 echo "================================"
 echo "Server: $SERVER"
 echo "Remote Dir: $REMOTE_DIR"

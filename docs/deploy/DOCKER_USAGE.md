@@ -1,4 +1,4 @@
-# SpliceGAIP Docker 使用指南
+# EpitopeRank Docker 使用指南
 
 ## 快速开始
 
@@ -82,7 +82,7 @@ Docker 卷会自动保存以下数据：
 - 运行时状态
 - 用户上传的文件
 
-数据存储在名为 `splicegaip-data` 的 Docker 卷中。
+数据存储在名为 `epitoperank-data` 的 Docker 卷中。
 
 ## 端口映射
 
@@ -107,7 +107,7 @@ Docker 卷会自动保存以下数据：
 
 ```bash
 # 查看健康状态
-docker inspect --format='{{.State.Health.Status}}' splicegaip
+docker inspect --format='{{.State.Health.Status}}' epitoperank
 ```
 
 ## 常见问题
@@ -134,7 +134,7 @@ docker-compose up -d
 
 ```bash
 # 导出数据库卷
-docker run --rm -v splicegaip-data:/data -v %cd%:/backup alpine tar czf /backup/splicegaip-backup.tar.gz /data
+docker run --rm -v epitoperank-data:/data -v %cd%:/backup alpine tar czf /backup/epitoperank-backup.tar.gz /data
 ```
 
 ### Q: AI 功能未启用？
@@ -142,7 +142,7 @@ docker run --rm -v splicegaip-data:/data -v %cd%:/backup alpine tar czf /backup/
 检查 `.env` 文件中是否正确配置了 `MODEL_API_KEY`：
 
 ```bash
-docker-compose exec splicegaip python -c "import os; print(os.getenv('MODEL_API_KEY', 'NOT SET')[:10] + '****')"
+docker-compose exec epitoperank python -c "import os; print(os.getenv('MODEL_API_KEY', 'NOT SET')[:10] + '****')"
 ```
 
 ## 高级用法
@@ -167,8 +167,8 @@ docker-compose --network my-network up -d
 
 ```bash
 # 复制 docker-compose.yml 并修改项目名称
-COMPOSE_PROJECT_NAME=splicegaip-prod docker-compose up -d
-COMPOSE_PROJECT_NAME=splicegaip-dev docker-compose -f docker-compose.dev.yml up -d
+COMPOSE_PROJECT_NAME=epitoperank-prod docker-compose up -d
+COMPOSE_PROJECT_NAME=epitoperank-dev docker-compose -f docker-compose.dev.yml up -d
 ```
 
 ## 安全建议
@@ -183,7 +183,7 @@ COMPOSE_PROJECT_NAME=splicegaip-dev docker-compose -f docker-compose.dev.yml up 
 遇到问题？查看日志：
 
 ```bash
-docker-compose logs -f splicegaip
+docker-compose logs -f epitoperank
 ```
 
 或查看完整文档：`../dev/API_CONFIG.md`

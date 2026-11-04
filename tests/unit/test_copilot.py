@@ -8,10 +8,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from splicegaip.agent.copilot import CopilotTools, ask, status
-from splicegaip.config import LLMSettings, load_settings
-from splicegaip.llm.chat import ChatClient
-from splicegaip.memory.project_memory import ProjectMemory
+from epitoperank.agent.copilot import CopilotTools, ask, status
+from epitoperank.config import LLMSettings, load_settings
+from epitoperank.llm.chat import ChatClient
+from epitoperank.memory.project_memory import ProjectMemory
 
 PROJECT = "SPN-TEST0001"
 
@@ -184,7 +184,7 @@ def test_empty_message_rejected(tmp_path) -> None:
 
 
 def test_sanitize_removes_provider_template_artifacts() -> None:
-    from splicegaip.agent.copilot import _sanitize_model_text
+    from epitoperank.agent.copilot import _sanitize_model_text
 
     raw = "## 结论\n正常内容\n<｜｜DSML｜｜ calls>\n<｜｜DSML｜｜ invoke name=\"x\">\n## 局限\nok"
     cleaned = _sanitize_model_text(raw)
