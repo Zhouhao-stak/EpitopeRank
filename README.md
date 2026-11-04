@@ -237,25 +237,21 @@ Docker 容器内 `/data`（命名卷 `epitoperank-data`），可用 `EPITOPERANK
 
 被拒绝的检验直接变成警告并进报告 Limitations——不遮掩对自己不利的结论。
 
-### 工具调用型助手（copilot）
+### 设置页
 
-不是固定话术，而是真正的 agent 循环（`agent/copilot.py` + `agent/planner.py`）：
-原生 function calling、12 个只读工具、计划 JSON Schema 校验、数字溯源、
-确定性审稿 + 可选模型审稿、修订后重新溯源。
+左侧「⚙️ 设置」放两件事：
 
-- 编排：`react` / `plan` / `auto`；预算：≤6 步、全局 ≤24 次工具、联网 ≤8 次
-- 缓存：联网工具 SQLite + TTL + 项目隔离
-- 接口：`POST /api/copilot/chat`、`/api/copilot/stream`（SSE，界面支持「停止」）
-- 评测：`python run.py eval-agent`
-
-详见 [docs/AGENTIC.md](docs/AGENTIC.md)。
+- **模型配置** —— 填 Base URL / 模型名 / API Key 即可启用报告里的 AI 解读，
+  密钥只写本机 `.env`，不进报告、不进日志。
+- **MCP 工具台** —— 手动选择服务器与工具并传 JSON 参数调用；也可以用一句自然语言
+  让模型挑工具（模型只给 `{server, tool, arguments}` 建议，校验和执行都在本地）。
 
 ## 项目结构
 
 ```
 EpitopeRank/
 ├── agent/             # 自治内核：状态/画像/决策/校验/反思/循环/经验记忆
-│                      # + copilot.py / planner.py / hypothesis.py / skills_bridge.py
+│                      # + hypothesis.py / skills_bridge.py / interactive.py
 ├── agents/            # 3 个核心 Agent + 确定性策略（scripted 模式）
 ├── integrations/      # 可选后端：GSEApy(Enrichr) / MyGene，缺失自动降级
 ├── data/              # loader.py / validator.py（Standard BioAnalysis Format）
@@ -286,7 +282,7 @@ pytest tests/unit tests/integration -v
 pytest --cov=epitoperank --cov-report=html
 ```
 
-当前 **350 个测试全部通过**（单元 + API/UI 集成，含 copilot 黄金样本回归）。
+当前 **268 个测试全部通过**（单元 + API/UI 集成）。
 
 CI 在每次推送时跑：
 
@@ -306,7 +302,6 @@ CI 在每次推送时跑：
 | [QUICKSTART.md](docs/QUICKSTART.md) | 三步跑通第一个分析 |
 | [NEOANTIGEN.md](docs/NEOANTIGEN.md) | 剪接新抗原流程与结果解读 |
 | [PEPTIDE.md](docs/PEPTIDE.md) | 肽预测层：MHC-I/II、加工、稳定性、novelty、评分 |
-| [AGENTIC.md](docs/AGENTIC.md) | 智能体化：工具循环、预算、数字溯源 |
 | [DATASETS.md](docs/DATASETS.md) | 可用数据集与参考表来源 |
 | [DATA_AND_DEPLOY.md](docs/DATA_AND_DEPLOY.md) | 数据存哪 · 部署 · 域名与 HTTPS |
 | [智能体的手册.md](docs/智能体的手册.md) | 能力全清单与边界 |

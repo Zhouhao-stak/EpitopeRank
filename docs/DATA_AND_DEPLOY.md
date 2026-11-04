@@ -130,7 +130,7 @@ client_max_body_size 2048m;
 | 上传报 413 | 就是上面 `client_max_body_size` |
 | 分析跑一会儿就失败 | 内存不够。百万事件项目加载约 2–4 GB，Docker 默认可能不够，`deploy.resources.limits.memory` 调到 8G |
 | 历史项目全空 | 卷没挂上，或换了 `EPITOPERANK_RUNTIME_ROOT`，旧数据在另一个目录 |
-| 大模型解读不可用 | `.env` 里 `MODEL_API_KEY` 没读到；打开「AI 助手 → 模型配置」也能现场粘贴 |
+| 大模型解读不可用 | `.env` 里 `MODEL_API_KEY` 没读到；打开「设置 → 模型配置」也能现场粘贴 |
 
 ---
 

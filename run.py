@@ -226,92 +226,6 @@ def _cmd_peptide(args: argparse.Namespace) -> int:
     return 0
 
 
-def _cmd_copilot(args: argparse.Namespace) -> int:
-    """Ask the tool-using analysis copilot a question."""
-    from epitoperank.agent.copilot import ask, status
-    from epitoperank.config import load_prepared_settings
-
-    settings, _warnings = load_prepared_settings(args.config)
-    if args.tools:
-        print(json.dumps(status(settings, project_id=args.project_id,
-                                allow_network=not args.no_network),
-                         ensure_ascii=False, indent=2))
-        return 0
-    if not args.message:
-        print("[epitoperank] error: --message is required (or use --tools)")
-        return 1
-
-    def on_event(event: dict) -> None:
-        if not args.stream:
-            return
-        name, data = event.get("event"), event.get("data") or {}
-        if name == "plan":
-            tools = [step.get("tool") for step in data.get("steps") or [] if step.get("tool")]
-            print(f"[plan] {len(tools)} steps: {' -> '.join(tools)}")
-        elif name == "tool_result":
-            print(f"[tool] {data.get('tool')} ok={data.get('ok')} cached={data.get('cached')}")
-        elif name in {"critique", "revision"}:
-            print(f"[{name}] {json.dumps(data, ensure_ascii=False)[:200]}")
-
-    try:
-        answer = ask(args.message, settings, project_id=args.project_id,
-                     max_steps=args.max_steps, force_offline=args.offline,
-                     mode=args.mode, allow_network=not args.no_network,
-                     use_cache=not args.no_cache, on_event=on_event)
-    except (ValueError, RuntimeError) as error:
-        print(f"[epitoperank] error: {error}")
-        return 1
-    print(answer.answer)
-    print("")
-    print(f"[epitoperank] mode={answer.mode} strategy={answer.strategy} steps={answer.steps} "
-          f"tools={len(answer.tool_calls)} elapsed={answer.elapsed_seconds}s")
-    if answer.plan:
-        steps = [step.get("tool") or step.get("action") for step in answer.plan.get("steps") or []]
-        print(f"[epitoperank] plan({answer.plan.get('source')}): {' -> '.join(str(s) for s in steps)}")
-    for call in answer.tool_calls:
-        cached = " (cache)" if call.get("cached") else ""
-        print(f"  · {call['tool']}({json.dumps(call['arguments'], ensure_ascii=False)}) "
-              f"-> {call['summary'][:80]}{cached}")
-    if answer.usage:
-        print(f"[epitoperank] tokens: {json.dumps(answer.usage, ensure_ascii=False)}")
-    if answer.grounding:
-        print(f"[epitoperank] grounding: {answer.grounding.get('severity')} "
-              f"({answer.grounding.get('checked')} numbers checked, "
-              f"{len(answer.grounding.get('unverified') or [])} unverified)")
-    if answer.critique:
-        print(f"[epitoperank] critique: {answer.critique.get('verdict')} "
-              f"({len(answer.critique.get('issues') or [])} issues, "
-              f"source={answer.critique.get('source')})")
-    if args.json:
-        print(json.dumps(answer.as_dict(), ensure_ascii=False, indent=2))
-    return 0
-
-
-def _cmd_eval_agent(args: argparse.Namespace) -> int:
-    """Run the copilot golden-set evaluation."""
-    from epitoperank.agent.evaluation import evaluate, load_cases, write_report
-    from epitoperank.config import load_prepared_settings
-    from epitoperank.llm.chat import ChatClient
-    from epitoperank.pipeline import list_projects
-
-    settings, _warnings = load_prepared_settings(args.config)
-    project_id = args.project_id
-    if not project_id:
-        projects = list_projects(settings)
-        project_id = str(projects[0].get("project_id") or "") if projects else None
-    cases = load_cases(args.cases)
-    factory = (lambda case: ChatClient(settings)) if args.mode == "live" else None
-    payload = evaluate(
-        cases, settings, project_id=project_id, chat_factory=factory,
-        allow_network=args.allow_network and args.mode == "live",
-    )
-    paths = write_report(payload, args.out)
-    print(json.dumps(payload["summary"], ensure_ascii=False, indent=2))
-    print(f"[epitoperank] report: {paths['markdown']}")
-    threshold = float(args.min_pass_rate)
-    return 0 if payload["summary"]["pass_rate"] >= threshold else 1
-
-
 def _cmd_projects(args: argparse.Namespace) -> int:
     from epitoperank.config import load_prepared_settings, load_settings
     from epitoperank.pipeline import list_projects
@@ -488,40 +402,6 @@ def build_parser() -> argparse.ArgumentParser:
                          help="Print available methods, reference tables and limits, then exit")
     peptide.set_defaults(func=_cmd_peptide)
 
-    copilot = subparsers.add_parser(
-        "copilot",
-        help="Ask the tool-using analysis copilot about a project (agentic mode)",
-    )
-    copilot.add_argument("--message", default=None, help="Analyst question")
-    copilot.add_argument("--project-id", default=None, help="Project to analyse")
-    copilot.add_argument("--max-steps", type=int, default=6, help="Model/tool loop budget (1-10)")
-    copilot.add_argument("--mode", choices=("auto", "react", "plan"), default="auto",
-                         help="auto = plan for long/multi-part questions; react = plain tool loop; "
-                              "plan = plan + critic + one revision")
-    copilot.add_argument("--no-network", action="store_true",
-                         help="Disable literature/annotation/pathway/peptide tools")
-    copilot.add_argument("--no-cache", action="store_true",
-                         help="Bypass the persistent tool-result cache")
-    copilot.add_argument("--stream", action="store_true",
-                         help="Print plan/tool/critique events while the loop runs")
-    copilot.add_argument("--offline", action="store_true",
-                         help="Skip the model and print the deterministic briefing")
-    copilot.add_argument("--tools", action="store_true", help="List tools and readiness, then exit")
-    copilot.add_argument("--json", action="store_true", help="Print the full result as JSON")
-    copilot.set_defaults(func=_cmd_copilot)
-
-    eval_agent = subparsers.add_parser(
-        "eval-agent",
-        help="Run the copilot golden-set evaluation (scripted or live)",
-    )
-    eval_agent.add_argument("--cases", default=str(Path(__file__).resolve().parent
-                                                   / "examples" / "agent_eval" / "golden.jsonl"))
-    eval_agent.add_argument("--project-id", default=None)
-    eval_agent.add_argument("--mode", choices=("scripted", "live"), default="scripted")
-    eval_agent.add_argument("--allow-network", action="store_true")
-    eval_agent.add_argument("--out", default=str(Path(__file__).resolve().parent / "out" / "agent_eval"))
-    eval_agent.add_argument("--min-pass-rate", type=float, default=0.0)
-    eval_agent.set_defaults(func=_cmd_eval_agent)
     return parser
 
 

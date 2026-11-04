@@ -184,10 +184,10 @@ Five pre-registered hypothesis tests run before interpretation: `dpsi_shift`
 `coverage_confound` (Spearman), `gene_recurrence` (permutation). A rejected test
 is surfaced as a warning, not hidden.
 
-The copilot is a real tool-calling loop (`agent/copilot.py` + `agent/planner.py`):
-native function calling, 12 read-only tools, JSON-Schema-checked plans, numeric
-trace-back, deterministic critique plus optional model review. Endpoints:
-`POST /api/copilot/chat`, `POST /api/copilot/stream` (SSE).
+The **Settings** page holds the model configuration (Base URL / model / API key,
+written only to the local `.env`) and an MCP tool console: pick a server and tool,
+pass JSON arguments, or describe what you want and let the model propose
+`{server, tool, arguments}` — validation and execution stay local.
 
 ## Tests
 
@@ -197,7 +197,7 @@ pytest tests/unit tests/integration -v
 pytest --cov=epitoperank --cov-report=html
 ```
 
-350 tests pass (unit + API/UI integration, including copilot golden samples).
+268 tests pass (unit + API/UI integration).
 CI runs on Python 3.10/3.11/3.12 with Black, Flake8 and MyPy; pushing a `v*` tag
 builds the Windows portable build and publishes a release.
 

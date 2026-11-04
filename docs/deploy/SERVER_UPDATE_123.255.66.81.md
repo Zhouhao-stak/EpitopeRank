@@ -91,8 +91,8 @@ cd ~/epitoperank
 3. 清理 `__pycache__` / `*.pyc`
 4. 确保 `.env` 有 `COMPOSE_FILE`
 5. `docker compose config -q` 校验
-6. **预检**：用现有镜像 + 新源码跑 `import epitoperank.api.app, epitoperank.peptide, epitoperank.agent.copilot`
-7. `docker compose up -d --no-build`，等 `/api/health`，打印 copilot/peptide 能力
+6. **预检**：用现有镜像 + 新源码跑 `import epitoperank.api.app, epitoperank.peptide, epitoperank.mcp`
+7. `docker compose up -d --no-build`，等 `/api/health`，打印 mcp/peptide 能力
 
 预检失败时容器不会被动，线上仍是旧版本。
 
@@ -100,12 +100,12 @@ cd ~/epitoperank
 
 ```bash
 curl -s localhost:8800/api/health
-curl -s localhost:8800/api/copilot/tools | head -c 300
+curl -s localhost:8800/api/mcp/servers | head -c 300
 curl -s localhost:8800/api/peptide/capabilities | head -c 300
 docker compose logs --tail 50 epitoperank
 ```
 
-浏览器打开 `http://123.255.66.81:8800/`，确认左侧导航出现「🤖 AI 助手」和「肽预测」。
+浏览器打开 `http://123.255.66.81:8800/`，确认左侧导航出现「⚙️ 设置」和「肽预测」。
 
 ### 5. 回滚
 
@@ -143,12 +143,12 @@ cd ~/epitoperank
 | 镜像 | `epitoperank-epitoperank:latest` 未重建（1.07 GB） |
 | 挂载 | `/home/wang_zi_wei/epitoperank -> /app (ro)`；`/data` volume 保留 |
 | 进程 | 8 个 uvicorn worker + Streamlit :8501 |
-| 路由 | `/api/health`、`/api/copilot/tools`、`/api/peptide/capabilities`、`/api/projects`、`/docs`、`/` 全部 200 |
-| UI | 页面含「AI 助手」「肽预测」「模型配置」 |
+| 路由 | `/api/health`、`/api/mcp/servers`、`/api/peptide/capabilities`、`/api/projects`、`/docs`、`/` 全部 200 |
+| UI | 页面含「设置」「肽预测」「模型配置」 |
 | 大模型 | `mode=llm`，`list_projects` 工具调用成功，4643 tokens，数字溯源 `ok` |
 | 肽预测 | IEDB 实测：冷请求 33.2 s，命中缓存后 **2.4 ms**；`NLVPMVATV / HLA-A*02:01` percentile 0.06 |
 | 数据 | 83 个项目 / 1,805,145 事件 / 14 个索引，未重建 |
-| 测试 | 本地 318 passed；容器内 copilot+peptide 52 passed |
+| 测试 | 本地 268 passed；容器内 peptide 测试通过 |
 | 回滚点 | `.backup-20261104-010511`（最新） |
 
 **冷请求慢是网络位置问题，不是代码问题**：同一请求第二次走 `/data/runtime/peptide_cache`，实测 2.4 ms。首次批量预测请给浏览器/网关留 ≥120 s。

@@ -190,40 +190,6 @@ def lookup_epitope(peptides: list[str]) -> dict:
 
 
 @server.tool()
-def copilot_tools(allow_network: bool = True) -> dict:
-    """List the analysis copilot's tools and whether a model is configured."""
-    from epitoperank.agent.copilot import status
-    from epitoperank.config import load_prepared_settings
-
-    settings, _ = load_prepared_settings()
-    return status(settings, allow_network=allow_network)
-
-
-@server.tool()
-def ask_copilot(question: str, project_id: str = "", max_steps: int = 4,
-                mode: str = "auto", allow_network: bool = True) -> dict:
-    """Ask the tool-using analysis copilot about one project.
-
-    Runs a bounded native-tool-calling loop over project memory (events,
-    candidates, enrichment, quality), plus optional literature/gene/peptide
-    tools. ``mode`` is ``react``, ``plan`` or ``auto``; ``plan`` adds a
-    structured evidence plan, a critic review and at most one revision.
-    """
-    from epitoperank.agent.copilot import ask
-    from epitoperank.config import load_prepared_settings
-
-    if not isinstance(question, str) or not question.strip():
-        return {"error": "question is required"}
-    if mode not in {"auto", "react", "plan"}:
-        return {"error": "mode must be auto, react or plan"}
-    settings, _ = load_prepared_settings()
-    answer = ask(question, settings, project_id=project_id or None,
-                 max_steps=max(1, min(8, int(max_steps))), mode=mode,
-                 allow_network=allow_network)
-    return answer.as_dict()
-
-
-@server.tool()
 def literature_passages(query: str, max_articles: int = 2, max_passages: int = 4) -> dict:
     """Full-text literature passages (Europe PMC open access, local BM25).
 
@@ -243,7 +209,7 @@ def literature_passages(query: str, max_articles: int = 2, max_passages: int = 4
 
 def main() -> None:
     # Match the CLI/desktop behaviour: a key stored in .env or 配置大模型.env
-    # must also configure the copilot tools exposed over MCP.
+    # must also configure the tools exposed over MCP.
     try:
         from epitoperank.llm.envfile import load_env_values
 

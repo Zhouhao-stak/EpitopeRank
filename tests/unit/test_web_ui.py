@@ -1,13 +1,12 @@
-"""Regression tests for the agentic chat UI.
+"""Static regression tests for the rendered web UI.
 
-These tests are deliberately static: they inspect the rendered HTML/JS instead
-of driving a browser. That is enough to catch the two failure modes that have
-already bitten this page:
+Driving a browser is not necessary to catch the failure modes that have already
+bitten this page:
 
 * Python string-escape leakage into the inline JavaScript (``\\uXXXX`` inside a
   normal Python string can produce lone surrogates that break UTF-8 encoding);
-* the UI silently reverting to the old non-agentic chat (missing controls,
-  missing SSE endpoint, missing abort wiring).
+* the settings page losing its controls, or the removed chat assistant being
+  wired back in by accident.
 """
 
 from __future__ import annotations
@@ -37,48 +36,32 @@ def find_node() -> str | None:
     return None
 
 
-class TestAgenticControls:
-    def test_chat_controls_exist(self) -> None:
+class TestSettingsPage:
+    def test_model_config_and_mcp_console_are_present(self) -> None:
         html = rendered_html()
         for needle in (
-            'id="chat-mode"',
-            'id="chat-network"',
-            'id="chat-cache"',
-            'id="chat-stop"',
-            'id="chat-status"',
-            'id="chat-send"',
+            'id="page-settings"',
+            'data-page="settings"',
+            'id="cfg-base"',
+            'id="cfg-model"',
+            'id="cfg-key"',
+            'id="cfg-save"',
+            'id="mcp-panel"',
+            'id="mcp-server-select"',
+            'id="mcp-call-btn"',
         ):
-            assert needle in html, f"missing control: {needle}"
+            assert needle in html, f"missing setting control: {needle}"
 
-    def test_strategy_options_cover_auto_plan_react(self) -> None:
+    def test_chat_assistant_is_gone(self) -> None:
         html = rendered_html()
-        assert '<option value="auto">' in html
-        assert '<option value="plan">' in html
-        assert '<option value="react">' in html
-
-    def test_stream_endpoint_and_abort_are_wired(self) -> None:
-        html = rendered_html()
-        assert "/api/copilot/stream" in html
-        assert "function stopChat" in html
-        assert "window.chatAbort" in html
-        assert "signal: controller.signal" in html
-
-    def test_pending_message_has_marker(self) -> None:
-        html = rendered_html()
-        assert "data-pending-body" in html
-        assert "renderPendingMessage" in html
-
-    def test_sse_event_handlers_are_present(self) -> None:
-        html = rendered_html()
-        for event in ("plan", "step", "tool_start", "tool_result",
-                      "critique", "revision", "offline", "done", "error"):
-            assert f"event === '{event}'" in html, f"missing SSE handler: {event}"
-
-    def test_request_payload_passes_mode_and_flags(self) -> None:
-        html = rendered_html()
-        assert "mode: modeEl ? modeEl.value : 'auto'" in html
-        assert "allow_network: networkEl ? !!networkEl.checked : true" in html
-        assert "use_cache: cacheEl ? !!cacheEl.checked : true" in html
+        for needle in (
+            'id="chat-input"',
+            'id="chat-messages"',
+            "/api/copilot/stream",
+            "sendChatMessage",
+            "page-assistant",
+        ):
+            assert needle not in html, f"leftover chat assistant wiring: {needle}"
 
 
 class TestEncodingSafety:
@@ -96,9 +79,7 @@ class TestEncodingSafety:
     def test_document_has_title_and_no_placeholder(self) -> None:
         # NOTE: ``render(title=...)`` currently has no effect because the HTML
         # carries a hard-coded <title> instead of the ``__TITLE__`` placeholder
-        # the function replaces. This test pins the observable behaviour and
-        # reports the mismatch to the parent agent instead of asserting the
-        # intended (but unimplemented) substitution.
+        # the function replaces. This test pins the observable behaviour.
         html = rendered_html()
         assert "<title>EpitopeRank" in html
         assert "__TITLE__" not in html

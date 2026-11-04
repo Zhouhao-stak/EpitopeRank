@@ -79,7 +79,7 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .nav-item[data-page="gene"]::before { content: "⌬"; font-size: 18px; }
 .nav-item[data-page="report"]::before { content: "▤"; font-size: 15px; }
 .nav-item[data-page="peptide"]::before { content: "◎"; font-size: 16px; }
-.nav-item[data-page="assistant"]::before { content: "✦"; font-size: 15px; color: var(--accent); }
+.nav-item[data-page="settings"]::before { content: "✦"; font-size: 15px; color: var(--accent); }
 .nav-item:hover { background: rgba(94,234,212,.07); color: var(--white); }
 .nav-item.active { background: linear-gradient(90deg, rgba(94,234,212,.16), rgba(94,234,212,.04)); color: var(--white); border-left-color: var(--accent); box-shadow: inset 0 0 24px rgba(94,234,212,.04); }
 
@@ -298,7 +298,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
       <div class="nav-item" data-page="peptide">肽预测</div>
     </div>
     <div class="nav-section"><div class="nav-label">智能助手</div>
-      <div class="nav-item" data-page="assistant">🤖 AI 助手</div>
+      <div class="nav-item" data-page="settings">⚙️ 设置</div>
     </div>
   </aside>
   <main class="main">
@@ -688,108 +688,29 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         </div>
       </div>
       
-      <!-- AI Assistant Page -->
-      <div class="page" id="page-assistant">
-        <div class="grid grid-2" style="height: calc(100vh - 140px);">
-          <!-- Chat Interface -->
-          <div class="card" style="display: flex; flex-direction: column;">
-            <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🤖 EpitopeRank 智能助手</div>
-            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">
-              会先规划再调用项目工具取数（事件查询 / 数据质量 / 富集 / 文献 / 肽预测），并对回答里的数字做溯源检查
+      <div class="page" id="page-settings">
+        <div class="grid grid-2">
+          <div class="card">
+            <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">⚙️ 模型配置</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 18px;">
+              用于报告里的 AI 解读与 MCP 工具的自然语言调用。密钥只保存在本机，不会写入报告或日志。
             </div>
-
-            <details class="model-config" id="model-config">
-              <summary>
-                <span>⚙️ 模型配置</span>
+            <div class="model-config-body" style="display: block;">
+              <div class="cfg-row"><label for="cfg-base">Base URL</label><input id="cfg-base" type="text" autocomplete="off" placeholder="https://api.deepseek.com"></div>
+              <div class="cfg-row"><label for="cfg-model">模型名</label><input id="cfg-model" type="text" autocomplete="off" placeholder="deepseek-flash"></div>
+              <div class="cfg-row"><label for="cfg-key">API Key</label><input id="cfg-key" type="password" autocomplete="off" placeholder="留空则保持当前密钥"></div>
+              <div class="cfg-row">
+                <button class="btn btn-primary btn-sm" id="cfg-save" type="button" onclick="saveModelConfig()">保存并启用</button>
+                <span class="cfg-msg" id="cfg-msg"></span>
+              </div>
+              <div class="cfg-row" style="margin-top: 12px;">
                 <span class="status status-waiting" id="cfg-status"><span class="status-dot"></span><span id="cfg-status-text">检查中…</span></span>
-              </summary>
-              <div class="model-config-body">
-                <div class="cfg-row"><label for="cfg-base">Base URL</label><input id="cfg-base" type="text" autocomplete="off" placeholder="https://api.deepseek.com"></div>
-                <div class="cfg-row"><label for="cfg-model">模型名</label><input id="cfg-model" type="text" autocomplete="off" placeholder="deepseek-flash"></div>
-                <div class="cfg-row"><label for="cfg-key">API Key</label><input id="cfg-key" type="password" autocomplete="off" placeholder="留空则保持当前密钥"></div>
-                <div class="cfg-row">
-                  <button class="btn btn-primary btn-sm" id="cfg-save" type="button" onclick="saveModelConfig()">保存并启用</button>
-                  <span class="cfg-msg" id="cfg-msg"></span>
-                </div>
-                <div class="cfg-hint">密钥仅保存在本机 .env / 配置大模型.env，不会写入报告或日志；保存后即时生效。</div>
               </div>
-            </details>
-            
-            <!-- Skill Buttons -->
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
-              <button class="btn btn-sm btn-secondary" onclick="loadSkill('gene_annotation')" style="text-align: left; padding: 12px;">
-                <div style="font-size: 16px; margin-bottom: 4px;">🧬</div>
-                <div style="font-size: 13px; font-weight: 600;">基因注释</div>
-              </button>
-              <button class="btn btn-sm btn-secondary" onclick="loadSkill('literature_search')" style="text-align: left; padding: 12px;">
-                <div style="font-size: 16px; margin-bottom: 4px;">📚</div>
-                <div style="font-size: 13px; font-weight: 600;">文献搜索</div>
-              </button>
-              <button class="btn btn-sm btn-secondary" onclick="loadSkill('pathway_enrichment')" style="text-align: left; padding: 12px;">
-                <div style="font-size: 16px; margin-bottom: 4px;">🔬</div>
-                <div style="font-size: 13px; font-weight: 600;">通路富集</div>
-              </button>
-              <button class="btn btn-sm btn-secondary" onclick="loadSkill('splice_interpretation')" style="text-align: left; padding: 12px;">
-                <div style="font-size: 16px; margin-bottom: 4px;">⚕️</div>
-                <div style="font-size: 13px; font-weight: 600;">剪接解读</div>
-              </button>
-            </div>
-            
-            <!-- Chat Messages -->
-            <div id="chat-messages" style="flex: 1; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: #f8fafc; margin-bottom: 16px;">
-              <div class="chat-message assistant-message">
-                <div class="message-author" style="font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">🤖 EpitopeRank</div>
-                <div style="font-size: 14px; line-height: 1.6; color: var(--text);">
-                  你好！我是 EpitopeRank 智能助手，可以帮助你：<br>
-                  • 直接提问，我会调用工具读取当前项目的数据<br>
-                  • 查事件、看质量、读富集、找文献、预测候选肽<br>
-                  • 回答分四段：结论 / 关键证据 / 下一步 / 局限<br>
-                  • 每个数字都会与工具结果做溯源核对<br><br>
-                  也可以使用上方技能按钮做单项分析。
-                </div>
-              </div>
-            </div>
-            
-            <!-- Chat Controls -->
-            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--text-secondary);">
-              <label style="display:flex;gap:6px;align-items:center;">策略
-                <select id="chat-mode" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);color:var(--text);">
-                  <option value="auto">自动（长问题先规划）</option>
-                  <option value="plan">先规划 + 审稿</option>
-                  <option value="react">直接工具循环</option>
-                </select>
-              </label>
-              <label style="display:flex;gap:6px;align-items:center;">
-                <input type="checkbox" id="chat-network" checked> 允许联网工具
-              </label>
-              <label style="display:flex;gap:6px;align-items:center;">
-                <input type="checkbox" id="chat-cache" checked> 结果缓存
-              </label>
-              <span id="chat-status" style="color:var(--accent);font-weight:600;"></span>
-              <button class="btn btn-sm btn-secondary" type="button" id="chat-stop" onclick="stopChat()" style="display:none;">停止</button>
-            </div>
-
-            <!-- Chat Input -->
-            <div style="display: flex; gap: 12px;">
-              <input type="text" id="chat-input" placeholder="输入问题或选择上方技能..." 
-                     style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px;"
-                     onkeypress="if(event.key==='Enter') sendChatMessage()">
-              <button class="btn btn-primary" id="chat-send" onclick="sendChatMessage()">发送</button>
+              <div class="cfg-hint">密钥仅保存在本机 .env / 配置大模型.env，保存后即时生效。</div>
             </div>
           </div>
-          
-          <!-- Results Panel -->
-          <div class="card" style="overflow-y: auto;">
-            <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">📊 分析结果</div>
-            <div id="skill-results">
-              <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">📈</div>
-                <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">等待分析结果</div>
-                <div style="font-size: 14px;">选择左侧的技能按钮执行专业分析</div>
-              </div>
-            </div>
 
-            <!-- MCP Tool Console -->
+          <div class="card">
             <div class="mcp-panel" id="mcp-panel">
               <div class="mcp-head">
                 <div>
@@ -838,7 +759,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           </div>
         </div>
       </div>
-    </div>
     <div class="page" id="page-neoantigen">
       <div class="card" style="max-width: 880px; padding: 24px;">
         <h2>剪接来源候选新抗原</h2>
@@ -1913,7 +1833,7 @@ function navigateTo(page) {
   if (page === 'neoantigen') { restoreNeoWorkflow(); checkNeoReadiness(); }
   if (page === 'peptide') { pepInitPage(); }
   if (page === 'explorer') loadExplorer();
-  if (page === 'assistant') { loadModelConfig(); loadMcpServers(); loadChatHistory(); }
+  if (page === 'settings') { loadModelConfig(); loadMcpServers(); }
 }
 async function apiCall(endpoint, options = {}) {
   try { const response = await fetch(`/api${endpoint}`, { headers: { 'Content-Type': 'application/json' }, ...options }); return await response.json(); }
@@ -3406,7 +3326,6 @@ function viewGeneInBrowser(geneSymbol) {
   exploreGene();
 }
 
-// ==================== AI Assistant Functions ====================
 
 // ==================== MCP Tool Console ====================
 const mcpState = { servers: {}, configPath: '', selectedServer: '', tools: [], loading: false };
@@ -3678,357 +3597,6 @@ async function runMcpAgent() {
   }
 }
 
-async function loadSkill(skillName) {
-  const skillNames = {
-    'gene_annotation': '基因注释',
-    'literature_search': '文献搜索',
-    'pathway_enrichment': '通路富集',
-    'splice_interpretation': '剪接解读'
-  };
-  
-  const skillDescriptions = {
-    'gene_annotation': '查询基因的详细信息，包括外显子结构、剪接位点、保守性评分和临床变异。',
-    'literature_search': '搜索 PubMed、Europe PMC 等数据库中的科学文献，查找与基因或疾病相关的剪接研究。',
-    'pathway_enrichment': '对候选基因列表进行 GO、KEGG、Reactome 通路富集分析，识别显著的功能类别。',
-    'splice_interpretation': '解读特定剪接事件的生物学和临床意义，包括致病性预测和治疗靶点分析。'
-  };
-  
-  // Add user message to chat
-  addChatMessage('user', `我想使用 ${skillNames[skillName]} 技能`);
-  
-  // Show skill description
-  addChatMessage('assistant', `${skillNames[skillName]}\n\n${skillDescriptions[skillName]}\n\n请提供必要的参数（如基因名称、事件类型等），我将为你执行分析。`);
-  
-  // Store current skill for parameter input
-  window.currentSkill = skillName;
-  
-  // Focus input for parameters
-  document.getElementById('chat-input').focus();
-  document.getElementById('chat-input').placeholder = `请输入 ${skillNames[skillName]} 的参数...`;
-}
-
-async function sendChatMessage() {
-  const input = document.getElementById('chat-input');
-  const message = input.value.trim();
-  if (!message) return;
-
-  // Capture prior turns before appending the new user message, so the backend
-  // does not receive the current question twice.
-  const history = readChatHistory().slice(-8).map(function (m) {
-    return { role: m.role, content: m.content };
-  });
-  addChatMessage('user', message);
-  input.value = '';
-
-  const skill = window.currentSkill;
-  window.currentSkill = null;
-  document.getElementById('chat-input').placeholder = '\u8f93\u5165\u95ee\u9898\u6216\u9009\u62e9\u4e0a\u65b9\u6280\u80fd...';
-  if (skill) {
-    await executeSkillWithParams(skill, message);
-    return;
-  }
-
-  const pending = renderPendingMessage();
-  const body = pending.querySelector('[data-pending-body]') || pending;
-  const statusEl = document.getElementById('chat-status');
-  const stopBtn = document.getElementById('chat-stop');
-  const sendBtn = document.getElementById('chat-send');
-  const modeEl = document.getElementById('chat-mode');
-  const networkEl = document.getElementById('chat-network');
-  const cacheEl = document.getElementById('chat-cache');
-  const payload = {
-    message: message,
-    project_id: state.currentProject || '',
-    history: history,
-    max_steps: 6,
-    mode: modeEl ? modeEl.value : 'auto',
-    allow_network: networkEl ? !!networkEl.checked : true,
-    use_cache: cacheEl ? !!cacheEl.checked : true
-  };
-  if (stopBtn) stopBtn.style.display = 'inline-block';
-  if (sendBtn) sendBtn.disabled = true;
-  if (statusEl) statusEl.textContent = '\u51c6\u5907\u4e2d\u2026';
-
-  const controller = new AbortController();
-  window.chatAbort = controller;
-  const notes = [];
-  function note(text) {
-    notes.push(text);
-    while (notes.length > 9) notes.shift();
-    body.textContent = notes.join('\\n');
-    const box = document.getElementById('chat-messages');
-    if (box) box.scrollTop = box.scrollHeight;
-  }
-
-  let finalData = null;
-  function handleEvent(event, data) {
-    if (event === 'plan') {
-      const tools = (data.steps || []).map(function (s) { return s.tool || s.action; }).filter(Boolean);
-      note('[plan] \u8ba1\u5212 ' + tools.length + ' \u6b65\uff1a' + tools.join(' \u2192 '));
-      if (statusEl) statusEl.textContent = '\u6267\u884c\u8ba1\u5212\u2026';
-    } else if (event === 'step') {
-      if (statusEl) statusEl.textContent = '\u7b2c ' + data.step + '/' + data.max_steps + ' \u6b65';
-    } else if (event === 'tool_start') {
-      note('[tool] ' + data.tool);
-      if (statusEl) statusEl.textContent = '\u8c03\u7528 ' + data.tool;
-    } else if (event === 'tool_result') {
-      note('   ' + (data.ok ? 'ok' : 'failed')
-        + (data.cached ? ' (cache)' : '')
-        + ' \u00b7 ' + String(data.summary || data.error || '').slice(0, 90));
-    } else if (event === 'critique') {
-      note('[critique] \u5ba1\u7a3f\uff1a' + (data.verdict || '') + ' \u00b7 issues '
-        + ((data.issues || []).length));
-    } else if (event === 'revision') {
-      note('\u270d\ufe0f \u5df2\u6309\u5ba1\u7a3f\u610f\u89c1\u4fee\u8ba2');
-    } else if (event === 'offline') {
-      if (statusEl) statusEl.textContent = '\u79bb\u7ebf\u6a21\u5f0f';
-    } else if (event === 'done') {
-      finalData = data;
-    } else if (event === 'error') {
-      throw new Error(data.message || 'stream error');
-    }
-  }
-
-  try {
-    const response = await fetch('/api/copilot/stream', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-    if (!response.ok || !response.body) {
-      throw new Error('HTTP ' + response.status);
-    }
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder('utf-8');
-    let buffer = '';
-    while (true) {
-      const chunk = await reader.read();
-      if (chunk.done) break;
-      buffer += decoder.decode(chunk.value, { stream: true });
-      let index;
-      while ((index = buffer.indexOf('\\n\\n')) >= 0) {
-        const raw = buffer.slice(0, index);
-        buffer = buffer.slice(index + 2);
-        let event = 'message';
-        let data = '';
-        raw.split('\\n').forEach(function (line) {
-          if (line.indexOf('event: ') === 0) event = line.slice(7).trim();
-          else if (line.indexOf('data: ') === 0) data += line.slice(6);
-        });
-        if (!data) continue;
-        let parsed = {};
-        try { parsed = JSON.parse(data); } catch (error) { continue; }
-        handleEvent(event, parsed);
-      }
-    }
-    if (!finalData) throw new Error('\u6d41\u5f0f\u8fde\u63a5\u672a\u8fd4\u56de\u7ed3\u679c');
-    pending.remove();
-    addChatMessage('assistant', finalData.answer || '\uff08\u6a21\u578b\u672a\u8fd4\u56de\u5185\u5bb9\uff09');
-    renderCopilotTrace(finalData);
-    if (statusEl) statusEl.textContent = '';
-  } catch (error) {
-    const aborted = error && (error.name === 'AbortError' || controller.signal.aborted);
-    pending.remove();
-    if (aborted) {
-      addChatMessage('assistant', '\u23f9\ufe0f \u5df2\u505c\u6b62\u672c\u6b21\u5206\u6790\u3002');
-    } else {
-      addChatMessage('assistant', '\u274c \u5206\u6790\u5931\u8d25\uff1a' + (error.message || error));
-    }
-    if (statusEl) statusEl.textContent = '';
-  } finally {
-    window.chatAbort = null;
-    if (stopBtn) stopBtn.style.display = 'none';
-    if (sendBtn) sendBtn.disabled = false;
-  }
-}
-
-function stopChat() {
-  if (window.chatAbort) {
-    try { window.chatAbort.abort(); } catch (error) { /* ignore */ }
-  }
-}
-
-function renderPendingMessage() {
-  const messagesDiv = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'chat-message assistant-message';
-  const title = document.createElement('div');
-  title.className = 'message-author';
-  title.style.cssText = 'font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 4px;';
-  title.textContent = '🤖 EpitopeRank';
-  const body = document.createElement('div');
-  body.setAttribute('data-pending-body', '1');
-  body.style.cssText = 'font-size: 13px; color: var(--text-secondary); white-space: pre-wrap;';
-  body.textContent = '\u6b63\u5728\u89c4\u5212\u5e76\u8c03\u7528\u5de5\u5177\u5206\u6790\u2026';
-  div.appendChild(title);
-  div.appendChild(body);
-  messagesDiv.appendChild(div);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  return div;
-}
-
-function escapeHtmlText(value) {
-  return String(value === null || value === undefined ? '' : value)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-function formatChatText(text) {
-  var escaped = escapeHtmlText(text);
-  escaped = escaped.replace(/^#{2,3}\\s*(.+)$/gm,
-    '<div style="font-weight:700;margin:12px 0 4px;color:var(--accent);">$1</div>');
-  escaped = escaped.replace(/\\*\\*(.+?)\\*\\*/g, '<b>$1</b>');
-  escaped = escaped.replace(/`([^`]+)`/g, '<code style="background:rgba(148,163,184,.18);padding:1px 4px;border-radius:4px;">$1</code>');
-  escaped = escaped.replace(/\\n/g, '<br>');
-  return escaped;
-}
-
-function renderCopilotTrace(data) {
-  const resultsDiv = document.getElementById('skill-results');
-  if (!resultsDiv) return;
-  const calls = data.tool_calls || [];
-  const usage = data.usage || {};
-  const grounding = data.grounding || {};
-  const strategy = data.strategy === 'plan' ? '\u8ba1\u5212+\u5ba1\u7a3f' : '\u76f4\u63a5\u5de5\u5177\u5faa\u73af';
-  const mode = data.mode === 'llm' ? '\u6a21\u578b + \u5de5\u5177' : (data.mode === 'offline' ? '\u79bb\u7ebf\u6458\u8981' : String(data.mode || ''));
-  const badgeColor = data.mode === 'llm' ? '#0f766e' : '#b45309';
-
-  let html = '<div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;background:rgba(15,23,42,.35);">';
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">';
-  html += '<div style="font-size:16px;font-weight:700;color:var(--accent);">🧭 \u667a\u80fd\u4f53\u6267\u884c\u8f68\u8ff9</div>';
-  html += '<span style="font-size:12px;font-weight:700;color:#fff;background:' + badgeColor + ';padding:3px 9px;border-radius:999px;">' + escapeHtmlText(mode) + ' · ' + escapeHtmlText(strategy) + '</span>';
-  html += '</div>';
-  html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">'
-    + '\u6b65\u9aa4 ' + (data.steps || 0)
-    + ' \u00b7 \u5de5\u5177\u8c03\u7528 ' + calls.length
-    + ' \u00b7 \u7f13\u5b58\u547d\u4e2d ' + calls.filter(function (c) { return c.cached; }).length
-    + ' \u00b7 \u7528\u65f6 ' + (data.elapsed_seconds || 0) + ' s'
-    + (data.model ? ' \u00b7 \u6a21\u578b ' + escapeHtmlText(data.model) : '')
-    + (usage.total_tokens ? ' \u00b7 tokens ' + usage.total_tokens : '')
-    + '</div>';
-
-  const plan = data.plan || {};
-  if (plan.steps && plan.steps.length) {
-    html += '<div style="margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(2,6,23,.28);">';
-    html += '<div style="font-size:12px;font-weight:700;color:var(--accent);">\u8bc1\u636e\u8ba1\u5212</div>';
-    plan.steps.forEach(function (step, index) {
-      html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">'
-        + (index + 1) + '. ' + escapeHtmlText(step.tool || '\u5df2\u5b8c\u6210') + ' \u00b7 '
-        + escapeHtmlText(step.purpose || step.action || '') + '</div>';
-    });
-    html += '</div>';
-  }
-
-  const critique = data.critique || {};
-  const critiqueIssues = critique.issues || [];
-  const showCritique = critique.verdict && critique.verdict !== 'pass'
-    && critiqueIssues.length > 0;
-  if (showCritique) {
-    const high = critiqueIssues.some(function (item) { return item.severity === 'high'; });
-    html += '<div style="margin-top:10px;padding:10px 12px;border-left:3px solid ' + (high ? '#f87171' : '#f59e0b') + ';background:rgba(245,158,11,.10);border-radius:var(--radius);">';
-    html += '<div style="font-size:12px;font-weight:700;color:' + (high ? '#fca5a5' : '#fbbf24') + ';">\u5ba1\u7a3f\u610f\u89c1 \u00b7 ' + escapeHtmlText(critique.verdict) + '</div>';
-    critiqueIssues.forEach(function (item) {
-      html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">[' + escapeHtmlText(item.severity) + '] ' + escapeHtmlText(item.problem) + '</div>';
-    });
-    html += '</div>';
-  }
-  html += '</div>';
-
-  if (grounding && grounding.severity && grounding.severity !== 'ok') {
-    html += '<div style="padding:12px 14px;border-left:3px solid #f59e0b;background:rgba(245,158,11,.12);border-radius:var(--radius);margin-bottom:14px;">';
-    html += '<div style="font-weight:700;color:#fbbf24;margin-bottom:4px;">\u26a0\ufe0f \u6570\u5b57\u6eaf\u6e90\u63d0\u9192</div>';
-    html += '<div style="font-size:13px;color:var(--text-secondary);">\u56de\u7b54\u4e2d\u6709 '
-      + escapeHtmlText((grounding.unverified || []).length) + ' \u4e2a\u6570\u5b57\u672a\u5728\u5de5\u5177\u7ed3\u679c\u4e2d\u68c0\u7d22\u5230\uff1a'
-      + escapeHtmlText((grounding.unverified || []).join(', ')) + '\u3002\u8bf7\u4ee5\u8868\u683c\u6570\u636e\u4e3a\u51c6\u3002</div>';
-    html += '</div>';
-  }
-
-  if (!calls.length) {
-    html += '<div style="font-size:13px;color:var(--text-muted);">\u672c\u6b21\u6ca1\u6709\u8c03\u7528\u5de5\u5177\uff08\u53ef\u80fd\u662f\u79bb\u7ebf\u6a21\u5f0f\u6216\u95ee\u9898\u4e0d\u9700\u8981\u9879\u76ee\u6570\u636e\uff09\u3002</div>';
-  } else {
-    html += '<div style="font-size:14px;font-weight:700;margin:6px 0 8px;">\u5de5\u5177\u8c03\u7528</div>';
-    calls.forEach(function (call, index) {
-      const ok = call.ok !== false;
-      html += '<div style="border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;background:rgba(2,6,23,.35);">';
-      html += '<div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;">';
-      html += '<span style="font-weight:700;">' + (index + 1) + '. ' + escapeHtmlText(call.tool) + '</span>';
-      html += '<span style="color:' + (ok ? '#34d399' : '#f87171') + ';">'
-        + (ok ? 'ok' : 'failed') + ' \u00b7 ' + escapeHtmlText(call.elapsed_seconds) + ' s</span>';
-      html += '</div>';
-      const args = JSON.stringify(call.arguments || {});
-      html += '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;word-break:break-all;">\u53c2\u6570\uff1a' + escapeHtmlText(args) + '</div>';
-      html += '<div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">\u7ed3\u679c\uff1a' + escapeHtmlText(call.summary || call.error || '') + '</div>';
-      html += '</div>';
-    });
-  }
-
-  if (data.errors && data.errors.length) {
-    html += '<div style="font-size:12px;color:#fca5a5;margin-top:8px;">\u9519\u8bef\uff1a' + escapeHtmlText(data.errors.join(' | ')) + '</div>';
-  }
-  resultsDiv.innerHTML = html;
-}
-
-function addChatMessage(role, content) {
-  saveChatMessage(role, content);
-  renderChatMessage(role, content);
-}
-// The assistant conversation is kept per project in localStorage, so a refresh
-// (or reopening the app tomorrow) still shows what was asked and answered.
-function chatStorageKey() {
-  return 'epitoperank.chat.' + (state.currentProject || 'none');
-}
-function readChatHistory() {
-  try {
-    const raw = localStorage.getItem(chatStorageKey());
-    const items = raw ? JSON.parse(raw) : [];
-    return Array.isArray(items) ? items : [];
-  } catch (error) { return []; }
-}
-function saveChatMessage(role, content) {
-  const items = readChatHistory();
-  items.push({ role: role, content: content, at: new Date().toISOString() });
-  // Keep the tail so localStorage cannot grow without bound.
-  const trimmed = items.slice(-200);
-  try { localStorage.setItem(chatStorageKey(), JSON.stringify(trimmed)); } catch (error) { /* quota */ }
-}
-function loadChatHistory() {
-  const messagesDiv = document.getElementById('chat-messages');
-  if (!messagesDiv) return;
-  messagesDiv.innerHTML = '';
-  const items = readChatHistory();
-  if (!items.length) {
-    renderChatMessage('assistant', '选择上方技能开始分析，或直接提问。对话会保存在本机（按项目分开），刷新或下次打开仍可回看。');
-    return;
-  }
-  items.forEach(m => renderChatMessage(m.role, m.content));
-}
-function renderChatMessage(role, content) {
-  const messagesDiv = document.getElementById('chat-messages');
-  if (!messagesDiv) return;
-  const isUser = role === 'user';
-
-  const msgDiv = document.createElement('div');
-  msgDiv.className = 'chat-message ' + (isUser ? 'user-message' : 'assistant-message');
-
-  const titleDiv = document.createElement('div');
-  titleDiv.className = 'message-author';
-  titleDiv.style.cssText = 'font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 4px;';
-  titleDiv.textContent = isUser ? '👤 你' : '🤖 EpitopeRank';
-
-  const contentDiv = document.createElement('div');
-  contentDiv.style.cssText = 'font-size: 14px; line-height: 1.6; white-space: pre-wrap; color: var(--text);';
-  var newlineRegex = new RegExp('\\n', 'g');
-  contentDiv.innerHTML = formatChatText(content);
-  
-  msgDiv.appendChild(titleDiv);
-  msgDiv.appendChild(contentDiv);
-  messagesDiv.appendChild(msgDiv);
-  
-  // Scroll to bottom
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
 function cfgText(zh, en) {
   var i18n = window.__epitoperankI18n;
   return i18n && i18n.getLang && i18n.getLang() === 'en' ? en : zh;
@@ -4125,281 +3693,6 @@ document.addEventListener('epitoperank:language', function () {
   loadModelConfig(true);
 });
 
-async function executeSkillWithParams(skillName, paramText) {
-  try {
-    // Parse parameters from text (simple key=value parsing)
-    const params = parseParameters(paramText);
-    
-    // Build request based on skill
-    let requestBody = { skill_name: skillName, parameters: {} };
-    
-    if (skillName === 'gene_annotation') {
-      requestBody.parameters.gene_symbol = params.gene || params.gene_symbol || extractGeneFromText(paramText);
-      requestBody.parameters.include_splicing = true;
-      requestBody.parameters.include_clinical = true;
-    } else if (skillName === 'literature_search') {
-      requestBody.parameters.query = params.query || paramText;
-      requestBody.parameters.max_results = parseInt(params.max_results) || 10;
-      requestBody.parameters.sources = ['pubmed'];
-    } else if (skillName === 'pathway_enrichment') {
-      // Extract gene list from text
-      const genes = extractGenesFromText(paramText);
-      requestBody.parameters.genes = genes;
-      requestBody.parameters.ontologies = ['GO', 'KEGG'];
-    } else if (skillName === 'splice_interpretation') {
-      requestBody.parameters.gene_symbol = params.gene || extractGeneFromText(paramText);
-      requestBody.parameters.event_type = params.event_type || 'SE';
-    }
-    
-    // Call API
-    addChatMessage('assistant', '正在执行分析，请稍候...');
-    
-    const response = await fetch('/api/skills/execute', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API 错误: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    
-    // Display results
-    displaySkillResults(result);
-    
-    // Add success message to chat
-    if (result.success) {
-      addChatMessage('assistant', '✅ 分析完成！结果已显示在右侧面板中。');
-    } else {
-      addChatMessage('assistant', `❌ 分析失败: ${result.error || '未知错误'}`);
-    }
-    
-  } catch (error) {
-    addChatMessage('assistant', `❌ 执行出错: ${error.message}`);
-  }
-}
-
-function parseParameters(text) {
-  const params = {};
-  const pairs = text.split(/\\s+/);
-  
-  for (const pair of pairs) {
-    const [key, ...valueParts] = pair.split('=');
-    if (valueParts.length > 0) {
-      params[key.toLowerCase()] = valueParts.join('=');
-    }
-  }
-  
-  return params;
-}
-
-function extractGeneFromText(text) {
-  // Simple extraction - look for common gene patterns
-  const match = text.match(/([A-Z][A-Z0-9]+[0-9]?)/);
-  return match ? match[1] : text.split(/\\s+/)[0];
-}
-
-function extractGenesFromText(text) {
-  // Split by comma, space, or semicolon and filter
-  const candidates = text.split(/[,\\s;]+/).filter(s => s.length > 1 && /^[A-Z]/.test(s));
-  return candidates.slice(0, 20); // Limit to 20 genes
-}
-
-function displaySkillResults(result) {
-  const resultsDiv = document.getElementById('skill-results');
-  
-  if (!result.success) {
-    resultsDiv.innerHTML = `
-      <div style="padding: 20px; background: #fee2e2; border-left: 4px solid #dc2626; border-radius: var(--radius);">
-        <div style="font-size: 16px; font-weight: 700; color: #dc2626; margin-bottom: 8px;">❌ 分析失败</div>
-        <div style="font-size: 14px; color: #7f1d1d;">${result.error || '未知错误'}</div>
-      </div>
-    `;
-    return;
-  }
-  
-  const skillName = result.skill_name;
-  const data = result.data;
-  
-  let html = `<div style="padding: 20px; background: var(--gray-100); border-left: 2px solid var(--black); border-radius: var(--radius); margin-bottom: 20px;">
-    <div style="font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">✅ 分析完成</div>
-    <div style="font-size: 13px; color: var(--text);">${getSkillDisplayName(skillName)}</div>
-  </div>`;
-  
-  if (skillName === 'gene_annotation') {
-    html += renderGeneAnnotationResults(data);
-  } else if (skillName === 'literature_search') {
-    html += renderLiteratureSearchResults(data);
-  } else if (skillName === 'pathway_enrichment') {
-    html += renderPathwayEnrichmentResults(data);
-  } else if (skillName === 'splice_interpretation') {
-    html += renderSpliceInterpretationResults(data);
-  }
-  
-  resultsDiv.innerHTML = html;
-}
-
-function getSkillDisplayName(skillName) {
-  const names = {
-    'gene_annotation': '基因注释分析',
-    'literature_search': '文献搜索结果',
-    'pathway_enrichment': '通路富集分析',
-    'splice_interpretation': '剪接事件解读'
-  };
-  return names[skillName] || skillName;
-}
-
-function renderGeneAnnotationResults(data) {
-  let html = '<div class="card" style="margin-bottom: 16px;">';
-  html += '<div style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">🧬 基因基本信息</div>';
-  
-  if (data.basic_info) {
-    const info = data.basic_info;
-    html += `<div style="font-size: 14px; line-height: 1.8;">
-      <div><strong>基因符号:</strong> ${info.symbol || '-'}</div>
-      <div><strong>基因名称:</strong> ${info.name || '-'}</div>
-      <div><strong>Ensembl ID:</strong> ${info.ensembl_gene || '-'}</div>
-      <div><strong>基因类型:</strong> ${info.gene_type || '-'}</div>
-    </div>`;
-    if (info.summary) {
-      html += `<div style="margin-top: 12px; padding: 12px; background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text);">${info.summary}</div>`;
-    }
-  }
-  
-  if (data.gene_structure) {
-    const struct = data.gene_structure;
-    html += '<div style="margin-top: 20px; font-size: 16px; font-weight: 700;">📐 基因结构</div>';
-    html += `<div style="font-size: 14px; line-height: 1.8; margin-top: 8px;">
-      <div><strong>染色体:</strong> ${struct.chromosome || '-'}</div>
-      <div><strong>位置:</strong> ${struct.start || '-'} - ${struct.end || '-'}</div>
-      <div><strong>链方向:</strong> ${struct.strand === 1 ? '+' : (struct.strand === -1 ? '-' : '-')}</div>
-      <div><strong>生物类型:</strong> ${struct.biotype || '-'}</div>
-    </div>`;
-  }
-  
-  html += '</div>';
-  return html;
-}
-
-function renderLiteratureSearchResults(data) {
-  let html = '<div class="card" style="margin-bottom: 16px;">';
-  html += `<div style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">📚 文献搜索结果</div>`;
-  html += `<div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">共找到 ${data.total_found || 0} 篇相关文献</div>`;
-  
-  if (data.results && Array.isArray(data.results)) {
-    data.results.forEach((paper, idx) => {
-      html += `<div style="padding: 16px; margin-bottom: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius);">
-        <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--accent);">${idx + 1}. ${paper.title || '无标题'}</div>
-        <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
-          ${paper.authors || ''} | ${paper.journal || ''} | ${paper.year || ''}
-        </div>
-        ${paper.citation_count ? `<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">被引次数: ${paper.citation_count}</div>` : ''}
-        ${paper.abstract ? `<div style="font-size: 13px; line-height: 1.6; color: var(--text); margin-top: 8px; padding: 12px; background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius);">${paper.abstract.substring(0, 300)}...</div>` : ''}
-        ${paper.url ? `<a href="${paper.url}" target="_blank" style="display: inline-block; margin-top: 8px; font-size: 13px; color: var(--accent); text-decoration: none;">查看原文 →</a>` : ''}
-      </div>`;
-    });
-  }
-  
-  html += '</div>';
-  return html;
-}
-
-function renderPathwayEnrichmentResults(data) {
-  let html = '<div class="card" style="margin-bottom: 16px;">';
-  html += `<div style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">🔬 通路富集分析结果</div>`;
-  html += `<div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">输入基因数: ${data.total_genes || 0} | 显著条目数: ${data.total_significant || 0}</div>`;
-  
-  if (data.enriched_terms && Array.isArray(data.enriched_terms)) {
-    html += '<div style="overflow-x: auto;">';
-    html += '<table style="width: 100%; font-size: 13px; border-collapse: collapse;">';
-    html += '<thead><tr style="background: var(--surface-2); border-bottom: 2px solid var(--border);">';
-    html += '<th style="padding: 12px; text-align: left; font-weight: 700;">数据库</th>';
-    html += '<th style="padding: 12px; text-align: left; font-weight: 700;">术语/通路</th>';
-    html += '<th style="padding: 12px; text-align: center; font-weight: 700;">基因数</th>';
-    html += '<th style="padding: 12px; text-align: right; font-weight: 700;">FDR</th>';
-    html += '</tr></thead><tbody>';
-    
-    data.enriched_terms.forEach((term, idx) => {
-      const sigColor = term.fdr < 0.05 ? '#059669' : (term.fdr < 0.1 ? '#d97706' : '#dc2626');
-      html += `<tr style="border-bottom: 1px solid var(--border);">
-        <td style="padding: 12px;"><span style="display: inline-block; padding: 4px 8px; background: rgba(94,234,212,.12); color: var(--accent); border: 1px solid rgba(94,234,212,.3); border-radius: 4px; font-size: 11px; font-weight: 600;">${term.ontology || '-'}</span></td>
-        <td style="padding: 12px; font-weight: 600;">${term.term_name || '-'}</td>
-        <td style="padding: 12px; text-align: center;">${term.gene_count || 0}</td>
-        <td style="padding: 12px; text-align: right; color: ${sigColor}; font-weight: 700;">${term.fdr ? term.fdr.toExponential(2) : '-'}</td>
-      </tr>`;
-    });
-    
-    html += '</tbody></table></div>';
-  }
-  
-  html += '</div>';
-  return html;
-}
-
-function renderSpliceInterpretationResults(data) {
-  let html = '<div class="card" style="margin-bottom: 16px;">';
-  html += `<div style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">⚕️ 剪接事件解读</div>`;
-  
-  if (data.interpretation) {
-    const interp = data.interpretation;
-    
-    if (interp.summary) {
-      html += `<div style="padding: 16px; background: rgba(243,189,114,.1); border-left: 2px solid var(--warning); border-radius: var(--radius); margin-bottom: 20px;">
-        <div style="font-size: 14px; font-weight: 700; color: var(--warning); margin-bottom: 8px;">📋 总结</div>
-        <div style="font-size: 14px; line-height: 1.8; color: var(--text);">${interp.summary}</div>
-      </div>`;
-    }
-    
-    if (interp.protein_impact) {
-      const impact = interp.protein_impact;
-      html += '<div style="margin-bottom: 20px;">';
-      html += '<div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--accent);">🎯 蛋白功能影响</div>';
-      html += `<div style="font-size: 14px; line-height: 1.8;">${impact.functional_consequence || '-'}</div>`;
-      
-      if (impact.affected_domains && impact.affected_domains.length > 0) {
-        html += '<div style="margin-top: 12px; font-size: 13px; font-weight: 700;">受影响的蛋白结构域:</div>';
-        impact.affected_domains.forEach(domain => {
-          html += `<div style="padding: 8px 12px; margin-top: 6px; background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text);">
-            • ${domain.name || '-'} (位置: ${domain.start || '-'}-${domain.end || '-'})
-          </div>`;
-        });
-      }
-      html += '</div>';
-    }
-    
-    if (interp.therapeutic_opportunities) {
-      const thermo = interp.therapeutic_opportunities;
-      html += '<div style="margin-bottom: 20px;">';
-      html += '<div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--accent);">💊 治疗机会</div>';
-      
-      if (thermo.targeting_strategies && thermo.targeting_strategies.length > 0) {
-        thermo.targeting_strategies.forEach(strategy => {
-          html += `<div style="padding: 12px; margin-bottom: 8px; background: rgba(94,234,212,.08); border-left: 3px solid var(--accent); border-radius: var(--radius);">
-            <div style="font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">${strategy.strategy || '-'}</div>
-            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">机制: ${strategy.mechanism || '-'}</div>
-            ${strategy.example ? `<div style="font-size: 12px; color: var(--text-secondary);">示例: ${strategy.example}</div>` : ''}
-          </div>`;
-        });
-      }
-      
-      if (thermo.clinical_trials && thermo.clinical_trials.length > 0) {
-        html += '<div style="margin-top: 12px; font-size: 13px; font-weight: 700;">相关临床试验:</div>';
-        thermo.clinical_trials.forEach(trial => {
-          html += `<div style="padding: 8px 12px; margin-top: 6px; background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text);">
-            • ${trial.title || trial.nct_id || '-'} (${trial.status || '进行中'})
-          </div>`;
-        });
-      }
-      html += '</div>';
-    }
-  }
-  
-  html += '</div>';
-  return html;
-}
-
 document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModelConfig(); setInterval(() => { if (state.currentPage === 'pipeline' && state.currentProject) { loadPipeline(); } }, 5000); });
 </script>
 <script src="/assets/opencc-cn2t.js"></script>
@@ -4414,8 +3707,8 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "可视化": "Visualization",
     "基因浏览器": "Gene Browser",
     "报告": "Report",
-    "AI 助手": "AI Assistant",
-    "🤖 AI 助手": "🤖 AI Assistant",
+    "设置": "Settings",
+    "⚙️ 设置": "⚙️ Settings",
     "👤 你": "👤 You",
     "主菜单": "Main Menu",
     "分析工具": "Analysis Tools",
@@ -4544,7 +3837,6 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "配置已保存（保留原 Key）": "Saved (existing key kept)",
     "选择左侧的技能按钮执行专业分析": "Choose a skill on the left to run a professional analysis",
     "请选择上方的技能按钮开始，或直接输入你的问题。": "Choose a skill above to start, or type your question.",
-    "你好！我是 EpitopeRank 智能助手，可以帮助你：": "Hello! I am the EpitopeRank assistant. I can help you:",
     "🤖 EpitopeRank 智能助手": "🤖 EpitopeRank Assistant",
     "• 项目概览与样本统计": "• Project overview and sample statistics",
     "• 显著剪接事件列表（FDR": "• Significant splicing event list (FDR",

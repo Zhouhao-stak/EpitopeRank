@@ -13,7 +13,6 @@
 | [智能体的手册.md](智能体的手册.md) | 平台能力全清单：哪些已上线、哪些实验性、边界在哪 |
 | [NEOANTIGEN.md](NEOANTIGEN.md) | 剪接新抗原流程：moPepGen / pVACsplice / 结果解读注意事项 |
 | [PEPTIDE.md](PEPTIDE.md) | **肽预测层：MHC-I/II 结合、加工、稳定性、MHC-NP、已知表位查询、novelty 过滤、综合评分、CLI/API/MCP 用法** |
-| [AGENTIC.md](AGENTIC.md) | **智能体化升级：工具调用循环、可用工具、预算与数字溯源、CLI/API/MCP/UI 用法、与主流 agent 模式对照** |
 | [DATASETS.md](DATASETS.md) | **可用数据集目录：PRELP rMATS / TCGA PanCan / GSE319608 / HCC1395 / splice2neo 的边界与加载方式，以及肽参考数据来源** |
 | [BIOGAIP_COMPARISON.md](BIOGAIP_COMPARISON.md) | 与 BioGAIP 的能力对照与改进记录（历史快照） |
 | [prompts/](prompts/) | Agent 提示词草稿 |
