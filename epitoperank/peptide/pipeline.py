@@ -84,6 +84,7 @@ class PeptideOptions:
     cache_dir: str | None = None
 
     def as_dict(self) -> dict[str, object]:
+        """把运行参数序列化为字典，写入 manifest 以便复现。"""
         return {
             "alleles": list(self.alleles),
             "mhc_class": self.mhc_class,
@@ -102,6 +103,7 @@ class PeptideOptions:
         }
 
     def validate(self) -> None:
+        """校验 MHC 类别、预测器、II 类窗口与等位基因名，非法时抛 ValueError。"""
         if self.mhc_class not in {"class1", "class2", "both"}:
             raise ValueError("mhc_class must be class1, class2 or both")
         if self.predictor not in {"iedb", "local", "auto", "none"}:
@@ -115,16 +117,19 @@ class PeptideOptions:
 
 
 def _now() -> str:
+    """当前 UTC 时间（秒级 ISO 字符串），用作运行时间戳。"""
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _clean(value: object) -> object:
+    """去除字符串首尾空白，其他类型原样返回。"""
     if isinstance(value, str):
         return value.strip()
     return value
 
 
 def _float_or_none(value: object) -> float | None:
+    """把输入转为浮点数，无法转换或为 NaN 时返回 None。"""
     try:
         result = float(str(value))
     except (TypeError, ValueError):
@@ -136,6 +141,7 @@ def _float_or_none(value: object) -> float | None:
 # Candidate collection
 # ----------------------------------------------------------------------
 def _event_metadata(event: object) -> dict[str, object]:
+    """从剪接事件对象上提取 event_id、基因、事件类型、FDR 与 ΔPSI 等字段。"""
     return {
         "event_id": getattr(event, "event_id", "") or "",
         "gene_id": getattr(event, "gene_id", "") or "",
@@ -188,6 +194,7 @@ def candidates_from_cds(input_dir: str | Path, cds_table: str | Path, *,
         position.setdefault(name, offset)
 
     def cell(row: list[str], name: str) -> str:
+        """按列名安全读取当前行的单元格文本，越界时返回空串。"""
         index = position[name]
         return (row[index] if index < len(row) else "").strip()
 
@@ -300,6 +307,11 @@ def _class2_contexts(candidates: Sequence[dict]) -> tuple[list[str], int]:
 
 def _run_iedb(candidates: Sequence[dict], alleles: Sequence[HlaAllele],
               options: PeptideOptions) -> dict[str, object]:
+    """经 IEDB 联网预测 I/II 类结合（可选加工、稳定性、MHC-NP）。
+
+    每个阶段独立捕获 :class:`IedbError` 并记入 ``errors``，单阶段失败不会
+    中断其余阶段；返回预测记录、错误列表与调用记录。
+    """
     client = _client(options)
     grouped = split_by_class(list(alleles))
     predictions: list[dict[str, object]] = []
@@ -312,6 +324,7 @@ def _run_iedb(candidates: Sequence[dict], alleles: Sequence[HlaAllele],
     class2_alleles = [item.name for item in grouped[2]]
 
     def attempt(label: str, func, *args, **kwargs) -> None:
+        """执行一个预测阶段，把 IedbError 记入 errors 而不中断整体流程。"""
         try:
             predictions.extend(func(*args, **kwargs))
         except IedbError as error:
@@ -346,6 +359,10 @@ def _run_iedb(candidates: Sequence[dict], alleles: Sequence[HlaAllele],
 
 
 def _run_local(candidates: Sequence[dict], alleles: Sequence[HlaAllele]) -> dict[str, object]:
+    """用本地 MHCflurry 离线预测 I 类结合，不联网；异常记入 errors。
+
+    仅处理 8-11 aa 的 I 类肽段，II 类不支持时结果中不会出现相应记录。
+    """
     from . import local_models
 
     grouped = split_by_class(list(alleles))
@@ -444,6 +461,7 @@ def aggregate(candidates: Sequence[dict], predictions: Sequence[dict]) -> list[d
 
 
 def annotate_properties(rows: Sequence[dict]) -> list[dict[str, object]]:
+    """为每条候选合并本地理化特征（分子量、pI、GRAVY 等），纯离线计算。"""
     annotated = []
     for row in rows:
         info = properties.describe(str(row["peptide"]))
@@ -456,6 +474,7 @@ def annotate_properties(rows: Sequence[dict]) -> list[dict[str, object]]:
 # ----------------------------------------------------------------------
 def _write_tsv(path: Path, rows: Sequence[dict], preferred: Sequence[str],
                *, allow_extra: bool = False) -> None:
+    """按首选列顺序写出 UTF-8 制表符表格；可选追加未列出的标量字段。"""
     keys: list[str] = list(preferred)
     if allow_extra:
         for row in rows:
@@ -470,6 +489,7 @@ def _write_tsv(path: Path, rows: Sequence[dict], preferred: Sequence[str],
 
 
 def _format(value: object) -> object:
+    """把单元格值格式化为写入 TSV 的文本（布尔转 yes/no、浮点保留 6 位有效数字）。"""
     if isinstance(value, bool):
         return "yes" if value else "no"
     if isinstance(value, float):
@@ -482,6 +502,7 @@ def _format(value: object) -> object:
 
 
 def _prediction_rows(predictions: Sequence[dict]) -> list[dict[str, object]]:
+    """把预测记录中的原始行转成 JSON 字符串（截断到 2000 字符）以便落表。"""
     rows = []
     for row in predictions:
         item = {key: value for key, value in row.items() if key != "raw"}
@@ -491,6 +512,7 @@ def _prediction_rows(predictions: Sequence[dict]) -> list[dict[str, object]]:
 
 
 def _summary_markdown(manifest: dict, ranked: Sequence[dict]) -> str:
+    """生成 summary.md 的 Markdown 文本：运行信息、前 10 名表格与局限性。"""
     lines = [
         "# 候选肽预测摘要",
         "",
@@ -729,6 +751,7 @@ def _run_iedb_with(client: IedbClient, candidates: Sequence[dict],
     contexts, short_contexts = _class2_contexts(candidates)
 
     def attempt(label: str, func, *args, **kwargs) -> None:
+        """执行一个预测阶段，把 IedbError 记入 errors 而不中断整体流程。"""
         try:
             predictions.extend(func(*args, **kwargs))
         except IedbError as error:

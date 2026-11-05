@@ -15,10 +15,12 @@ from epitoperank.neoantigen_evidence import expression_evidence, normal_protein_
 
 
 def dataset_fingerprint(dataset) -> str:
+    """对事件与样本生成 sha256 摘要，用于发现输入数据在阶段之间被改动。"""
     return hashlib.sha256(repr((dataset.events, dataset.samples)).encode('utf-8')).hexdigest()
 
 
 def _file(directory: Path, name: str) -> Path:
+    """确保输入文件位于项目数据目录内且真实存在，否则抛出 ValueError。"""
     path = (directory / name).resolve()
     if directory.resolve() not in path.parents or not path.is_file():
         raise ValueError('输入文件必须位于项目数据目录内')
@@ -26,6 +28,7 @@ def _file(directory: Path, name: str) -> Path:
 
 
 def _table(path: Path) -> list[dict]:
+    """读取带表头的表格（按后缀区分逗号与制表符分隔）为字典行列表。"""
     with path.open(encoding='utf-8-sig', newline='') as handle:
         return list(csv.DictReader(handle, delimiter=',' if path.suffix.lower() == '.csv' else '\t'))
 
@@ -188,5 +191,6 @@ def advance(state: dict, dataset, parameters: dict, *, predictor=predict_iedb) -
 
 
 def start(dataset, evidence: dict) -> dict:
+    """初始化流程状态：先做输入审计，后续阶段的事件、候选与预测均从空开始。"""
     return {'next_stage': 1, 'dataset_fingerprint': dataset_fingerprint(dataset), 'history': [audit(dataset, evidence)], 'event_ids': [],
             'candidates': [], 'predictions': [], 'stopped': None}

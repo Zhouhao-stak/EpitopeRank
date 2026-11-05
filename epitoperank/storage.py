@@ -67,6 +67,7 @@ def default_runtime_root() -> Path:
 
 
 def _exe_dir() -> Path | None:
+    """返回打包后 exe 所在目录；源码运行时返回 None。"""
     if getattr(sys, "frozen", False):
         try:
             return Path(sys.executable).resolve().parent
@@ -152,10 +153,12 @@ def storage_info(root: Path | None = None) -> dict[str, Any]:
 # migration
 # --------------------------------------------------------------------------
 def _now() -> str:
+    """返回秒级精度的 UTC 时间戳字符串，写入迁移标记。"""
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _read_marker(root: Path) -> dict[str, Any]:
+    """读取迁移标记 JSON；文件缺失或内容损坏时返回空字典。"""
     path = root / _MARKER
     try:
         return json.loads(path.read_text(encoding="utf-8"))
@@ -164,6 +167,7 @@ def _read_marker(root: Path) -> dict[str, Any]:
 
 
 def _write_marker(root: Path, payload: dict[str, Any]) -> None:
+    """把迁移标记写回运行时目录；目标只读等写入失败时静默忽略。"""
     try:
         root.mkdir(parents=True, exist_ok=True)
         (root / _MARKER).write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -172,6 +176,7 @@ def _write_marker(root: Path, payload: dict[str, Any]) -> None:
 
 
 def _table_names(connection: sqlite3.Connection, schema: str = "main") -> list[str]:
+    """列出指定 schema 里的普通表名（排除 sqlite_ 开头的内部表）。"""
     rows = connection.execute(
         f"SELECT name FROM {schema}.sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
     ).fetchall()
@@ -179,6 +184,7 @@ def _table_names(connection: sqlite3.Connection, schema: str = "main") -> list[s
 
 
 def _columns(connection: sqlite3.Connection, table: str, schema: str = "main") -> list[str]:
+    """返回指定表的列名列表，顺序与建表语句一致。"""
     rows = connection.execute(f'PRAGMA {schema}.table_info("{table}")').fetchall()
     return [row[1] for row in rows]
 
@@ -256,6 +262,7 @@ def _merge_sqlite(target: Path, source: Path) -> dict[str, int]:
 
 
 def _copy_tree(source: Path, target: Path) -> int:
+    """把源目录下的文件与子目录逐个复制到目标目录，已存在的同名项跳过，返回复制条目数。"""
     if not source.is_dir():
         return 0
     copied = 0

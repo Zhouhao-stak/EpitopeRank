@@ -16,6 +16,7 @@ from epitoperank.tools.context import RunContext
 
 
 def _median(values: list[float]) -> float | None:
+    """中位数；空列表返回 None。"""
     if not values:
         return None
     ordered = sorted(values)
@@ -26,6 +27,7 @@ def _median(values: list[float]) -> float | None:
 
 
 def _ratio(events: list[Any], attribute: str) -> float:
+    """事件中该属性非空的比例（保留 4 位小数）。"""
     if not events:
         return 0.0
     hits = sum(1 for event in events if getattr(event, attribute, None) is not None)

@@ -58,6 +58,7 @@ class FigureResult:
 
 
 def _save(fig: Figure, output_dir: Path, name: str, title: str, caption: str) -> FigureResult:
+    """把图保存为 PNG 与 SVG、关闭画布，并返回含路径、标题和图注的 FigureResult。"""
     output_dir.mkdir(parents=True, exist_ok=True)
     png_path = output_dir / f"{name}.png"
     svg_path = output_dir / f"{name}.svg"

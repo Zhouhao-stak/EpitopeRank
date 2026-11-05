@@ -19,7 +19,7 @@
 | PyPI | **不通**（`pypi.org/simple`、清华镜像 `/simple/` 全部超时） | 不能 `pip install` |
 | Docker Hub | **不通**（`registry-1.docker.io` 超时） | 不能 `docker pull` 新镜像 |
 | GitHub / Cloudflare | 通 | 可以装 cloudflared |
-| 对外端口 | 只有 SSH 39145 通，8800/8501 被防火墙挡 | 见第四节 |
+| 对外端口 | 只有 SSH 39145 通，8800 被防火墙挡 | 见第四节 |
 
 > 两条“不通”是这台机器最关键的限制：**任何新增 Python 依赖都无法在线安装**。
 
@@ -39,8 +39,7 @@ epitoperank-epitoperank:latest          ← 当前运行（旧镜像 + 新代码
 
 | 进程 | 端口 | 说明 |
 |---|---|---|
-| `serve_ui.py --workers 8` | 8800 | FastAPI + 新 Web UI，8 个 uvicorn 进程 |
-| `streamlit` | 8501 | 旧版看板，保留兼容 |
+| `serve_ui.py --workers 8` | 8800 | FastAPI + Web UI（页面由 `/` 直接渲染），8 个 uvicorn 进程 |
 | 内置 MCP | 9100（容器内） | 8 个 worker 抢同一端口，后 7 个自动检测到已存在并复用 |
 
 配置通过 `docker-compose.override.yml` 叠加，**原始的 `docker-compose.yml` 未改动**。
@@ -60,9 +59,6 @@ cd ~/epitoperank
 
 # 看日志（API）
 ~/bin/docker logs -f --tail 100 epitoperank
-
-# 只看 streamlit
-~/bin/docker exec epitoperank tail -f /data/streamlit.log
 
 # 重启
 ~/bin/docker compose restart epitoperank
@@ -105,7 +101,7 @@ cd ~/epitoperank
 
 ## 四、怎么访问（外网端口被封）
 
-8800/8501 在宿主机上是 `0.0.0.0` 监听，但防火墙只放了 SSH。无 sudo 无法改防火墙，
+8800 在宿主机上是 `0.0.0.0` 监听，但防火墙只放了 SSH。无 sudo 无法改防火墙，
 三条可行路径：
 
 ### 0. 当前已开的公网地址（临时隧道）
@@ -195,7 +191,7 @@ sudo firewall-cmd --permanent --add-port=8800/tcp && sudo firewall-cmd --reload
 
 `run.py serve` 只有一个 uvicorn 进程，任何时刻只有 1 个核在干活。
 `docker-compose.override.yml` 把启动命令换成 `serve_ui.py --workers 8`，8 个独立进程，
-可以同时跑 8 个分析任务。实测 8 个 worker + streamlit 常驻内存 886 MB，128 核 / 503 G 完全吃得下。
+可以同时跑 8 个分析任务。实测 8 个 worker 常驻内存约 886 MB，128 核 / 503 G 完全吃得下。
 
 调大：`EPITOPERANK_WORKERS=16`（每个 worker 约 300–400 MB）。
 
@@ -239,7 +235,6 @@ NUMEXPR_NUM_THREADS=1
 | 数据库 | 容器内 `/data/epitoperank.sqlite3` → 宿主机 `/var/lib/docker/volumes/epitoperank-data/_data/` | 命名卷 `epitoperank-data` |
 | 项目产物（图表/报告） | 容器内 `/data/runtime/projects/<项目ID>/` | 同上卷 |
 | 旧库（迁移前） | `/data/epitoperank.sqlite3` 是主库；`/data/runtime/epitoperank.sqlite3` 是备用位置 | 见 `/api/storage` |
-| streamlit 日志 | `/data/streamlit.log` | |
 
 **当前这个库几乎是空的**（60 KB，0 个项目）——你本机 `%LOCALAPPDATA%\EpitopeRank`
 里那 83 个项目没有被带上来。要迁移的话见下面。

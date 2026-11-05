@@ -18,6 +18,7 @@ class SkillResult:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        """把技能执行结果序列化为可 JSON 传输的字典。"""
         return {
             "skill_name": self.skill_name,
             "success": self.success,

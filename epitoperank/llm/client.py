@@ -91,6 +91,7 @@ def detect_provider(settings: Settings) -> str:
 
 
 def _normalised_thinking(raw: str) -> str:
+    """把配置中的 thinking 取值归一化为 enabled / disabled / auto（无法识别时按 auto）。"""
     value = str(raw or "auto").strip().lower()
     if value in {"enabled", "enable", "on", "true", "1", "yes"}:
         return "enabled"

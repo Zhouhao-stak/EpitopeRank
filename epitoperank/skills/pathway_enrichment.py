@@ -24,14 +24,17 @@ class PathwayEnrichmentSkill(BaseSkill):
 
     @property
     def name(self) -> str:
+        """技能标识符 pathway_enrichment，供工具注册与调用时使用。"""
         return "pathway_enrichment"
 
     @property
     def description(self) -> str:
+        """供模型选择工具时阅读的技能说明（中文）。"""
         return "执行通路富集分析，包括GO术语、KEGG通路、Reactome通路和疾病关联（整合本地分析与实时数据库查询）"
 
     @property
     def input_schema(self) -> dict[str, Any]:
+        """技能的入参 JSON Schema：genes 必填，背景基因、本体库与阈值可选。"""
         return {
             "type": "object",
             "properties": {
@@ -73,6 +76,7 @@ class PathwayEnrichmentSkill(BaseSkill):
         }
 
     async def execute(self, **kwargs: Any) -> SkillResult:
+        """按所选本体库逐个查询富集结果，合并排序后按 FDR 阈值返回。"""
         genes = kwargs.get("genes")
         background_genes = kwargs.get("background_genes")
         ontologies = kwargs.get("ontologies", ["GO", "KEGG"])

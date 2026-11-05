@@ -6,8 +6,8 @@
 
 - **容器状态**: Up & Healthy ✓
 - **API 服务**: http://0.0.0.0:8800 ✓
-- **Streamlit UI**: http://0.0.0.0:8501 ✓
-- **端口映射**: 8800 (API), 8501 (UI) ✓
+- **Web UI**: http://0.0.0.0:8800/ ✓（页面由 API 在 `/` 直接渲染）
+- **端口映射**: 8800 (API + Web UI) ✓
 
 ## 🌐 访问方式
 
@@ -16,8 +16,8 @@
 在浏览器中打开以下任一地址：
 
 ```
-http://123.255.66.81:8501    # Streamlit Web UI
-http://123.255.66.81:8800/docs    # API 文档（Swagger UI）
+http://123.255.66.81:8800        # Web UI
+http://123.255.66.81:8800/docs   # API 文档（Swagger UI）
 ```
 
 ### 方式二：SSH 隧道（推荐，更安全）
@@ -25,25 +25,24 @@ http://123.255.66.81:8800/docs    # API 文档（Swagger UI）
 在你的本地机器上运行以下命令（Windows PowerShell 或 CMD）：
 
 ```bash
-ssh -L 8501:localhost:8501 -L 8800:localhost:8800 -p 39145 wang_zi_wei@123.255.66.81
+ssh -L 8800:localhost:8800 -p 39145 wang_zi_wei@123.255.66.81
 ```
 
 保持 SSH 会话打开，然后在浏览器中访问：
 
 ```
-http://localhost:8501        # Streamlit Web UI
+http://localhost:8800        # Web UI
 http://localhost:8800/docs   # API 文档
 ```
 
 **参数说明**：
-- `-L 8501:localhost:8501`：将服务器的 8501 端口转发到本地的 8501 端口
 - `-L 8800:localhost:8800`：将服务器的 8800 端口转发到本地的 8800 端口
 - `-p 39145`：服务器 SSH 端口
 - `wang_zi_wei@123.255.66.81`：服务器用户名和地址
 
 ## 📱 Web UI 功能
 
-Streamlit UI 提供以下功能：
+Web UI 提供以下功能（9 个页面：仪表盘 / AI 流水线 / 事件浏览器 / 可视化 / 基因浏览器 / 报告 / 剪接候选新抗原 / 肽预测 / 设置）：
 
 1. **项目管理**：查看、创建和管理剪接分析项目
 2. **数据上传**：上传 rMATS 结果（JC 事件表或厂商逐样本导出）
@@ -74,7 +73,7 @@ MODEL_API_KEY=sk-your-api-key-here
 
 如需更换，编辑服务器上的 `.env` 文件：
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
+ssh -p 39145 wang_zi_wei@123.255.66.81
 cd /home/wang_zi_wei/epitoperank
 nano .env
 # 修改 MODEL_API_KEY
@@ -85,7 +84,7 @@ docker compose restart
 
 ### 查看容器状态
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
+ssh -p 39145 wang_zi_wei@123.255.66.81
 docker ps | grep epitoperank
 ```
 
@@ -107,7 +106,7 @@ docker stats epitoperank
 ## ⚠️ 注意事项
 
 1. **保持 SSH 会话打开**：如果使用 SSH 隧道方式，需要保持 SSH 会话一直打开
-2. **防火墙设置**：确保服务器防火墙允许 8501 和 8800 端口访问（或直接使用 SSH 隧道）
+2. **防火墙设置**：确保服务器防火墙允许 8800 端口访问（或直接使用 SSH 隧道）
 3. **API Key 安全**：不要公开分享你的 DeepSeek API Key
 4. **数据持久化**：分析数据存储在 Docker volume `epitoperank-data` 中，即使容器删除也不会丢失
 

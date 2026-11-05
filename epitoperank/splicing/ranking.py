@@ -40,6 +40,7 @@ class RankedCandidate:
     evidence: tuple[str, ...] = ()
 
     def as_dict(self) -> dict[str, object]:
+        """转换为可 JSON 序列化的候选字典，分数与各分项保留四位小数，证据元组转为列表。"""
         return {
             "event_id": self.event_id,
             "gene_id": self.gene_id,

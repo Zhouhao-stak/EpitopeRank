@@ -31,7 +31,6 @@ SQLAlchemy>=2.0
 reportlab>=4.0
 
 # --- interfaces -----------------------------------------------------------------
-streamlit>=1.46   # st.image width="stretch" requires 1.46+
 fastapi>=0.110
 uvicorn[standard]>=0.29
 python-multipart>=0.0.9

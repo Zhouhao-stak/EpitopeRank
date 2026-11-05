@@ -4,7 +4,13 @@
 
 SERVER="wang_zi_wei@123.255.66.81"
 PORT="39145"
-PASS="REDACTED-SSH-PASSWORD"
+# 仓库不保存密码：需要免交互时临时设置 EPITOPERANK_SSH_PASS，否则走 ssh 交互提示/密钥。
+SSH_PASS="${EPITOPERANK_SSH_PASS:-}"
+if [ -n "$SSH_PASS" ]; then
+    SSH_BASE=(sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -p "$PORT")
+else
+    SSH_BASE=(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -p "$PORT")
+fi
 
 echo "=========================================="
 echo "🔍 Checking EpitopeRank Deployment Status"
@@ -13,7 +19,7 @@ echo ""
 
 # Function to run SSH commands
 ssh_cmd() {
-    sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -p $PORT $SERVER "$@" 2>&1
+    "${SSH_BASE[@]}" "$SERVER" "$@" 2>&1
 }
 
 # Step 1: Check connectivity
@@ -82,7 +88,7 @@ if echo "$HEALTH" | grep -q '"status":"ok"'; then
     echo ""
     echo "Access your application:"
     echo "  API: http://123.255.66.81:8800"
-    echo "  UI:  http://123.255.66.81:8501"
+    echo "  UI:  http://123.255.66.81:8800  (与 API 同端口)"
     echo ""
     echo "Useful commands:"
     echo "  Logs:     ssh -p $PORT $SERVER 'cd ~/epitoperank && docker compose logs -f'"

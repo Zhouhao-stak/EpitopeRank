@@ -40,6 +40,7 @@ ORGANISMS: dict[str, str] = {
 
 
 def backend_available() -> bool:
+    """检查 gseapy 是否已安装；未安装则不做任何联网富集分析。"""
     try:
         import gseapy  # noqa: F401, PLC0415
 
@@ -72,6 +73,7 @@ def enrich(
     org = ORGANISMS.get(str(organism).strip().lower(), "Human")
 
     def _call() -> list[dict[str, Any]]:
+        """在临时目录中联网调用 gseapy.enrichr 查询 Enrichr，并把结果表转成字典行。"""
         import shutil  # noqa: PLC0415
 
         import gseapy  # noqa: PLC0415
@@ -103,7 +105,9 @@ def enrich(
 
 
 def _normalise(row: dict[str, Any]) -> dict[str, Any]:
+    """把 GSEApy 的原始结果行映射为 EpitopeRank 的统一字段，兼容多种列名写法。"""
     def pick(*keys: str, default: Any = None) -> Any:
+        """按候选列名依次取值，跳过 None 与空串。"""
         for key in keys:
             value = row.get(key)
             if value not in (None, ""):
@@ -132,6 +136,7 @@ def _normalise(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def _ontology_of(library: str) -> str:
+    """根据库名推断本体类别（GO、KEGG、Reactome、WikiPathways 或 Enrichr）。"""
     text = (library or "").upper()
     if text.startswith("GO_") or "GO_" in text or "BIOLOGICAL" in text or "MOLECULAR" in text:
         return "GO"
@@ -145,6 +150,7 @@ def _ontology_of(library: str) -> str:
 
 
 def _as_float(value: Any) -> float | None:
+    """尽力把值转成 float，转换失败或为 NaN 时返回 None。"""
     try:
         if value is None:
             return None

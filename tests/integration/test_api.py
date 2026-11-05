@@ -206,15 +206,20 @@ class TestAPIErrorHandling:
         response = client.post("/api/health")
         assert response.status_code == 405
 
-    def test_debug_endpoint_does_not_log_auth_header(self, client, caplog):
-        """Debug logging must not capture bearer/API credentials."""
+    def test_debug_endpoint_is_not_exposed(self, client, caplog):
+        """开发期用过的调试接口不得对外暴露，也不得把凭证写进日志。
+
+        该端点曾用于排查上传问题（回显表单字段并吞掉异常），属于开发遗留：
+        它无鉴权、无载荷处理，会把内部细节暴露给任何能访问端口的人。现予删除，
+        并用 404 断言锁死，避免以后被重新加回来。
+        """
         caplog.set_level(logging.INFO)
         response = client.post(
             "/api/upload-debug",
             headers={"Authorization": "Bearer do-not-log-this"},
             data={},
         )
-        assert response.status_code == 200
+        assert response.status_code == 404
         assert "do-not-log-this" not in caplog.text
 
 

@@ -11,11 +11,11 @@
 |---|---|
 | 出网 | PyPI / Docker Hub 被集群防火墙阻断 |
 | 镜像 | `epitoperank-epitoperank:latest`，1.07 GB，Python 3.11.17 |
-| 依赖 | pandas / numpy / scipy / openai / httpx / fastapi / streamlit 等已装 |
+| 依赖 | pandas / numpy / scipy / openai / httpx / fastapi 等已装 |
 | 代码位置 | 镜像内 `/app`，原来**没有**源码 bind mount |
 | 数据 | docker volume `epitoperank-data` → `/data`，SQLite 877 MB / 180 万事件 |
 | 资源 | 128 核 / 503 GB 内存，容器限额 64 核 / 64 GB |
-| 端口 | 8800（FastAPI + 新 Web UI）、8501（旧 Streamlit） |
+| 端口 | 8800（FastAPI + Web UI，页面在 `/`） |
 
 所以发布模型是：**把源码目录挂进容器，覆盖镜像里的 `/app`**。
 以后每次更新 = 覆盖文件 + `docker compose up -d --no-build`，几秒完成。
@@ -131,7 +131,7 @@ cd ~/epitoperank
 ## 已知边界
 
 - **8800 端口无鉴权**：目前是公网直连。需要的话在 `splicingnexus-proxy` 加 Basic Auth 或只监听 127.0.0.1 再由 nginx 转发。
-- **8501 Streamlit 是旧界面**：新 Web UI 在 8800 `/`。确认无人使用后可把 `EPITOPERANK_ENABLE_STREAMLIT=0`，省一个进程。
+- **Streamlit（8501）已移除**：旧界面代码与依赖一并删除，容器只跑 API；重启后 8501 不再监听。
 - **`.env` 含真实密钥**：不要提交、不要打包、不要发群。
 - **数据库 877 MB**：`/data/epitoperank.sqlite3`；更新不会重建它，但也不做备份。需要时先 `docker run --rm -v epitoperank-data:/data alpine cp /data/epitoperank.sqlite3 /data/backup.sqlite3`。
 - **镜像更新仍需外网**：如果未来新增 Python 依赖，必须在一台能出网的机器上 `docker build` + `docker save` / `docker load`，本机不能直接 build。
@@ -142,7 +142,7 @@ cd ~/epitoperank
 |---|---|
 | 镜像 | `epitoperank-epitoperank:latest` 未重建（1.07 GB） |
 | 挂载 | `/home/wang_zi_wei/epitoperank -> /app (ro)`；`/data` volume 保留 |
-| 进程 | 8 个 uvicorn worker + Streamlit :8501 |
+| 进程 | 8 个 uvicorn worker |
 | 路由 | `/api/health`、`/api/mcp/servers`、`/api/peptide/capabilities`、`/api/projects`、`/docs`、`/` 全部 200 |
 | UI | 页面含「设置」「肽预测」「模型配置」 |
 | 大模型 | `mode=llm`，`list_projects` 工具调用成功，4643 tokens，数字溯源 `ok` |

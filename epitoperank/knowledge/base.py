@@ -307,6 +307,7 @@ class KnowledgeRecord:
     pmids: tuple[str, ...] = ()
 
     def summary(self) -> str:
+        """拼成一段可读摘要：功能、剪接相关性、疾病关联与参考文献。"""
         parts = [f"{self.gene}: {self.function}"]
         if self.as_notes:
             parts.append(f"Splicing relevance: {self.as_notes}.")
@@ -318,6 +319,7 @@ class KnowledgeRecord:
 
 
 def _as_tuple(pmids: Any) -> tuple[str, ...]:
+    """把 PMID 字段（None、字符串或序列）统一成字符串元组。"""
     if pmids is None:
         return ()
     if isinstance(pmids, str):

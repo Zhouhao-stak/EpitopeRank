@@ -31,6 +31,7 @@ class FilterReport:
     excluded: dict[str, int]
 
     def as_dict(self) -> dict[str, object]:
+        """导出筛选报告字典：输入/输出事件数、所用阈值与各剔除原因的计数。"""
         return {
             "input_count": self.input_count,
             "output_count": self.output_count,

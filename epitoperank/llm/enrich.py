@@ -89,10 +89,12 @@ def extract_json(text: str | None) -> Any:
 
 
 def _fenced(raw: str) -> list[str]:
+    """提取回复中围栏代码块（```json 等）里的内容，供宽松 JSON 解析使用。"""
     return [match.group(1).strip() for match in _JSON_FENCE.finditer(raw)]
 
 
 def _braced(raw: str) -> list[str]:
+    """截取首个 { 或 [ 到最后一个 } 或 ] 之间的片段，用于从散文里捞 JSON。"""
     candidates: list[str] = []
     for opener, closer in (("{", "}"), ("[", "]")):
         start = raw.find(opener)
@@ -122,6 +124,7 @@ class LLMEnhancer:
         logger: Callable[[str, str, str, str], None] | None = None,
         features: Iterable[str] | None = None,
     ) -> None:
+        """按配置初始化功能开关、调用预算、超时、缓存与重试参数，不做任何网络请求。"""
         self.settings = settings
         self.logger = logger
         llm = settings.llm
@@ -152,23 +155,29 @@ class LLMEnhancer:
     # -- state ------------------------------------------------------------
     @property
     def enabled(self) -> bool:
+        """凭据可用且至少启用了一个功能时才为真。"""
         return bool(self.settings.llm.usable) and bool(self.features)
 
     @property
     def model(self) -> str:
+        """返回配置的主模型名，未配置时为空串。"""
         return self.settings.llm.model or ""
 
     @property
     def critic_model(self) -> str:
+        """返回自评使用的模型，未单独配置时回退到主模型。"""
         return self.settings.llm.critic_model or self.model
 
     def has(self, feature: str) -> bool:
+        """判断某个功能是否启用（整体可用且该功能在启用集合内）。"""
         return self.enabled and feature in self.features
 
     def _budget_left(self) -> bool:
+        """判断本次运行是否还有调用额度；预算为 0 表示不限。"""
         return not self.max_calls or len(self.calls) < self.max_calls
 
     def _note(self, status: str, feature: str, detail: str) -> None:
+        """把一次调用的状态写入日志回调，日志自身异常会被吞掉以免影响主流程。"""
         if self.logger is not None:
             try:
                 self.logger("llm", f"enrich:{feature}", status, detail[:400])
@@ -353,6 +362,7 @@ class LLMEnhancer:
         json_output: bool,
         timeout: float,
     ) -> str:
+        """发起一次真实模型调用（联网、受 timeout 约束）；失败时异常上抛，由上层降级。"""
         from autogen_core.models import SystemMessage, UserMessage
 
         messages: list[Any] = [SystemMessage(content=system), UserMessage(content=user, source="user")]
@@ -419,6 +429,7 @@ class LLMEnhancer:
 
 
 def _as_text(result: Any) -> str:
+    """把模型返回的 content（字符串、内容块列表或对象）统一拼成纯文本。"""
     content = getattr(result, "content", result)
     if isinstance(content, str):
         return content
@@ -471,6 +482,7 @@ def llm_status(settings: Settings | None = None) -> dict[str, Any]:
 
 
 def env_flag(name: str, default: bool = False) -> bool:
+    """按常见真假值解析环境变量开关，变量未设置时返回默认值。"""
     value = os.getenv(name)
     if value is None:
         return default

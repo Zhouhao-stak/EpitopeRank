@@ -41,10 +41,12 @@ class Remediation:
     addresses: str
 
     def as_tuple(self) -> tuple[str, dict[str, Any], str]:
+        """展开为 (action, args, rationale) 三元组。"""
         return self.action, dict(self.args), self.rationale
 
 
 def _remedy_no_significant(state: AgentState) -> Remediation | None:
+    """零显著事件：以 exploratory 策略放宽阈值重选，达重试上限则放弃。"""
     if state.count_of("adapt_thresholds") >= MAX_RETRIES["adapt_thresholds"]:
         return None
     strategy = "exploratory"
@@ -60,6 +62,7 @@ def _remedy_no_significant(state: AgentState) -> Remediation | None:
 
 
 def _remedy_no_candidates(state: AgentState) -> Remediation | None:
+    """有显著事件但排序无结果：重跑排序。"""
     if state.count_of("rank_candidates") >= MAX_RETRIES["rank_candidates"]:
         return None
     return Remediation(
@@ -71,6 +74,7 @@ def _remedy_no_candidates(state: AgentState) -> Remediation | None:
 
 
 def _remedy_too_many(state: AgentState) -> Remediation | None:
+    """显著事件过多：以 strict 策略收紧阈值，得到可排序的数量。"""
     if state.count_of("adapt_thresholds") >= MAX_RETRIES["adapt_thresholds"]:
         return None
     return Remediation(
@@ -82,6 +86,7 @@ def _remedy_too_many(state: AgentState) -> Remediation | None:
 
 
 def _remedy_few(state: AgentState) -> Remediation | None:
+    """显著事件过少：以 exploratory 策略略微放宽门槛。"""
     if state.count_of("adapt_thresholds") >= MAX_RETRIES["adapt_thresholds"]:
         return None
     return Remediation(
@@ -93,6 +98,7 @@ def _remedy_few(state: AgentState) -> Remediation | None:
 
 
 def _remedy_sparse_evidence(state: AgentState) -> Remediation | None:
+    """文献证据覆盖不足：提高每基因条数后重试证据收集。"""
     if state.count_of("collect_literature_evidence") >= MAX_RETRIES["collect_literature_evidence"]:
         return None
     return Remediation(
@@ -104,6 +110,7 @@ def _remedy_sparse_evidence(state: AgentState) -> Remediation | None:
 
 
 def _remedy_figures(state: AgentState) -> Remediation | None:
+    """出图动作跑过但结果为空：重试一次出图。"""
     if state.count_of("generate_figures") >= MAX_RETRIES["generate_figures"]:
         return None
     return Remediation(

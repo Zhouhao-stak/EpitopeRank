@@ -47,6 +47,7 @@ _SUMMARY_TTL_SECONDS = 20.0
 
 
 def _settings() -> Any:
+    """惰性加载平台配置，避免工具模块导入时即触发配置解析。"""
     from epitoperank.config import load_prepared_settings
 
     settings, _ = load_prepared_settings()
@@ -54,6 +55,7 @@ def _settings() -> Any:
 
 
 def _memory() -> Any:
+    """按当前配置打开项目记忆库（SQLite），供各工具共享。"""
     from epitoperank.memory import ProjectMemory
 
     settings = _settings()
@@ -61,6 +63,7 @@ def _memory() -> Any:
 
 
 def _require_project(project_id: str) -> dict[str, Any]:
+    """校验 project_id 是否存在，不存在时抛出带可选列表的 ValueError。"""
     project = _memory().get_project(project_id)
     if project is None:
         available = [item["project_id"] for item in _memory().list_projects()[:5]]
@@ -270,6 +273,7 @@ def compute_delta_psi(group1_psi: float, group2_psi: float) -> dict[str, Any]:
 
 
 def _round(value: Any, digits: int) -> float | None:
+    """四舍五入数值用于输出，非数值或缺失时返回 None。"""
     if value is None:
         return None
     try:
@@ -376,4 +380,5 @@ TOOL_SPECS_BY_NAME = {spec["name"]: spec for spec in TOOL_SPECS}
 
 
 def text_result(payload: dict[str, Any]) -> str:
+    """把工具返回的 dict 序列化为缩进 JSON 文本，作为 MCP content 文本块。"""
     return json.dumps(payload, ensure_ascii=False, indent=2, default=str)

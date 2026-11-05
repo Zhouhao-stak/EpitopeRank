@@ -25,6 +25,7 @@ class Capability:
     requires: str = ""
 
     def as_dict(self) -> dict[str, str]:
+        """转成供 API 与报告使用的字典，available 保持布尔值。"""
         return {
             "name": self.name,
             "purpose": self.purpose,
@@ -65,6 +66,7 @@ _SPEC: tuple[tuple[str, str, str, str], ...] = (
 
 
 def _version_of(module: str) -> str:
+    """先查包元数据、再导入模块取 __version__，两者都失败时返回空串。"""
     try:
         return str(metadata.version(module))
     except Exception:  # noqa: BLE001 - metadata is best-effort only
@@ -112,8 +114,10 @@ def has_backend(name: str) -> bool:
 
 
 def available_backends() -> list[str]:
+    """返回当前实际已安装的组件名列表。"""
     return [item.name for item in capabilities() if item.available]
 
 
 def capability_report() -> dict[str, dict[str, str]]:
+    """返回 组件名 -> 组件信息 的完整探测报告。"""
     return {item.name: item.as_dict() for item in capabilities()}

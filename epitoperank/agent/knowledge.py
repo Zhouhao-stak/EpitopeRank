@@ -51,6 +51,7 @@ class LabKnowledge:
 
     # -- internal -----------------------------------------------------------
     def _connect(self) -> sqlite3.Connection:
+        """打开 SQLite 连接：DELETE 日志模式（Windows 兼容更好）、5 秒忙等待、按列名取行。"""
         conn = sqlite3.connect(str(self.db_path))
         # Use DELETE mode instead of WAL for better Windows compatibility
         conn.execute("PRAGMA journal_mode=DELETE")
@@ -67,6 +68,7 @@ class LabKnowledge:
             pass  # Ignore errors during cleanup
 
     def _init_db(self) -> None:
+        """幂等地建表与建索引，确保知识库表可用。"""
         with self._connect() as conn:
             conn.execute(
                 """

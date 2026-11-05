@@ -23,14 +23,17 @@ class LiteratureSearchSkill(BaseSkill):
 
     @property
     def name(self) -> str:
+        """技能标识符 literature_search，供工具注册与调用时使用。"""
         return "literature_search"
 
     @property
     def description(self) -> str:
+        """供模型选择工具时阅读的技能说明（中文）。"""
         return "搜索科学文献，查找基因剪接相关证据、疾病关联、功能验证和临床研究（支持PubMed/Europe PMC/Semantic Scholar）"
 
     @property
     def input_schema(self) -> dict[str, Any]:
+        """技能的入参 JSON Schema：query 必填，年份、篇数与数据源可选。"""
         return {
             "type": "object",
             "properties": {
@@ -69,6 +72,7 @@ class LiteratureSearchSkill(BaseSkill):
         }
 
     async def execute(self, **kwargs: Any) -> SkillResult:
+        """执行多源文献检索，按引用数与年份排序后截断到 max_results。"""
         query = kwargs.get("query")
         max_results = kwargs.get("max_results", 10)
         year_from = kwargs.get("year_from")

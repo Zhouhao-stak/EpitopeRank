@@ -34,6 +34,7 @@ _RMATS_COORDINATE_FIELDS: dict[str, tuple[str, str]] = {
 
 
 def _numbers(value: Any, cast: type[float] | type[int]) -> list[float] | list[int]:
+    """把 rMATS 中以逗号分隔的逐样本数值字段（如 IncLevel1）解析为列表，跳过 NA 等缺失项。"""
     values: list[float] | list[int] = []
     for item in str(value or "").split(","):
         if item.strip() in {"", "NA", "nan", "NaN"}:
@@ -46,6 +47,7 @@ def _numbers(value: Any, cast: type[float] | type[int]) -> list[float] | list[in
 
 
 def _mean(values: list[float]) -> float | None:
+    """返回数值列表的算术平均值，空列表返回 None。"""
     return sum(values) / len(values) if values else None
 
 

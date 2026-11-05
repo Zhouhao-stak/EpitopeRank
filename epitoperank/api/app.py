@@ -224,10 +224,12 @@ def create_app() -> FastAPI:
 
     @app.get("/favicon.ico", include_in_schema=False)
     def favicon() -> Response:
+        """返回内嵌的 SVG 站点图标，避免浏览器探测 /favicon.ico 时报 404。"""
         return Response(content=_FAVICON_SVG, media_type="image/svg+xml")
 
     @app.get("/api/health")
     def health() -> dict[str, Any]:
+        """健康探针：返回版本号与是否已配置模型端点。"""
         return {"status": "ok", "version": API_VERSION, "llm_configured": settings.llm.configured}
 
     @app.middleware("http")
@@ -402,6 +404,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/projects")
     def projects() -> dict[str, Any]:
+        """列出全部项目（纯读库，供首页项目列表使用）。"""
         return {"projects": list_projects(settings)}
 
     @app.get("/api/storage")
@@ -417,6 +420,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/status/{project_id}")
     def status(project_id: str) -> dict[str, Any]:
+        """返回某项目的分析状态汇总（读库）；项目不存在时返回 404。"""
         payload = project_status(project_id, settings)
         if payload is None:
             raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
@@ -524,6 +528,7 @@ def create_app() -> FastAPI:
         return {"ok": True, "path": bundle}
 
     def _bundle_dir_for(project_id: str) -> str:
+        """导出并返回项目的成果目录；项目不存在或没有可导出内容时抛 404。"""
         from epitoperank.memory.project_memory import ProjectMemory
 
         memory = ProjectMemory(settings.paths.memory_db)
@@ -587,6 +592,10 @@ def create_app() -> FastAPI:
 
     @app.post("/api/analyze")
     def analyze(payload: dict[str, Any]) -> dict[str, Any]:
+        """同步跑完整条分析流水线并返回摘要，随后尝试把成果导出到 results 目录。
+
+        请求需带 ``query`` 与存在的 ``input_dir``；``thresholds`` 里给出的阈值只对本次生效。
+        """
         query = str(payload.get("query", "")).strip()
         input_dir = str(payload.get("input_dir", "")).strip()
         if not query:
@@ -695,11 +704,13 @@ def create_app() -> FastAPI:
     neo_workflows_dir = settings.paths.runtime_root / 'neoantigen_workflows'
 
     def _neo_session_file(workflow_id: str) -> Path:
+        """校验 workflow_id 为 32 位安全字符并返回会话文件路径；格式非法时抛 404。"""
         if not re.fullmatch(r'[A-Za-z0-9_-]{32}', workflow_id):
             raise HTTPException(status_code=404, detail='流程不存在')
         return neo_workflows_dir / (workflow_id + '.json')
 
     def _neo_save(workflow_id: str, session: dict) -> None:
+        """原子地写入流程会话（先写 .tmp 再 os.replace），同时更新内存缓存。"""
         path = _neo_session_file(workflow_id)
         path.parent.mkdir(parents=True, exist_ok=True)
         temporary = path.with_suffix('.tmp')
@@ -708,6 +719,7 @@ def create_app() -> FastAPI:
         neo_workflows[workflow_id] = session
 
     def _neo_load(workflow_id: str) -> dict:
+        """读取流程会话：命中内存缓存则直接返回，否则从磁盘 JSON 载入；读不到抛 404。"""
         path = _neo_session_file(workflow_id)
         if workflow_id not in neo_workflows:
             try:
@@ -718,12 +730,17 @@ def create_app() -> FastAPI:
 
     @app.get('/api/neoantigen/workflow/{workflow_id}')
     def neo_workflow_get(workflow_id: str) -> dict[str, Any]:
+        """返回指定新抗原流程会话的当前阶段状态。"""
         with neo_workflows_lock:
             session = _neo_load(workflow_id)
             return {'workflow_id': workflow_id, **session['state']}
 
     @app.get('/api/neoantigen/readiness/{project_id}')
     def neo_readiness(project_id: str) -> dict[str, Any]:
+        """体检项目的编码序列表与 rMATS 文件是否齐备，并给出列映射与预览。
+
+        只按表头与列内容判断，不校验读码框；检测失败时返回 422 并带出原因。
+        """
         import csv
         from epitoperank.data.loader import load_dataset
         from epitoperank.neoantigen import (CDS_FIELD_LABELS, CDS_FIELDS, discover_cds_tables,
@@ -777,6 +794,7 @@ def create_app() -> FastAPI:
 
     @app.post('/api/neoantigen/mopepgen')
     def neo_mopepgen(payload: dict[str, Any]) -> dict[str, Any]:
+        """调用 moPepGen 生成变异肽：校验参考文件与 rMATS 表后启动子进程并读回 manifest。"""
         from epitoperank.mopepgen_docker import execute
         project = project_status(str(payload.get('project_id') or ''), settings)
         if not project:
@@ -784,6 +802,7 @@ def create_app() -> FastAPI:
         directory = _ingest_input_dir(str(project['project'].get('source_dir') or ''))
         root = _ingest_input_dir(str(directory.parent)) if directory.name == 'standardized' else directory
         def input_file(value: Any) -> Path:
+            """把请求里的文件名解析成项目目录内的真实文件，越界或不存在时抛 422。"""
             path = (root / str(value or '')).resolve()
             if root not in path.parents or not path.is_file():
                 raise HTTPException(status_code=422, detail='输入文件必须位于当前项目上传目录中')
@@ -820,6 +839,7 @@ def create_app() -> FastAPI:
 
     @app.get('/api/neoantigen/mopepgen/file')
     def neo_mopepgen_file(output_dir: str, name: str) -> FileResponse:
+        """下载 moPepGen 的指定结果文件；文件名必须在白名单内且位于结果目录。"""
         directory = _ingest_input_dir(output_dir)
         if directory.parent.name != 'mopepgen_results' or name not in {'manifest.json', 'events.gvf', 'variant_peptides.fasta', 'step_1.log', 'step_2.log'}:
             raise HTTPException(status_code=400, detail='无效结果文件')
@@ -830,6 +850,7 @@ def create_app() -> FastAPI:
 
     @app.post('/api/neoantigen/workflow/start')
     def neo_workflow_start(payload: dict[str, Any]) -> dict[str, Any]:
+        """用项目数据集开启一轮新抗原流程，生成随机 workflow_id 并落盘会话。"""
         from epitoperank.data.loader import load_dataset
         from epitoperank.neoantigen_workflow import start
         project = project_status(str(payload.get('project_id') or ''), settings)
@@ -850,6 +871,7 @@ def create_app() -> FastAPI:
 
     @app.post('/api/neoantigen/workflow/advance')
     def neo_workflow_advance(payload: dict[str, Any]) -> dict[str, Any]:
+        """把流程推进到下一阶段；客户端 expected_stage 过期时返回 409 以防重复提交。"""
         from epitoperank.data.loader import load_dataset
         from epitoperank.neoantigen_workflow import advance
         workflow_id = str(payload.get('workflow_id') or '')
@@ -869,6 +891,7 @@ def create_app() -> FastAPI:
 
     @app.post("/api/neoantigen/audit")
     def neoantigen_audit(payload: dict[str, Any]) -> dict[str, Any]:
+        """按 ``stage`` 分派：0 做数据审计，2 做事件级过滤（需先确认审计结果）。"""
         from epitoperank.data.loader import load_dataset
         from epitoperank.neoantigen_audit import audit, filter_events
 
@@ -895,6 +918,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
     def _project_input_dirs(project_id: str) -> tuple[Path, list[Path]]:
+        """返回项目的数据目录，以及需一并搜索的目录列表（standardized 时含其父目录）。"""
         project = project_status(project_id, settings)
         if not project:
             raise HTTPException(status_code=404, detail="项目不存在，请重新选择项目")
@@ -930,6 +954,7 @@ def create_app() -> FastAPI:
         raise HTTPException(status_code=404, detail=f"当前项目里没有找到文件「{raw}」，请重新选择或上传")
 
     def _detect_cds_table(roots: list[Path]) -> Path:
+        """在给定目录里自动挑一张可用的编码序列表；一张都没有时抛 422 并说明所需四列。"""
         from epitoperank.neoantigen import discover_cds_tables
 
         candidates = discover_cds_tables(*roots)
@@ -942,6 +967,7 @@ def create_app() -> FastAPI:
     # Customer-confirmed column mappings live next to the table so a manual fix
     # only has to be made once per project.
     def _load_cds_mappings(directory: Path) -> dict[str, Any]:
+        """读取表目录下已确认的列映射文件；文件缺失或内容损坏时返回空字典。"""
         path = Path(directory) / CDS_MAPPING_FILE
         try:
             data = json.loads(path.read_text(encoding='utf-8'))
@@ -950,6 +976,7 @@ def create_app() -> FastAPI:
         return data if isinstance(data, dict) else {}
 
     def _save_cds_mapping(directory: Path, name: str, mapping: dict[str, str]) -> None:
+        """把某张表的列映射并入映射文件（按表名覆盖旧值）并写回磁盘。"""
         data = _load_cds_mappings(directory)
         data[name] = {'map': mapping}
         (Path(directory) / CDS_MAPPING_FILE).write_text(
@@ -1072,6 +1099,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/neoantigen/file")
     def neoantigen_file(input_dir: str, name: str) -> FileResponse:
+        """下载新抗原结果文件，仅允许三个固定文件名。"""
         directory = _ingest_input_dir(input_dir)
         if name not in {"splice_peptides.tsv", "mhc_i_predictions.tsv", "neoantigen_manifest.json"}:
             raise HTTPException(status_code=400, detail="Unsupported result file")
@@ -1233,6 +1261,7 @@ def create_app() -> FastAPI:
         roots = [path.resolve() for path in search_dirs]
 
         def input_file(raw: Any, label: str) -> Path:
+            """校验请求里的文件路径：为空或越出项目目录、文件不存在都按 4xx 报错。"""
             value = str(raw or "").strip()
             if not value:
                 raise HTTPException(status_code=422, detail=f"{label} 不能为空")
@@ -1378,34 +1407,9 @@ def create_app() -> FastAPI:
             logger.error(f"Upload failed: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}") from e
     
-    # Debug endpoint to test file upload
-    @app.post("/api/upload-debug")
-    async def upload_debug(request: Request):
-        """Debug endpoint to inspect incoming request."""
-        import logging
-        logger = logging.getLogger(__name__)
-        
-        logger.info(
-            "upload_debug_request",
-            extra={
-                "event": "upload_debug_request",
-                "method": request.method,
-                "content_type": request.headers.get("content-type", ""),
-            },
-        )
-        
-        try:
-            form = await request.form()
-            logger.info(f"Form keys: {list(form.keys())}")
-            for key, value in form.multi_items():
-                logger.info(f"  {key}: {type(value).__name__} - {getattr(value, 'filename', 'N/A')}")
-            return {"form_keys": list(form.keys()), "success": True}
-        except Exception as e:
-            logger.error(f"Form parsing failed: {e}", exc_info=True)
-            return {"error": str(e)}
-
     @app.get("/api/report/{project_id}")
     def report(project_id: str, format: str = "html") -> Any:
+        """返回项目的 HTML/PDF 报告：先查产物表登记的路径，再退回项目目录下的约定位置。"""
         payload = project_status(project_id, settings)
         if payload is None:
             raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
@@ -1560,6 +1564,7 @@ def create_app() -> FastAPI:
             project_hint = ""
 
         def sanitise(candidate: Any) -> dict[str, Any] | None:
+            """校验模型给出的工具调用：丢掉未知工具与非法参数，补齐合法 project_id，不合格返回 None。"""
             if not isinstance(candidate, dict):
                 return None
             server = str(candidate.get("server", "")).strip()
@@ -1603,7 +1608,9 @@ def create_app() -> FastAPI:
             }
 
         def rule_plan() -> dict[str, Any]:
+            """没有可用模型时按关键词规则挑一个 MCP 工具，保证演示不会无路可走。"""
             def entry_for(name: str) -> dict[str, Any] | None:
+                """在已连通的工具目录里按名字查一条，找不到返回 None。"""
                 return next((item for item in catalog if item["name"] == name), None)
 
             project_id = project_hint or (project_ids[0] if project_ids else "")
@@ -1832,6 +1839,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/figure/{project_id}/{figure_name}")
     def figure(project_id: str, figure_name: str) -> Any:
+        """返回项目图表；先查项目 figures 目录与产物记录，缺图时按需现画再返回。"""
         safe_name = Path(figure_name).stem
         for extension in (".png", ".svg"):
             candidate = settings.paths.runtime_root / "projects" / project_id / "figures" / f"{safe_name}{extension}"

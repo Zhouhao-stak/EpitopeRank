@@ -65,6 +65,7 @@ class AgentRunResult:
     confirmations: dict[str, Any] = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
+        """序列化整次运行结果：步数、决策轨迹、假设检验、外部技能与人机确认。"""
         return {
             "mode": self.mode,
             "stopped_reason": self.stopped_reason,
@@ -139,6 +140,7 @@ class AutonomousAgent:
         state: AgentState | None = None,
         followup: list[tuple[str, dict[str, Any]]] | None = None,
     ) -> None:
+        """装配一次运行：动作注册表、黑板、外部技能桥与人工确认闸门；传入 state 表示续跑上次结果。"""
         self.context = context
         self.settings = settings or context.settings
         self.config = _agent_settings(self.settings)
@@ -159,6 +161,7 @@ class AutonomousAgent:
 
     # -- setup ------------------------------------------------------------
     def _seed_params(self) -> None:
+        """用配置中的 FDR / |dPSI| / top-N 初始化自适应参数（strategy=configured）。"""
         analysis = self.context.settings.analysis
         self.state.params.update(
             {
@@ -193,6 +196,7 @@ class AutonomousAgent:
         self.result.tool_calls.append({"agent": "autonomous", "tool": "profile_dataset", "result": text})
 
     def _load_experience(self) -> None:
+        """从事前情节记忆读取可比数据集的历史阈值，写入 facts["episodic_hint"] 供阈值选择参考。"""
         if not getattr(self.config, "episodic", True):
             return
         memory = EpisodicMemory(self.context.settings.paths.memory_db)
@@ -242,6 +246,7 @@ class AutonomousAgent:
             self.context.log("agent", "save_state", "warning", str(error)[:200])
 
     def _execute(self, name: str, args: dict[str, Any]) -> tuple[str, str]:
+        """执行一个动作：未知动作、前置条件不满足或抛异常都折算为状态返回，绝不中断循环。"""
         action = self.registry.get(name)
         if action is None:
             return "error", f"Unknown action: {name}"
@@ -255,6 +260,7 @@ class AutonomousAgent:
         return "ok", str(message or "")
 
     def run(self) -> AgentRunResult:
+        """主循环 observe→verify→decide→act：受步数/时长/错误三重预算约束，结束前兜底生成报告。"""
         context = self.context
         state = self.state
         result = self.result
@@ -373,6 +379,7 @@ class AutonomousAgent:
 
     # -- finalize ---------------------------------------------------------
     def _finalize(self, seconds: float) -> AgentRunResult:
+        """收尾：刷新事实与问题、评估目标是否达成，并把计划、假设检验与技能记录写回 context。"""
         state = self.state
         context = self.context
         result = self.result

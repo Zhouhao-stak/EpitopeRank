@@ -239,7 +239,7 @@ TOTAL                                    7049   5116    27%
    - [ ] Reflector 反思机制测试
 
 2. **UI 组件测试**
-   - [ ] Streamlit 应用测试
+   - [ ] Web UI 交互回归（`scripts/check_frontend.py`）
    - [ ] Web UI 渲染测试
 
 3. **LLM 集成测试**

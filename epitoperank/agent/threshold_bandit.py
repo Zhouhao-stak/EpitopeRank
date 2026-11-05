@@ -23,6 +23,7 @@ class ArmStats:
 
     @property
     def mean_reward(self) -> float:
+        """平均奖励；该臂尚未被拉动时为 0。"""
         if self.pulls == 0:
             return 0.0
         return self.total_reward / self.pulls
@@ -38,13 +39,16 @@ class ThresholdBandit:
     min_epsilon: float = 0.02
 
     def _key(self, fdr: float, dpsi: float) -> str:
+        """把 (fdr, dpsi) 阈值组合编码为字典键。"""
         return f"{fdr:.4f}|{dpsi:.4f}"
 
     def _parse_key(self, key: str) -> tuple[float, float]:
+        """把字典键还原为 (fdr, dpsi)。"""
         parts = key.split("|")
         return float(parts[0]), float(parts[1])
 
     def get_arm(self, fdr: float, dpsi: float) -> ArmStats:
+        """取得该阈值组合的统计量，不存在则先创建。"""
         key = self._key(fdr, dpsi)
         if key not in self.arms:
             self.arms[key] = ArmStats()

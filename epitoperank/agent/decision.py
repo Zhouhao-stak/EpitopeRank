@@ -69,6 +69,7 @@ class Decision:
     confidence: float = 1.0
 
     def as_dict(self) -> dict[str, Any]:
+        """序列化为字典（置信度保留两位小数），写入决策轨迹。"""
         return {
             "kind": self.kind,
             "action": self.action,
@@ -98,6 +99,7 @@ class DecisionEngine:
         llm_advisory: bool = True,
         gate: Any | None = None,
     ) -> None:
+        """构造决策引擎：载入动作注册表，并装配可选的模型顾问与人工确认闸门。"""
         self.state = state
         self.settings = settings
         self.registry = build_registry()
@@ -110,6 +112,7 @@ class DecisionEngine:
 
     # -- public -----------------------------------------------------------
     def decide(self) -> Decision:
+        """决定下一步动作：目标已达成则（或追加一步增强后）停止，否则先修 blocker、再按计划链推进。"""
         state = self.state
         satisfied, unmet = state.goal.evaluate(state)
         if satisfied:
@@ -135,6 +138,7 @@ class DecisionEngine:
 
     # -- self-correction --------------------------------------------------
     def _fix_blockers(self) -> Decision | None:
+        """按严重程度遍历 blocker，返回第一条仍可执行的补救决策；无可补救则记为已接受限制。"""
         state = self.state
         for issue in state.blockers():
             if issue.code == "no_significant_events":
@@ -205,6 +209,7 @@ class DecisionEngine:
 
     # -- planning ---------------------------------------------------------
     def _plan_step(self, unmet: Sequence[str]) -> Decision | None:
+        """依据当前事实拼出候选动作链，返回第一个未重复、前置条件满足且已获人工放行的动作。"""
         state = self.state
         facts = state.facts
         chain: list[tuple[str, dict[str, Any], str]] = []
@@ -358,6 +363,7 @@ class DecisionEngine:
         return True
 
     def _hypothesis_enabled(self) -> bool:
+        """是否启用假设检验（读取 agent.hypothesis_testing，缺省开启）。"""
         block = getattr(self.settings, "agent", None)
         return bool(getattr(block, "hypothesis_testing", True))
 
@@ -385,9 +391,11 @@ class DecisionEngine:
         return covered / max(targets, 1) < 0.5
 
     def _already_ok(self, action_name: str) -> bool:
+        """该动作此前是否已成功执行过（用于 once-only 动作去重）。"""
         return any(step.action == action_name and step.status == "ok" for step in self.state.steps)
 
     def _requirements_met(self, action_name: str) -> bool:
+        """检查注册表中该动作声明的 requires 事实是否全部为真。"""
         action = self.registry.get(action_name)
         if action is None:
             return False
@@ -419,6 +427,7 @@ class DecisionEngine:
         )
 
     def _ask_model(self, genes: list[str]) -> Decision | None:
+        """向模型请求一步额外的可选动作；异常或输出不合规时一律返回 None。"""
         try:
             from epitoperank.llm.enrich import LLMEnhancer
 
@@ -471,4 +480,5 @@ class DecisionEngine:
 
 
 def state_overused(state: AgentState, action: str) -> bool:
+    """该动作的执行次数是否已达重试上限。"""
     return state.count_of(action) >= MAX_RETRIES.get(action, 3)

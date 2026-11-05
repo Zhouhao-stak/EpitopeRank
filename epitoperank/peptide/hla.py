@@ -91,6 +91,7 @@ class HlaAllele:
     supertype: str | None = None
 
     def as_dict(self) -> dict[str, object]:
+        """导出等位基因名、基因座、MHC 类别与（若已知）超型。"""
         return {
             "allele": self.name,
             "locus": self.locus,
@@ -147,11 +148,13 @@ def mhc_class(allele: str) -> int:
 
 
 def locus(allele: str) -> str:
+    """抽取基因座名称，如 ``HLA-DRB1*15:01`` 返回 ``DRB1``。"""
     name = normalize_allele(allele)
     return name.replace("HLA-", "").split("*", 1)[0].split("/", 1)[0]
 
 
 def describe(allele: str) -> HlaAllele:
+    """标准化等位基因名并返回含基因座、MHC 类别、超型的完整描述。"""
     name = normalize_allele(allele)
     return HlaAllele(
         name=name,
@@ -187,6 +190,7 @@ def parse_panel(values: object, *, allow_mixed_classes: bool = False) -> list[Hl
 
 
 def split_by_class(alleles: list[HlaAllele]) -> dict[int, list[HlaAllele]]:
+    """按 MHC 类别（1 或 2）把等位基因分组，供两类预测分别提交。"""
     grouped: dict[int, list[HlaAllele]] = {1: [], 2: []}
     for allele in alleles:
         grouped[allele.mhc_class].append(allele)

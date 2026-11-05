@@ -107,6 +107,11 @@ excludes = [
     "PySide2",
     "IPython",
     "notebook",
+    # Browser automation is only used by the maintenance scripts under
+    # scripts/ (tutorial screenshots). It drags a 33 MB node.exe into the
+    # archive and no shipped module imports it.
+    "playwright",
+    "pyee",
 ]
 
 block_cipher = None
@@ -128,6 +133,29 @@ a = Analysis(
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+# `excludes` above stops PyInstaller's import analysis, but third-party hooks
+# may still hand binaries/datas over for a package we never ship. Drop them
+# explicitly so the onefile archive stays lean.
+_DROP_PREFIXES = ("playwright", "pyee")
+
+
+def _drop(entries):
+    kept = []
+    dropped = 0
+    for entry in entries:
+        name = str(entry[0]).replace("\\", "/").lower()
+        if any(name == prefix or name.startswith(prefix + "/") for prefix in _DROP_PREFIXES):
+            dropped += 1
+            continue
+        kept.append(entry)
+    if dropped:
+        print(f"[spec] dropped {dropped} playwright/pyee archive entries")
+    return kept
+
+
+a.binaries = _drop(a.binaries)
+a.datas = _drop(a.datas)
 
 exe = EXE(
     pyz,

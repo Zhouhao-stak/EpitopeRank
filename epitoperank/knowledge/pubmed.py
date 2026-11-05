@@ -25,6 +25,7 @@ class PubMedArticle:
     year: str = ""
 
     def summary(self, max_chars: int = 600) -> str:
+        """拼成标题、期刊年份、截断后的摘要与 PMID 组成的一段文本。"""
         abstract = self.abstract.strip()
         if len(abstract) > max_chars:
             abstract = abstract[: max_chars - 3].rstrip() + "..."
@@ -55,6 +56,7 @@ class PubMedRetriever:
         query_timeout: float = 6.0,
         connect_timeout: float = 4.0,
     ) -> None:
+        """保存邮箱、工具名与查询/连接超时；pymed 导入与 NCBI 连通性均在其后才探测。"""
         self._email = email
         self._tool = tool
         self._query_timeout = query_timeout
@@ -76,6 +78,7 @@ class PubMedRetriever:
         return self._available
 
     def _check_reachable(self) -> bool:
+        """请求 NCBI eutils 做一次连通性预检并缓存结果，任何异常都视为不可达。"""
         if self._reachable is not None:
             return self._reachable
         try:
@@ -88,6 +91,7 @@ class PubMedRetriever:
         return self._reachable
 
     def _ensure_client(self) -> Any:
+        """延迟创建 pymed 客户端；pymed 未安装时导入错误会向上抛出。"""
         if self._client is None:
             from pymed import PubMed
 
@@ -95,6 +99,7 @@ class PubMedRetriever:
         return self._client
 
     def _query(self, keyword: str, max_results: int) -> list[Any]:
+        """用 pymed 执行一次关键词检索并返回结果列表（联网调用）。"""
         client = self._ensure_client()
         return list(client.query(keyword, max_results=max_results) or [])
 

@@ -195,7 +195,7 @@ python -c "import epitoperank; print(epitoperank.__file__)"
 
 - [ ] Add parser tests for A3SS/A5SS/MXE/RI tables
 - [ ] Add agent workflow tests
-- [ ] Add UI component tests (Streamlit)
+- [ ] Extend the UI regression script (`scripts/check_frontend.py`)
 - [ ] Add performance benchmark tests
 - [ ] Integrate with Codecov for coverage tracking
 - [ ] Add mutation testing with `mutmut`

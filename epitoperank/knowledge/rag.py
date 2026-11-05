@@ -51,6 +51,7 @@ class Evidence:
     pmid: str = ""
 
     def as_dict(self) -> dict[str, str]:
+        """转成供报告与 API 使用的普通字典。"""
         return {"gene": self.gene, "text": self.text, "source": self.source, "pmid": self.pmid}
 
 
@@ -58,6 +59,7 @@ class _LiteratureStore:
     """SQLite-backed persistent literature store (thread-safe)."""
 
     def __init__(self, db_path: Path) -> None:
+        """创建父目录、加锁并按 STORE_SCHEMA 初始化 SQLite 表（数据库即传入的 db_path）。"""
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._lock = threading.Lock()
@@ -65,11 +67,13 @@ class _LiteratureStore:
             connection.executescript(STORE_SCHEMA)
 
     def _connect(self) -> sqlite3.Connection:
+        """新建 SQLite 连接，行以 sqlite3.Row 返回，锁等待超时 30 秒。"""
         connection = sqlite3.connect(self.db_path, timeout=30)
         connection.row_factory = sqlite3.Row
         return connection
 
     def add(self, gene: str, article: PubMedArticle) -> None:
+        """在锁内把一条 PubMed 文献写入 literature 表，并记录写入时间。"""
         with self._lock, self._connect() as connection:
             connection.execute(
                 "INSERT INTO literature (gene, pmid, title, abstract, journal, year, source, retrieved_at) "
@@ -86,6 +90,7 @@ class _LiteratureStore:
             )
 
     def get(self, gene: str, limit: int = 3) -> list[Evidence]:
+        """读取该基因最近的 limit 条记录并转成 Evidence，正文截断到 600 字。"""
         with self._lock, self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM literature WHERE gene = ? ORDER BY id DESC LIMIT ?",
@@ -102,6 +107,7 @@ class _LiteratureStore:
         ]
 
     def count(self) -> int:
+        """统计 literature 表的总记录数。"""
         with self._lock, self._connect() as connection:
             row = connection.execute("SELECT COUNT(*) AS n FROM literature").fetchone()
         return int(row["n"]) if row else 0
@@ -118,6 +124,7 @@ class KnowledgeService:
 
     # -- store -------------------------------------------------------------
     def _get_store(self) -> _LiteratureStore | None:
+        """惰性打开 SQLite 文献库；未配置路径或打开失败时返回 None，调用方只用离线知识库。"""
         if self._store is not None:
             return self._store
         if self.store_path is None:

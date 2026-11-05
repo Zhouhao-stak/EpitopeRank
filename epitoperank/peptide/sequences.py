@@ -70,6 +70,7 @@ def unique(items: Iterable[str]) -> list[str]:
 
 
 def file_sha256(path: str | Path, *, chunk_size: int = 1024 * 1024) -> str:
+    """分块计算文件 SHA-256，用于记录参考数据的溯源校验值。"""
     digest = hashlib.sha256()
     with Path(path).open("rb") as handle:
         for block in iter(lambda: handle.read(chunk_size), b""):
@@ -91,6 +92,7 @@ def read_fasta(path: str | Path, *, kind: str = "protein") -> Iterator[tuple[str
     chunks: list[str] = []
 
     def finish() -> tuple[str, str]:
+        """收尾当前 FASTA 记录：校验并返回 (header, 序列)。"""
         assert name is not None
         sequence = "".join(chunks).upper()
         if not sequence:
@@ -147,6 +149,7 @@ class SelfReference:
     MAX_HITS_PER_PEPTIDE = 25
 
     def __init__(self, proteins: Iterable[tuple[str, str]]) -> None:
+        """把多条蛋白拼接成以 ``*`` 分隔的长串，并记录各蛋白起始偏移。"""
         names: list[str] = []
         parts: list[str] = []
         offsets: list[int] = []
@@ -168,6 +171,7 @@ class SelfReference:
 
     @classmethod
     def from_fasta(cls, *paths: str | Path) -> "SelfReference":
+        """从一或多个蛋白 FASTA 文件构建参考索引。"""
         proteins: list[tuple[str, str]] = []
         for path in paths:
             proteins.extend(read_fasta(path, kind="protein"))
@@ -193,4 +197,5 @@ class SelfReference:
         return result
 
     def contains(self, peptide: str) -> bool:
+        """判断该肽段是否作为精确子串出现在参考蛋白集合中。"""
         return self._blob.find(normalize_peptide(peptide)) >= 0

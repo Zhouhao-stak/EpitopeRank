@@ -19,6 +19,7 @@ TOO_FEW_SIGNIFICANT = 5
 
 
 def _rule_no_significant(state: AgentState) -> Issue | None:
+    """已过滤但显著事件为 0：报 blocker，提示放宽阈值重过滤。"""
     if not state.facts.get("filtered"):
         return None
     if int(state.facts.get("significant", 0)) > 0:
@@ -32,6 +33,7 @@ def _rule_no_significant(state: AgentState) -> Issue | None:
 
 
 def _rule_too_many_significant(state: AgentState) -> Issue | None:
+    """显著事件超过 2000：报 warning，说明门槛过松、无法排序。"""
     if not state.facts.get("filtered"):
         return None
     count = int(state.facts.get("significant", 0))
@@ -46,6 +48,7 @@ def _rule_too_many_significant(state: AgentState) -> Issue | None:
 
 
 def _rule_few_significant(state: AgentState) -> Issue | None:
+    """显著事件非零但少于 5：报 warning，提示结论脆弱。"""
     if not state.facts.get("filtered"):
         return None
     count = int(state.facts.get("significant", 0))
@@ -60,6 +63,7 @@ def _rule_few_significant(state: AgentState) -> Issue | None:
 
 
 def _rule_no_candidates(state: AgentState) -> Issue | None:
+    """排序已执行且有显著事件却无候选：报 blocker，要求重跑排序。"""
     if not state.facts.get("filtered") or int(state.facts.get("significant", 0)) == 0:
         return None
     # Only meaningful once ranking has actually been attempted.
@@ -76,6 +80,7 @@ def _rule_no_candidates(state: AgentState) -> Issue | None:
 
 
 def _rule_missing_fdr(state: AgentState) -> Issue | None:
+    """数据集中 FDR 覆盖率低于 50%：报 warning，提示显著性部分不可用。"""
     profile = state.profile or {}
     coverage = profile.get("fdr_coverage")
     if coverage is None or coverage >= 0.5:
@@ -89,6 +94,7 @@ def _rule_missing_fdr(state: AgentState) -> Issue | None:
 
 
 def _rule_small_dataset(state: AgentState) -> Issue | None:
+    """事件总数少于 50：报 info，结论只能视为探索性。"""
     if int(state.facts.get("events_total", 0)) >= 50:
         return None
     return Issue(
@@ -100,6 +106,7 @@ def _rule_small_dataset(state: AgentState) -> Issue | None:
 
 
 def _rule_imbalanced_groups(state: AgentState) -> Issue | None:
+    """分组样本量相差 3 倍及以上：报 info，提醒组间比较不平衡。"""
     imbalance = (state.profile or {}).get("group_imbalance")
     if not imbalance or imbalance < 3:
         return None
@@ -112,6 +119,7 @@ def _rule_imbalanced_groups(state: AgentState) -> Issue | None:
 
 
 def _rule_enrichment_unavailable(state: AgentState) -> Issue | None:
+    """已过滤但未提供基因注释表：报 info，说明功能富集无法本地运行。"""
     if not state.facts.get("filtered") or state.facts.get("has_annotation"):
         return None
     return Issue(
@@ -123,6 +131,7 @@ def _rule_enrichment_unavailable(state: AgentState) -> Issue | None:
 
 
 def _rule_sparse_evidence(state: AgentState) -> Issue | None:
+    """文献证据覆盖的候选基因不足 30%：报 warning，建议提高每基因条数重试。"""
     targets = int(state.facts.get("evidence_targets", 0))
     covered = int(state.facts.get("evidence_genes", 0))
     if targets == 0 or covered / max(targets, 1) >= 0.3:
@@ -136,6 +145,7 @@ def _rule_sparse_evidence(state: AgentState) -> Issue | None:
 
 
 def _rule_figures_missing(state: AgentState) -> Issue | None:
+    """出图动作已执行但图数为 0：报 warning，建议重试一次。"""
     if not any(step.action == "generate_figures" for step in state.steps):
         return None
     if int(state.facts.get("figures", 0)) > 0:
@@ -163,6 +173,7 @@ def _rule_confounded(state: AgentState) -> Issue | None:
 
 
 def _rule_repeated_failures(state: AgentState) -> Issue | None:
+    """累计两个及以上动作失败：报 warning，列明失败动作。"""
     failures = [step for step in state.steps if step.status == "error"]
     if len(failures) < 2:
         return None

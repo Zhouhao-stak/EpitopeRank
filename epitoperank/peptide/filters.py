@@ -31,6 +31,7 @@ class DatabaseScan:
     peptides_found: int
 
     def as_dict(self) -> dict[str, object]:
+        """输出该参考 FASTA 的路径、校验和、蛋白数与命中肽段数。"""
         return {
             "path": self.path,
             "sha256": self.sha256,
@@ -49,13 +50,16 @@ class SelfFilterResult:
 
     @property
     def novel(self) -> list[str]:
+        """在所提供的全部参考蛋白组中均未命中，即“新颖”的肽段。"""
         return [peptide for peptide in self.peptides if not self.hits.get(peptide)]
 
     @property
     def shared(self) -> list[str]:
+        """至少在一条参考蛋白中出现的肽段（即被判定为自身/正常来源）。"""
         return [peptide for peptide in self.peptides if self.hits.get(peptide)]
 
     def annotate(self, peptide: str) -> dict[str, object]:
+        """生成单个肽段的自身命中注释字段，供候选行合并使用。"""
         matched = self.hits.get(peptide, [])
         return {
             "self_hit": bool(matched),
@@ -65,6 +69,7 @@ class SelfFilterResult:
         }
 
     def as_dict(self) -> dict[str, object]:
+        """汇总输入数、新颖/共享计数与各数据库溯源信息（含新颖性局限说明）。"""
         return {
             "input_count": len(self.peptides),
             "novel_count": len(self.novel),

@@ -208,6 +208,7 @@ def literature_passages(query: str, max_articles: int = 2, max_passages: int = 4
 
 
 def main() -> None:
+    """加载 .env 中的模型配置后，以 stdio 传输启动标准 MCP 工具服务。"""
     # Match the CLI/desktop behaviour: a key stored in .env or 配置大模型.env
     # must also configure the tools exposed over MCP.
     try:

@@ -102,14 +102,17 @@ class Dataset:
 
     @property
     def groups(self) -> dict[str, list[str]]:
+        """按分组聚合样本，返回 {组名: [样本 ID, ...]}。"""
         return group_sample_ids(self.samples)
 
     @property
     def group_labels(self) -> tuple[str, str] | None:
+        """返回排序后的首尾两个组名（对照组、实验组）；组数不足两个时返回 None。"""
         labels = sorted(self.groups)
         return (labels[0], labels[-1]) if len(labels) >= 2 else None
 
     def summary(self) -> dict[str, Any]:
+        """生成数据集概要字典：事件数、样本数、各组规模、事件类型分布与注释/差异基因数量。"""
         event_types: dict[str, int] = {}
         for event in self.events:
             event_types[event.event_type] = event_types.get(event.event_type, 0) + 1
@@ -127,6 +130,7 @@ class Dataset:
 
 
 def _find_file(directory: Path, candidates: Iterable[str]) -> Path | None:
+    """按候选文件名在目录中查找文件，同时兼容带数字前缀的供应商命名（如 01_sample_metadata.csv）。"""
     for name in candidates:
         path = directory / name
         if path.is_file():
@@ -182,6 +186,7 @@ def _looks_like_rmats_table(path: Path) -> bool:
 
 
 def _find_standard_event_table(directory: Path) -> Path | None:
+    """定位标准化事件主表：先按约定文件名匹配，再回退到首个包含完整核心字段的表。"""
     path = _find_file(directory, STANDARD_EVENT_FILENAMES)
     if path:
         return path
@@ -213,6 +218,7 @@ def load_differential_expression(path: Path) -> list[DifferentialGene]:
 
 
 def _optional_float(value: Any) -> float | None:
+    """把单元格转成浮点数，空串、NA、NaN 等缺失标记返回 None。"""
     if value is None:
         return None
     text = str(value).strip()

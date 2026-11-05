@@ -65,6 +65,7 @@ class Method:
     score_field: str = "score"
 
     def as_dict(self) -> dict[str, object]:
+        """导出可选预测模型的标识、IEDB 方法名与 MHC 类别。"""
         return {
             "key": self.key,
             "api_method": self.api_method,
@@ -94,10 +95,12 @@ DEFAULT_METHODS: dict[int, str] = {1: "netmhcpan_el", 2: "netmhciipan_el"}
 
 
 def _now() -> str:
+    """当前 UTC 时间（秒级 ISO 字符串），写入缓存与调用记录。"""
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _default_cache_dir() -> Path:
+    """确定响应缓存目录：优先环境变量，其次运行目录，最后用户主目录（不联网）。"""
     override = os.getenv("EPITOPERANK_PEPTIDE_CACHE")
     if override:
         return Path(override).expanduser()
@@ -110,6 +113,7 @@ def _default_cache_dir() -> Path:
 
 
 def _env_float(name: str, default: float) -> float:
+    """从环境变量读取浮点配置，缺失或非法时返回默认值。"""
     try:
         return float(os.getenv(name, "") or default)
     except ValueError:
@@ -117,6 +121,7 @@ def _env_float(name: str, default: float) -> float:
 
 
 def _env_int(name: str, default: int) -> int:
+    """从环境变量读取整数配置，缺失或非法时返回默认值。"""
     try:
         return int(os.getenv(name, "") or default)
     except ValueError:
@@ -124,6 +129,7 @@ def _env_int(name: str, default: int) -> int:
 
 
 def _float(value: object) -> float | None:
+    """把 IEDB 返回的文本字段解析为浮点数；非法或 NaN/inf 返回 None。"""
     try:
         result = float(str(value))
     except (TypeError, ValueError):
@@ -156,6 +162,7 @@ class IedbClient:
     # Transport
     # ------------------------------------------------------------------
     def _throttle(self) -> None:
+        """按最小请求间隔休眠，避免过于频繁地访问 IEDB 服务。"""
         if self.min_interval <= 0:
             return
         elapsed = time.monotonic() - self.last_request_at
@@ -163,15 +170,18 @@ class IedbClient:
             self.sleep(self.min_interval - elapsed)
 
     def _cache_file(self, key: str) -> Path | None:
+        """返回缓存键对应的磁盘文件路径；未配置缓存目录时为 None。"""
         if not self.cache_dir:
             return None
         return Path(self.cache_dir) / f"{key}.json"
 
     def _cache_key(self, url: str, payload: dict[str, str]) -> str:
+        """对 URL 与请求参数求 SHA-256 摘要，作为缓存键与 request_id。"""
         blob = json.dumps([url, sorted(payload.items())], ensure_ascii=False)
         return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:32]
 
     def _read_cache(self, key: str) -> str | None:
+        """读取本地缓存的响应文本；不允许读缓存或文件损坏时返回 None。"""
         path = self._cache_file(key)
         if not path or not self.cache_read or not path.is_file():
             return None
@@ -181,6 +191,7 @@ class IedbClient:
             return None
 
     def _write_cache(self, key: str, url: str, payload: dict[str, str], text: str) -> None:
+        """把响应文本连同请求参数写入磁盘缓存；写失败被静默忽略，不影响预测。"""
         path = self._cache_file(key)
         if not path or not self.cache_write:
             return
@@ -198,6 +209,11 @@ class IedbClient:
             pass
 
     def _post(self, url: str, payload: dict[str, str]) -> tuple[str, str]:
+        """向 IEDB 工具接口 POST 表单（需联网），命中缓存则直接返回。
+
+        4xx 立即抛 :class:`IedbResponseError`；5xx 与网络异常按指数退避重试，
+        重试耗尽后抛 :class:`IedbUnavailable` 供上层降级处理。
+        """
         key = self._cache_key(url, payload)
         cached = self._read_cache(key)
         if cached is not None:
@@ -245,6 +261,11 @@ class IedbClient:
         raise IedbUnavailable(f"IEDB request failed after {self.retries + 1} attempts: {error}")
 
     def _get(self, url: str) -> object:
+        """GET 请求 IEDB query API 并解析 JSON（需联网），结果可缓存到磁盘。
+
+        无重试机制：HTTP 错误抛 :class:`IedbResponseError`，网络不可达抛
+        :class:`IedbUnavailable`。
+        """
         key = self._cache_key(url, {})
         path = self._cache_file(key)
         if path and self.cache_read and path.is_file():
@@ -275,6 +296,8 @@ class IedbClient:
     # ------------------------------------------------------------------
     @staticmethod
     def _parse_table(text: str) -> list[dict[str, str]]:
+        """解析 IEDB 返回的制表符表格；错误信息或空响应抛
+        :class:`IedbResponseError`，仅表头的表视为合法的空结果。"""
         stripped = text.lstrip("\ufeff \t\r\n")
         if not stripped or stripped.lower().startswith(("error", "__all__", "input ")):
             raise IedbResponseError(f"IEDB did not return a table: {stripped[:300]!r}")
@@ -286,6 +309,7 @@ class IedbClient:
 
     @staticmethod
     def _lengths_present(peptides: Sequence[str], lengths: Sequence[int]) -> tuple[int, ...]:
+        """返回所请求长度中确实出现在肽段集合里的那部分（升序去重）。"""
         requested = {int(item) for item in lengths}
         present = sorted({len(item) for item in peptides} & requested)
         return tuple(present)
@@ -298,6 +322,7 @@ class IedbClient:
         return text, mapping
 
     def _batches(self, peptides: Sequence[str]) -> Iterable[Sequence[str]]:
+        """按单次请求上限把肽段列表切分成批次。"""
         for start in range(0, len(peptides), MAX_SEQUENCES_PER_REQUEST):
             yield peptides[start:start + MAX_SEQUENCES_PER_REQUEST]
 
@@ -369,6 +394,7 @@ class IedbClient:
 
     def _binding_records(self, text: str, request_id: str, spec: Method, allele: str,
                          peptides: set[str], lengths: Sequence[int] | None) -> list[dict[str, object]]:
+        """把绑定预测表格转成统一记录，过滤掉未请求的肽段与长度。"""
         records: list[dict[str, object]] = []
         for row in self._parse_table(text):
             peptide = (row.get("peptide") or "").upper()

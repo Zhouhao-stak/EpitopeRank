@@ -24,14 +24,17 @@ class SpliceInterpretationSkill(BaseSkill):
 
     @property
     def name(self) -> str:
+        """技能标识符 splice_interpretation，供工具注册与调用时使用。"""
         return "splice_interpretation"
 
     @property
     def description(self) -> str:
+        """供模型选择工具时阅读的技能说明（中文）。"""
         return "解读可变剪接事件的生物学和临床意义，包括剪接位点强度预测、致病性评估、蛋白结构域影响和治疗靶点分析"
 
     @property
     def input_schema(self) -> dict[str, Any]:
+        """技能的入参 JSON Schema：gene_symbol 与 event_type 必填，坐标与 ΔPSI 可选。"""
         return {
             "type": "object",
             "properties": {
@@ -79,6 +82,7 @@ class SpliceInterpretationSkill(BaseSkill):
         }
 
     async def execute(self, **kwargs: Any) -> SkillResult:
+        """汇总剪接位点、致病性、蛋白影响、临床与治疗信息并生成中文小结。"""
         gene_symbol = kwargs.get("gene_symbol")
         event_type = kwargs.get("event_type")
         chromosome = kwargs.get("chromosome")

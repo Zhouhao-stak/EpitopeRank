@@ -62,6 +62,7 @@ class Passage:
     source: str = "fulltext"
 
     def as_dict(self) -> dict[str, Any]:
+        """转成可 JSON 序列化的字典，得分保留四位小数。"""
         return {
             "article_id": self.article_id,
             "title": self.title,
@@ -73,6 +74,7 @@ class Passage:
 
 
 def _cache_dir(explicit: str | Path | None) -> Path | None:
+    """确定全文缓存目录（默认落在运行时根目录的 literature_cache），未给出且解析失败时返回 None 表示不缓存。"""
     if explicit:
         return Path(explicit).expanduser()
     try:
@@ -84,6 +86,7 @@ def _cache_dir(explicit: str | Path | None) -> Path | None:
 
 
 def _request(url: str, opener: Callable[..., Any], timeout: float) -> bytes:
+    """带 User-Agent 请求 Europe PMC 地址并读取响应；HTTP 与网络错误统一抛成 RagError。"""
     request = Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
     try:
         with opener(request, timeout=timeout) as response:
@@ -201,10 +204,12 @@ def fetch_fulltext_xml(pmcid: str, *, opener: Callable[..., Any] = urlopen,
 
 
 def _local_name(tag: str) -> str:
+    """去掉 XML 标签的命名空间前缀，只留本地名。"""
     return tag.rsplit("}", 1)[-1] if "}" in tag else tag
 
 
 def _text_of(element: ET.Element) -> str:
+    """递归收集元素内标题、段落、摘要等节点的文本并拼成一段。"""
     parts: list[str] = []
     for node in element.iter():
         if _local_name(node.tag) in {"title", "p", "abstract", "label", "caption"}:
@@ -266,6 +271,7 @@ def _stem(token: str) -> str:
 
 
 def tokenize(text: str) -> list[str]:
+    """把文本切成小写词元，去掉停用词并做简单的复数归一。"""
     tokens = []
     for token in _TOKEN_RE.findall(text or ""):
         lowered = token.lower()
@@ -305,6 +311,7 @@ class BM25:
     _avgdl: float = 0.0
 
     def __post_init__(self) -> None:
+        """预计算平均文档长度与每个词元的 IDF。"""
         lengths = [len(doc.get("tokens") or []) for doc in self.documents]
         self._avgdl = sum(lengths) / len(lengths) if lengths else 0.0
         frequencies: dict[str, int] = {}
@@ -318,6 +325,7 @@ class BM25:
         }
 
     def score(self, query_tokens: Sequence[str], document: dict[str, Any]) -> float:
+        """按 BM25 公式计算一篇文档对给定查询词元的得分。"""
         tokens = document.get("tokens") or []
         if not tokens:
             return 0.0
@@ -336,6 +344,7 @@ class BM25:
         return total
 
     def top(self, query: str, *, top_k: int = 6) -> list[dict[str, Any]]:
+        """对全部文档打分，返回得分大于 0 的前 top_k 篇。"""
         query_tokens = tokenize(query)
         if not query_tokens:
             return []
@@ -346,6 +355,7 @@ class BM25:
 
 
 def _snippet(text: str, query: str, *, limit: int = 420) -> str:
+    """挑出与查询词元重合最多的句子作为摘录，超长时按词边界截断。"""
     tokens = set(tokenize(query))
     sentences = re.split(r"(?<=[.!?])\s+", text.strip())
     best = max(sentences, key=lambda sentence: sum(

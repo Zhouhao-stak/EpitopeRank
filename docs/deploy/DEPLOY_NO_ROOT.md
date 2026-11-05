@@ -130,7 +130,7 @@ cp .env.production.example .env
 vim .env  # 编辑添加 API Keys
 
 # 启动服务
-nohup python run.py serve --api --ui --port 8800 > epitoperank.log 2>&1 &
+nohup python run.py serve --api --port 8800 > epitoperank.log 2>&1 &
 
 # 查看日志
 tail -f epitoperank.log

@@ -72,6 +72,7 @@ class LLMSettings:
 
     @property
     def configured(self) -> bool:
+        """是否同时拿到了 API 密钥与服务地址（不判断开关与模型名）。"""
         return bool(self.api_key and self.base_url)
 
     @property
@@ -131,10 +132,12 @@ class AgentSettings:
 
     @property
     def agentic(self) -> bool:
+        """是否走自主 agent 循环，而不是旧的固定脚本流程。"""
         return str(self.mode).strip().lower() in {"agentic", "agent", "auto"}
 
     @property
     def assisted(self) -> bool:
+        """是否启用助手模式，即在有风险的决策前先询问用户。"""
         return str(self.autonomy).strip().lower() == "assisted"
 
 
@@ -188,11 +191,13 @@ class Settings:
     raw: dict[str, Any] = field(default_factory=dict)
 
     def resolve(self, relative: str | Path) -> Path:
+        """把相对路径解析成项目根目录下的绝对路径；本身就是绝对路径时原样返回。"""
         path = Path(relative)
         return path if path.is_absolute() else (PROJECT_ROOT / path)
 
 
 def _load_env_file(path: Path) -> dict[str, str]:
+    """解析 ``KEY=VALUE`` 形式的 .env 文件（忽略空行与 # 注释），文件不存在时返回空字典。"""
     values: dict[str, str] = {}
     if not path.is_file():
         return values
@@ -230,6 +235,7 @@ def _apply_env_overrides(data: dict[str, Any]) -> dict[str, Any]:
 
 
 def _env_str(name: str, fallback: str = "") -> str:
+    """读取字符串环境变量；变量未设置时返回 ``fallback``（空字符串也算已设置）。"""
     value = os.getenv(name)
     return value if value is not None else fallback
 
@@ -293,10 +299,12 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
         block = {}
 
     def _bool(name: str, key: str, default: bool) -> bool:
+        """取布尔开关：环境变量优先，其次 YAML 块，最后用默认值。"""
         raw = os.getenv(name, str(block.get(key, default)))
         return str(raw).strip().lower() in {"1", "true", "yes", "on"}
 
     def _int(name: str, key: str, default: int) -> int:
+        """取整数配置：环境变量优先，解析失败时回退默认值。"""
         raw = os.getenv(name, str(block.get(key, default)))
         try:
             return int(str(raw).strip())
@@ -304,6 +312,7 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
             return default
 
     def _float(name: str, key: str, default: float) -> float:
+        """取浮点配置：环境变量优先，解析失败时回退默认值。"""
         raw = os.getenv(name, str(block.get(key, default)))
         try:
             return float(str(raw).strip())
@@ -315,6 +324,7 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
         skills_block = {}
 
     def _skill_bool(env: str, key: str, default: bool) -> bool:
+        """解析 skills 段的布尔开关，接受 enabled/disabled 等写法，无法识别时用默认值。"""
         raw = os.getenv(env, str(skills_block.get(key, default)))
         if raw is None:
             return default
@@ -326,6 +336,7 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
         return default
 
     def _skill_int(env: str, key: str, default: int) -> int:
+        """解析 skills 段的整数配置（如调用次数上限），解析失败时用默认值。"""
         raw = os.getenv(env, skills_block.get(key, default))
         try:
             return int(str(raw).strip())
@@ -333,6 +344,7 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
             return default
 
     def _skill_float(env: str, key: str, default: float) -> float:
+        """解析 skills 段的浮点配置（如单次超时秒数），解析失败时用默认值。"""
         raw = os.getenv(env, skills_block.get(key, default))
         try:
             return float(str(raw).strip())
@@ -471,6 +483,7 @@ def _sqlite_writable(path: Path, timeout: float = 5.0) -> bool:
     from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 
     def _probe() -> bool:
+        """在独立连接上建表再删表，用一次真实写入判断该位置能否承载 SQLite。"""
         try:
             connection = sqlite3.connect(path, timeout=timeout)
             try:

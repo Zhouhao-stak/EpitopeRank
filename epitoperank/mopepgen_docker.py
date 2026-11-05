@@ -16,6 +16,7 @@ IMAGE = 'ghcr.io/uclahs-cds/mopepgen@sha256:68b2a44eea775a80c5055890369f23769336
 
 
 def sha256(path: Path) -> str:
+    """计算文件的分块 SHA-256 摘要，用于在 manifest 中固定输入版本。"""
     digest = hashlib.sha256()
     with path.open('rb') as handle:
         for block in iter(lambda: handle.read(1024 * 1024), b''):
@@ -24,6 +25,11 @@ def sha256(path: Path) -> str:
 
 
 def execute(argv=None) -> int:
+    """调用本机 Docker 依次运行 moPepGen 的 parseRMATS 与 callVariant，返回退出码。
+
+    依赖已安装并启动的 Docker；输入以只读方式挂载、容器不联网。任一步失败都会把
+    manifest.json 标记为 failed 并返回非零码，成功时返回 0。
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     for flag in ('se', 'a3ss', 'a5ss', 'mxe', 'ri'):
         parser.add_argument('--' + flag, type=Path)
@@ -66,6 +72,7 @@ def execute(argv=None) -> int:
                                 'Outputs use moPepGen default proteomics cleavage rules, not HLA-binding predictions.',
                                 'Outputs are not a reference/altered CDS pair or evidence of tumor specificity.']}
     def save():
+        """把当前 manifest（含运行状态、错误与产物信息）写入输出目录。"""
         (output / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
     save()
     for index, command in enumerate(commands):

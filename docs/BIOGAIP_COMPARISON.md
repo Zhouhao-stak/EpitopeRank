@@ -251,11 +251,7 @@ services:
   api:
     image: ghcr.io/yourname/epitoperank:latest
     ports:
-      - "8800:8800"
-  streamlit:
-    image: ghcr.io/yourname/epitoperank:latest
-    ports:
-      - "8501:8501"
+      - "8800:8800"   # API + Web UI（页面由 API 在 / 直接渲染）
 ```
 
 **优势**:
@@ -469,7 +465,7 @@ tests/
 **重要发现**: ⚠️ **项目中未发现独立的 `tests/` 目录**
 
 **README 声称的测试覆盖**:
-> "144 个测试覆盖：rMATS/SUPPA2/MAJIQ/LeafCutter/标准表五种输入解析、统计检验、GO/KEGG 富集、端到端流程、FastAPI 全接口、Streamlit UI 无头测试..."
+> "144 个测试覆盖：rMATS/SUPPA2/MAJIQ/LeafCutter/标准表五种输入解析、统计检验、GO/KEGG 富集、端到端流程、FastAPI 全接口、Web UI 无头测试..."
 
 **实际情况**:
 - ❌ 未找到 `tests/` 目录
@@ -481,7 +477,7 @@ tests/
 
 **发现的验证脚本**:
 ```
-scripts/validate_ui.py  # Streamlit UI 无头测试
+scripts/check_frontend.py  # Web UI 渲染回归（Playwright）
 ```
 
 ### 5.3 测试覆盖对比总结
@@ -884,7 +880,6 @@ docs/
 | `BUILD_GUIDE.md` | - | ⭐⭐⭐⭐ | 良好 |
 | `DOCKER_USAGE.md` | - | ⭐⭐⭐⭐ | 良好 |
 | `README_DOCKER.md` | - | ⭐⭐⭐ | 中等 |
-| `AGENT_CHAT_UI.md` | - | ⭐⭐⭐ | 中等 |
 | `README_START_HERE.txt` | - | ⭐⭐⭐ | 中等 |
 | `packaging/*.md` (6个) | - | ⭐⭐⭐ | 中等 |
 
@@ -1046,10 +1041,10 @@ docs/
 
 **现有界面**:
 
-1. **Web UI (Streamlit)**
-   - `interface/web_ui.py`: 专业极简 UI
-   - `interface/streamlit_app.py`: 传统 Streamlit 界面
-   - `interface/agent_chat_ui.js`: Agent 对话面板
+1. **Web UI（零构建单页）**
+   - `interface/web_ui.py`: 全部 HTML/CSS/JS 内联在这一个文件里，由 FastAPI 在 `/` 直接返回
+   - 无外部前端依赖、无构建步骤；繁简转换器（`opencc-cn2t.js`）按需加载
+   - 旧版 `interface/streamlit_app.py` 与 Agent 对话面板已移除
 
 2. **UI 亮点** ✅:
 
@@ -1078,7 +1073,7 @@ docs/
    - 长时间分析工作时眼睛疲劳
 
    **移动端适配差**
-   - Streamlit 默认布局不适合手机屏幕
+   - 旧版 Streamlit 布局不适合手机屏幕；改用自研单页后已按 390px 宽度适配
 
 ### 9.3 UX 对比总结
 
@@ -1109,33 +1104,30 @@ docs/
    **价值**: 用户可以缩放、筛选、查看详细信息
 
 2. **实现深色模式**
-   ```python
-   # ui/theme_professional.py 中添加
-   DARK_THEME = {
-       "background": "#1a1a1a",
-       "text": "#e0e0e0",
-       "accent": "#00d4ff"
+   ```css
+   /* web_ui.py 的 <style> 里已全部走 CSS 变量，加一组深色值即可 */
+   :root[data-theme="dark"] {
+     --bg: #07151e;
+     --text: #e8f5f4;
+     --accent: #00d4ff;
    }
-   
-   # 根据系统偏好自动切换
-   import webbrowser
    ```
+   **注意**：桌面窗口标题栏配色（`desktop_ui.py` 的 `_CAPTION_BG`）需要同步。
 
 3. **响应式设计**
-   ```python
-   # 使用 Streamlit columns 实现移动端适配
-   col1, col2 = st.columns([1, 2])
-   with col1:
-       st.file_uploader(...)
-   with col2:
-       st.text_area(...)
+   ```css
+   /* 现有实现就是媒体查询，不依赖任何前端框架 */
+   @media (max-width: 520px) {
+     .main { padding: 16px; }
+     .sidebar { transform: translateX(-100%); }
+   }
    ```
 
 **中优先级**:
 
 4. **添加快捷键支持**
    ```javascript
-   // agent_chat_ui.js
+   // web_ui.py 内联脚本（Ctrl+K 全局跳转已实现，这里补 Ctrl+Enter 提交）
    document.addEventListener('keydown', (e) => {
        if (e.ctrlKey && e.key === 'Enter') {
            submitAnalysis();  // Ctrl+Enter 提交

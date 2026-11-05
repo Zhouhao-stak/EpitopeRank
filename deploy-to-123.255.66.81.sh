@@ -10,7 +10,18 @@ SERVER="wang_zi_wei@123.255.66.81"
 PORT="39145"
 REMOTE_DIR="/home/wang_zi_wei/epitoperank"
 API_PORT="8800"
-UI_PORT="8501"
+
+# SSH 凭据不落盘：仓库里不保存任何密码。
+# 需要免交互时（CI / 定时任务）设置环境变量 EPITOPERANK_SSH_PASS 临时传入；
+# 未设置时退化为 ssh 自带的交互式提示，或使用已配置的 SSH key。
+SSH_PASS="${EPITOPERANK_SSH_PASS:-}"
+if [ -n "$SSH_PASS" ]; then
+    SSH_BASE=(sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no -p "$PORT")
+    SSH_E_OPTS="sshpass -p '$SSH_PASS' ssh -o StrictHostKeyChecking=no -p $PORT"
+else
+    SSH_BASE=(ssh -o StrictHostKeyChecking=no -p "$PORT")
+    SSH_E_OPTS="ssh -o StrictHostKeyChecking=no -p $PORT"
+fi
 
 echo "=========================================="
 echo "🚀 EpitopeRank Deployment to 123.255.66.81"
@@ -19,7 +30,7 @@ echo ""
 
 # SSH helper function
 ssh_cmd() {
-    sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "$@"
+    "${SSH_BASE[@]}" "$SERVER" "$@"
 }
 
 # Step 1: Verify server connectivity
@@ -43,9 +54,9 @@ fi
 
 # Step 3: Check ports
 echo "[3/7] Checking port availability..."
-OCCUPIED_PORTS=$(ssh_cmd 'netstat -tuln 2>/dev/null | grep -E ":(8800|8501)" || true')
+OCCUPIED_PORTS=$(ssh_cmd 'netstat -tuln 2>/dev/null | grep -E ":8800" || true')
 if [ -n "$OCCUPIED_PORTS" ]; then
-    echo "⚠️  Ports $API_PORT or $UI_PORT are in use:"
+    echo "⚠️  Port $API_PORT is in use:"
     echo "$OCCUPIED_PORTS"
     read -p "Continue anyway? (y/n): " -n 1 -r
     echo
@@ -54,7 +65,7 @@ if [ -n "$OCCUPIED_PORTS" ]; then
         exit 1
     fi
 else
-    echo "✓ Ports $API_PORT and $UI_PORT are free"
+    echo "✓ Port $API_PORT is free"
 fi
 
 # Step 4: Create remote directory
@@ -74,7 +85,7 @@ rsync -avz --delete \
     --exclude='htmlcov' \
     --exclude='dist' \
     --exclude='build' \
-    -e "sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p $PORT" \
+    -e "$SSH_E_OPTS" \
     ./ "$SERVER:$REMOTE_DIR/"
 
 echo "✓ Files uploaded"
@@ -115,8 +126,7 @@ echo "✅ Deployment Complete!"
 echo "=========================================="
 echo ""
 echo "Access your application:"
-echo "  🌐 API:  http://123.255.66.81:$API_PORT"
-echo "   UI:   http://123.255.66.81:$UI_PORT"
+echo "  🌐 Web UI + API:  http://123.255.66.81:$API_PORT  (页面在 /，接口在 /api)"
 echo ""
 echo "Useful commands:"
 echo "  View logs:     ssh -p $PORT $SERVER 'cd $REMOTE_DIR && docker compose logs -f'"
@@ -134,5 +144,5 @@ echo ""
 read -p "Show live logs? (y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "cd $REMOTE_DIR && docker compose logs -f"
+    "${SSH_BASE[@]}" "$SERVER" "cd $REMOTE_DIR && docker compose logs -f"
 fi

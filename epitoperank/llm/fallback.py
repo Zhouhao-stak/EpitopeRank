@@ -38,6 +38,7 @@ _ZERO_USAGE = RequestUsage(prompt_tokens=0, completion_tokens=0)
 
 
 def _text_result(text: str) -> CreateResult:
+    """构造一个纯文本的停止结果，供离线回放使用（不产生 token 用量）。"""
     return CreateResult(
         finish_reason="stop",
         content=text,
@@ -47,6 +48,7 @@ def _text_result(text: str) -> CreateResult:
 
 
 def _tool_result(call_id: str, name: str, arguments: dict[str, Any]) -> CreateResult:
+    """构造一个函数调用结果，把脚本化的工具名与参数包装成 AutoGen 可消费的形状。"""
     return CreateResult(
         finish_reason="function_calls",
         content=[{"id": call_id, "name": name, "arguments": json.dumps(arguments)}],
@@ -64,6 +66,7 @@ class DeterministicClient(ChatCompletionClient):
         script: Sequence[dict[str, Any]] | None = None,
         finalizer: Callable[[], str] | None = None,
     ) -> None:
+        """初始化该 agent 的回放队列、收尾回调和调用计数，不建立任何网络连接。"""
         self._agent_name = agent_name
         self._queue: deque[dict[str, Any]] = deque(script or [])
         self._finalizer = finalizer
@@ -75,15 +78,18 @@ class DeterministicClient(ChatCompletionClient):
         self._queue.append(item)
 
     def set_finalizer(self, finalizer: Callable[[], str]) -> None:
+        """设置队列耗尽后生成收尾文本的回调。"""
         self._finalizer = finalizer
 
     # -- ChatCompletionClient interface -----------------------------------
     @property
     def capabilities(self) -> ModelCapabilities:
+        """声明不支持视觉、但支持函数调用与 JSON 输出。"""
         return ModelCapabilities(vision=False, function_calling=True, json_output=True)
 
     @property
     def model_info(self) -> ModelInfo:
+        """返回固定为 deterministic 家族的模型元信息，供 AutoGen 校验。"""
         return ModelInfo(
             vision=False,
             function_calling=True,
@@ -101,6 +107,7 @@ class DeterministicClient(ChatCompletionClient):
         tool_choice: Any = None,
         **kwargs: Any,
     ) -> CreateResult:
+        """按脚本顺序回放一次响应；队列为空时用 finalizer 或直接返回终止令牌，永不联网也不会死循环。"""
         self._call_count += 1
         if self._queue:
             item = self._queue.popleft()
@@ -122,21 +129,27 @@ class DeterministicClient(ChatCompletionClient):
         tools: Sequence[Any] = (),
         **kwargs: Any,
     ) -> AsyncGenerator[str | CreateResult, None]:
+        """把 create 的单次结果包装成异步流，仅为满足接口签名。"""
         yield await self.create(messages, tools=tools, **kwargs)
 
     async def close(self) -> None:
+        """空实现：离线客户端没有需要释放的连接。"""
         return None
 
     def actual_usage(self) -> RequestUsage:
+        """返回零用量：回放不消耗任何 token。"""
         return _ZERO_USAGE
 
     def total_usage(self) -> RequestUsage:
+        """返回零用量：回放不消耗任何 token。"""
         return _ZERO_USAGE
 
     def count_tokens(self, messages: Sequence[LLMMessage], *, tools: Sequence[Any] = ()) -> int:
+        """恒返回 0，离线回放无需估算 token。"""
         return 0
 
     def remaining_tokens(self, messages: Sequence[LLMMessage], *, tools: Sequence[Any] = ()) -> int:
+        """返回固定的剩余额度，避免 AutoGen 误判上下文耗尽。"""
         return 100000
 
 
@@ -144,10 +157,12 @@ class DeterministicSelectorClient(ChatCompletionClient):
     """Selector model client that replays a planned speaker order."""
 
     def __init__(self, speaker_order: Sequence[str], participants: Sequence[str]) -> None:
+        """保存预定的发言顺序与参与者名单。"""
         self._order = deque(speaker_order)
         self._participants = list(participants)
 
     def _next_speaker(self) -> str:
+        """取出下一个仍在参与者名单中的预定发言人；顺序耗尽则回退到最后一位（解释器）。"""
         while self._order:
             candidate = self._order.popleft()
             if candidate in self._participants:
@@ -157,10 +172,12 @@ class DeterministicSelectorClient(ChatCompletionClient):
 
     @property
     def capabilities(self) -> ModelCapabilities:
+        """声明不支持视觉、但支持函数调用与 JSON 输出。"""
         return ModelCapabilities(vision=False, function_calling=True, json_output=True)
 
     @property
     def model_info(self) -> ModelInfo:
+        """返回固定为 deterministic-selector 家族的模型元信息。"""
         return ModelInfo(
             vision=False,
             function_calling=True,
@@ -178,6 +195,7 @@ class DeterministicSelectorClient(ChatCompletionClient):
         tool_choice: Any = None,
         **kwargs: Any,
     ) -> CreateResult:
+        """返回一句指明下一位发言者的固定文本，驱动 SelectorGroupChat 选人，不联网。"""
         speaker = self._next_speaker()
         return _text_result(f"The next agent to perform the task is {speaker}.")
 
@@ -188,19 +206,25 @@ class DeterministicSelectorClient(ChatCompletionClient):
         tools: Sequence[Any] = (),
         **kwargs: Any,
     ) -> AsyncGenerator[str | CreateResult, None]:
+        """把 create 的单次结果包装成异步流，仅为满足接口签名。"""
         yield await self.create(messages, tools=tools, **kwargs)
 
     async def close(self) -> None:
+        """空实现：离线选择器没有需要释放的连接。"""
         return None
 
     def actual_usage(self) -> RequestUsage:
+        """返回零用量。"""
         return _ZERO_USAGE
 
     def total_usage(self) -> RequestUsage:
+        """返回零用量。"""
         return _ZERO_USAGE
 
     def count_tokens(self, messages: Sequence[LLMMessage], *, tools: Sequence[Any] = ()) -> int:
+        """恒返回 0。"""
         return 0
 
     def remaining_tokens(self, messages: Sequence[LLMMessage], *, tools: Sequence[Any] = ()) -> int:
+        """返回固定的剩余额度。"""
         return 100000

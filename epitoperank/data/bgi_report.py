@@ -22,6 +22,7 @@ KINDS = {"SE", "MXE", "A3SS", "A5SS", "RI"}
 
 
 def discover(directory: Path) -> list[tuple[Path, str, str]]:
+    """扫描目录下的 BGI rMATS 逐样本导出文件（<样本>.<类型>.xls），校验关键表头后返回 (路径, 样本名, 事件类型) 列表。"""
     found = []
     for path in directory.rglob("*.xls"):
         match = NAME.fullmatch(path.name)
@@ -40,6 +41,7 @@ def discover(directory: Path) -> list[tuple[Path, str, str]]:
 
 
 def preview(directory: Path, *, enhancer: Any = None) -> dict[str, Any] | None:
+    """导入前预览 BGI 逐样本目录：汇总样本与事件类型分布，生成映射、质量提示与前端展示字段；未发现文件时返回 None。"""
     files = discover(directory)
     if not files:
         return None
@@ -81,6 +83,7 @@ def preview(directory: Path, *, enhancer: Any = None) -> dict[str, Any] | None:
 
 
 def _psi(value: str) -> float | None:
+    """把 PSI 单元格解析为浮点数，仅接受 [0, 1] 区间，非法值返回 None。"""
     try:
         number = float(value)
         return number if 0 <= number <= 1 else None
@@ -89,6 +92,7 @@ def _psi(value: str) -> float | None:
 
 
 def apply(directory: Path, mapping: Mapping[str, Any], output_dir: Path | None = None) -> dict[str, Any]:
+    """按样本分组把 BGI 逐样本 rMATS 表合并为标准格式（事件主表、样本元数据、映射 JSON），返回输出目录与事件统计。"""
     files = discover(directory)
     if not files:
         raise ValueError("No BGI per-sample rMATS tables found")
@@ -134,6 +138,7 @@ def apply(directory: Path, mapping: Mapping[str, Any], output_dir: Path | None =
             values: dict[str, float] = {}
             event_count = 0
             def flush() -> None:
+                """把当前事件累积的各样本 PSI 汇总成一行写入主表，含两组均值、ΔPSI 与缺失率。"""
                 nonlocal event_count
                 if current is None:
                     return

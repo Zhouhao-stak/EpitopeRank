@@ -25,6 +25,7 @@ REPORT_VERSION = "EpitopeRank 0.1.0"
 
 
 def _fmt(value: Any, digits: int = 3, na: str = "NA") -> str:
+    """把数值格式化为报告文本，None 显示为 ``na``，浮点按有效位数或小数位输出。"""
     if value is None:
         return na
     if isinstance(value, float):
@@ -109,6 +110,7 @@ def build_interpretation(context: RunContext) -> str:
 
 
 def _event_type_counts(events: Sequence[Any]) -> dict[str, int]:
+    """按事件类型统计剪接事件数量，用于摘要句子中的类型分布。"""
     counts: dict[str, int] = {}
     for event in events:
         counts[event.event_type] = counts.get(event.event_type, 0) + 1
@@ -116,6 +118,7 @@ def _event_type_counts(events: Sequence[Any]) -> dict[str, int]:
 
 
 def _percent(part: int, whole: int) -> str:
+    """计算占比并格式化为一位小数的百分数字符串，分母为 0 时返回 "0%"。"""
     return f"{100.0 * part / whole:.1f}%" if whole else "0%"
 
 
@@ -127,6 +130,11 @@ class ReportGenerator:
 
     # -- HTML -------------------------------------------------------------
     def render_html(self) -> str:
+        """渲染自包含的 HTML 报告字符串（图片以 base64 内嵌，无外部资源依赖）。
+
+        章节依次为摘要、方法、结果、图、生物学解释、局限性、参考文献与 AI 溯源；
+        AI 相关章节仅在上下文中存在模型洞察时出现。
+        """
         context = self.context
         dataset = context.dataset
         groups = dataset.groups
@@ -596,10 +604,12 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return raw if isinstance(raw, dict) else {}
 
     def _narrative(self) -> dict[str, Any]:
+        """取 AI 叙述段（lead/paragraphs/highlights），非字典时返回空字典。"""
         narrative = self._insights().get("narrative")
         return narrative if isinstance(narrative, dict) else {}
 
     def _ai_narrative_html(self) -> str:
+        """把 LLM 生成的叙述渲染为 HTML 段落；无 LLM 内容时返回空串。"""
         narrative = self._narrative()
         if not narrative or narrative.get("source") != "llm":
             return ""
@@ -621,6 +631,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return "".join(parts)
 
     def _ai_gene_notes_html(self) -> str:
+        """把每个候选基因的 AI 注释渲染成 HTML 表格；无内容时返回空串。"""
         notes = self._insights().get("gene_notes")
         if not isinstance(notes, dict) or not notes:
             return ""
@@ -635,6 +646,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         )
 
     def _ai_evidence_summary_html(self) -> str:
+        """把经检索文献得出的 AI 证据摘要渲染成 HTML 表格；无内容时返回空串。"""
         summaries = self._insights().get("evidence_summaries")
         if not isinstance(summaries, dict) or not summaries:
             return ""
@@ -649,6 +661,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         )
 
     def _ai_hypotheses_html(self) -> str:
+        """渲染 AI 提出的假设、验证方案与后续分析；仅在来源为 llm 时输出。"""
         insights = self._insights()
         block = insights.get("hypotheses")
         if not isinstance(block, dict) or block.get("source") != "llm":
@@ -669,6 +682,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return "".join(pieces)
 
     def _ai_critique_html(self) -> str:
+        """渲染 AI 对结论的自我批评（结论与问题清单）；无 LLM 内容时返回空串。"""
         block = self._insights().get("critique")
         if not isinstance(block, dict) or block.get("source") != "llm":
             return ""
@@ -682,6 +696,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return "".join(parts)
 
     def _ai_model_html(self) -> str:
+        """渲染 AI 溯源信息（模型名、接口地址、调用次数、启用特性）。"""
         insights = self._insights()
         if not insights.get("enabled"):
             return (
@@ -831,9 +846,11 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
 
     # -- helpers ----------------------------------------------------------
     def _embed(self, path: Path) -> str:
+        """把 PNG 图文件读入并编码为 base64，用于内嵌进 HTML 报告。"""
         return base64.b64encode(path.read_bytes()).decode("ascii")
 
     def _summary_stats(self) -> dict[str, Any]:
+        """汇总输入格式、事件/候选/富集/图数量等关键指标，供摘要表展示。"""
         context = self.context
         stats = {
             "input format": context.dataset.source_format,
@@ -854,6 +871,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return stats
 
     def _limitations(self) -> list[str]:
+        """列出报告的局限性：优先采用 AI 扩展版本，否则按缺失数据本地推导。"""
         context = self.context
         # When the model enrichment ran, it returns the deterministic list
         # plus the additional limitations it derived from the same facts.
@@ -883,6 +901,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return limitations
 
     def _references(self) -> list[str]:
+        """从文献证据中提取 PMID 生成参考文献列表（去重、最多 20 条），无则给出离线知识库说明。"""
         context = self.context
         references: list[str] = []
         for entries in context.evidence.values():

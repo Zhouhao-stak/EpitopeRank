@@ -150,6 +150,7 @@ CREATE INDEX IF NOT EXISTS idx_enrichment_project ON enrichment_terms (project_i
 
 
 def _utc_now() -> str:
+    """返回秒级精度的 UTC 时间戳字符串，供各表的 created_at 列使用。"""
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
@@ -157,6 +158,7 @@ class ProjectMemory:
     """SQLite-backed analysis memory (thread-safe)."""
 
     def __init__(self, db_path: str | Path) -> None:
+        """创建数据库父目录、建好所有表，并按需把日志模式切到 WAL。"""
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._local = threading.local()
@@ -174,6 +176,7 @@ class ProjectMemory:
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
+        """以 ``with`` 方式使用的连接上下文：正常退出时提交，随后总是关闭连接。"""
         connection = sqlite3.connect(self.db_path, timeout=30)
         connection.row_factory = sqlite3.Row
         # ``synchronous`` is per-connection (journal_mode is not), so the WAL
@@ -196,6 +199,7 @@ class ProjectMemory:
         source_format: str = "",
         species: str = "",
     ) -> None:
+        """写入或覆盖项目基本信息（同一 project_id 的旧记录会被替换）。"""
         with self._connect() as connection:
             connection.execute(
                 "INSERT OR REPLACE INTO projects "
@@ -205,6 +209,7 @@ class ProjectMemory:
             )
 
     def get_project(self, project_id: str) -> dict[str, Any] | None:
+        """按 project_id 读取项目记录；不存在时返回 None。"""
         with self._connect() as connection:
             row = connection.execute(
                 "SELECT * FROM projects WHERE project_id = ?", (project_id,)
@@ -212,6 +217,7 @@ class ProjectMemory:
         return dict(row) if row else None
 
     def list_projects(self) -> list[dict[str, Any]]:
+        """按创建时间倒序列出全部项目。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM projects ORDER BY created_at DESC"
@@ -220,6 +226,7 @@ class ProjectMemory:
 
     # -- samples ----------------------------------------------------------
     def save_samples(self, project_id: str, samples: Sequence[Any]) -> None:
+        """先清空该项目的样本表，再按顺序批量写入新的样本元数据。"""
         with self._connect() as connection:
             connection.execute("DELETE FROM samples WHERE project_id = ?", (project_id,))
             connection.executemany(
@@ -239,6 +246,7 @@ class ProjectMemory:
             )
 
     def load_samples(self, project_id: str) -> list[dict[str, Any]]:
+        """按 sample_id 顺序读取某项目的全部样本记录。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM samples WHERE project_id = ? ORDER BY sample_id", (project_id,)
@@ -252,6 +260,7 @@ class ProjectMemory:
         events: Sequence[Any],
         significant_ids: set[str] | None = None,
     ) -> None:
+        """清空项目已有事件后批量写入，并按 significant_ids 打上显著性标记。"""
         significant_ids = significant_ids or set()
         with self._connect() as connection:
             connection.execute("DELETE FROM events WHERE project_id = ?", (project_id,))
@@ -288,6 +297,7 @@ class ProjectMemory:
             )
 
     def load_events(self, project_id: str) -> list[dict[str, Any]]:
+        """一次性读取某项目的全部事件（按 event_id 排序，不分页）。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM events WHERE project_id = ? ORDER BY event_id", (project_id,)
@@ -305,6 +315,7 @@ class ProjectMemory:
         fdr_max: float | None = None,
         min_abs_delta: float | None = None,
     ) -> tuple[str, list[Any]]:
+        """按搜索词、事件类型、显著性与阈值拼出 WHERE 子句及其参数列表。"""
         clauses = ["project_id = ?"]
         params: list[Any] = [project_id]
         if search:
@@ -325,6 +336,7 @@ class ProjectMemory:
         return " AND ".join(clauses), params
 
     def count_events(self, project_id: str, **filters: Any) -> int:
+        """按条件统计某项目的事件条数（走 SQL COUNT，不拉全表）。"""
         where, params = self._event_filter(project_id, **filters)
         with self._connect() as connection:
             row = connection.execute(
@@ -363,6 +375,7 @@ class ProjectMemory:
         return [dict(row) for row in rows]
 
     def event_type_counts(self, project_id: str) -> dict[str, int]:
+        """统计某项目各剪接事件类型的条数，按数量降序返回；空类型记为 NA。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT COALESCE(event_type, 'NA') AS kind, COUNT(*) FROM events "
@@ -417,6 +430,7 @@ class ProjectMemory:
 
     # -- candidates -------------------------------------------------------
     def save_candidates(self, project_id: str, candidates: Sequence[Any]) -> None:
+        """清空项目候选后按入参顺序写入，排名由枚举序号决定，各评分分量存为 JSON。"""
         with self._connect() as connection:
             connection.execute("DELETE FROM candidates WHERE project_id = ?", (project_id,))
             connection.executemany(
@@ -449,6 +463,7 @@ class ProjectMemory:
             )
 
     def load_candidates(self, project_id: str) -> list[dict[str, Any]]:
+        """按排名顺序读取某项目的候选事件。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM candidates WHERE project_id = ? ORDER BY rank", (project_id,)
@@ -457,6 +472,7 @@ class ProjectMemory:
 
     # -- enrichment -------------------------------------------------------
     def save_enrichment(self, project_id: str, results: Sequence[Any]) -> None:
+        """清空项目原有富集结果，再批量写入通路/功能富集条目。"""
         with self._connect() as connection:
             connection.execute("DELETE FROM enrichment_terms WHERE project_id = ?", (project_id,))
             connection.executemany(
@@ -480,6 +496,7 @@ class ProjectMemory:
             )
 
     def load_enrichment(self, project_id: str) -> list[dict[str, Any]]:
+        """读取某项目的富集结果，按 FDR 升序（最优在前）。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM enrichment_terms WHERE project_id = ? ORDER BY fdr", (project_id,)
@@ -488,6 +505,7 @@ class ProjectMemory:
 
     # -- artifacts / plans / interpretations / logs -----------------------
     def save_artifact(self, project_id: str, kind: str, path: str | Path) -> None:
+        """登记一个产物文件（种类 + 路径），供报告与图表下载接口回查。"""
         with self._connect() as connection:
             connection.execute(
                 "INSERT INTO artifacts (project_id, kind, path, created_at) VALUES (?, ?, ?, ?)",
@@ -495,6 +513,7 @@ class ProjectMemory:
             )
 
     def load_artifacts(self, project_id: str) -> list[dict[str, Any]]:
+        """按入库顺序读取某项目的全部产物记录。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM artifacts WHERE project_id = ? ORDER BY id", (project_id,)
@@ -502,6 +521,7 @@ class ProjectMemory:
         return [dict(row) for row in rows]
 
     def save_plan(self, project_id: str, plan: dict[str, Any]) -> None:
+        """覆盖保存某项目的分析计划，整份计划序列化为 JSON 存一行。"""
         with self._connect() as connection:
             connection.execute("DELETE FROM plans WHERE project_id = ?", (project_id,))
             connection.execute(
@@ -510,6 +530,7 @@ class ProjectMemory:
             )
 
     def load_plan(self, project_id: str) -> dict[str, Any] | None:
+        """读出某项目的分析计划；从未保存过计划时返回 None。"""
         with self._connect() as connection:
             row = connection.execute(
                 "SELECT plan_json FROM plans WHERE project_id = ?", (project_id,)
@@ -517,6 +538,7 @@ class ProjectMemory:
         return json.loads(row["plan_json"]) if row else None
 
     def save_interpretation(self, project_id: str, agent: str, content: str) -> None:
+        """追加一条分析解读文本，同一项目可保留多条（按写入顺序读取）。"""
         with self._connect() as connection:
             connection.execute(
                 "INSERT INTO interpretations (project_id, agent, content, created_at) "
@@ -525,6 +547,7 @@ class ProjectMemory:
             )
 
     def load_interpretations(self, project_id: str) -> list[dict[str, Any]]:
+        """按写入顺序读取某项目的全部解读文本。"""
         with self._connect() as connection:
             rows = connection.execute(
                 # ``interpretations`` has no surrogate id column: order by the
@@ -541,6 +564,7 @@ class ProjectMemory:
         status: str = "ok",
         detail: str = "",
     ) -> None:
+        """追加一条工作流日志（记录执行者、动作与状态），detail 截断到 4000 字符。"""
         with self._connect() as connection:
             connection.execute(
                 "INSERT INTO workflow_logs (project_id, agent, action, status, detail, created_at) "
@@ -549,6 +573,7 @@ class ProjectMemory:
             )
 
     def load_logs(self, project_id: str) -> list[dict[str, Any]]:
+        """按写入顺序读取某项目的全部工作流日志（agent 逐条轨迹）。"""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM workflow_logs WHERE project_id = ? ORDER BY id", (project_id,)

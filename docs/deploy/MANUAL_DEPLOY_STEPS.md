@@ -29,7 +29,7 @@ tar czf epitoperank-deploy.tar.gz ^
 # 服务器: 123.255.66.81
 # 端口: 39145
 # 用户: wang_zi_wei
-# 密码: REDACTED-SSH-PASSWORD
+# 密码: 手动输入（仓库不保存）
 # 目标路径: /home/wang_zi_wei/
 ```
 
@@ -41,7 +41,7 @@ tar czf epitoperank-deploy.tar.gz ^
 - 主机名: `123.255.66.81`
 - 端口: `39145`
 - 用户名: `wang_zi_wei`
-- 密码: `REDACTED-SSH-PASSWORD`
+- 密码: 登录时手动输入（仓库不保存）
 - 协议: SFTP
 
 ---
@@ -52,7 +52,7 @@ tar czf epitoperank-deploy.tar.gz ^
 # 使用 Git Bash、WSL 或 PuTTY
 ssh -p 39145 wang_zi_wei@123.255.66.81
 
-# 输入密码: REDACTED-SSH-PASSWORD
+# 输入密码: 手动输入（仓库不保存）
 ```
 
 ---
@@ -137,8 +137,8 @@ docker compose logs -f
 # API
 curl http://localhost:8800/api/health
 
-# UI (需要在服务器上安装 lynx 或 links)
-lynx http://localhost:8501
+# UI（与 API 同端口，直接取首页 HTML）
+curl -s http://localhost:8800/ | head -5
 ```
 
 ### 从你的电脑访问
@@ -147,19 +147,17 @@ lynx http://localhost:8501
 
 在浏览器中打开：
 ```
-http://123.255.66.81:8800  # API
-http://123.255.66.81:8501  # UI
+http://123.255.66.81:8800  # Web UI + API
 ```
 
 **如果端口未开放，需要配置 SSH 隧道**：
 
 ```bash
 # 在本地电脑执行
-ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.66.81
+ssh -L 8800:localhost:8800 -p 39145 wang_zi_wei@123.255.66.81
 
 # 然后在本机浏览器访问
 # http://localhost:8800
-# http://localhost:8501
 ```
 
 ---
@@ -203,7 +201,7 @@ docker-compose up -d --build
 
 ```bash
 # 检查端口占用
-netstat -tuln | grep -E ':(8800|8501)'
+netstat -tuln | grep -E ':8800'
 
 # 如果被占用，修改 docker-compose.coolify.yml
 vim docker-compose.coolify.yml
@@ -226,7 +224,7 @@ docker compose logs epitoperank-api
 
 ```bash
 # 检查防火墙
-sudo iptables -L -n | grep -E '(8800|8501)'
+sudo iptables -L -n | grep -E '8800'
 
 # 如果端口被阻止，请管理员开放
 # 或使用 SSH 隧道（见上面第六步）

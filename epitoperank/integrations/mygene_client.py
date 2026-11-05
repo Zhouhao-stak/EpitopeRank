@@ -26,6 +26,7 @@ FIELDS: tuple[str, ...] = (
 
 
 def backend_available() -> bool:
+    """检查 mygene 是否已安装；未安装时调用方回退到内置 REST 注释。"""
     try:
         import mygene  # noqa: F401, PLC0415
 
@@ -48,6 +49,7 @@ def annotate(
         return None
 
     def _call() -> dict[str, dict[str, Any]]:
+        """联网批量调用 MyGene.info（一次请求覆盖全部基因）并逐条清洗结果。"""
         import mygene  # noqa: PLC0415
 
         client = mygene.MyGeneInfo()
@@ -67,6 +69,7 @@ def annotate(
 
 
 def _clean(hit: dict[str, Any]) -> dict[str, Any]:
+    """把 MyGene 的命中记录压平成统一字段，兼容 ensembl 与 uniprot 的多种返回形态。"""
     ensembl = hit.get("ensembl") or {}
     if isinstance(ensembl, list) and ensembl:
         ensembl = ensembl[0]

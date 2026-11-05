@@ -164,4 +164,5 @@ def describe(peptide: str, *, mhc_class: int = 1) -> dict[str, object]:
 
 
 def describe_many(peptides: list[str], *, mhc_class: int = 1) -> list[dict[str, object]]:
+    """批量计算多个肽段的全套本地理化特征，纯本地计算、不联网。"""
     return [describe(peptide, mhc_class=mhc_class) for peptide in peptides]

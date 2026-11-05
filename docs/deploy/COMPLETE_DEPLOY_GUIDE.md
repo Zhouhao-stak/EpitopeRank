@@ -23,7 +23,7 @@
    - 主机名：`123.255.66.81`
    - 端口：`39145`
    - 用户名：`wang_zi_wei`
-   - 密码：`REDACTED-SSH-PASSWORD`
+   - 密码：登录时手动输入（仓库不保存）
    - 协议：SFTP
 
 3. **上传整个项目**：
@@ -34,7 +34,7 @@
 
 4. **重新构建和启动**：
    ```bash
-   sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
+   ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
    cd /home/wang_zi_wei/epitoperank
    docker compose down
    docker compose build --no-cache
@@ -63,7 +63,7 @@
 
 3. **在服务器上解压并重新部署**：
    ```bash
-   sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
+   ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
    cd /home/wang_zi_wei
    rm -rf epitoperank
    mkdir epitoperank
@@ -86,7 +86,7 @@ rsync -avz --exclude='venv' --exclude='.pytest_cache' --exclude='__pycache__' --
 部署完成后，检查服务是否正常运行：
 
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
+ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
 cd /home/wang_zi_wei/epitoperank
 
 # 检查容器状态
@@ -99,7 +99,7 @@ docker compose logs --tail=50
 curl -s http://localhost:8800/api/health | python3 -m json.tool
 
 # 检查端口监听
-netstat -tuln | grep -E '(8800|8501)'
+netstat -tuln | grep 8800
 EOF
 ```
 
@@ -107,24 +107,21 @@ EOF
 
 部署成功后，可以通过以下方式访问：
 
-1. **API 服务**：`http://123.255.66.81:8800`
-2. **Streamlit UI**：`http://123.255.66.81:8501`
+1. **Web UI / API**：`http://123.255.66.81:8800`（页面在 `/`，接口在 `/api/*`）
 
 如果端口未开放，可以使用 SSH 隧道：
 ```bash
-ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.66.81
+ssh -L 8800:localhost:8800 -p 39145 wang_zi_wei@123.255.66.81
 ```
 
-然后在本地浏览器访问：
-- API: `http://localhost:8800`
-- UI: `http://localhost:8501`
+然后在本地浏览器访问：`http://localhost:8800`
 
 ## 配置 API Key
 
 编辑服务器上的 `.env` 文件，添加你的 DeepSeek API Key：
 
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
+ssh -o StrictHostKeyChecking=no -p 39145 wang_zi_wei@123.255.66.81 << 'EOF'
 cd /home/wang_zi_wei/epitoperank
 nano .env
 EOF

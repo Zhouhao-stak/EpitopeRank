@@ -36,6 +36,7 @@ class GeneAnnotation:
     terms: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
     def terms_for(self, ontology: str) -> tuple[str, ...]:
+        """返回该基因在指定本体列（如 go_biological_process）下的术语元组，缺失时为空元组。"""
         return self.terms.get(ontology, ())
 
 

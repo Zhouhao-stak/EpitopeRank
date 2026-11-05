@@ -94,6 +94,7 @@ def build_plan(context: RunContext) -> dict[str, Any]:
 
 
 def _planner_text(context: RunContext) -> str:
+    """把 Planner 的计划 JSON 序列化为文本，作为其单轮回复脚本。"""
     import json
 
     return json.dumps(build_plan(context), indent=2)
@@ -118,6 +119,7 @@ def _analyst_script(context: RunContext) -> list[dict[str, Any]]:
 
 
 def _interpreter_script(context: RunContext) -> list[dict[str, Any]]:
+    """Interpreter 的固定工具调用序列：收集文献、解读、生成报告。"""
     return [
         {
             "tool": "collect_literature_evidence",

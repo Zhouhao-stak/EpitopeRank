@@ -61,6 +61,7 @@ class MCPClient:
     """MCP client that works with standard servers and the built-in adapter."""
 
     def __init__(self, config_dir: Path | None = None):
+        """初始化客户端，从 ``config_dir`` 读取 servers.json 并注册内置演示服务。"""
         self.config_dir = config_dir or Path.home() / ".epitoperank" / "mcp"
         self.config_path = self.config_dir / "servers.json"
         self.servers: dict[str, MCPServerConfig] = {}
@@ -118,6 +119,7 @@ class MCPClient:
         server: MCPServerConfig,
         url: str | None = None,
     ) -> AsyncIterator[Any]:
+        """按 stdio/sse/http 打开一次官方 MCP SDK 会话并完成 initialize。"""
         try:
             from mcp import ClientSession
         except ImportError as error:
@@ -176,6 +178,7 @@ class MCPClient:
 
     @staticmethod
     def _sdk_tools(server_name: str, result: Any) -> list[MCPToolInfo]:
+        """把 SDK 的 list_tools 返回结果转换成 MCPToolInfo 列表。"""
         return [
             MCPToolInfo(
                 name=tool.name,
@@ -196,6 +199,7 @@ class MCPClient:
         mode: str,
         url: str | None = None,
     ) -> bool:
+        """用 SDK 试连一次并缓存工具列表，成功则记录连接方式。"""
         try:
             async with self._open_sdk_session(server, url=url) as session:
                 result = await session.list_tools()
@@ -232,6 +236,7 @@ class MCPClient:
         return False
 
     async def _connect_http(self, server: MCPServerConfig) -> bool:
+        """先尝试 streamable-http 的 MCP 握手，失败再退回内置 /health 简易协议。"""
         if not server.url:
             return False
 
@@ -268,6 +273,7 @@ class MCPClient:
         self._connected_via.pop(server_name, None)
 
     async def refresh(self, server_name: str) -> bool:
+        """断开后重新连接指定服务器，用于刷新工具列表。"""
         await self.disconnect(server_name)
         return await self.connect(server_name)
 
@@ -389,6 +395,7 @@ class MCPClient:
 
     @staticmethod
     def _serialise_result(result: Any) -> dict[str, Any]:
+        """把 SDK 返回对象（pydantic 模型或 dict）统一转成可序列化字典。"""
         if hasattr(result, "model_dump"):
             try:
                 data = result.model_dump(mode="json", exclude_none=True)
@@ -402,6 +409,7 @@ class MCPClient:
 
     @staticmethod
     def _result_text(payload: dict[str, Any]) -> str:
+        """从工具结果的 content 文本块拼接可读文本，缺失时回退为 JSON。"""
         parts = [
             str(item.get("text", ""))
             for item in payload.get("content", [])

@@ -33,6 +33,7 @@ CREATE INDEX IF NOT EXISTS idx_agent_episodes_action ON agent_episodes(action);
 
 
 def _now() -> str:
+    """当前 UTC 时间，秒级 ISO 字符串，写入 episode 记录。"""
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
@@ -40,6 +41,7 @@ class EpisodicMemory:
     """SQLite-backed store of agent decisions and their outcomes."""
 
     def __init__(self, db_path: str | Path) -> None:
+        """绑定 SQLite 数据库路径；表结构由 :meth:`ensure` 延迟创建。"""
         self.db_path = Path(db_path)
 
     # -- schema -----------------------------------------------------------
@@ -67,6 +69,7 @@ class EpisodicMemory:
         significant: int | None,
         params: dict[str, Any],
     ) -> None:
+        """写入一条 episode（动作、参数、状态与显著事件数）；写库失败静默忽略，不影响分析。"""
         try:
             with sqlite3.connect(self.db_path, timeout=5.0) as connection:
                 connection.execute(

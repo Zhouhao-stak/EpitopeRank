@@ -37,6 +37,7 @@ class PendingDecision:
     default: bool = True
 
     def as_dict(self) -> dict[str, Any]:
+        """序列化为字典，供 API 层传递与记录保存。"""
         return asdict(self)
 
 
@@ -50,12 +51,14 @@ class ConfirmationGate:
 
     @classmethod
     def from_settings(cls, settings: Any | None, handler: Callable[[PendingDecision], bool] | None = None) -> "ConfirmationGate":
+        """按 ``agent.autonomy`` 配置构造闸门；未提供 handler 时回退到 stdin 询问。"""
         block = getattr(settings, "agent", None)
         mode = str(getattr(block, "autonomy", "auto") or "auto").strip().lower()
         return cls(mode=mode, handler=handler)
 
     @property
     def interactive(self) -> bool:
+        """仅 ``autonomy: assisted`` 时才会真正打断并询问用户。"""
         return self.mode == "assisted"
 
     # -- public -----------------------------------------------------------
@@ -77,6 +80,7 @@ class ConfirmationGate:
         return answer
 
     def _ask(self, pending: PendingDecision) -> bool:
+        """向 handler 询问；handler 抛异常时回落到默认答案，避免阻塞整个运行。"""
         if self.handler is not None:
             try:
                 return bool(self.handler(pending))
@@ -85,6 +89,7 @@ class ConfirmationGate:
         return _ask_stdin(pending)
 
     def _record(self, pending: PendingDecision, approved: bool, source: str) -> None:
+        """把一次确认（问题、答案与来源）追加到记录中。"""
         entry = pending.as_dict()
         entry["approved"] = approved
         entry["source"] = source
@@ -92,6 +97,7 @@ class ConfirmationGate:
 
     # -- reporting --------------------------------------------------------
     def as_dict(self) -> dict[str, Any]:
+        """序列化闸门模式与全部确认记录，写入运行结果。"""
         return {
             "mode": self.mode,
             "interactive": self.interactive,
@@ -99,6 +105,7 @@ class ConfirmationGate:
         }
 
     def summary_line(self) -> str:
+        """一行摘要：确认次数、实际询问次数与被拒绝次数。"""
         if not self.records:
             return f"autonomy={self.mode} (no confirmations requested)"
         asked = sum(1 for item in self.records if item.get("source") == "human decision")

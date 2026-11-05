@@ -25,6 +25,7 @@ class LocalModelStatus:
     requires: str = "pip install mhcflurry"
 
     def as_dict(self) -> dict[str, object]:
+        """把本地模型探测结果转为可序列化字典，供 API/报告展示。"""
         return {
             "name": self.name,
             "available": self.available,
@@ -35,10 +36,12 @@ class LocalModelStatus:
 
 
 def _version(module: object) -> str:
+    """读取模块的 ``__version__``，缺失时返回空字符串。"""
     return str(getattr(module, "__version__", "") or "")
 
 
 def mhcflurry_status() -> LocalModelStatus:
+    """尝试导入 mhcflurry 探测本地可用性；不联网，导入失败即视为不可用。"""
     try:
         module = importlib.import_module("mhcflurry")
     except Exception as exc:  # noqa: BLE001 - optional by design
@@ -48,10 +51,12 @@ def mhcflurry_status() -> LocalModelStatus:
 
 
 def available() -> bool:
+    """本地 MHCflurry 是否已安装，供调用方决定走本地打分还是 IEDB。"""
     return mhcflurry_status().available
 
 
 def _load_predictor(presentation: bool = False):
+    """加载并返回本地 MHCflurry 预测器（呈递或亲和力模型）。"""
     import mhcflurry  # local import keeps startup cheap
 
     if presentation and hasattr(mhcflurry, "Class1PresentationPredictor"):
@@ -99,4 +104,5 @@ def predict_mhci(peptides: Sequence[str], alleles: Sequence[str], *,
 
 
 def status() -> dict[str, object]:
+    """返回本地预测器状态的字典形式，用于运行清单与界面展示。"""
     return mhcflurry_status().as_dict()

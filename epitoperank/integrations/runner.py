@@ -46,6 +46,7 @@ def _rows_from_frame(frame: Any, limit: int) -> list[dict[str, Any]]:
 
 
 def _scalar(value: Any) -> Any:
+    """把 numpy 标量、NaN 等转成可 JSON 序列化的普通值，异常时退回字符串。"""
     try:
         import math
 

@@ -43,6 +43,7 @@ plt.rcParams.update(
 
 
 def _save(fig: Figure, output_dir: Path, name: str) -> Path:
+    """把图同时保存为 PNG 与 SVG 到输出目录，关闭画布并返回 PNG 路径。"""
     output_dir.mkdir(parents=True, exist_ok=True)
     png = output_dir / f"{name}.png"
     svg = output_dir / f"{name}.svg"
@@ -53,12 +54,14 @@ def _save(fig: Figure, output_dir: Path, name: str) -> Path:
 
 
 def _placeholder(fig: Figure, ax, message: str, output_dir: Path, name: str) -> Path:
+    """在无数据的坐标轴上写提示文字并保存占位图，保证输出文件始终存在。"""
     ax.text(0.5, 0.5, message, ha="center", va="center", color=COLOR_NEUTRAL)
     ax.set_axis_off()
     return _save(fig, output_dir, name)
 
 
 def _label(candidate: dict[str, Any]) -> str:
+    """为候选事件生成图上标签，格式为「基因符号 (事件类型)」，缺值以 ? 占位。"""
     gene = candidate.get("gene_symbol") or candidate.get("gene_id") or "?"
     return f"{gene} ({candidate.get('event_type', '?')})"
 
@@ -258,9 +261,11 @@ def plot_event_schematic(output_dir: Path) -> Path:
     intron_color = "#CCCCCC"
 
     def _exon(ax, x, width, color, height=0.34, y=0.4):
+        """在指定位置绘制一个外显子矩形块。"""
         ax.add_patch(Rectangle((x, y), width, height, facecolor=color, edgecolor="#333333", lw=0.8))
 
     def _line(ax, x0, x1, y=0.57):
+        """绘制连接各外显子的水平转录本连线。"""
         ax.plot([x0, x1], [y, y], color=intron_color, lw=1.4, zorder=0)
 
     panels = [

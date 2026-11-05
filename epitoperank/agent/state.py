@@ -36,6 +36,7 @@ class Issue:
     suggestion: str = ""
 
     def as_dict(self) -> dict[str, str]:
+        """序列化为普通字典，便于写入快照与 JSON 输出。"""
         return {
             "code": self.code,
             "severity": self.severity,
@@ -59,6 +60,7 @@ class StepRecord:
     issues: list[str] = field(default_factory=list)
 
     def as_dict(self) -> dict[str, Any]:
+        """序列化为字典（消息截断到 600 字符），用于决策轨迹持久化。"""
         return {
             "index": self.index,
             "action": self.action,
@@ -86,6 +88,7 @@ class Criterion:
     check: Callable[["AgentState"], bool]
 
     def satisfied(self, state: "AgentState") -> bool:
+        """在当前状态上执行检查；检查本身抛异常时视为未满足。"""
         try:
             return bool(self.check(state))
         except Exception:  # noqa: BLE001 - a broken check must not stall the run
@@ -146,6 +149,7 @@ class Goal:
         return (not unmet), unmet
 
     def as_dict(self) -> dict[str, Any]:
+        """序列化目标与分析类型、验收标准（不含 lambda 检查函数）。"""
         return {
             "analysis_type": self.analysis_type,
             "description": self.description,
@@ -215,21 +219,27 @@ class AgentState:
 
     # -- helpers ----------------------------------------------------------
     def blockers(self) -> list[Issue]:
+        """返回当前所有 BLOCKER 级别的问题。"""
         return [issue for issue in self.issues if issue.severity == BLOCKER]
 
     def has_issue(self, code: str) -> bool:
+        """判断当前是否存在指定 code 的问题。"""
         return any(issue.code == code for issue in self.issues)
 
     def resolve_issue(self, code: str) -> None:
+        """移除指定 code 的问题（问题被修复或被接受为限制后调用）。"""
         self.issues = [issue for issue in self.issues if issue.code != code]
 
     def note_action(self, action: str) -> None:
+        """累加某动作的执行次数，供重试上限判断使用。"""
         self.action_counts[action] = self.action_counts.get(action, 0) + 1
 
     def count_of(self, action: str) -> int:
+        """返回某动作已执行的次数。"""
         return self.action_counts.get(action, 0)
 
     def sorted_issues(self) -> list[Issue]:
+        """按严重程度排序（blocker→warning→info）后返回问题列表。"""
         return sorted(self.issues, key=lambda item: _SEVERITY_ORDER.get(item.severity, 3))
 
     def snapshot(self) -> dict[str, Any]:

@@ -39,10 +39,12 @@ TIER_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
 
 
 def _clamp(value: float, low: float = 0.0, high: float = 1.0) -> float:
+    """把分量得分限制在 [low, high] 区间内。"""
     return max(low, min(high, value))
 
 
 def _number(value: object) -> float | None:
+    """把输入转成有限浮点数；布尔、None、非数值和 NaN/inf 均返回 None。"""
     if isinstance(value, bool) or value is None:
         return None
     try:
@@ -80,6 +82,7 @@ def component_scores(row: Mapping[str, object]) -> dict[str, float]:
 
 
 def evidence_tier(components: Mapping[str, float]) -> str:
+    """按已有分量判定证据等级 A/B/C，均不满足则归为 D（无结合预测）。"""
     for tier, required in TIER_RULES:
         if all(name in components for name in required):
             return tier

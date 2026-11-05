@@ -11,7 +11,6 @@ services:
       # /data is a local docker volume, so WAL is safe here and lets the 8
       # workers read while one of them writes analysis results.
       - EPITOPERANK_SQLITE_WAL=1
-      - EPITOPERANK_ENABLE_STREAMLIT=1
       # One BLAS thread per process: without this each of the 8 workers tries
       # to use all 128 cores and they thrash each other.
       - OMP_NUM_THREADS=1

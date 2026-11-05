@@ -256,6 +256,7 @@ def _norm(value: Any) -> str:
 
 
 def _truncate(value: Any, limit: int = MAX_CELL_CHARS) -> str:
+    """截断过长的单元格文本：超出上限时保留前 limit-1 个字符并补省略号，用于展示与送入模型。"""
     text = str(value if value is not None else "").strip()
     return text if len(text) <= limit else text[: limit - 1] + "…"
 
@@ -268,6 +269,7 @@ def _scrub(text: str) -> str:
 
 
 def _issue(severity: str, code: str, message_zh: str, message_en: str) -> dict[str, str]:
+    """构造一条中英双语问题记录（severity / code / message / message_en），供预览与报告展示。"""
     return {
         "severity": severity,
         "code": code,
@@ -277,6 +279,7 @@ def _issue(severity: str, code: str, message_zh: str, message_en: str) -> dict[s
 
 
 def _unique_headers(headers: Sequence[str]) -> list[str]:
+    """规范化表头：空表头补成 column_<序号>，重名依次追加 _2、_3 等后缀，保证列名唯一。"""
     seen: Counter[str] = Counter()
     result: list[str] = []
     for index, raw in enumerate(headers):
@@ -311,10 +314,12 @@ class FileProfile:
 
     @property
     def suffix(self) -> str:
+        """返回文件扩展名（小写，含点）。"""
         return self.path.suffix.lower()
 
     @property
     def width(self) -> int:
+        """返回表头列数，即数据行的标准宽度。"""
         return len(self.headers)
 
     def column_values(self, header: str, limit: int = 40) -> list[str]:
@@ -351,6 +356,7 @@ class FileProfile:
             yield row
 
     def to_dict(self) -> dict[str, Any]:
+        """导出文件画像的可序列化字典（编码、分隔符、表头、行数等），供前端与处理日志展示。"""
         return {
             "name": self.name,
             "supported": self.supported,
@@ -385,6 +391,7 @@ def _decode_head(raw: bytes) -> tuple[str, str]:
 
 
 def _head_text(path: Path) -> tuple[bytes, str, str]:
+    """读取文件头部若干字节（自动处理 .gz），解码为文本并丢弃可能被截断的末行，返回 (原始字节, 编码, 文本)。"""
     opener = gzip.open if path.name.lower().endswith(".gz") else Path.open
     with opener(path, "rb") as handle:
         raw = handle.read(HEAD_BYTES)
@@ -423,6 +430,7 @@ def _raw_table_rows(path: Path, kind: str, encoding: str, delimiter: str) -> Ite
 
 
 def _detect_delimiter(text: str, suffix: str) -> str:
+    """在 , 制表符 ; | 中挑选让前 20 行列数最一致的分隔符，扩展名对应的默认值加权。"""
     lines = [line for line in text.splitlines() if line.strip()][:20]
     if not lines:
         return "\t" if suffix in {".tsv", ".tab"} else ","
@@ -448,6 +456,7 @@ def _detect_delimiter(text: str, suffix: str) -> str:
 
 
 def _looks_numeric(value: str) -> bool:
+    """判断单元格是否可解析为数值，容忍百分号、千分位逗号以及 <、≤、~ 等前缀。"""
     text = str(value or "").strip().replace("%", "").lstrip("<>≤≥")
     if not text:
         return False
@@ -459,6 +468,7 @@ def _looks_numeric(value: str) -> bool:
 
 
 def _header_hit_count(cells: Sequence[str]) -> int:
+    """统计一行中有多少单元格命中事件列或元数据列的同义词表，作为表头行的加分项。"""
     hits = 0
     for cell in cells:
         normalized = _norm(cell)
@@ -472,6 +482,7 @@ def _header_hit_count(cells: Sequence[str]) -> int:
 
 
 def _detect_header_row(rows: Sequence[Sequence[str]]) -> int:
+    """在前 15 行中按非空列数、唯一性、非数值比例、后续行宽度一致性与同义词命中率评分，返回最可能的表头行下标。"""
     best_index = 0
     best_score = float("-inf")
     for index, row in enumerate(rows[:HEADER_SCAN_ROWS]):
@@ -581,6 +592,7 @@ def profile_file(path: Path, *, count_rows: bool = True) -> FileProfile:
 
 
 def _count_rows(path: Path, profile: FileProfile) -> tuple[int, bool]:
+    """统计表头之后的数据行数，达到上限即停止并返回 (行数, 是否被截断)。"""
     count = 0
     try:
         for index, row in enumerate(_raw_table_rows(path, profile.file_kind, profile.encoding, profile.delimiter)):
@@ -595,6 +607,7 @@ def _count_rows(path: Path, profile: FileProfile) -> tuple[int, bool]:
 
 
 def _profile_directory(directory: Path) -> list[FileProfile]:
+    """递归扫描目录下受支持的表格文件（跳过隐藏文件，事件/元数据相关命名优先），逐个画像并返回列表。"""
     profiles: list[FileProfile] = []
     candidates = [path for path in directory.rglob("*")
                   if path.is_file() and not path.name.startswith(".")
@@ -620,6 +633,7 @@ def _profile_directory(directory: Path) -> list[FileProfile]:
 
 
 def _synonym_score(header: str, synonyms: Sequence[str]) -> float:
+    """给表头与某字段同义词的相似度打分：完全一致 1.0、互为前缀 0.88、包含 0.8，其余 0。"""
     normalized = _norm(header)
     if not normalized:
         return 0.0
@@ -694,6 +708,7 @@ def _detect_sample_columns(profile: FileProfile, mapped_headers: set[str]) -> di
 
 
 def _normalize_event_type(value: Any) -> str | None:
+    """把英文全称、缩写或中文的剪接类型标签归一化为 SE/MXE/A5SS/A3SS/RI，无法识别返回 None。"""
     normalized = _norm(value)
     if not normalized:
         return None
@@ -714,6 +729,7 @@ def _normalize_event_type(value: Any) -> str | None:
 
 
 def _event_type_map(profile: FileProfile, header: str | None) -> dict[str, str]:
+    """扫描剪接类型列的实际取值，返回该文件 {原始标签: 标准类型} 的映射。"""
     if not header or header not in profile.headers:
         return {}
     result: dict[str, str] = {}
@@ -725,6 +741,7 @@ def _event_type_map(profile: FileProfile, header: str | None) -> dict[str, str]:
 
 
 def _infer_group(sample_id: str) -> str | None:
+    """根据样本名中的关键词推断生物学分组，命中对照组提示词返回 Control、处理组提示词返回 Treatment，否则 None。"""
     normalized = _norm(sample_id)
     if any(_norm(hint) in normalized for hint in CONTROL_HINTS):
         return "Control"
@@ -733,6 +750,7 @@ def _infer_group(sample_id: str) -> str | None:
     return None
 
 def _pick_groups(values: Sequence[str]) -> dict[str, str]:
+    """从元数据的分组取值中挑出对照与处理标签，返回 {'group1': 对照, 'group2': 处理}；取值不足两个返回空字典。"""
     clean = [str(value).strip() for value in values if str(value).strip()]
     if len(clean) < 2:
         return {}
@@ -753,6 +771,7 @@ def _pick_groups(values: Sequence[str]) -> dict[str, str]:
 
 
 def _metadata_profile(profiles: Sequence[FileProfile]) -> FileProfile | None:
+    """在已画像文件中挑选最像样本元数据的表（含样本 ID 与分组列、文件名带 metadata/sample 等），得分不足时返回 None。"""
     best: FileProfile | None = None
     best_score = 0.0
     for profile in profiles:
@@ -784,6 +803,7 @@ class _Candidate:
 
 
 def _candidate_for(profile: FileProfile) -> _Candidate | None:
+    """评估单个文件能否作为事件表：映射标准列、检测每样本 PSI 列并给出可信度打分；缺基因列或缺定量/显著性列时返回 None。"""
     if not profile.supported or not profile.headers:
         return None
     if _is_expression_quantification(profile) or _is_transcript_quantification(profile):
@@ -847,6 +867,7 @@ def _is_expression_quantification(profile: FileProfile) -> bool:
 
 
 def _heuristic_mapping(profiles: Sequence[FileProfile]) -> tuple[dict[str, Any], FileProfile | None, _Candidate | None]:
+    """仅用列名同义词从画像结果中选出最优事件表与元数据表，生成含列映射、每样本 PSI 列、类型映射和分组的启发式映射。"""
     candidates = [candidate for profile in profiles if (candidate := _candidate_for(profile))]
     candidates.sort(key=lambda item: item.score, reverse=True)
     candidate = candidates[0] if candidates else None
@@ -901,6 +922,7 @@ invent event types, p-values, FDR, biological groups, or genomic coordinates."""
 
 
 def _mapping_prompt(profiles: Sequence[FileProfile], heuristic: Mapping[str, Any]) -> str:
+    """构造发送给模型的映射提示词：最多 8 个文件的表头与样例行、标准字段说明、启发式猜测及 JSON 输出格式。"""
     files: list[dict[str, Any]] = []
     for profile in profiles:
         if not profile.supported or not profile.headers:
@@ -1184,11 +1206,13 @@ def _parse_float(value: Any, *, decimal_comma: bool | None = None) -> tuple[floa
 
 
 def _parse_int(value: Any) -> int | None:
+    """把单元格解析为整数（按浮点解析后四舍五入），缺失或非法值返回 None。"""
     number, _ = _parse_float(value)
     return None if number is None else int(round(number))
 
 
 def _normalize_strand(value: Any) -> str:
+    """把各种链方向写法（plus/forward/+、minus/reverse/- 等）统一成 + 或 -，无法识别时原样返回。"""
     text = str(value or "").strip()
     lowered = text.lower()
     if lowered in {"+", "plus", "forward", "f", "1", "正", "正向"}:
@@ -1204,6 +1228,7 @@ def _build_coordinates(
     end: str,
     explicit: str,
 ) -> str:
+    """拼装基因组坐标：有显式坐标串则直接使用，否则由染色体与起止位置组合成 chr:start-end。"""
     if explicit.strip():
         return explicit.strip()
     if start.strip() or end.strip():
@@ -1217,6 +1242,7 @@ def _metadata_rows(
     mapping: Mapping[str, Any],
     issues: list[dict[str, str]],
 ) -> list[SampleMetadata]:
+    """解析元数据文件为 SampleMetadata 列表（按样本 ID 去重，条件缺失时回退到分组）；无样本 ID 列或分组不足两组时记录问题并返回空列表。"""
     columns = mapping.get("metadata_columns")
     if not isinstance(columns, Mapping):
         columns = _map_columns(profile.headers, METADATA_SYNONYMS)
@@ -1238,6 +1264,7 @@ def _metadata_rows(
     seen: set[str] = set()
     for row in profile.iter_rows():
         def value(field_name: str) -> str:
+            """读取当前行中某个元数据字段的文本，该字段未出现在表头中时返回空串。"""
             header = columns.get(field_name)
             if not header or header not in indices:
                 return ""
@@ -1276,6 +1303,7 @@ def _synthesized_metadata(
     issues: list[dict[str, str]],
     sample_groups: Mapping[str, str] | None = None,
 ) -> list[SampleMetadata]:
+    """在只提供每样本 PSI 列时，用已确认的分组或样本名关键词合成样本元数据；标签不足两组或存在空标签时记录提示并返回空列表。"""
     if not sample_columns:
         return []
     supplied = sample_groups or {}
@@ -1314,6 +1342,7 @@ class Conversion:
     normalized_types: Counter[str] = field(default_factory=Counter)
 
     def stats(self, validation: Mapping[str, Any] | None = None) -> dict[str, Any]:
+        """汇总转换统计：总行数、有效事件、丢弃原因、FDR 与 ΔPSI 覆盖率、事件类型和分组分布，可并入校验结果。"""
         events = self.events
         fdr = sum(1 for event in events if event.fdr is not None)
         delta = sum(1 for event in events if event.delta_psi is not None)
@@ -1334,6 +1363,7 @@ class Conversion:
         }
 
     def preview_rows(self, limit: int = 5) -> list[dict[str, Any]]:
+        """取前 limit 条事件生成精简字典（基因、类型、ΔPSI、FDR、p 值、坐标），供前端表格预览。"""
         rows: list[dict[str, Any]] = []
         for event in self.events[:limit]:
             rows.append(
@@ -1355,6 +1385,7 @@ def _convert(
     mapping: Mapping[str, Any],
     issues: list[dict[str, str]],
 ) -> Conversion:
+    """按映射把事件表逐行转换为 StandardEvent：处理百分比 PSI、ΔPSI 方向与类型归一化、事件 ID 去重、坐标拼装，并生成样本元数据、必要时由 p 值补算 BH FDR。"""
     columns = {str(key): str(value) for key, value in (mapping.get("columns") or {}).items()}
     headers = {header: index for index, header in enumerate(profile.headers)}
     sample_columns = {
@@ -1377,10 +1408,12 @@ def _convert(
     )
 
     def header_for(field_name: str) -> str | None:
+        """返回某标准字段对应的真实表头名，未映射或表中不存在时返回 None。"""
         header = columns.get(field_name)
         return header if header in headers else None
 
     def cell(row: Sequence[str], field_name: str) -> str:
+        """取本行中某标准字段的单元格文本（已去空白），未映射或越界时返回空串。"""
         header = header_for(field_name)
         if header is None:
             return ""
@@ -1388,6 +1421,7 @@ def _convert(
         return row[index].strip() if index < len(row) else ""
 
     def numeric(row: Sequence[str], field_name: str) -> tuple[float | None, bool]:
+        """把本行某标准字段解析为浮点数（按欧洲小数逗号处理），返回 (数值, 是否百分号)。"""
         return _parse_float(cell(row, field_name), decimal_comma=True)
 
     used_ids: set[str] = set()
@@ -1633,6 +1667,7 @@ def _convert(
 
 
 def _parse_bool(value: Any) -> bool | None:
+    """把单元格解析为布尔值，识别 true/1/yes/是 与 false/0/no/否，其他取值返回 None。"""
     text = str(value or "").strip().lower()
     if text in {"true", "1", "yes", "y", "是"}:
         return True
@@ -1651,6 +1686,7 @@ def _confidence(
     conversion: Conversion,
     llm_used: bool,
 ) -> dict[str, Any]:
+    """按已识别字段、样本分组与行有效率算出 0.05–0.99 的映射置信度，返回分数、等级（high/medium/low）与中文理由列表。"""
     columns = mapping.get("columns") or {}
     reasons: list[str] = []
     score = 0.15
@@ -1703,6 +1739,7 @@ def _confidence(
 
 
 def _validation_payload(events: Sequence[StandardEvent], samples: Sequence[SampleMetadata]) -> dict[str, Any]:
+    """用流水线同款校验器检查转换结果，返回 ValidationResult 的字典形式。"""
     dataset = Dataset(
         name="ingestion_preview",
         source_dir=Path("."),
@@ -1714,6 +1751,7 @@ def _validation_payload(events: Sequence[StandardEvent], samples: Sequence[Sampl
 
 
 def _validation_issues(validation: Mapping[str, Any]) -> list[dict[str, str]]:
+    """把校验结果转成中英双语问题列表，中文文案优先套用 VALIDATION_ZH 模板并回填数量。"""
     issues: list[dict[str, str]] = []
     for raw in validation.get("issues") or []:
         if not isinstance(raw, Mapping):
@@ -1732,6 +1770,7 @@ def _validation_issues(validation: Mapping[str, Any]) -> list[dict[str, str]]:
 
 
 def _native_preview(directory: Path) -> dict[str, Any] | None:
+    """若目录能被严格加载器直接识别，返回原生格式预览（数据集概要、校验结果、各样本分组建议）；识别失败返回 None。"""
     try:
         dataset = load_dataset(directory)
     except Exception:  # noqa: BLE001 - native detection must never break preview
@@ -1799,6 +1838,7 @@ def _groups_from_identical_upload(directory: Path, sample_ids: Sequence[str]) ->
     event_file = event_files[0]
 
     def digest(path: Path) -> str:
+        """计算文件的 SHA-256 摘要，用于判断两个上传目录中的事件表是否完全一致。"""
         with path.open("rb") as handle:
             return hashlib.file_digest(handle, "sha256").hexdigest()
 
@@ -1839,6 +1879,7 @@ def preview_ingestion(
     trace: list[dict[str, Any]] = []
 
     def step(name: str, status: str, detail_zh: str, detail_en: str) -> None:
+        """向 agent_trace 追加一条处理步骤记录（名称、状态与中英双语文案）。"""
         trace.append(
             {
                 "step": name,
@@ -2233,6 +2274,7 @@ def preview_ingestion(
 
 
 def _standard_row(event: StandardEvent, sample_ids: Sequence[str]) -> dict[str, Any]:
+    """把 StandardEvent 展开成标准表的一行：含质量列、按样本数计算的 PSI 缺失率，以及 PSI_<样本> 列。"""
     row: dict[str, Any] = {
         "event_id": event.event_id,
         "gene_id": event.gene_id,
@@ -2272,6 +2314,7 @@ def _write_standardized(
     mapping: Mapping[str, Any],
     preview: Mapping[str, Any],
 ) -> Path:
+    """写出标准化目录：事件主表 AS_event_master.csv、样本元数据 sample_metadata.csv 与映射配置 ingestion_mapping.json，返回输出目录。"""
     output_dir.mkdir(parents=True, exist_ok=True)
     sample_ids = list(conversion.sample_columns.values())
     for sample in conversion.samples:

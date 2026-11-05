@@ -9,8 +9,7 @@ services:
     container_name: epitoperank
     restart: unless-stopped
     ports:
-      - "8800:8800"  # API server
-      - "8501:8501"  # Streamlit UI (optional)
+      - "8800:8800"  # API server + web UI (served at /)
     volumes:
       # Persist analysis data and databases
       - epitoperank-data:/data

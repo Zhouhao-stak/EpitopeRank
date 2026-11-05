@@ -135,6 +135,7 @@ def decode_table_text(path: str | Path, *, limit: int | None = None) -> str:
 
 
 def sniff_delimiter(header_line: str) -> str:
+    """按表头行里制表符与逗号的数量推断分隔符。"""
     return '\t' if header_line.count('\t') >= header_line.count(',') else ','
 
 
@@ -175,6 +176,7 @@ def _sequence_like(value: str) -> bool:
 
 
 def _translate_ok(value: str) -> bool:
+    """判断该单元格能否作为完整密码子的序列成功翻译。"""
     try:
         translate(value)
         return True
@@ -183,6 +185,7 @@ def _translate_ok(value: str) -> bool:
 
 
 def _looks_numeric(value: str) -> bool:
+    """判断单元格是否为 1 至 9 位纯数字，可能代表连接点坐标。"""
     text = str(value or '').strip()
     return text.isdigit() and 0 < len(text) <= 9
 
@@ -310,6 +313,7 @@ def detect_column_map(path: str | Path, event_ids: set[str] | None = None,
 
 
 def _median_length(column: dict) -> float:
+    """返回该列序列长度的平均值，用于判断哪一列是较长的参考 CDS。"""
     lengths = column.get('sequence_lengths') or [0]
     return sum(lengths) / len(lengths)
 
@@ -330,6 +334,7 @@ def _compare_sequence_orientation(profile: dict, first: dict, second: dict,
         return {'reference': longer['index'], 'altered': shorter['index'], 'source': 'guess'}
 
     def replay(reference: dict, altered: dict) -> tuple[int, int]:
+        """按给定方向重放样例行，返回（产出肽的行数，有效行数）。"""
         produced = valid = 0
         for row in rows[:50]:
             try:
@@ -479,6 +484,7 @@ def pick_cds_table(candidates: list) -> Path | None:
 
 
 def translate(cds: str) -> str:
+    """把 CDS 翻译成蛋白序列，遇到第一个终止密码子即截断。"""
     cds = cds.strip().upper().replace('U', 'T')
     if not cds or len(cds) % 3 or set(cds) - set('ACGT'):
         raise ValueError('CDS must contain only A/C/G/T and complete codons')
@@ -566,6 +572,7 @@ def _resolve_column_index(header: list[str], column_map: dict[str, str] | None,
 
 
 def _number_text(value) -> str:
+    """把 None 或缺失值归一成空字符串，便于直接写入 TSV。"""
     return '' if value is None else value
 
 
@@ -607,6 +614,10 @@ def _predict_batched(pairs: list[tuple[str, str]]) -> tuple[list[dict], list[dic
 def run(input_dir: str | Path, cds_table: str | Path, output_dir: str | Path,
         *, alleles: list[str] | None = None, max_predictions: int = DEFAULT_MAX_PREDICTIONS,
         predictor=None, column_map: dict[str, str] | None = None) -> dict:
+    """按列映射生成跨连接点候选肽，可选调用 IEDB 打分，并写出 TSV 与 manifest。
+
+    单行数据错误或预测失败只记入 skipped / prediction_errors，不会中断整次运行。
+    """
     dataset = load_dataset(input_dir)
     events = {}
     duplicate_ids = set()
@@ -632,6 +643,7 @@ def run(input_dir: str | Path, cds_table: str | Path, output_dir: str | Path,
     mapping_used = {field: header[position] for field, position in column_index.items()}
 
     def cell(row: list[str], field: str) -> str:
+        """按已确认的列映射取出单元格文本，行不足时返回空串。"""
         position = column_index[field]
         return (row[position] if position < len(row) else '').strip()
 

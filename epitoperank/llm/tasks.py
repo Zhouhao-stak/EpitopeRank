@@ -37,14 +37,17 @@ _SYSTEM_BASE = (
 
 
 def _lang(query: str, configured: str) -> str:
+    """按查询文本与配置的语言决定输出语言（zh 或 en）。"""
     return detect_language(query, configured)
 
 
 def _hint(language: str) -> str:
+    """返回该语言的输出提示语，未知语言回退英文。"""
     return LANG_HINT.get(language, LANG_HINT["en"])
 
 
 def _strings(value: Any, limit: int = MAX_LIST_ITEMS, max_len: int = 400) -> list[str]:
+    """把模型返回的列表或映射规整为字符串列表，并限制条目数与单条长度。"""
     if isinstance(value, str):
         value = [value]
     if not isinstance(value, (list, tuple)):

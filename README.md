@@ -94,8 +94,7 @@ Docker：
 
 ```bash
 docker compose up -d
-# API: http://localhost:8800
-# UI:  http://localhost:8501
+# Web UI + API: http://localhost:8800（页面在 /）
 ```
 
 Coolify 一键部署、无 root 服务器部署等方案见 [docs/deploy/](docs/deploy/)。

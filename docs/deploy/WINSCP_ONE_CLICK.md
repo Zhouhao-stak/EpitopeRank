@@ -38,7 +38,7 @@ tar czf /tmp/epitoperank-deploy-package.tar.gz \
    - 主机: `123.255.66.81`
    - 端口: `39145`
    - 用户: `wang_zi_wei`
-   - 密码: `REDACTED-SSH-PASSWORD`
+   - 密码: 登录时手动输入（仓库不保存）
 3. 在右侧创建文件夹 `/home/wang_zi_wei/epitoperank`
 4. 将 `C:\tmp\epitoperank-deploy-package.tar.gz` **拖拽**到该文件夹
 5. 等待上传完成 ✅
@@ -50,7 +50,7 @@ tar czf /tmp/epitoperank-deploy-package.tar.gz \
 ```bash
 # SSH 登录
 ssh -p 39145 wang_zi_wei@123.255.66.81
-# 密码: REDACTED-SSH-PASSWORD
+# 密码: 手动输入（仓库不保存）
 
 # ===== 从这里开始复制 =====
 
@@ -91,8 +91,7 @@ echo ""
 echo "=========================================="
 echo "✅ Deployment Complete!"
 echo "=========================================="
-echo "API: http://localhost:8800"
-echo "UI:  http://localhost:8501"
+echo "Web UI + API: http://localhost:8800"
 echo ""
 echo "Useful commands:"
 echo "  Logs:     docker compose logs -f"
@@ -113,11 +112,10 @@ curl http://localhost:8800/api/health
 **从你的电脑**（如果端口未开放，使用 SSH 隧道）：
 ```bash
 # 保持这个窗口打开
-ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.66.81
+ssh -L 8800:localhost:8800 -p 39145 wang_zi_wei@123.255.66.81
 
 # 然后在本机浏览器访问
 # http://localhost:8800
-# http://localhost:8501
 ```
 
 ---
@@ -165,7 +163,7 @@ docker compose ps
 | 健康检查 | ✅ 内置 healthcheck |
 | 日志查看 | ✅ `docker compose logs -f` |
 | 版本管理 | ✅ Git + tar 包版本控制 |
-| Web 界面 | ✅ Streamlit UI (端口 8501) |
+| Web 界面 | ✅ 内置 Web UI（端口 8800，页面在 `/`） |
 
 **虽然不是真正的 SaaS 平台，但操作流程已经非常接近了！**
 

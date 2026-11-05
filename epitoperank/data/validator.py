@@ -35,17 +35,21 @@ class ValidationResult:
 
     @property
     def errors(self) -> list[ValidationIssue]:
+        """返回级别为 error 的问题列表（阻止后续分析的结构性缺陷）。"""
         return [issue for issue in self.issues if issue.severity == "error"]
 
     @property
     def warnings(self) -> list[ValidationIssue]:
+        """返回级别为 warning 的问题列表（不阻断分析，写入报告的限制说明）。"""
         return [issue for issue in self.issues if issue.severity == "warning"]
 
     @property
     def ok(self) -> bool:
+        """数据集是否通过校验，即不存在任何 error 级问题。"""
         return not self.errors
 
     def as_dict(self) -> dict[str, Any]:
+        """转换为可 JSON 序列化的字典，含通过状态、错误/警告计数与问题明细。"""
         return {
             "ok": self.ok,
             "error_count": len(self.errors),

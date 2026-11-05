@@ -32,9 +32,11 @@ class _Handler(BaseHTTPRequestHandler):
     server_version = "EpitopeRank-MCP/1.0"
 
     def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
+        """屏蔽 HTTPServer 默认的访问日志输出。"""
         return
 
     def _send(self, status: int, payload: dict[str, Any]) -> None:
+        """以 UTF-8 JSON 响应请求，并写入状态码与 Content-Length。"""
         body = json.dumps(payload, ensure_ascii=False, default=str).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -43,6 +45,7 @@ class _Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def _read_json(self) -> dict[str, Any]:
+        """读取并解析请求体 JSON，限制 2 MB 且必须是对象。"""
         length = int(self.headers.get("Content-Length", "0") or 0)
         if length <= 0:
             return {}
@@ -55,6 +58,7 @@ class _Handler(BaseHTTPRequestHandler):
         return data
 
     def do_GET(self) -> None:  # noqa: N802
+        """处理 GET：/health 返回健康状态，/tools/list 返回工具 schema 列表。"""
         if self.path.rstrip("/") in ("/health", ""):
             self._send(
                 200,
@@ -72,6 +76,7 @@ class _Handler(BaseHTTPRequestHandler):
         self._send(404, {"error": f"unknown path: {self.path}"})
 
     def do_POST(self) -> None:  # noqa: N802
+        """处理 POST：/tools/list 列工具，/tools/call 执行工具并返回 MCP 结果块。"""
         path = self.path.rstrip("/")
         try:
             if path == "/tools/list":
@@ -111,6 +116,7 @@ class _Handler(BaseHTTPRequestHandler):
 
 
 def _health_ok(host: str, port: int) -> bool:
+    """探测该端口上是否已有同名服务在跑，用于多进程重复启动的场景。"""
     try:
         with urlopen(f"http://{host}:{port}/health", timeout=1.0) as response:
             data = json.loads(response.read().decode("utf-8"))
@@ -161,6 +167,7 @@ def ensure_demo_server() -> dict[str, Any]:
 
 
 def stop_server() -> None:
+    """关闭内置演示服务器线程并释放端口。"""
     global _server, _thread
     with _lock:
         if _server is not None:

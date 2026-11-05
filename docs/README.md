@@ -48,5 +48,4 @@
 | [TESTING_QUICKSTART.md](dev/TESTING_QUICKSTART.md) | 跑测试的最短路径 |
 | [TEST_SUMMARY.md](dev/TEST_SUMMARY.md) | 测试补强记录 |
 | [API_CONFIG.md](dev/API_CONFIG.md) | 大模型 / API 配置项 |
-| [AGENT_CHAT_UI.md](dev/AGENT_CHAT_UI.md) | Agent 对话界面实现说明 |
 | [WEB_UI_ACCESS_GUIDE.md](dev/WEB_UI_ACCESS_GUIDE.md) | Web UI 访问方式 |

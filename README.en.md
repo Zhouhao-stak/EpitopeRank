@@ -75,7 +75,7 @@ python run.py followup --project-id SPN-XXXX --query "only SE events"
 Docker:
 
 ```bash
-docker compose up -d   # API :8800, UI :8501
+docker compose up -d   # Web UI + API on :8800 (UI served at /)
 ```
 
 ## What an analysis does

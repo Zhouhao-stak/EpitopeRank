@@ -104,6 +104,7 @@ class StandardEvent:
     confidence_level: str = ""
 
     def to_row(self, sample_ids: Iterable[str] = ()) -> dict[str, Any]:
+        """转换为标准表的一行字段字典，并按 sample_ids 追加 PSI_<样本> 列（缺失写空串）。"""
         row: dict[str, Any] = {
             "event_id": self.event_id,
             "gene_id": self.gene_id,
@@ -129,6 +130,7 @@ class StandardEvent:
 
 
 def _to_float(value: Any) -> float | None:
+    """把单元格转成浮点数，空串、NA、NaN、None 等缺失标记返回 None。"""
     if value is None:
         return None
     text = str(value).strip()
@@ -141,11 +143,13 @@ def _to_float(value: Any) -> float | None:
 
 
 def _to_int(value: Any) -> int | None:
+    """把单元格转成整数（先按浮点解析再四舍五入），缺失或非法值返回 None。"""
     number = _to_float(value)
     return None if number is None else int(round(number))
 
 
 def _to_bool(value: Any) -> bool | None:
+    """把单元格解析为布尔值，识别 true/1/yes 与 false/0/no，其他取值返回 None。"""
     if value is None:
         return None
     text = str(value).strip().lower()

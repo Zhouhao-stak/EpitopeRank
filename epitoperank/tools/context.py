@@ -51,11 +51,13 @@ class RunContext:
     hypotheses: list[Any] = field(default_factory=list)
 
     def log(self, agent: str, action: str, status: str = "ok", detail: str = "") -> None:
+        """记录一次工具/agent 动作，同时写入内存日志与项目记忆库。"""
         entry = {"agent": agent, "action": action, "status": status, "detail": detail}
         self.workflow_log.append(entry)
         self.memory.log(self.project_id, agent, action, status, detail)
 
     def top_genes(self, limit: int | None = None) -> list[str]:
+        """取出排名靠前的候选基因列表，未指定数量时使用配置的 top_candidates。"""
         from epitoperank.splicing.ranking import top_candidate_genes
 
         return top_candidate_genes(self.candidates, limit or self.settings.analysis.top_candidates)

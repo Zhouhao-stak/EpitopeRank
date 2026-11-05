@@ -50,7 +50,7 @@ tar czf /tmp/epitoperank-deploy-package.tar.gz \
 | **主机名** | `123.255.66.81` |
 | **端口号** | `39145` |
 | **用户名** | `wang_zi_wei` |
-| **密码** | `REDACTED-SSH-PASSWORD` |
+| **密码** | 手动输入（仓库不保存） |
 
 然后点击 **"登录"**
 
@@ -102,14 +102,14 @@ tar czf /tmp/epitoperank-deploy-package.tar.gz \
 3. 点击 **"Open"**
 4. 登录信息:
    - login as: `wang_zi_wei`
-   - password: `REDACTED-SSH-PASSWORD`
+   - password: 手动输入（仓库不保存）
 
 ### 方法 B：使用 Git Bash
 
 打开 Git Bash，执行：
 ```bash
 ssh -p 39145 wang_zi_wei@123.255.66.81
-# 输入密码: REDACTED-SSH-PASSWORD
+# 输入密码: 手动输入（仓库不保存）
 ```
 
 ### 在服务器上执行以下命令
@@ -213,7 +213,7 @@ docker compose logs -f
 curl http://localhost:8800/api/health
 
 # Web UI（如果服务器有浏览器）
-firefox http://localhost:8501 &
+firefox http://localhost:8800 &
 ```
 
 ### 从你的电脑访问
@@ -221,18 +221,16 @@ firefox http://localhost:8501 &
 **如果服务器端口已开放**：
 
 在浏览器中打开：
-- API: `http://123.255.66.81:8800`
-- UI: `http://123.255.66.81:8501`
+- Web UI + API: `http://123.255.66.81:8800`
 
 **如果端口未开放（更常见）**，使用 SSH 隧道：
 
 ```bash
 # 在本地电脑执行（保持这个窗口打开）
-ssh -L 8800:localhost:8800 -L 8501:localhost:8501 -p 39145 wang_zi_wei@123.255.66.81
+ssh -L 8800:localhost:8800 -p 39145 wang_zi_wei@123.255.66.81
 
 # 然后在本机浏览器访问
 # http://localhost:8800
-# http://localhost:8501
 ```
 
 ---

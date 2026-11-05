@@ -6,7 +6,8 @@ down or a remote API is slow. This module provides the bridge with all the
 guards that implies:
 
 * **sync wrapping** — every coroutine runs on its own event loop in a worker
-  thread, so it works from a plain script, from FastAPI and from Streamlit;
+  thread, so it works from a plain script, from a FastAPI worker and from any
+  sync caller;
 * **hard timeout** — a slow endpoint can never stall the analysis;
 * **kill switch** — ``agent.skills.enabled`` / ``EPITOPERANK_ENABLE_SKILLS``;
 * **budget** — at most ``agent.skills.max_calls`` external calls per run;
@@ -34,6 +35,7 @@ _EXECUTOR = concurrent.futures.ThreadPoolExecutor(
 
 
 def _env_bool(name: str) -> bool | None:
+    """读取布尔环境变量；未设置或取值无法识别时返回 None。"""
     raw = os.environ.get(name)
     if raw is None:
         return None
@@ -56,18 +58,21 @@ def skills_enabled(settings: Any | None = None) -> bool:
 
 
 def skill_timeout(settings: Any | None = None) -> float:
+    """外部技能单次调用的超时秒数（``agent.skills.timeout``，默认 10）。"""
     block = getattr(settings, "agent", None)
     skills = getattr(block, "skills", None)
     return float(getattr(skills, "timeout", 10.0) or 10.0)
 
 
 def skill_budget(settings: Any | None = None) -> int:
+    """单次运行允许的外部调用次数（``agent.skills.max_calls``，默认 4）。"""
     block = getattr(settings, "agent", None)
     skills = getattr(block, "skills", None)
     return int(getattr(skills, "max_calls", 4) or 0)
 
 
 def _cache_key(name: str, kwargs: dict[str, Any]) -> str:
+    """由技能名与关键字参数生成稳定的缓存键（同一查询一次运行内只发一次）。"""
     payload = json.dumps(kwargs, sort_keys=True, default=str, ensure_ascii=False)
     digest = hashlib.sha1(payload.encode("utf-8")).hexdigest()[:16]
     return f"{name}:{digest}"
@@ -96,6 +101,7 @@ class SkillBridge:
 
     @classmethod
     def from_settings(cls, settings: Any | None) -> "SkillBridge":
+        """按配置构造桥接器：是否启用外部技能、单次超时与调用总预算。"""
         return cls(
             settings=settings,
             enabled=skills_enabled(settings),
@@ -111,9 +117,11 @@ class SkillBridge:
 
     @property
     def remaining(self) -> int:
+        """剩余可用的外部调用次数。"""
         return max(self.budget - self.used, 0)
 
     def spent(self) -> bool:
+        """外部调用预算是否已用尽。"""
         return self.remaining <= 0
 
     # -- execution --------------------------------------------------------
@@ -155,7 +163,9 @@ class SkillBridge:
         return result if ok else None
 
     def _invoke(self, skill: Any, kwargs: dict[str, Any]) -> Any | None:
+        """在工作线程的独立事件循环中运行异步技能；超时或异常均返回 None。"""
         def _task() -> Any:
+            """在工作线程内新建事件循环并执行该技能协程。"""
             return asyncio.run(skill.execute(**kwargs))
 
         try:
@@ -168,6 +178,7 @@ class SkillBridge:
 
     # -- reporting --------------------------------------------------------
     def as_dict(self) -> dict[str, Any]:
+        """序列化为字典：启用状态、预算与每次调用记录（参数截断），供报告与 API 使用。"""
         return {
             "enabled": self.enabled,
             "budget": self.budget,
@@ -184,6 +195,7 @@ class SkillBridge:
         }
 
     def summary_line(self) -> str:
+        """一行摘要：已用/总预算，以及各调用状态的计数。"""
         if not self.enabled:
             return "external skills disabled"
         counts: dict[str, int] = {}

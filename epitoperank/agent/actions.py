@@ -88,6 +88,7 @@ def assess_quality(context: RunContext, state: AgentState) -> str:
 
 
 def _count_at(context: RunContext, fdr: float, dpsi: float) -> int:
+    """试算在给定 FDR 与 |dPSI| 下通过显著性与质量门槛的事件数（只读，供阈值网格搜索）。"""
     analysis = context.settings.analysis
     settings = FilterSettings(
         fdr_threshold=fdr,
@@ -766,6 +767,7 @@ def interpret_splice_event(
 
 
 def summarize_dataset(context: RunContext, state: AgentState) -> str:
+    """工具：汇总已加载数据集的概览（事件数、样本、分组），供模型在分析前了解数据。"""
     from epitoperank.tools.data_tools import summarize_dataset as _impl
 
     return _impl(context)
@@ -778,6 +780,7 @@ def filter_significant_events(
     delta_psi_threshold: float | None = None,
     event_types: list[str] | None = None,
 ) -> str:
+    """工具：按 FDR 与 |dPSI| 过滤显著剪接事件；阈值缺省时沿用 state.params 中自适应选定的值，event_types 可限定事件类型。"""
     from epitoperank.tools.analysis_tools import filter_significant_events as _impl
 
     fdr = fdr_threshold if fdr_threshold is not None else state.params.get("fdr")
@@ -786,18 +789,21 @@ def filter_significant_events(
 
 
 def rank_candidates(context: RunContext, state: AgentState, top_n: int | None = None) -> str:
+    """工具：按综合评分对显著事件排序取前 top_n 个候选，top_n 缺省时用 state.params["top_n"]。"""
     from epitoperank.tools.analysis_tools import rank_candidates as _impl
 
     return _impl(context, top_n or state.params.get("top_n"))
 
 
 def run_enrichment(context: RunContext, state: AgentState, alpha: float | None = None) -> str:
+    """工具：对候选基因运行 GO/KEGG 过表征富集分析，alpha 为显著性阈值。"""
     from epitoperank.tools.analysis_tools import run_enrichment as _impl
 
     return _impl(context, alpha)
 
 
 def generate_figures(context: RunContext, state: AgentState, output_dir: str | None = None) -> str:
+    """工具：生成论文用图集，output_dir 可覆盖默认输出目录。"""
     from epitoperank.tools.viz_tools import generate_figures as _impl
 
     return _impl(context, output_dir)
@@ -809,18 +815,21 @@ def collect_literature_evidence(
     genes: list[str] | None = None,
     max_per_gene: int = 2,
 ) -> str:
+    """工具：为候选基因收集文献证据，genes 缺省时取排名靠前的候选，max_per_gene 控制每基因条数。"""
     from epitoperank.tools.knowledge_tools import collect_literature_evidence as _impl
 
     return _impl(context, genes, max_per_gene)
 
 
 def interpret_candidates(context: RunContext, state: AgentState) -> str:
+    """工具：基于已收集的证据对候选基因做生物学解读，结果写入 context 供报告使用。"""
     from epitoperank.tools.knowledge_tools import interpret_candidates as _impl
 
     return _impl(context)
 
 
 def generate_report(context: RunContext, state: AgentState, output_dir: str | None = None) -> str:
+    """工具：写出 HTML/PDF 报告，output_dir 可覆盖默认输出目录。"""
     from epitoperank.tools.report_tools import generate_report as _impl
 
     return _impl(context, output_dir)

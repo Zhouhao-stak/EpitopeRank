@@ -164,6 +164,7 @@ def expression_evidence(candidates: list[dict], records: dict[str, dict]) -> dic
 
 
 def _read_tsv(path: Path, columns: set[str]) -> list[dict]:
+    """读取 TSV，并在缺少必需列时直接报错，避免静默使用残缺证据表。"""
     with path.open(encoding='utf-8-sig', newline='') as handle:
         reader = csv.DictReader(handle, delimiter='\t')
         if not reader.fieldnames or not columns.issubset(reader.fieldnames):
@@ -182,6 +183,7 @@ def gtex_junction_filter(candidates: list[dict], event_file: Path, gtex_file: Pa
     if not normal:
         raise ValueError('GTEx 连接点表为空，不能作为正常组织阴性证据')
     def key(row):
+        """把连接点记录规整为（染色体，1-based 起点，终点，链）并校验合法性。"""
         try:
             start, end = int(row['intron_start']), int(row['intron_end'])
         except (TypeError, ValueError):

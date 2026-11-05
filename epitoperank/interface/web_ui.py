@@ -44,8 +44,12 @@ _HTML = """<!DOCTYPE html>
   --warning: #f3bd72;
   --danger: #fb7185;
   --border: #244957;
-  --font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  /* 字体策略：只引用系统已安装字体，不打包、不加载任何字体文件。
+     因此项目不携带字体二进制，无需分发 OFL/Apache 字体授权文本；
+     Segoe UI / Roboto / Consolas 等为各自平台自带字体，仅按名称引用。
+     如需引入 Web 字体，请同步在 NOTICE 中注明授权。 */
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
   --shadow-sm: 0 4px 16px rgba(0, 0, 0, .18);
@@ -71,22 +75,12 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .nav-section { padding: 22px 0 0; }
 .nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.7px; color: var(--text-muted); padding: 0 22px; margin-bottom: 9px; }
 .nav-item { display: flex; align-items: center; gap: 11px; padding: 11px 20px; margin: 3px 12px 3px 0; color: var(--text-secondary); cursor: pointer; transition: all .2s ease; font-size: 14px; font-weight: 600; border-left: 2px solid transparent; border-radius: 0 9px 9px 0; }
-.nav-item::before { content: "·"; color: var(--text-muted); width: 16px; text-align: center; font-size: 22px; line-height: 0; }
-.nav-item[data-page="dashboard"]::before { content: "⌂"; font-size: 16px; }
-.nav-item[data-page="pipeline"]::before { content: "◌"; font-size: 19px; }
-.nav-item[data-page="explorer"]::before { content: "⌁"; font-size: 19px; }
-.nav-item[data-page="visualization"]::before { content: "◒"; font-size: 16px; }
-.nav-item[data-page="gene"]::before { content: "⌬"; font-size: 18px; }
-.nav-item[data-page="report"]::before { content: "▤"; font-size: 15px; }
-.nav-item[data-page="peptide"]::before { content: "◎"; font-size: 16px; }
-.nav-item[data-page="settings"]::before { content: "✦"; font-size: 15px; color: var(--accent); }
 .nav-item:hover { background: rgba(94,234,212,.07); color: var(--white); }
 .nav-item.active { background: linear-gradient(90deg, rgba(94,234,212,.16), rgba(94,234,212,.04)); color: var(--white); border-left-color: var(--accent); box-shadow: inset 0 0 24px rgba(94,234,212,.04); }
 
 .card, .chart-container, .filters { background: linear-gradient(145deg, rgba(17,43,54,.92), rgba(10,29,39,.92)); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-sm); }
 .card { transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
 .card:hover { border-color: rgba(94,234,212,.48); transform: translateY(-1px); box-shadow: var(--shadow); }
-.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
 .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .9px; color: var(--text-secondary); }
 .grid { display: grid; gap: 18px; }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -110,8 +104,6 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .btn-sm { padding: 7px 13px; font-size: 12px; }
 
 .neo-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
-.neo-tab { padding: 7px 14px; font-size: 12px; font-weight: 700; border-radius: 999px; border: 1px solid var(--border); background: rgba(17,43,54,.55); color: var(--text-secondary); cursor: pointer; transition: all .2s ease; }
-.neo-tab:hover { color: var(--white); border-color: var(--accent); }
 .neo-tab.active { background: rgba(94,234,212,.14); border-color: var(--accent); color: var(--accent); }
 .neo-result-body { max-height: 58vh; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(8,25,34,.6); }
 .neo-result-body table { font-size: 12px; }
@@ -156,36 +148,10 @@ input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent);
 select option { color: var(--text); background: var(--surface); }
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus { -webkit-text-fill-color: var(--text); -webkit-box-shadow: 0 0 0 1000px rgba(8,25,34,.9) inset; transition: background-color 9999s ease-out; }
 .chart-container { margin-bottom: var(--space-5); }
-.chart-placeholder { height: 360px; background: repeating-linear-gradient(0deg, rgba(94,234,212,.025) 0 1px, transparent 1px 40px), linear-gradient(145deg, rgba(94,234,212,.06), rgba(12,32,43,.8)); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px; border: 1px dashed rgba(94,234,212,.22); }
 
 .page { display: none; }
 .page.active { display: block; animation: pageIn .24s ease-out; }
-.hero-panel { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 27px 30px; margin-bottom: 22px; border: 1px solid rgba(94,234,212,.28); border-radius: 16px; background: radial-gradient(circle at 92% 10%, rgba(94,234,212,.2), transparent 32%), linear-gradient(120deg, rgba(17,43,54,.96), rgba(9,28,38,.92)); box-shadow: var(--shadow); }
-.eyebrow { color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-.eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--secondary); box-shadow: 0 0 12px var(--secondary); }
-.hero-copy h1 { font-size: clamp(24px, 3vw, 37px); line-height: 1.15; letter-spacing: -.8px; max-width: 700px; margin: 10px 0 8px; color: var(--white); }
-.hero-copy p { color: var(--text-secondary); font-size: 14px; max-width: 680px; }
-.hero-meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .hero-chip { padding: 7px 10px; border: 1px solid rgba(94,234,212,.26); border-radius: 999px; color: var(--text-secondary); background: rgba(94,234,212,.07); font-size: 11px; font-weight: 700; white-space: nowrap; }
-.chat-message { animation: fadeIn .3s ease; }
-.message-header { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.agent-icon { font-size: 14px; }
-.agent-name { font-weight: 700; }
-.message-time { color: var(--text-muted); margin-left: auto; font-size: 11px; }
-.message-content { font-size: 13px; line-height: 1.6; margin-top: 6px; color: var(--text-secondary); }
-.log-entry { margin-bottom: 4px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
-#chat-messages, #skill-results { background: rgba(8,25,34,.72) !important; border-color: var(--border) !important; }
-#chat-messages .chat-message { padding: 12px; margin-bottom: 12px; background: var(--surface-2) !important; border: 1px solid var(--border) !important; border-radius: var(--radius); color: var(--text) !important; box-shadow: 0 1px 2px rgba(0,0,0,.18); }
-#chat-messages .chat-message.user-message { background: rgba(94,234,212,.12) !important; border-color: rgba(94,234,212,.3) !important; }
-#chat-messages .chat-message > div { background: transparent !important; color: inherit !important; }
-#chat-messages .chat-message .message-author { color: var(--accent) !important; }
-#skill-results { color: var(--text); }
-.model-config { margin-bottom: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(8,25,34,.5); }
-.model-config summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 13px; font-weight: 700; color: var(--text-secondary); }
-.model-config summary::-webkit-details-marker { display: none; }
-.model-config summary .status { margin-left: auto; }
-.model-config summary::after { content: "▾"; color: var(--text-muted); font-size: 11px; }
-.model-config[open] summary::after { content: "▴"; }
 .model-config-body { display: flex; flex-direction: column; gap: 10px; padding: 0 14px 14px; }
 .model-config-body .cfg-row { display: flex; align-items: center; gap: 10px; }
 .model-config-body .cfg-row label { flex: none; width: 88px; font-size: 12px; font-weight: 700; color: var(--text-secondary); }
@@ -237,7 +203,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .ingest-privacy { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
 .ingest-footer { display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-top: 1px solid var(--border); background: rgba(7,21,30,.9); }
 .ingest-footer .ingest-error { color: var(--danger); font-size: 12px; margin-right: auto; }
-.ingest-footer .spacer { margin-right: auto; }
 @media (max-width: 760px) { .ingest-stats { grid-template-columns: repeat(2, 1fr); } .ingest-map-grid { grid-template-columns: 1fr; } .ingest-map-row label { width: 112px; } }
 #stat-samples, #stat-events, #stat-significant { color: var(--white) !important; text-shadow: 0 0 20px rgba(94,234,212,.16); }
 #progress-bar { background: linear-gradient(90deg, var(--accent), var(--secondary)) !important; }
@@ -268,43 +233,194 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .mcp-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .mcp-result { margin: 0; padding: 12px; max-height: 300px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; background: rgba(3,12,17,.75); color: var(--text-secondary); font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
 .mcp-result.err { color: var(--danger); }
-.mcp-empty { padding: 10px 12px; border: 1px dashed var(--border); border-radius: 9px; font-size: 12px; color: var(--text-muted); }
 
 @keyframes pageIn { from { opacity: .25; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@media (max-width: 1100px) { .sidebar { width: 236px; } .main { margin-left: 236px; } .grid-4 { grid-template-columns: repeat(2, 1fr); } .hero-panel { align-items: flex-start; flex-direction: column; } .hero-meta { justify-content: flex-start; } }
-@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .content { padding: 20px 16px 40px; } .topbar { padding: 0 16px; } .hero-panel { padding: 22px; } .hero-copy h1 { font-size: 26px; } }
+@media (max-width: 1100px) { .sidebar { width: 236px; } .main { margin-left: 236px; } .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .content { padding: 20px 16px 40px; } .topbar { padding: 0 16px; } }
 .lang-toggle { display: inline-flex; align-items: center; gap: 2px; padding: 3px; background: rgba(8, 25, 34, .06); border: 1px solid var(--border); border-radius: 999px; }
 .lang-toggle button { border: 0; background: transparent; color: var(--text-secondary); font-family: inherit; font-size: 12px; font-weight: 700; line-height: 1; padding: 6px 10px; border-radius: 999px; cursor: pointer; transition: background .18s ease, color .18s ease; }
 .lang-toggle button:hover { color: var(--text); }
 .lang-toggle button.active { background: var(--black); color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
 @media (max-width: 520px) { .lang-toggle button { padding: 5px 7px; font-size: 11px; } }
+
+/* Task-oriented peptide workspace. Shared application colors remain authoritative. */
+.pep-workspace { max-width:1280px; margin:auto; }
+.pep-header { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-bottom:28px; }
+.pep-header h2 { font-size:30px; letter-spacing:-.025em; margin-bottom:8px; }
+.pep-header p,.pep-help { color:var(--text-secondary); font-size:14px; }
+.pep-steps { list-style:none; display:flex; gap:32px; padding:18px 0; margin-bottom:28px; border-block:1px solid var(--border); }
+.pep-steps li { display:flex; align-items:center; gap:10px; color:var(--text-secondary); font-size:14px; }
+.pep-steps b { color:var(--accent); font-variant-numeric:tabular-nums; }
+.pep-layout { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:32px; align-items:start; }
+.pep-inputs { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:0 28px; }
+.pep-section { padding:24px 0; }
+.pep-inputs .pep-section + .pep-section { border-top:1px solid var(--border); }
+.pep-workspace h3 { font-size:17px; font-weight:650; margin-bottom:10px; }
+.pep-options { padding:0 24px; background:var(--surface-2); border-radius:12px; }
+.pep-options .btn-primary { width:100%; min-height:46px; }
+.pep-guide { border-top:1px solid var(--border); padding:22px 0; }
+.pep-guide h3 { font-size:14px; }
+.pep-guide p { font-size:13px; color:var(--text-secondary); margin-top:10px; }
+#pep-sequences { min-height:220px; padding:16px !important; background:var(--bg) !important; }
+#page-peptide input,#page-peptide select { min-height:42px; }
+#page-peptide input[type=checkbox] { width:16px; height:16px; flex:0 0 16px; min-height:auto; accent-color:var(--accent); }
+#page-peptide select option { background:var(--surface); color:var(--text); }
+.pep-output { margin-top:32px; padding:24px 0; border-block:1px solid var(--border); min-width:0; }
+#pep-results { overflow-x:auto; }
+#pep-results:empty::before { content:'完成序列与 HLA 设置后，点击「预测并排序」。结果将在这里显示。'; display:block; padding:26px 0; color:var(--text-secondary); font-size:14px; }
+.pep-project { margin-top:24px; padding:20px 24px; background:var(--surface); border-radius:12px; border:1px solid var(--border); }
+.pep-project summary { cursor:pointer; font-weight:650; }
+.pep-project[open] summary { margin-bottom:16px; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+.btn:disabled { cursor:not-allowed; opacity:.55; }
+@media(max-width:1100px) { .pep-layout { grid-template-columns:1fr; } .pep-header { align-items:flex-start; } }
+@media(max-width:600px) { .pep-header { flex-direction:column; } .pep-header h2 { font-size:25px; } .pep-steps { gap:12px; flex-wrap:wrap; } .pep-steps li { font-size:12px; } .pep-inputs { padding:0 16px; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; animation:none !important; } }
+
+/* EpitopeRank research workspace: daylight surfaces, restrained teal, readable evidence. */
+:root { --black:#172f39; --gray-900:#172f39; --gray-700:#445b65; --gray-500:#60737c; --gray-300:#d6e0e3; --gray-100:#f0f4f5; --white:#fff; --bg:#f5f7f8; --surface:#fff; --surface-2:#edf4f3; --surface-3:#e3efec; --text:#172f39; --text-secondary:#455f69; --text-muted:#60737c; --accent:#087e72; --secondary:#367344; --warning:#986015; --danger:#b33449; --border:#d9e3e6; --shadow-sm:none; --shadow:none; --shadow-lg:0 20px 60px #162f3920; --radius:12px; --font-sans:'Segoe UI','Microsoft YaHei',system-ui,sans-serif; }
+body { font-size:14px; } body::before { display:none; }
+::selection { background:#c4e9e1; color:#173c36; }
+* { scrollbar-width:thin; scrollbar-color:#b7c8cd transparent; }
+.sidebar { width:232px; background:#142e38; backdrop-filter:none; border:0; padding-bottom:24px; }
+.brand { padding:30px 24px; border-color:#ffffff16; }
+.brand::before { display:none; }.brand-name { color:#f6fbfa; font-size:24px; letter-spacing:-.7px; }.brand-tagline { color:#a8c4ca; font-size:11px; letter-spacing:1px; margin-top:8px; }
+.nav-section { padding-top:24px; }.nav-label { color:#90aeb7; font-size:11px; letter-spacing:.6px; padding-inline:24px; }
+.nav-item { width:calc(100% - 24px); margin:4px 12px; padding:12px; color:#c4d5db; border:0; border-radius:7px; background:transparent; text-align:left; font:500 14px var(--font-sans); }
+.nav-item::before { display:none !important; }.nav-item svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+.nav-item:hover { background:#ffffff0c; color:#fff; }.nav-item.active { background:#284b53; box-shadow:none; color:#a5f0dc; }
+.main { margin-left:232px; min-width:0; }.topbar { height:74px; background:#ffffffed; border-bottom:1px solid var(--border); padding:0 36px; backdrop-filter:none; gap:16px; }
+#current-project { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.content { padding:32px 36px 64px; max-width:1560px; }.content:focus { outline:none; }
+.workspace-heading { display:flex; justify-content:space-between; align-items:center; gap:20px; margin-bottom:28px; }.workspace-heading h1,.pep-header h2 { font-size:28px; letter-spacing:-.7px; font-weight:650; line-height:1.3; }.workspace-heading p { margin-top:9px; color:var(--text-secondary); max-width:74ch; font-size:14px; }
+.workspace-tag { border:1px solid var(--border); border-radius:6px; padding:6px 11px; color:var(--text-secondary); white-space:nowrap; font-size:12px; background:#fff; }
+.start-guide { display:grid; grid-template-columns:1.3fr 1fr; gap:40px; background:#eaf3f0; padding:30px; border-radius:12px; margin-bottom:28px; }.start-guide h2 { font-size:21px; font-weight:650; }.start-guide p { margin:10px 0 22px; color:var(--text-secondary); max-width:52ch; }.start-guide .btn { margin:0 8px 8px 0; }.start-guide ol { list-style:none; display:grid; gap:16px; }.start-guide li { display:flex; gap:16px; font-size:12px; color:var(--text-secondary); }.start-guide li b { font-size:13px; color:var(--accent); padding-top:2px; font-variant-numeric:tabular-nums; }.start-guide strong { display:block; font-size:14px; color:var(--text); margin-bottom:3px; }
+.card,.chart-container,.filters { background:var(--surface); box-shadow:none; border:1px solid var(--border); padding:24px; }.card:hover { transform:none; box-shadow:none; border-color:var(--border); }
+.card-title { text-transform:none; letter-spacing:0; font-size:14px; }.grid { gap:24px; }.grid > * { min-width:0; }
+#page-dashboard > .grid-4 { gap:0; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; }#page-dashboard > .grid-4 > .card { border:0; border-right:1px solid var(--border); border-radius:0; }#page-dashboard > .grid-4 > .card:last-child { border-right:0; }
+.btn { border-radius:7px; font-weight:600; min-height:40px; transition:background .15s,border-color .15s; }.btn-sm { min-height:34px; }.btn-primary { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:none; }.btn-primary:hover { background:#09685f; color:#fff; box-shadow:none; transform:none; filter:none; }.btn-secondary { background:#fff; color:var(--text); border-color:#cbd8dc; }.btn-secondary:hover { background:#edf5f2; color:#12675c; border-color:#8bb9ae; }.btn-danger { background:#fff3f4; border-color:#e8b5be; }.btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+input,select,textarea,.search-input { background:#fff; color:var(--text); min-width:0; border-color:#c6d5da; border-radius:7px; caret-color:var(--accent); }
+input[type=checkbox] { flex:0 0 16px; }.checkbox-label:hover { color:var(--text); background:#eef5f3; }input::placeholder,textarea::placeholder { color:#677b84; }
+#upload-modal input,#project-name,#analysis-query { background:#fff !important; }.search-input:focus,input:focus,select:focus,textarea:focus { box-shadow:0 0 0 3px #087e7214; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }.sidebar :focus-visible { outline-color:#a5f0dc; }
+.lang-toggle { background:#f5f7f8; border-color:var(--border); border-radius:7px; }.lang-toggle button { color:var(--text-secondary); white-space:nowrap; }.lang-toggle button.active { color:var(--accent); background:#dfeee9; border-radius:5px; }
+.status { font-weight:600; }.status-dot { box-shadow:none !important; }.status-running { background:#e5f4ef; border-color:#bddfd4; }.status-completed { background:#eef5e9; border-color:#ccdfbf; }
+.pipeline-step { background:#fff; border-color:var(--border); padding:20px; cursor:default; }.pipeline-step:hover { transform:none; border-color:var(--border); }.pipeline-step.active { background:#eff8f5; border-color:#80bbaa; }.pipeline-step.active .step-number { color:#fff; }.step-number { border-radius:50%; font-variant-numeric:tabular-nums; }#progress-bar { background:var(--accent) !important; box-shadow:none !important; }
+#page-pipeline > .card:last-child { padding:28px; }.pipeline { gap:0; }.pipeline-step { border:0; border-radius:0; border-bottom:1px solid var(--border); }.pipeline-step:last-child { border-bottom:0; }
+#page-explorer .filters { border:0; border-radius:0; padding:0; box-shadow:none; gap:22px; }.filter-group { align-items:flex-start; flex-direction:column; }.filter-label { font-size:12px; }.table-container { background:white; }table { font-variant-numeric:tabular-nums; }th { background:#eff4f5; letter-spacing:0; font-size:12px; padding:13px 16px; }td { border-bottom:1px solid #e8eef0; padding:14px 16px; }tr:hover { background:#f5faf8; }
+#page-visualization > .grid { grid-template-columns:320px minmax(0,1fr); }#page-visualization .card { padding:20px; }#page-visualization .card .btn { border-color:transparent; border-radius:5px; background:#f5f8f8; }#page-visualization .card .btn:hover { background:#e5f1ec; }#chart-display { min-height:560px !important; display:flex; flex-direction:column; justify-content:center; }#chart-display img { max-width:100%; height:auto; }
+#page-gene .search-bar { max-width:800px; }#page-gene > div:nth-of-type(2) { border-left:0 !important; }#page-gene #gene-details .card { min-height:300px; display:grid; align-content:center; }
+#page-report > .card { padding:32px; }#report-output { background:#f7f9fa; border-radius:8px; border:1px dashed #c6d5da; min-height:240px; display:grid; align-content:center; }#page-report .card > div:last-child { border-left:0 !important; }
+#page-settings > .grid { grid-template-columns:minmax(300px,.8fr) minmax(0,1.2fr); align-items:start; }.cfg-row { flex-wrap:wrap; gap:10px; margin-bottom:16px; }.cfg-row label { color:var(--text-secondary); }.mcp-panel { background:transparent; border:0; padding:0; }.mcp-result { background:#f3f6f7; color:var(--text); border-color:var(--border); }.mcp-badge { color:var(--text-secondary); background:#edf3f3; }
+#page-neoantigen > .card:first-of-type { max-width:none !important; padding:28px !important; }#page-neoantigen > .card:first-of-type > h2 { display:none; }#page-neoantigen > .card:first-of-type > div[style*='padding:16px'] { border:0 !important; border-top:1px solid var(--border) !important; border-radius:0 !important; padding:24px 0 !important; }#page-neoantigen p { color:var(--text-secondary); max-width:85ch; }#page-neoantigen details { padding:22px; background:#f2f6f7; border-radius:8px; }#page-neoantigen details h3 { margin:24px 0 8px; font-size:16px; }.neo-result-body,.neo-result-body th { background:#f6f9fa; }#neo-result-title { color:var(--text) !important; }
+.pep-options { background:#eaf3f0; }.pep-header { margin-bottom:28px; }.pep-section { padding:26px 0; }.pep-steps { margin-bottom:24px; }.pep-output { background:#fff; padding:24px; border:1px solid var(--border); border-radius:12px; }#pep-results:empty::before { color:var(--text-secondary); }#pep-sequences { background:#f8fafb !important; }
+#upload-modal { background:#112b3866 !important; backdrop-filter:blur(3px); }#upload-modal > div { box-shadow:var(--shadow-lg); border:0 !important; }#drop-zone { background:#f3f8f6 !important; }#ingest-modal { background:#112b3866; }.ingest-panel { background:#fff; }.ingest-head,.ingest-footer { background:#f7f9fa; }
+.mobile-menu { display:none; }.skip-link { position:fixed; left:250px; top:-70px; z-index:2000; padding:12px; background:white; color:var(--accent); }.skip-link:focus { top:12px; }
+@media(min-width:1600px) { .content { padding-top:40px; } }
+@media(max-width:1100px) { .sidebar { width:216px; }.main { margin-left:216px; }.content { padding:26px 24px 48px; }.topbar { padding:0 24px; }.start-guide { grid-template-columns:1fr; gap:24px; }.start-guide ol { grid-template-columns:repeat(3,1fr); }.start-guide li { gap:10px; }#page-visualization > .grid { grid-template-columns:260px minmax(0,1fr); }#page-settings > .grid { grid-template-columns:1fr; } }
+@media(max-width:768px) { .mobile-menu { display:inline-flex; }.sidebar { display:none; width:232px; top:74px; box-shadow:12px 0 35px #142e3833; }.navigation-open .sidebar { display:block; }.main { margin-left:0; }.topbar { gap:10px; padding:12px 16px; height:auto; min-height:74px; flex-wrap:wrap; }.topbar > div:last-child { gap:8px !important; flex-wrap:wrap; }.topbar #current-project { flex:1; }.content { padding:24px 16px 48px; }.workspace-heading { align-items:flex-start; }.workspace-heading h1,.pep-header h2 { font-size:25px; }.workspace-tag { display:none; }.start-guide { padding:24px; }.start-guide ol { grid-template-columns:1fr; }.grid-2,.grid-3,.grid-4,#page-visualization > .grid { grid-template-columns:1fr; }#page-dashboard > .grid-4 { grid-template-columns:repeat(2,1fr); }#page-dashboard > .grid-4 > .card { padding:18px; border-bottom:1px solid var(--border); }#chart-display { position:static !important; min-height:320px !important; }.search-bar { flex-wrap:wrap; }.search-bar input { flex-basis:100%; }.pipeline-step { padding:18px 0; flex-wrap:wrap; }.step-info { min-width:150px; }.card { padding:20px; }#page-report > .card { padding:20px; }#page-report .card > div:first-child { flex-wrap:wrap; gap:20px; }#page-report .card > div:first-child > div:last-child { flex-wrap:wrap; }.mcp-inline { flex-wrap:wrap; }.cfg-row { display:flex; flex-direction:column; align-items:stretch; }.cfg-row label { width:auto; }#neo-mapping-fields { grid-template-columns:1fr !important; }.skip-link { left:16px; }.pep-header { gap:18px; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+
+#stat-samples,#stat-events,#stat-significant { color:var(--text) !important; text-shadow:none; }
+.mcp-title,.ingest-head .ingest-title,.ingest-stat .v { color:var(--text); }
+.mcp-panel { margin-top:0; }.mcp-panel select,.mcp-panel textarea,.mcp-panel input[type="text"] { background:#fff; }
+.ingest-close,.ingest-step,.ingest-stat,.ingest-issue { background:#f1f6f5; }.ingest-close:hover { color:var(--accent); }
+#event-detail-modal > div > div:first-child { background:#edf5f3 !important; }
+@media(max-width:768px) { .sidebar { top:110px; }.ingest-footer { flex-wrap:wrap; } }
+
+.mobile-chart-select { display:none; }
+#page-visualization > .grid > div:first-child { max-height:560px; overflow-y:auto; padding-right:8px; }
+#page-explorer .table-container table { min-width:650px; }
+#page-explorer .table-container th { white-space:nowrap; }
+@media(max-width:768px) {
+ .mobile-chart-select { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+ #page-visualization > .grid > div:first-child { display:none; }
+ .model-config-body { padding:0; }
+ .model-config-body .cfg-row { align-items:stretch; }
+ .model-config-body .cfg-row label { width:auto; }
+ .model-config-body .cfg-row input { width:100%; }
+}
+
+@media(max-width:768px) {
+ #events-table td[colspan] { text-align:left !important; padding:32px 16px !important; }
+ #events-table td[colspan] > div { width:calc(100vw - 68px); text-align:center; white-space:normal; }
+}
+
+/* Fluid interaction layer: bounded effects, no ambient animation loop. */
+:root { --motion-ease:cubic-bezier(.16,1,.3,1); }
+.page.active { animation:none; }
+.topbar { background:rgba(255,255,255,.87); backdrop-filter:blur(16px); }
+.start-guide { position:relative; isolation:isolate; overflow:hidden; background:#e6f2ec; border:1px solid #d1e7df; }
+.start-guide::before { content:''; position:absolute; z-index:-1; width:460px; height:460px; left:var(--light-x,65%); top:var(--light-y,30%); transform:translate(-50%,-50%); border-radius:44% 56% 62% 38% / 52% 42% 58% 48%; background:radial-gradient(ellipse at 40% 35%,#ffffffcf, #b9e7d788 44%, #a3d6e222 67%,transparent 72%); pointer-events:none; transition:border-radius .6s var(--motion-ease); }
+.start-guide:hover::before { border-radius:62% 38% 44% 56% / 38% 60% 40% 62%; }
+.start-guide::after { content:''; position:absolute; z-index:-1; right:-60px; bottom:-120px; width:360px; height:300px; border:1px solid #9bcab766; border-radius:50%; transform:rotate(-28deg); pointer-events:none; }
+.start-guide ol { background:#ffffff70; border:1px solid #ffffffa8; border-radius:14px; padding:20px 24px; backdrop-filter:blur(8px); }
+.sidebar { isolation:isolate; }
+.nav-item { position:relative; z-index:1; transition:color .18s,background .18s; }
+.nav-item.active { background:transparent; }
+.nav-fluid-marker { position:absolute; left:12px; top:0; width:calc(100% - 24px); height:46px; border-radius:10px; background:linear-gradient(115deg,#365e66,#244a53); border:1px solid #7ea7ab45; box-shadow:0 5px 14px #071d2426; pointer-events:none; z-index:0; transition:transform .42s var(--motion-ease),height .25s var(--motion-ease),border-radius .3s; }
+.nav-fluid-marker::after { content:''; position:absolute; inset:0; border-radius:inherit; background:linear-gradient(110deg,#a8eee512,transparent 65%); }
+.nav-item:hover svg { transform:translateX(2px); }.nav-item svg { transition:transform .2s var(--motion-ease); }
+.btn { position:relative; isolation:isolate; overflow:hidden; transition:background .18s,border-color .18s,box-shadow .18s,transform .18s var(--motion-ease); }
+.btn:active:not(:disabled) { transform:scale(.975); }
+.btn-primary:hover { box-shadow:0 5px 14px #087e7226; }
+.press-wave { position:absolute; pointer-events:none; width:160px; height:160px; border-radius:50%; background:currentColor; opacity:.12; transform:translate(-50%,-50%) scale(0); animation:pressWave .48s var(--motion-ease) forwards; z-index:-1; }
+@keyframes pressWave { to { transform:translate(-50%,-50%) scale(2); opacity:0; } }
+#page-visualization .card .btn[aria-pressed=true] { background:#dceee6; border-color:#8bb9ae; color:#125e50; }
+#chart-display { transition:border-color .2s; }
+details[open] > :not(summary) { animation:detailReveal .22s var(--motion-ease); }
+@keyframes detailReveal { from { opacity:.4; transform:translateY(-3px); } to { opacity:1; transform:translateY(0); } }
+.quick-switch { padding-inline:12px; gap:10px; }.quick-switch kbd { border:1px solid var(--border); border-radius:4px; padding:1px 4px; font:10px var(--font-sans); color:var(--text-secondary); }
+.quick-dialog { border:1px solid #dce8e5; border-radius:18px; padding:0; width:min(540px,calc(100vw - 32px)); max-height:80vh; margin:12vh auto auto; color:var(--text); background:#ffffffed; box-shadow:0 24px 80px #142e3838; backdrop-filter:blur(18px); }
+.quick-dialog::backdrop { background:#102e3d66; backdrop-filter:blur(5px); }
+.quick-dialog[open] { animation:quickOpen .24s var(--motion-ease); }
+@keyframes quickOpen { from { opacity:0; transform:translateY(-10px) scale(.98); } to { opacity:1; transform:none; } }
+.quick-head { display:flex; gap:16px; align-items:center; justify-content:space-between; padding:20px 22px 8px; }.quick-head h2 { font-size:18px; }.quick-search { padding:12px 22px; }.quick-search input { width:100%; background:#f1f6f5; }.quick-results { display:grid; gap:4px; padding:0 12px 16px; overflow:auto; max-height:48vh; }.quick-result { text-align:left; padding:12px 14px; border:0; border-radius:8px; background:transparent; font:14px var(--font-sans); color:var(--text); cursor:pointer; }.quick-result:hover,.quick-result:focus-visible { background:#e5f2ec; }.quick-result[aria-current=page] { color:var(--accent); background:#f0f7f4; }.quick-result[hidden] { display:none; }.quick-empty { padding:20px 14px; color:var(--text-secondary); font-size:13px; }
+.nav-scrim { display:none; }
+body.motion-paused *,body.motion-paused *::before,body.motion-paused *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+body.motion-paused .start-guide::before { left:65% !important; top:30% !important; }
+@media(max-width:1100px) { .quick-switch kbd { display:none; }.topbar { flex-wrap:wrap; height:auto; min-height:74px; padding-block:12px; } }
+@media(max-width:768px) {
+ .start-guide ol { padding:18px; }.start-guide { gap:18px; }
+ .sidebar { display:block; top:0; width:min(280px,85vw); z-index:120; transform:translateX(-105%); visibility:hidden; transition:transform .32s var(--motion-ease),visibility .32s; }
+ .navigation-open .sidebar { visibility:visible; transform:translateX(0); }
+ .nav-scrim { display:block; position:fixed; inset:0; z-index:110; border:0; background:#102e3d70; opacity:0; visibility:hidden; transition:opacity .25s,visibility .25s; }
+ .navigation-open .nav-scrim { opacity:1; visibility:visible; }
+ .quick-switch kbd { display:none; }.quick-dialog { margin-top:8vh; }
+}
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } .start-guide::before { left:65% !important; top:30% !important; } }
+.drawer-close { display:none; }
+@media(max-width:768px) { body.navigation-open { overflow:hidden; } }
+@media(max-width:768px) { .drawer-close { display:flex; margin:16px 12px 0 auto; } }
 </style>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="brand"><div class="brand-name">EpitopeRank</div><div class="brand-tagline">AI 智能分析平台</div></div>
+  <button class="nav-scrim" tabindex="-1" aria-label="关闭导航" onclick="toggleNavigation(false)"></button><aside class="sidebar" id="app-navigation" aria-label="主导航"><div class="nav-fluid-marker" aria-hidden="true"></div><button class="drawer-close btn btn-secondary" type="button" onclick="toggleNavigation(false)">关闭菜单</button>
+    <div class="brand"><div class="brand-name">EpitopeRank</div><div class="brand-tagline">剪接事件与候选肽分析</div></div>
     <div class="nav-section"><div class="nav-label">主菜单</div>
-      <div class="nav-item active" data-page="dashboard">仪表盘</div>
-      <div class="nav-item" data-page="pipeline">AI 流水线</div>
-      <div class="nav-item" data-page="explorer">事件浏览器</div>
+      <button type="button" class="nav-item active" data-page="dashboard" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z"/></svg>仪表盘</button>
+      <button type="button" class="nav-item" data-page="pipeline"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16 M4 12h16 M4 19h16 M8 3v4 M16 10v4 M10 17v4"/></svg>AI 流水线</button>
+      <button type="button" class="nav-item" data-page="explorer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M4 10h16 M10 4v16"/></svg>事件浏览器</button>
     </div>
     <div class="nav-section"><div class="nav-label">分析工具</div>
-      <div class="nav-item" data-page="visualization">可视化</div>
-      <div class="nav-item" data-page="gene">基因浏览器</div>
-      <div class="nav-item" data-page="report">报告</div>
-      <div class="nav-item" data-page="neoantigen">剪接候选新抗原</div>
-      <div class="nav-item" data-page="peptide">肽预测</div>
+      <button type="button" class="nav-item" data-page="visualization"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17 M8 16v-5 M13 16V7 M18 16V4"/></svg>可视化</button>
+      <button type="button" class="nav-item" data-page="gene"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3c0 9 12 9 12 18 M18 3C18 12 6 12 6 21 M7 6h10 M8 18h8"/></svg>基因浏览器</button>
+      <button type="button" class="nav-item" data-page="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z M14 3v5h5 M9 12h7 M9 16h7"/></svg>报告</button>
+      <button type="button" class="nav-item" data-page="neoantigen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h5l3-8 4 16 3-8h3"/></svg>剪接候选新抗原</button>
+      <button type="button" class="nav-item" data-page="peptide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h5v5H5z M14 13h5v5h-5z M10 8h7v5 M7 11v5h7"/></svg>肽预测</button>
     </div>
-    <div class="nav-section"><div class="nav-label">智能助手</div>
-      <div class="nav-item" data-page="settings">⚙️ 设置</div>
+    <div class="nav-section"><div class="nav-label">工作区</div>
+      <button type="button" class="nav-item" data-page="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3 M12 18v3 M3 12h3 M18 12h3 M6 6l2 2 M16 16l2 2 M6 18l2-2 M16 8l2-2 M8 12a4 4 0 1 0 8 0a4 4 0 1 0-8 0"/></svg>设置</button>
     </div>
   </aside>
-  <main class="main">
-    <div class="topbar">
+  <a class="skip-link" href="#workspace-content">跳到工作区</a><main class="main">
+    <div class="topbar"><button class="btn btn-secondary mobile-menu" type="button" aria-controls="app-navigation" aria-expanded="false" onclick="toggleNavigation()">菜单</button>
       <div style="font-size: 14px; color: var(--text-secondary);" id="current-project">未加载项目</div>
       <div style="display: flex; gap: 12px; align-items: center;">
+        <button type="button" class="btn btn-secondary btn-sm quick-switch" onclick="openQuickSwitch()">快捷跳转 <kbd>Ctrl K</kbd></button>
+        <button type="button" id="motion-toggle" class="btn btn-secondary btn-sm" aria-pressed="false" onclick="toggleMotion()">动态：开</button>
         <div class="lang-toggle" role="group" aria-label="Language" data-no-i18n>
           <button type="button" data-lang="zh" class="active" aria-pressed="true">简体中文</button>
           <button type="button" data-lang="zh-Hant" aria-pressed="false">繁體中文</button>
@@ -314,20 +430,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         <button class="btn btn-primary btn-sm" onclick="showUploadModal()">+ 新建分析</button>
       </div>
     </div>
-    <div class="content">
+    <div class="content" id="workspace-content" tabindex="-1">
       <div class="page active" id="page-dashboard">
-        <section class="hero-panel">
-          <div class="hero-copy">
-            <div class="eyebrow"><span class="eyebrow-dot"></span>Splice intelligence workspace</div>
-            <h1>从剪接事件，到可复现的生物学证据。</h1>
-            <p>让 Agent 整理数据、追踪分析状态，并把每一个结论连接到可验证的结果。</p>
-          </div>
-          <div class="hero-meta">
-            <span class="hero-chip">Agentic mode</span>
-            <span class="hero-chip">FDR 0.05</span>
-            <span class="hero-chip">ΔPSI 0.10</span>
-          </div>
-        </section>
+        <header class="workspace-heading"><div><h1>项目工作台</h1><p>管理剪接分析项目，追踪进度，回到每一次研究的结果。</p></div><span class="workspace-tag">研究工作区</span></header>
+        <section class="start-guide" aria-label="开始使用"><div><h2>开始一次新的分析</h2><p>上传事件数据，确认字段与分组，再查看统计结果和研究报告。</p><button class="btn btn-primary" onclick="showUploadModal()">新建分析项目</button><button class="btn btn-secondary" onclick="navigateTo('peptide')">已有肽序列？直接预测</button></div><ol><li><b>01</b><span><strong>准备数据</strong>支持事件表与报告目录导入</span></li><li><b>02</b><span><strong>检查与分析</strong>确认数据映射，跟踪每一步进度</span></li><li><b>03</b><span><strong>探索与导出</strong>浏览候选事件，生成图表与报告</span></li></ol></section>
         <div class="grid grid-4" style="margin-bottom: 32px;">
           <div class="card">
             <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-500); margin-bottom: 12px;">总样本数</div>
@@ -357,7 +463,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             </div>
             <div id="current-agent">
               <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;">🤖</div>
+                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;"></div>
                 <div style="font-size: 14px;">暂无运行中的分析</div>
                 <button class="btn btn-primary" style="margin-top: 16px;" onclick="showUploadModal()">启动新分析</button>
               </div>
@@ -368,10 +474,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
               <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">历史项目</div>
               <button class="btn btn-sm btn-secondary" onclick="loadDashboard()">刷新</button>
             </div>
-            <input id="project-search" type="search" placeholder="搜索历史项目" oninput="renderProjectHistory()" style="width:100%;margin-bottom:12px;padding:9px;border:1px solid var(--border);border-radius:6px;">
+            <input aria-label="搜索历史项目" id="project-search" type="search" placeholder="搜索历史项目" oninput="renderProjectHistory()" style="width:100%;margin-bottom:12px;padding:9px;border:1px solid var(--border);border-radius:6px;">
             <div id="recent-projects" style="max-height:440px;overflow:auto;">
               <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;">📁</div>
+                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;"></div>
                 <div style="font-size: 14px;">暂无项目</div>
               </div>
             </div>
@@ -389,12 +495,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
               <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;" id="detail-meta">-</div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn btn-sm btn-secondary" onclick="openReport('html')">📄 打开 HTML 报告</button>
-              <button class="btn btn-sm btn-secondary" onclick="openReport('pdf')">📑 下载 PDF</button>
-              <button class="btn btn-sm btn-secondary" onclick="revealProjectBundle()">📁 成果文件夹</button>
-              <button class="btn btn-sm btn-secondary" onclick="packageProject()">📦 打包 ZIP</button>
-              <button class="btn btn-sm btn-secondary" onclick="jumpToExplorer()">🔍 浏览全部事件</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteCurrentProject()" style="color:var(--danger);">🗑 删除项目</button>
+              <button class="btn btn-sm btn-secondary" onclick="openReport('html')"> 打开 HTML 报告</button>
+              <button class="btn btn-sm btn-secondary" onclick="openReport('pdf')"> 下载 PDF</button>
+              <button class="btn btn-sm btn-secondary" onclick="revealProjectBundle()"> 成果文件夹</button>
+              <button class="btn btn-sm btn-secondary" onclick="packageProject()"> 打包 ZIP</button>
+              <button class="btn btn-sm btn-secondary" onclick="jumpToExplorer()"> 浏览全部事件</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteCurrentProject()" style="color:var(--danger);"> 删除项目</button>
             </div>
           </div>
           <div id="detail-bundle-hint" style="font-size:11px;color:var(--text-muted);margin:-6px 0 10px;"></div>
@@ -416,7 +522,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           </div>
         </section>
       </div>
-      <div class="page" id="page-pipeline">
+      <div class="page" id="page-pipeline"><header class="workspace-heading"><div><h1>分析流程</h1><p>查看数据处理、统计分析与解读进度，定位当前执行阶段。</p></div></header>
         <div class="card" style="margin-bottom: 24px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
             <div>
@@ -436,7 +542,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <div class="pipeline-step waiting">
               <div class="step-number">1</div>
               <div class="step-info">
-                <div class="step-name">📊 数据 Agent</div>
+                <div class="step-name"> 数据 Agent</div>
                 <div class="step-desc">加载并验证输入数据，检查文件格式和完整性</div>
               </div>
               <span class="status status-waiting"><span class="status-dot"></span>等待中</span>
@@ -444,7 +550,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <div class="pipeline-step waiting">
               <div class="step-number">2</div>
               <div class="step-info">
-                <div class="step-name">✅ 质控 Agent</div>
+                <div class="step-name"> 质控 Agent</div>
                 <div class="step-desc">执行质量控制检查，过滤低质量样本</div>
               </div>
               <span class="status status-waiting"><span class="status-dot"></span>等待中</span>
@@ -452,7 +558,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <div class="pipeline-step waiting">
               <div class="step-number">3</div>
               <div class="step-info">
-                <div class="step-name">🔬 剪接检测 Agent</div>
+                <div class="step-name"> 剪接检测 Agent</div>
                 <div class="step-desc">使用统计模型检测可变剪接事件</div>
               </div>
               <span class="status status-waiting"><span class="status-dot"></span>等待中</span>
@@ -460,7 +566,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <div class="pipeline-step waiting">
               <div class="step-number">4</div>
               <div class="step-info">
-                <div class="step-name">📈 统计 Agent</div>
+                <div class="step-name"> 统计 Agent</div>
                 <div class="step-desc">计算显著性（FDR）和效应量（Delta PSI）</div>
               </div>
               <span class="status status-waiting"><span class="status-dot"></span>等待中</span>
@@ -468,7 +574,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <div class="pipeline-step waiting">
               <div class="step-number">5</div>
               <div class="step-info">
-                <div class="step-name">🧬 注释 Agent</div>
+                <div class="step-name"> 注释 Agent</div>
                 <div class="step-desc">功能注释、通路富集和文献证据收集</div>
               </div>
               <span class="status status-waiting"><span class="status-dot"></span>等待中</span>
@@ -476,7 +582,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <div class="pipeline-step waiting">
               <div class="step-number">6</div>
               <div class="step-info">
-                <div class="step-name">🤖 解读 Agent</div>
+                <div class="step-name"> 解读 Agent</div>
                 <div class="step-desc">生成生物学解读和专业分析报告</div>
               </div>
               <span class="status status-waiting"><span class="status-dot"></span>等待中</span>
@@ -484,12 +590,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           </div>
         </div>
       </div>
-      <div class="page" id="page-explorer">
+      <div class="page" id="page-explorer"><header class="workspace-heading"><div><h1>事件浏览器</h1><p>按基因、事件类型与显著性筛选，追溯候选事件的统计依据。</p></div></header>
         <div class="card" style="margin-bottom: 24px;">
           <div style="font-size: 16px; font-weight: 700; margin-bottom: 20px;">筛选条件</div>
           <div class="search-bar" style="margin-bottom: 20px;">
-            <input type="text" class="search-input" placeholder="搜索基因名称、事件ID或染色体位置..." id="search-input" onkeypress="if(event.key==='Enter') applyFilters()">
-            <button class="btn btn-primary" onclick="applyFilters()">🔍 应用筛选</button>
+            <input type="text" class="search-input" placeholder="搜索基因名称、事件ID或染色体位置..." aria-label="搜索事件" id="search-input" onkeypress="if(event.key==='Enter') applyFilters()">
+            <button class="btn btn-primary" onclick="applyFilters()"> 应用筛选</button>
           </div>
           <div class="filters" style="margin-bottom: 0;">
             <div class="filter-group">
@@ -532,7 +638,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <tbody id="events-table">
               <tr>
                 <td colspan="6" style="text-align: center; padding: 60px; color: var(--text-muted);">
-                  <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">📋</div>
+                  <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></div>
                   <div style="font-size: 16px; font-weight: 600;">未加载事件数据</div>
                   <div style="font-size: 14px; margin-top: 8px;">请完成分析后查看结果</div>
                 </td>
@@ -551,69 +657,69 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           </div>
         </div>
       </div>
-      <div class="page" id="page-visualization">
-        <div class="grid grid-2">
+      <div class="page" id="page-visualization"><header class="workspace-heading"><div><h1>可视化工作室</h1><p>选择研究问题对应的图表，查看当前项目的可视化结果。</p></div></header>
+        <div class="mobile-chart-select"><label for="chart-select-mobile">图表类型</label><select id="chart-select-mobile" onchange="if(this.value) loadChart(this.value)"><option value="">选择要查看的图表</option><option value="volcano">火山图 Volcano</option><option value="dpsi_waterfall">ΔPSI 瀑布图 Waterfall</option><option value="dpsi_ecdf">ΔPSI 累积分布 ECDF</option><option value="fdr_scree">显著性碎石图 Scree</option><option value="event_type_counts">事件类型分布</option><option value="event_significance">类型×显著性堆叠图</option><option value="event_schematic">剪接机制示意图 Schematic</option><option value="psi_heatmap">PSI 热图 Heatmap</option><option value="psi_distribution">分组 PSI 箱线图</option><option value="sample_composition">队列构成图</option><option value="candidate_ranking">候选基因排名</option><option value="score_components">评分分解堆叠图</option><option value="enrichment">功能富集点图</option></select></div><div class="grid grid-2">
           <div>
             <div class="card" style="margin-bottom: 20px;">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);">📊 核心统计图</div>
+              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> 核心统计图</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">差异剪接的显著性与效应量</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('volcano')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🌋 火山图 Volcano</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">ΔPSI vs -log10(FDR)，标注显著性阈值</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 火山图 Volcano</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">ΔPSI vs -log10(FDR)，标注显著性阈值</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('dpsi_waterfall')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">💧 ΔPSI 瀑布图 Waterfall</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Top 25 效应量排序，区分包含上调/下调</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> ΔPSI 瀑布图 Waterfall</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Top 25 效应量排序，区分包含上调/下调</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('dpsi_ecdf')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">📈 ΔPSI 累积分布 ECDF</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">效应量经验累积分布与阈值占比</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> ΔPSI 累积分布 ECDF</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">效应量经验累积分布与阈值占比</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('fdr_scree')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🪜 显著性碎石图 Scree</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">候选排名 vs -log10(FDR)，定位显著性拐点</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 显著性碎石图 Scree</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">候选排名 vs -log10(FDR)，定位显著性拐点</div></div>
                 </button>
               </div>
             </div>
             <div class="card" style="margin-bottom: 20px;">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);">🧬 事件组成与机制</div>
+              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> 事件组成与机制</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">剪接事件类型构成与分子机制</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('event_type_counts')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">📊 事件类型分布</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">SE/MXE/A5SS/A3SS/RI 五类事件计数</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 事件类型分布</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">SE/MXE/A5SS/A3SS/RI 五类事件计数</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('event_significance')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🎯 类型×显著性堆叠图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">各类型中显著与非显著事件构成</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 类型×显著性堆叠图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">各类型中显著与非显著事件构成</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('event_schematic')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🧩 剪接机制示意图 Schematic</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">五类可变剪接的外显子-内含子结构模式图</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 剪接机制示意图 Schematic</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">五类可变剪接的外显子-内含子结构模式图</div></div>
                 </button>
               </div>
             </div>
             <div class="card" style="margin-bottom: 20px;">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);">🔬 样本与质控</div>
+              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> 样本与质控</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">队列构成与样本水平 PSI 模式</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('psi_heatmap')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🌡️ PSI 热图 Heatmap</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Top 事件逐样本 PSI 聚类热图</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> PSI 热图 Heatmap</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Top 事件逐样本 PSI 聚类热图</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('psi_distribution')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">📦 分组 PSI 箱线图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">各组 PSI 分布与离群样本检测</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 分组 PSI 箱线图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">各组 PSI 分布与离群样本检测</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('sample_composition')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🥧 队列构成图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">分组占比与批次分布（QC 必备）</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 队列构成图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">分组占比与批次分布（QC 必备）</div></div>
                 </button>
               </div>
             </div>
             <div class="card">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);">🤖 AI 排序与功能富集</div>
+              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> AI 排序与功能富集</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">智能体候选评分与通路注释</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('candidate_ranking')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🏆 候选基因排名</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">综合评分 Top 15 候选事件条形图</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 候选基因排名</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">综合评分 Top 15 候选事件条形图</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('score_components')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🧮 评分分解堆叠图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">显著性/效应/生物学/文献四维贡献</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 评分分解堆叠图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">显著性/效应/生物学/文献四维贡献</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('enrichment')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;">🕸️ 功能富集点图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">GO/KEGG 富集倍数 vs FDR 气泡图</div></div>
+                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 功能富集点图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">GO/KEGG 富集倍数 vs FDR 气泡图</div></div>
                 </button>
               </div>
             </div>
@@ -621,21 +727,21 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           <div>
             <div class="chart-container" id="chart-display" style="min-height: 600px; position: sticky; top: 88px;">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
-                <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">📈</div>
+                <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></div>
                 <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">选择图表类型</div>
-                <div style="font-size: 14px;">左侧共 13 张专业科研图，点击即可渲染</div>
+                <div style="font-size: 14px;">选择图表后，预览将在这里显示</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="page" id="page-gene">
+      <div class="page" id="page-gene"><header class="workspace-heading"><div><h1>基因探索</h1><p>以基因为线索，连接剪接事件、统计结果与生物学证据。</p></div></header>
         <div class="search-bar">
-          <input type="text" class="search-input" placeholder="输入基因符号（如 TP53、BRCA1、MYC）..." id="gene-search" onkeypress="if(event.key==='Enter') exploreGene()">
-          <button class="btn btn-primary" onclick="exploreGene()">🔍 探索</button>
+          <input type="text" class="search-input" placeholder="输入基因符号（如 TP53、BRCA1、MYC）..." aria-label="基因符号" id="gene-search" onkeypress="if(event.key==='Enter') exploreGene()">
+          <button class="btn btn-primary" onclick="exploreGene()"> 探索</button>
         </div>
         <div style="margin-bottom: 24px; padding: 20px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--gray-700);">
-          <div style="font-size: 13px; font-weight: 700; color: var(--secondary); margin-bottom: 8px;">💡 提示</div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--secondary); margin-bottom: 8px;"> 提示</div>
           <div style="font-size: 13px; line-height: 1.8; color: var(--text);">
             输入基因符号查看该基因的所有剪接事件、统计信息和文献证据。支持热门基因如 TP53、BRCA1、MYC、EGFR 等。
           </div>
@@ -643,14 +749,14 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         <div id="gene-details">
           <div class="card">
             <div style="padding: 60px; text-align: center; color: var(--text-muted);">
-              <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;">🧬</div>
+              <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;"></div>
               <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">探索基因剪接模式</div>
               <div style="font-size: 14px;">在上方输入基因符号以探索其剪接事件和生物学功能</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="page" id="page-report">
+      <div class="page" id="page-report"><header class="workspace-heading"><div><h1>报告与交付</h1><p>将当前项目的统计结果、图表和解读整理为可分享的研究报告。</p></div></header>
         <div class="card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
             <div>
@@ -659,24 +765,24 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             </div>
             <div style="display: flex; gap: 12px;">
               <button class="btn btn-primary" onclick="generateReport('html')">
-                <span>📄 HTML 报告</span>
+                <span> HTML 报告</span>
               </button>
               <button class="btn btn-secondary" onclick="generateReport('pdf')">
-                <span>📑 PDF 报告</span>
+                <span> PDF 报告</span>
               </button>
             </div>
           </div>
           
           <div id="report-output">
             <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-              <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">📊</div>
+              <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></div>
               <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">准备生成报告</div>
               <div style="font-size: 14px;">完成分析后可生成包含统计结果、可视化和生物学解读的专业报告</div>
             </div>
           </div>
           
           <div style="margin-top: 24px; padding: 20px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--black);">
-            <div style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 8px;">💡 报告内容</div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 8px;"> 报告内容</div>
             <div style="font-size: 13px; line-height: 1.8; color: var(--text);">
               <div>• 项目概览与样本统计</div>
               <div>• 显著剪接事件列表（FDR < 0.05）</div>
@@ -688,10 +794,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         </div>
       </div>
       
-      <div class="page" id="page-settings">
+      <div class="page" id="page-settings"><header class="workspace-heading"><div><h1>工作区设置</h1><p>配置 AI 解读服务与外部工具，查看连接状态。</p></div></header>
         <div class="grid grid-2">
           <div class="card">
-            <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">⚙️ 模型配置</div>
+            <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;"> 模型配置</div>
             <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 18px;">
               用于报告里的 AI 解读与 MCP 工具的自然语言调用。密钥只保存在本机，不会写入报告或日志。
             </div>
@@ -714,7 +820,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <div class="mcp-panel" id="mcp-panel">
               <div class="mcp-head">
                 <div>
-                  <div class="mcp-title">🔌 MCP 工具</div>
+                  <div class="mcp-title"> MCP 工具</div>
                   <div class="mcp-sub">Model Context Protocol · 运行时外部工具调用</div>
                 </div>
                 <span class="mcp-badge" id="mcp-status">未加载</span>
@@ -759,7 +865,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           </div>
         </div>
       </div>
-    <div class="page" id="page-neoantigen">
+    <div class="page" id="page-neoantigen"><header class="workspace-heading"><div><h1>剪接候选新抗原</h1><p>检查编码序列，生成跨连接点候选肽，再进入结合预测与证据审计。</p></div></header>
       <div class="card" style="max-width: 880px; padding: 24px;">
         <h2>剪接来源候选新抗原</h2>
         <p>使用当前项目查找候选肽。先检查数据，再决定是否进行 HLA 结合预测。</p>
@@ -838,16 +944,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
       </div>
     </div>
     <div class="page" id="page-peptide">
-      <div class="card" style="max-width: 1080px; padding: 24px;">
-        <h2>肽预测</h2>
-        <p style="color:var(--text-secondary);max-width:860px;line-height:1.7;">
-          输入候选肽，或从当前项目生成候选肽，选择 HLA 型别后调用 IEDB（或本地 MHCflurry）进行
-          MHC-I / MHC-II 结合、抗原加工与复合排序。percentile rank 越低越好，它不是亲和力 Kd；
-          结合预测不等于抗原呈递，也不等于免疫原性。
-        </p>
-
-        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
-          <strong>1. 候选肽</strong>
+      <div class="pep-workspace">
+        <header class="pep-header"><div><h2>肽预测工作台</h2><p>从候选序列出发，比较 HLA 结合能力，找到值得进一步研究的肽段。</p></div><button type="button" class="btn btn-secondary" onclick="pepFillExample()">填入示例</button></header>
+        <ol class="pep-steps" aria-label="预测流程"><li><b>1</b> 准备候选肽</li><li><b>2</b> 选择 HLA</li><li><b>3</b> 预测与解读</li></ol>
+        <div class="pep-layout"><div class="pep-inputs">
+        <section class="pep-section">
+          <h3><label for="pep-sequences">候选肽序列</label></h3>
           <p style="margin:6px 0 10px;color:var(--text-secondary);font-size:13px;">
             每行一个肽段（8–30 aa）；可直接粘贴 FASTA 序列，<code>&gt;</code> 开头的标题行会被忽略。
             单次最多 200 条肽、8 个 HLA（接口限制），避免触发 IEDB 频率限制。
@@ -855,11 +957,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           <textarea id="pep-sequences" rows="7" spellcheck="false"
             style="display:block;width:100%;padding:10px;margin:8px 0 6px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:var(--font-mono,monospace);font-size:13px;line-height:1.6;resize:vertical;"
             placeholder="SLYNTVATL&#10;GILGFVFTL&#10;NLVPMVATV"></textarea>
-          <div id="pep-seq-count" style="font-size:12px;color:var(--text-muted);">已识别 0 条肽段</div>
-        </div>
-
-        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
-          <strong>2. HLA 型别</strong>
+          <div id="pep-seq-count" role="status" aria-live="polite" style="font-size:12px;color:var(--text-muted);">已识别 0 条肽段</div>
+        </section>
+        <section class="pep-section">
+          <h3><label for="pep-alleles">HLA 型别</label></h3>
           <p style="margin:6px 0 10px;color:var(--text-secondary);font-size:13px;">
             逗号分隔；输入时会在 IEDB 等位基因表中搜索（最多显示 500 条）。class-I 与 class-II 需分别预测，
             选择“both”时平台会按类别拆分。
@@ -875,11 +976,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           <datalist id="pep-allele-list"></datalist>
           <div id="pep-allele-hint" style="font-size:12px;color:var(--text-muted);margin-top:6px;">参考表尚未加载。</div>
           <div id="pep-allele-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
-        </div>
-
-        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
-          <strong>3. 预测选项</strong>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:12px;">
+        </section></div>
+        <aside class="pep-options"><section class="pep-section">
+          <h3>预测设置</h3><p class="pep-help">先选类别，再选择运行方式。在线预测需要网络连接。</p>
+          <div style="display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px;">
             <div>
               <label for="pep-mhc-class" style="display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px;">MHC 类别</label>
               <select id="pep-mhc-class" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
@@ -907,16 +1007,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
             <button class="btn btn-primary" type="button" id="pep-predict-btn" onclick="pepPredict()">预测并排序</button>
             <span id="pep-capabilities" style="font-size:12px;color:var(--text-muted);"></span>
           </div>
-          <div id="pep-status" role="status" aria-live="polite" style="margin-top:12px;white-space:pre-wrap;"></div>
-          <div id="pep-errors" style="margin-top:8px;"></div>
-          <div id="pep-results" style="margin-top:14px;"></div>
-          <p style="margin:12px 0 0;font-size:12px;color:var(--text-muted);">
-            结合 ≠ 呈递 ≠ 免疫原性；排序分数只用于候选优先级的探索性排序。
-          </p>
-        </div>
-
-        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
-          <strong>从当前项目生成候选肽</strong>
+        </section><div class="pep-guide"><h3>如何看结果？</h3><p><b>Percentile rank 越低越好。</b>它代表相对排名，不是亲和力 Kd。</p><p>结合预测不等于抗原呈递，也不等于免疫原性。排序仅用于探索性候选筛选。</p></div></aside></div>
+        <section class="pep-output"><h3>预测结果</h3>
+          <div id="pep-status" role="status" aria-live="polite" style="white-space:pre-wrap;"></div>
+          <div id="pep-errors"></div><div id="pep-results" style="margin-top:14px;"></div>
+        </section>
+        <details class="pep-project"><summary>从当前项目生成候选肽</summary>
           <p style="margin:6px 0 10px;color:var(--text-secondary);font-size:13px;">
             使用当前项目的剪接事件与已重建的编码序列对照表生成跨连接点候选肽（对照表按表头自动识别，文件名不限），
             再按上面的 HLA 与预测选项排序。读码框与 ORF 必须由上游提供，平台不会从坐标猜测序列。
@@ -925,14 +1021,19 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
           <button class="btn btn-secondary" type="button" id="pep-project-btn" onclick="pepRunProject()" disabled style="opacity:.55;">从当前项目生成并排序</button>
           <div id="pep-project-status" role="status" aria-live="polite" style="margin-top:12px;white-space:pre-wrap;"></div>
           <div id="pep-project-files" style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:13px;"></div>
-        </div>
+        </details>
       </div>
     </div>
   </main>
 </div>
 
+<dialog id="quick-dialog" class="quick-dialog" aria-labelledby="quick-title">
+  <div class="quick-head"><h2 id="quick-title">快速前往工作区</h2><button type="button" class="btn btn-secondary btn-sm" onclick="closeQuickSwitch()" aria-label="关闭快捷跳转">关闭</button></div>
+  <div class="quick-search"><input id="quick-search" type="search" placeholder="搜索页面，如 肽预测、报告…" aria-label="搜索工作区" autocomplete="off" oninput="filterQuickSwitch()"></div>
+  <div class="quick-results" id="quick-results"></div>
+</dialog>
 <!-- Upload Modal -->
-<div id="upload-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--white); z-index: 1000; align-items: center; justify-content: center;">
+<div role="dialog" aria-modal="true" aria-label="新建分析项目" id="upload-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--white); z-index: 1000; align-items: center; justify-content: center;">
   <div style="background: var(--white); border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
       <h2 style="font-size: 20px; font-weight: 600; color: var(--black);">新建分析项目</h2>
@@ -948,8 +1049,8 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     </div>
     <div style="margin-bottom: 24px;">
       <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--gray-700);">上传文件</label>
-      <div id="drop-zone" style="border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--gray-100);" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('file-input').click()">
-        <div style="font-size: 48px; margin-bottom: 12px;">📁</div>
+      <div id="drop-zone" role="button" tabindex="0" aria-label="选择数据文件" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('file-input').click();}" style="border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--gray-100);" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('file-input').click()">
+        <div style="font-size: 48px; margin-bottom: 12px;"></div>
         <div style="font-size: 14px; color: var(--gray-700);">拖拽文件到此处，或点击选择文件</div>
         <div style="font-size: 12px; color: var(--gray-500); margin-top: 8px;">支持 CSV、TSV、TXT、文本 .xls、Excel .xls/.xlsx/.xlsm 及压缩文本 .gz；表达量表会被识别并提示所需事件数据</div>
       </div>
@@ -984,9 +1085,8 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   </div>
 </div>
 
-<script src="agent_chat_ui.js"></script>
 <script>
-const state = { currentProject: localStorage.getItem('epitoperank.currentProject'), projects: [], analysis状态: null, detail: null, storage: null, events: [], eventPage: 1, eventPages: 1, eventTotal: 0, currentPage: 'dashboard' };
+const state = { currentProject: localStorage.getItem('epitoperank.currentProject'), projects: [], analysisStatus: null, detail: null, storage: null, events: [], eventPage: 1, eventPages: 1, eventTotal: 0, currentPage: 'dashboard' };
 let neoResultDir = '', neoResultName = '', neoResultText = '';
 const NEO_CR = String.fromCharCode(13), NEO_LF = String.fromCharCode(10), NEO_TAB = String.fromCharCode(9);
 async function checkNeoReadiness() {
@@ -1451,6 +1551,15 @@ function pepRenderChips() {
     wrap.appendChild(chip);
   });
 }
+function pepFillExample() {
+  const field = document.getElementById('pep-sequences');
+  if (field.value.trim() && !window.confirm('填入示例会替换当前肽序列和 HLA 设置，是否继续？')) return;
+  field.value = ['SLYNTVATL', 'GILGFVFTL', 'NLVPMVATV'].join(String.fromCharCode(10));
+  document.getElementById('pep-alleles').value = 'HLA-A*02:01';
+  document.getElementById('pep-mhc-class').value = 'class1';
+  pepCountSequences(); pepRenderChips(); pepRefreshReference();
+  field.focus();
+}
 function pepCountSequences() {
   const label = document.getElementById('pep-seq-count');
   if (!label) return { peptides: [], invalid: 0 };
@@ -1824,10 +1933,35 @@ async function pepRunProject() {
 }
 
 document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('click', () => { navigateTo(item.dataset.page); }); });
+function toggleNavigation(force) {
+  const open = typeof force === 'boolean' ? force : !document.body.classList.contains('navigation-open');
+  const mobile = window.matchMedia('(max-width:768px)').matches;
+  const closingFocusedDrawer = !open && document.getElementById('app-navigation').contains(document.activeElement);
+  document.querySelector('main').inert = open && mobile;
+  document.body.classList.toggle('navigation-open', open);
+  if (closingFocusedDrawer) document.querySelector('.mobile-menu').focus();
+  document.querySelector('.mobile-menu').setAttribute('aria-expanded', String(open));
+  const navigation = document.getElementById('app-navigation');
+  navigation.inert = !open && window.matchMedia('(max-width:768px)').matches;
+  if (open) { syncFluidMarker(); navigation.querySelector('.nav-item.active').focus(); }
+
+}
 function navigateTo(page) {
+  if (!document.getElementById('page-' + page)) return;
+  const previousPage = state.currentPage;
+  toggleNavigation(false);
+  document.querySelectorAll('.nav-item').forEach(item => {
+    if (item.dataset.page === page) item.setAttribute('aria-current', 'page');
+    else item.removeAttribute('aria-current');
+  });
+
   document.querySelectorAll('.nav-item').forEach(item => { item.classList.toggle('active', item.dataset.page === page); });
   document.querySelectorAll('.page').forEach(p => { p.classList.toggle('active', p.id === `page-${page}`); });
   state.currentPage = page;
+  syncFluidMarker();
+  animateWorkspace(previousPage, page);
+  document.getElementById('workspace-content').focus({preventScroll:true});
+  window.scrollTo({top:0, behavior:'instant'});
   if (page === 'dashboard') loadDashboard();
   if (page === 'pipeline') loadPipeline();
   if (page === 'neoantigen') { restoreNeoWorkflow(); checkNeoReadiness(); }
@@ -1841,7 +1975,11 @@ async function apiCall(endpoint, options = {}) {
 }
 async function loadDashboard() {
   const response = await apiCall('/projects');
-  const projectsData = response.projects || response || [];
+  if (!response) {
+    document.getElementById('recent-projects').innerHTML = '<div role="alert" style="padding:24px;color:var(--danger)">暂时无法连接项目服务。请检查服务是否启动，然后点击上方刷新。</div>';
+    return;
+  }
+  const projectsData = (response && response.projects) || response || [];
   state.projects = Array.isArray(projectsData) ? projectsData : [];
 
   // Keep the selected historical project across refreshes.
@@ -2033,7 +2171,7 @@ function renderProjectHistory() {
 async function loadPipeline() {
   if (!state.currentProject) return;
   const status = await apiCall(`/status/${state.currentProject}`);
-  state.analysis状态 = status;
+  state.analysisStatus = status;
   if (status) updatePipelineUI(status);
 }
 function updatePipelineUI(status) {
@@ -2187,11 +2325,16 @@ function applyFilters() {
   loadEventPage(1);
 }
 function loadChart(chartType) {
+  document.querySelectorAll('#page-visualization button[onclick^="loadChart"]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.getAttribute('onclick').includes("'" + chartType + "'")));
+  });
+  document.getElementById('chart-select-mobile').value = chartType;
+
   const container = document.getElementById('chart-display');
   if (!state.currentProject) { 
     container.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 600px; color: var(--text-muted);">
-        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">⚠️</div>
+        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></div>
         <div style="font-size: 16px; font-weight: 600;">未选择项目</div>
         <div style="font-size: 14px; margin-top: 8px;">请先在仪表盘选择一个分析项目</div>
       </div>`; 
@@ -2246,7 +2389,7 @@ function loadChart(chartType) {
   img.onerror = function() { 
     container.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 600px; color: var(--text-muted);">
-        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">📊</div>
+        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></div>
         <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">图表不可用</div>
         <div style="font-size: 14px;">该项目可能尚未生成此图表，请完成分析后重试</div>
       </div>
@@ -2265,7 +2408,7 @@ async function exploreGene() {
     container.innerHTML = `
       <div class="card">
         <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-          <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;">⚠️</div>
+          <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;"></div>
           <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">请先选择项目</div>
           <div style="font-size: 14px;">在仪表盘选择一个分析项目后再探索基因</div>
         </div>
@@ -2290,7 +2433,7 @@ async function exploreGene() {
     container.innerHTML = `
       <div class="card">
         <div style="padding: 60px; text-align: center; color: var(--text-muted);">
-          <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;">🔍</div>
+          <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;"></div>
           <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">未找到 ${geneSymbol} 的剪接事件</div>
           <div style="font-size: 14px;">该基因可能不在当前分析的候选列表中，或未达到显著性阈值</div>
           <button class="btn btn-secondary" style="margin-top: 20px;" onclick="navigateTo('explorer')">浏览所有事件</button>
@@ -2445,7 +2588,7 @@ async function generateReport(format) {
     output.innerHTML = `
       <div style="padding: 24px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--gray-900);">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-          <div style="font-size: 24px;">✅</div>
+          <div style="font-size: 24px;"></div>
           <div>
             <div style="font-size: 16px; font-weight: 700; color: var(--success);">报告生成成功！</div>
             <div style="font-size: 13px; color: var(--text-secondary);">文件已自动下载</div>
@@ -2461,7 +2604,7 @@ async function generateReport(format) {
     output.innerHTML = `
       <div style="padding: 24px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--gray-900);">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-          <div style="font-size: 24px;">❌</div>
+          <div style="font-size: 24px;"></div>
           <div>
             <div style="font-size: 16px; font-weight: 700; color: var(--error);">报告生成失败</div>
             <div style="font-size: 13px; color: var(--text-secondary);">${error.message}</div>
@@ -2477,16 +2620,31 @@ async function generateReport(format) {
 function selectProject(projectId) { state.currentProject = projectId; localStorage.setItem('epitoperank.currentProject', projectId); loadDashboard(); if (state.currentPage === 'neoantigen') { restoreNeoWorkflow(); checkNeoReadiness(); } }
 function refreshData() { if (state.currentPage === 'dashboard') loadDashboard(); if (state.currentPage === 'pipeline') loadPipeline(); if (state.currentPage === 'explorer') loadExplorer(); }
 
+document.addEventListener('keydown', event => {
+  const modal = document.getElementById('upload-modal');
+  if (event.key === 'Escape') { toggleNavigation(false); if (modal.style.display === 'flex') closeUploadModal(); }
+  if (event.key !== 'Tab' || modal.style.display !== 'flex') return;
+  const controls = Array.from(modal.querySelectorAll('button,input,select,textarea,[tabindex="0"]')).filter(el => !el.disabled && el.getClientRects().length);
+  const first = controls[0], last = controls[controls.length - 1];
+  if (event.shiftKey && document.activeElement === first) { last.focus(); event.preventDefault(); }
+  if (!event.shiftKey && document.activeElement === last) { first.focus(); event.preventDefault(); }
+});
 // Upload Modal Functions
 let selectedFiles = [];
+let uploadReturnFocus = null;
 
 function showUploadModal() {
+  uploadReturnFocus = document.activeElement;
+  document.body.style.overflow = 'hidden';
   document.getElementById('upload-modal').style.display = 'flex';
   selectedFiles = [];
   updateFileList();
+  document.getElementById('project-name').focus();
 }
 
 function closeUploadModal() {
+  document.body.style.overflow = '';
+  if (uploadReturnFocus) uploadReturnFocus.focus();
   document.getElementById('upload-modal').style.display = 'none';
   document.getElementById('project-name').value = '';
   document.getElementById('analysis-query').value = '';
@@ -3326,7 +3484,6 @@ function viewGeneInBrowser(geneSymbol) {
   exploreGene();
 }
 
-
 // ==================== MCP Tool Console ====================
 const mcpState = { servers: {}, configPath: '', selectedServer: '', tools: [], loading: false };
 
@@ -3695,11 +3852,56 @@ document.addEventListener('epitoperank:language', function () {
 
 document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModelConfig(); setInterval(() => { if (state.currentPage === 'pipeline' && state.currentProject) { loadPipeline(); } }, 5000); });
 </script>
-<script src="/assets/opencc-cn2t.js"></script>
 <script>
 (function () {
   "use strict";
-  var toTraditional = window.OpenCC.Converter({ from: "cn", to: "t" });
+  // 繁简转换依赖 opencc-cn2t.js（约 1.1MB，占整个前端静态资源的大头）。
+  // 绝大多数用户从不切到繁體，所以这里不再在首屏同步加载，而是等真正需要
+  // 转换时才注入 <script>；加载完成后若当前语言仍是 zh-Hant，会自动重放一次
+  // applyLanguage，把已经渲染出来的文字补上转换结果。
+  var traditionalConverter = null;
+  var converterLoad = null;
+  var converterFailed = false;
+
+  function ensureTraditionalConverter() {
+    if (converterLoad || converterFailed) return converterLoad;
+    // 资源拿不到时不能静默：用户点了繁體却看到简体，必须说明原因。
+    function reportFailure() {
+      if (lang === "zh-Hant") {
+        window.alert("繁體中文轉換資源載入失敗，已保持簡體顯示。請檢查網路後重新整理。");
+      }
+    }
+    converterLoad = new Promise(function (resolve) {
+      var script = document.createElement("script");
+      script.src = "/assets/opencc-cn2t.js";
+      script.async = true;
+      script.onload = function () {
+        try {
+          traditionalConverter = window.OpenCC.Converter({ from: "cn", to: "t" });
+        } catch (e) {
+          converterFailed = true;
+          reportFailure();
+        }
+        resolve(traditionalConverter);
+        // 加载期间页面可能已经切成繁體：重新套用一次即可补齐。
+        if (traditionalConverter && lang === "zh-Hant") applyLanguage("zh-Hant");
+      };
+      script.onerror = function () {
+        converterFailed = true;
+        reportFailure();
+        resolve(null);
+      };
+      document.head.appendChild(script);
+    });
+    return converterLoad;
+  }
+
+  // 转换器未就绪时原样返回，避免为了一个未完成的下载阻塞整页渲染。
+  function toTraditional(text) {
+    if (traditionalConverter) return traditionalConverter(text);
+    ensureTraditionalConverter();
+    return text;
+  }
   var DICT = {
     "仪表盘": "Dashboard",
     "AI 流水线": "AI Pipeline",
@@ -3708,8 +3910,8 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "基因浏览器": "Gene Browser",
     "报告": "Report",
     "设置": "Settings",
-    "⚙️ 设置": "⚙️ Settings",
-    "👤 你": "👤 You",
+    " 设置": " Settings",
+    " 你": " You",
     "主菜单": "Main Menu",
     "分析工具": "Analysis Tools",
     "智能助手": "Assistant",
@@ -3736,17 +3938,17 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "分析进度": "Analysis Progress",
     "等待启动...": "Waiting to start...",
     "Agent 工作流": "Agent Workflow",
-    "📊 数据 Agent": "📊 Data Agent",
+    " 数据 Agent": " Data Agent",
     "加载并验证输入数据，检查文件格式和完整性": "Load and validate input data, checking file format and integrity",
-    "✅ 质控 Agent": "✅ QC Agent",
+    " 质控 Agent": " QC Agent",
     "执行质量控制检查，过滤低质量样本": "Run quality-control checks and filter low-quality samples",
-    "🔬 剪接检测 Agent": "🔬 Splicing Detection Agent",
+    " 剪接检测 Agent": " Splicing Detection Agent",
     "使用统计模型检测可变剪接事件": "Detect alternative splicing events with statistical models",
-    "📈 统计 Agent": "📈 Statistics Agent",
+    " 统计 Agent": " Statistics Agent",
     "计算显著性（FDR）和效应量（Delta PSI）": "Compute significance (FDR) and effect size (Delta PSI)",
-    "🧬 注释 Agent": "🧬 Annotation Agent",
+    " 注释 Agent": " Annotation Agent",
     "功能注释、通路富集和文献证据收集": "Functional annotation, pathway enrichment, and literature evidence collection",
-    "🤖 解读 Agent": "🤖 Interpretation Agent",
+    " 解读 Agent": " Interpretation Agent",
     "生成生物学解读和专业分析报告": "Generate biological interpretation and a professional analysis report",
     "等待中": "Waiting",
     "运行中": "Running",
@@ -3771,29 +3973,29 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "查看": "View",
     "筛选条件": "Filters",
     "统计阈值": "Statistical Thresholds",
-    "🔍 应用筛选": "🔍 Apply Filters",
-    "🔍 探索": "🔍 Explore",
+    " 应用筛选": " Apply Filters",
+    " 探索": " Explore",
     "搜索基因名称、事件ID或染色体位置...": "Search gene name, event ID, or chromosome position...",
     "选择图表类型": "Select chart type",
     "左侧共 13 张专业科研图，点击即可渲染": "13 publication-ready figures on the left; click to render",
-    "📊 核心统计图": "📊 Core Statistics",
-    "🔬 样本与质控": "🔬 Samples and QC",
-    "🧬 事件组成与机制": "🧬 Event Composition and Mechanisms",
-    "🤖 AI 排序与功能富集": "🤖 AI Ranking and Functional Enrichment",
-    "🌋 火山图 Volcano": "🌋 Volcano Plot",
-    "📈 ΔPSI 累积分布 ECDF": "📈 ΔPSI ECDF",
-    "🪜 显著性碎石图 Scree": "🪜 Significance Scree Plot",
-    "🎯 类型×显著性堆叠图": "🎯 Type × Significance Stacked Plot",
-    "🧩 剪接机制示意图 Schematic": "🧩 Splicing Mechanism Schematic",
-    "🌡️ PSI 热图 Heatmap": "🌡️ PSI Heatmap",
-    "📦 分组 PSI 箱线图": "📦 Grouped PSI Box Plot",
-    "🥧 队列构成图": "🥧 Cohort Composition",
-    "🏆 候选基因排名": "🏆 Candidate Gene Ranking",
-    "🧮 评分分解堆叠图": "🧮 Score Decomposition Stacked Plot",
-    "🕸️ 功能富集点图": "🕸️ Functional Enrichment Dot Plot",
+    " 核心统计图": " Core Statistics",
+    " 样本与质控": " Samples and QC",
+    " 事件组成与机制": " Event Composition and Mechanisms",
+    " AI 排序与功能富集": " AI Ranking and Functional Enrichment",
+    " 火山图 Volcano": " Volcano Plot",
+    " ΔPSI 累积分布 ECDF": " ΔPSI ECDF",
+    " 显著性碎石图 Scree": " Significance Scree Plot",
+    " 类型×显著性堆叠图": " Type × Significance Stacked Plot",
+    " 剪接机制示意图 Schematic": " Splicing Mechanism Schematic",
+    " PSI 热图 Heatmap": " PSI Heatmap",
+    " 分组 PSI 箱线图": " Grouped PSI Box Plot",
+    " 队列构成图": " Cohort Composition",
+    " 候选基因排名": " Candidate Gene Ranking",
+    " 评分分解堆叠图": " Score Decomposition Stacked Plot",
+    " 功能富集点图": " Functional Enrichment Dot Plot",
     "差异剪接的显著性与效应量": "Significance and effect size of differential splicing",
     "ΔPSI vs -log10(FDR)，标注显著性阈值": "ΔPSI vs -log10(FDR) with significance thresholds",
-    "💧 ΔPSI 瀑布图 Waterfall": "💧 ΔPSI Waterfall",
+    " ΔPSI 瀑布图 Waterfall": " ΔPSI Waterfall",
     "Top 25 效应量排序，区分包含上调/下调": "Top 25 by effect size, separating inclusion up/down",
     "SE/MXE/A5SS/A3SS/RI 五类事件计数": "Counts of the five event classes: SE/MXE/A5SS/A3SS/RI",
     "五类可变剪接的外显子-内含子结构模式图": "Exon-intron schematic of the five alternative splicing classes",
@@ -3809,8 +4011,8 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "显著性/效应/生物学/文献四维贡献": "Four-dimensional contribution: significance / effect / biology / literature",
     "GO/KEGG 富集倍数 vs FDR 气泡图": "GO/KEGG enrichment fold vs FDR bubble plot",
     "智能体候选评分与通路注释": "Agent-based candidate scoring and pathway annotation",
-    "📊 事件类型分布": "📊 Event Type Distribution",
-    "📊 分析结果": "📊 Analysis Results",
+    " 事件类型分布": " Event Type Distribution",
+    " 分析结果": " Analysis Results",
     "SE (外显子跳跃)": "SE (skipped exon)",
     "MXE (互斥外显子)": "MXE (mutually exclusive exons)",
     "A5SS (可变5'剪接)": "A5SS (alternative 5' splice site)",
@@ -3821,7 +4023,7 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "通路富集": "Pathway Enrichment",
     "剪接解读": "Splice Interpretation",
     "支持基因注释、文献搜索、通路富集和剪接事件解读等专业技能": "Professional skills including gene annotation, literature search, pathway enrichment, and splice event interpretation",
-    "⚙️ 模型配置": "⚙️ Model configuration",
+    " 模型配置": " Model configuration",
     "模型配置": "Model configuration",
     "检查中…": "Checking…",
     "模型名": "Model",
@@ -3837,7 +4039,7 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "配置已保存（保留原 Key）": "Saved (existing key kept)",
     "选择左侧的技能按钮执行专业分析": "Choose a skill on the left to run a professional analysis",
     "请选择上方的技能按钮开始，或直接输入你的问题。": "Choose a skill above to start, or type your question.",
-    "🤖 EpitopeRank 智能助手": "🤖 EpitopeRank Assistant",
+    " EpitopeRank 智能助手": " EpitopeRank Assistant",
     "• 项目概览与样本统计": "• Project overview and sample statistics",
     "• 显著剪接事件列表（FDR": "• Significant splicing event list (FDR",
     "• 显著剪接事件列表（FDR < 0.05）": "• Significant splicing event list (FDR < 0.05)",
@@ -3848,7 +4050,7 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "• 执行通路富集分析": "• Run pathway enrichment analysis",
     "• 解读剪接事件的临床意义": "• Interpret the clinical significance of splicing events",
     "• 查询基因注释和剪接位点信息": "• Query gene annotation and splice-site information",
-    "🔌 MCP 工具": "🔌 MCP Tools",
+    " MCP 工具": " MCP Tools",
     "Model Context Protocol · 运行时外部工具调用": "Model Context Protocol · runtime external tool calls",
     "未加载": "Not loaded",
     "自然语言指令": "Natural-language instruction",
@@ -3899,13 +4101,13 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "重试": "Retry",
     "正在生成报告...": "Generating report...",
     "这可能需要几分钟时间，请耐心等待": "This may take a few minutes. Please wait.",
-    "✅ 分析完成": "✅ Analysis complete",
-    "❌ 分析失败": "❌ Analysis failed",
+    " 分析完成": " Analysis complete",
+    " 分析失败": " Analysis failed",
     "未知错误": "Unknown error",
-    "🔬 通路富集分析结果": "🔬 Pathway Enrichment Results",
-    "📚 文献搜索结果": "📚 Literature Search Results",
-    "⚕️ 剪接事件解读": "⚕️ Splice Event Interpretation",
-    "📋 总结": "📋 Summary",
+    " 通路富集分析结果": " Pathway Enrichment Results",
+    " 文献搜索结果": " Literature Search Results",
+    " 剪接事件解读": " Splice Event Interpretation",
+    " 总结": " Summary",
     "无标题": "Untitled",
     "查看原文 →": "View source →",
     "被引次数:": "Citations:",
@@ -3985,11 +4187,11 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "解读 Agent 正在生成生物学解读...": "Interpretation Agent is generating biological interpretation...",
     "生成分析报告": "Generate Analysis Report",
     "基于当前分析结果生成专业报告": "Generate a professional report from the current analysis",
-    "💡 报告内容": "💡 Report Contents",
-    "📄 HTML 报告": "📄 HTML Report",
-    "📑 PDF 报告": "📑 PDF Report",
+    " 报告内容": " Report Contents",
+    " HTML 报告": " HTML Report",
+    " PDF 报告": " PDF Report",
     "完成分析后可生成包含统计结果、可视化和生物学解读的专业报告": "Generate a professional report with statistics, visualizations, and biological interpretation after analysis",
-    "💡 提示": "💡 Tip"
+    " 提示": " Tip"
   };
 
   var RULES = [
@@ -4064,13 +4266,13 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
       return null;
     },
     function (s) {
-      var p = "❌ 分析失败: ";
-      if (s.indexOf(p) === 0) return "❌ Analysis failed: " + s.slice(p.length);
+      var p = " 分析失败: ";
+      if (s.indexOf(p) === 0) return " Analysis failed: " + s.slice(p.length);
       return null;
     },
     function (s) {
-      var p = "❌ 执行出错: ";
-      if (s.indexOf(p) === 0) return "❌ Execution error: " + s.slice(p.length);
+      var p = " 执行出错: ";
+      if (s.indexOf(p) === 0) return " Execution error: " + s.slice(p.length);
       return null;
     },
     function (s) {
@@ -4261,6 +4463,11 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
       buttons[i].addEventListener("click", function () {
         applyLanguage(this.getAttribute("data-lang"));
       });
+      // 悬停/聚焦到「繁體中文」就先偷偷下载，点击时基本已经就绪。
+      if (buttons[i].getAttribute("data-lang") === "zh-Hant") {
+        buttons[i].addEventListener("pointerenter", ensureTraditionalConverter, { once: true });
+        buttons[i].addEventListener("focus", ensureTraditionalConverter, { once: true });
+      }
     }
     observer.observe(document.body, {
       childList: true,
@@ -4278,6 +4485,96 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     init();
   }
 })();
+</script>
+
+<script>
+const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let workspaceAnimation = null;
+function motionIsEnabled() { return !reducedMotionQuery.matches && localStorage.getItem('epitoperank.motion') !== 'off'; }
+function syncMotionPreference() {
+  const enabled = motionIsEnabled();
+  document.body.classList.toggle('motion-paused', !enabled);
+  const button = document.getElementById('motion-toggle');
+  button.textContent = reducedMotionQuery.matches ? '动态：系统关闭' : enabled ? '动态：开' : '动态：关';
+  button.setAttribute('aria-pressed', String(enabled));
+  button.disabled = reducedMotionQuery.matches;
+  if (!enabled) {
+    document.getAnimations().forEach(animation => animation.cancel());
+    document.querySelectorAll('.press-wave').forEach(wave => wave.remove());
+  }
+}
+function toggleMotion() { localStorage.setItem('epitoperank.motion', motionIsEnabled() ? 'off' : 'on'); syncMotionPreference(); }
+function syncFluidMarker() {
+  const sidebar = document.getElementById('app-navigation');
+  const active = sidebar.querySelector('.nav-item.active');
+  const marker = sidebar.querySelector('.nav-fluid-marker');
+  if (!active || !marker) return;
+  marker.style.transform = 'translateY(' + (active.getBoundingClientRect().top - sidebar.getBoundingClientRect().top + sidebar.scrollTop) + 'px)';
+  marker.style.height = active.offsetHeight + 'px';
+}
+function animateWorkspace(previous, current) {
+  if (workspaceAnimation) workspaceAnimation.cancel();
+  if (!motionIsEnabled() || previous === current) return;
+  const order = Array.from(document.querySelectorAll('.nav-item')).map(item => item.dataset.page);
+  const direction = order.indexOf(current) >= order.indexOf(previous) ? 1 : -1;
+  workspaceAnimation = document.getElementById('page-' + current).animate([
+    {opacity:.55, transform:'translateY(' + direction * 9 + 'px)'},
+    {opacity:1, transform:'translateY(0)'}
+  ], {duration:230, easing:'cubic-bezier(.16,1,.3,1)'});
+}
+let quickReturnFocus = null;
+function openQuickSwitch() {
+  const dialog = document.getElementById('quick-dialog');
+  if (dialog.open) return;
+  quickReturnFocus = document.activeElement;
+  const results = document.getElementById('quick-results');
+  results.replaceChildren();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'quick-result'; button.textContent = item.textContent.trim();
+    if (item.dataset.page === state.currentPage) button.setAttribute('aria-current','page');
+    button.onclick = () => { dialog.close(); navigateTo(item.dataset.page); };
+    results.appendChild(button);
+  });
+  const empty = document.createElement('p'); empty.className = 'quick-empty'; empty.id = 'quick-empty'; empty.textContent = '没有匹配的页面，试试「报告」或「设置」。'; empty.hidden = true; results.appendChild(empty);
+  document.getElementById('quick-search').value = '';
+  dialog.showModal(); document.getElementById('quick-search').focus();
+}
+function closeQuickSwitch() { document.getElementById('quick-dialog').close(); if (quickReturnFocus) quickReturnFocus.focus(); }
+function filterQuickSwitch() {
+  const query = document.getElementById('quick-search').value.trim().toLocaleLowerCase();
+  let matches = 0;
+  document.querySelectorAll('.quick-result').forEach(button => { button.hidden = !button.textContent.toLocaleLowerCase().includes(query); if (!button.hidden) matches++; });
+  document.getElementById('quick-empty').hidden = matches > 0;
+}
+document.addEventListener('keydown', event => {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && document.getElementById('upload-modal').style.display !== 'flex' && !document.getElementById('ingest-modal').classList.contains('open')) { event.preventDefault(); openQuickSwitch(); }
+  if (event.key === 'ArrowDown' && document.getElementById('quick-dialog').open && event.target.id === 'quick-search') { const first = document.querySelector('.quick-result:not([hidden])'); if (first) { event.preventDefault(); first.focus(); } }
+});
+document.addEventListener('pointerdown', event => {
+  const button = event.target.closest('.btn');
+  if (!button || button.disabled || !motionIsEnabled()) return;
+  const box = button.getBoundingClientRect(), wave = document.createElement('span');
+  wave.className = 'press-wave'; wave.setAttribute('aria-hidden','true');
+  wave.style.left = (event.clientX - box.left) + 'px'; wave.style.top = (event.clientY - box.top) + 'px';
+  button.appendChild(wave); wave.addEventListener('animationend', () => wave.remove(), {once:true});
+});
+let lightFrame = 0;
+const liquidHero = document.querySelector('.start-guide');
+liquidHero.addEventListener('pointermove', event => {
+  if (!motionIsEnabled() || event.pointerType !== 'mouse' || lightFrame) return;
+  const x = event.clientX, y = event.clientY;
+  lightFrame = requestAnimationFrame(() => {
+    const box = liquidHero.getBoundingClientRect();
+    liquidHero.style.setProperty('--light-x', (x - box.left) + 'px'); liquidHero.style.setProperty('--light-y', (y - box.top) + 'px'); lightFrame = 0;
+  });
+});
+liquidHero.addEventListener('pointerleave', () => { if (lightFrame) cancelAnimationFrame(lightFrame); lightFrame = 0; liquidHero.style.removeProperty('--light-x'); liquidHero.style.removeProperty('--light-y'); });
+reducedMotionQuery.addEventListener('change', syncMotionPreference);
+window.addEventListener('resize', () => { document.querySelector('main').inert = window.innerWidth <= 768 && document.body.classList.contains('navigation-open'); syncFluidMarker(); document.getElementById('app-navigation').inert = window.innerWidth <= 768 && !document.body.classList.contains('navigation-open'); });
+new ResizeObserver(syncFluidMarker).observe(document.getElementById('app-navigation'));
+syncMotionPreference(); syncFluidMarker();
+document.getElementById('app-navigation').inert = window.innerWidth <= 768;
 </script>
 </body>
 </html>"""

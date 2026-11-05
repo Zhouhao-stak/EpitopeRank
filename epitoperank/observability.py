@@ -35,6 +35,7 @@ class _JsonFormatter(logging.Formatter):
     _sensitive = {"api_key", "authorization", "password", "token", "secret"}
 
     def format(self, record: logging.LogRecord) -> str:
+        """把日志记录输出为单行 JSON，跳过敏感字段与非基础类型的扩展字段。"""
         payload: dict[str, Any] = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "level": record.levelname,
@@ -55,6 +56,7 @@ class _JsonFormatter(logging.Formatter):
 
 
 def _level(value: str | int | None) -> int:
+    """解析日志级别，未知时退回 EPITOPERANK_LOG_LEVEL 环境变量或 INFO。"""
     if isinstance(value, int):
         return value
     raw = str(value or os.getenv("EPITOPERANK_LOG_LEVEL", "INFO")).upper()

@@ -25,14 +25,17 @@ class GeneAnnotationSkill(BaseSkill):
 
     @property
     def name(self) -> str:
+        """技能标识符 gene_annotation，供工具注册与调用时使用。"""
         return "gene_annotation"
 
     @property
     def description(self) -> str:
+        """供模型选择工具时阅读的技能说明（中文）。"""
         return "获取基因注释信息，包括外显子结构、已知剪接事件、保守性评分和临床变异（支持Ensembl/UCSC数据库查询）"
 
     @property
     def input_schema(self) -> dict[str, Any]:
+        """技能的入参 JSON Schema：gene_symbol 必填，其余为可选查询开关。"""
         return {
             "type": "object",
             "properties": {
@@ -65,6 +68,7 @@ class GeneAnnotationSkill(BaseSkill):
         }
 
     async def execute(self, **kwargs: Any) -> SkillResult:
+        """执行基因注释查询，依次聚合 MyGene.info、Ensembl 与 ClinVar 的结果。"""
         gene_symbol = kwargs.get("gene_symbol")
         gene_id = kwargs.get("gene_id")
         genome_build = kwargs.get("genome_build", "GRCh38")

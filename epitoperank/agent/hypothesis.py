@@ -43,6 +43,7 @@ class HypothesisResult:
     interpretation: str
 
     def as_dict(self) -> dict[str, Any]:
+        """序列化为字典，数值压缩为有限位有效数字，供报告与 API 输出。"""
         return {
             "code": self.code,
             "title": self.title,
@@ -74,6 +75,7 @@ def _benjamini_hochberg(p_values: Sequence[float]) -> list[float]:
 
 
 def _float(value: Any) -> float | None:
+    """安全转为 float；None、无法转换或 NaN 均返回 None。"""
     try:
         if value is None:
             return None
@@ -107,6 +109,7 @@ def _test_dpsi_shift(values: list[float]) -> tuple[float | None, float | None, s
 
 
 def _test_direction_balance(up: int, down: int) -> tuple[float | None, float | None, str]:
+    """二项检验判断上调/下调事件数是否偏离 1:1（双向，p=0.5）。"""
     import scipy.stats as stats  # noqa: PLC0415
 
     total = up + down
@@ -348,6 +351,7 @@ def run_hypothesis_tests(context: Any, alpha: float = ALPHA_DEFAULT) -> list[Hyp
 
 
 def _verdict(p_value: float | None, fdr: float | None, n: int, alpha: float) -> str:
+    """按 BH 校正后的 q 值（缺失时退回原始 p 值）与 alpha 判定假设是否被拒绝。"""
     if p_value is None or n < MIN_N:
         return "inconclusive"
     value = fdr if fdr is not None else p_value
@@ -362,6 +366,7 @@ def _interpret(
     n: int,
     alpha: float,
 ) -> str:
+    """把检验结果写成一句结论，并对拒绝原假设的每种检验给出对应解读。"""
     if p_value is None or n < MIN_N:
         return f"Not testable with n={n}; reported as inconclusive rather than assumed."
     value = fdr if fdr is not None else p_value
@@ -381,6 +386,7 @@ def _interpret(
 
 
 def _median(values: list[float]) -> float | None:
+    """中位数；空列表返回 None。"""
     if not values:
         return None
     ordered = sorted(values)
@@ -412,9 +418,11 @@ class HypothesisLedger:
     alpha: float = ALPHA_DEFAULT
 
     def rejected(self) -> list[HypothesisResult]:
+        """返回原假设被拒绝（即检出异常信号）的检验结果。"""
         return [item for item in self.results if item.verdict == "rejected"]
 
     def confounds(self) -> list[HypothesisResult]:
+        """返回被拒绝的混杂类检验（覆盖度混杂、事件类型偏倚）。"""
         return [
             item
             for item in self.results
@@ -422,6 +430,7 @@ class HypothesisLedger:
         ]
 
     def as_dict(self) -> dict[str, Any]:
+        """序列化整本台账：alpha、全部检验、被拒项与混杂项代码。"""
         return {
             "alpha": self.alpha,
             "tests": [item.as_dict() for item in self.results],

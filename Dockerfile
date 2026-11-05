@@ -41,8 +41,8 @@ COPY . .
 # Create data directory and set permissions
 RUN mkdir -p /data && chown -R epitoperank:epitoperank /data /app
 
-# Expose ports
-EXPOSE 8800 8501
+# Expose port (the web UI is rendered by the API at `/`)
+EXPOSE 8800
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \

@@ -143,6 +143,7 @@ def default_env_path() -> Path:
 
 
 def read_env_file(path: Path) -> dict[str, str]:
+    """把一个 .env 风格的配置文件读成键值字典；文件不可读时返回空字典，键值两侧的引号会被去掉。"""
     values: dict[str, str] = {}
     try:
         # utf-8-sig tolerates the BOM Notepad writes; without it the first

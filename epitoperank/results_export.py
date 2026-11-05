@@ -101,6 +101,7 @@ def _manifest_text(
     stats: dict[str, Any],
     project_dir: Path,
 ) -> str:
+    """生成“项目说明.txt”的正文：说明该文件夹的用途、内容与本次运行规模。"""
     lines = [
         f"项目名称：{project_name or '未命名项目'}",
         f"项目编号：{project_id}",

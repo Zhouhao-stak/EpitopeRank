@@ -56,6 +56,7 @@ def ensembl_annotate(
         return None
 
     def _call() -> dict[str, dict[str, Any]]:
+        """在线程内通过 bioservices 联网调用 Ensembl REST，逐个基因先按符号、失败再按 ID 查询注释。"""
         from bioservices import Ensembl  # noqa: PLC0415
 
         ens = Ensembl(verbose=False)
@@ -126,6 +127,7 @@ def uniprot_annotate(
         return None
 
     def _call() -> dict[str, dict[str, Any]]:
+        """通过 bioservices 的 UniProt 接口联网按基因名检索条目，抽取功能、亚细胞定位与疾病信息。"""
         from bioservices import UniProt  # noqa: PLC0415
 
         uniprot = UniProt(verbose=False)
@@ -182,6 +184,7 @@ def kegg_pathways(
         return None
 
     def _call() -> list[dict[str, Any]]:
+        """联网读取 KEGG 通路列表并统计与输入基因的重叠，只做粗略倍数计算，p 值与 FDR 留空。"""
         from bioservices import KEGG  # noqa: PLC0415
 
         kegg = KEGG(verbose=False)
@@ -270,6 +273,7 @@ def reactome_pathways(
         return None
 
     def _call() -> list[dict[str, Any]]:
+        """联网把基因映射到 Reactome 实体、查询其参与的通路，再按通路聚合基因。"""
         from bioservices import Reactome  # noqa: PLC0415
 
         reactome = Reactome(verbose=False)

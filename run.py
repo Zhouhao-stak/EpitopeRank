@@ -15,10 +15,9 @@ Show a project's workflow log::
 
     python run.py status --project-id SPN-XXXXXXXX
 
-Serve the API / dashboard::
+Serve the API (the browser UI is rendered at `/`)::
 
-    python run.py serve --api --port 8800
-    python run.py serve --ui --port 8501
+    python run.py serve --port 8800
 """
 
 from __future__ import annotations
@@ -259,44 +258,36 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
 
 def _cmd_serve(args: argparse.Namespace) -> int:
+    """启动 FastAPI 服务（Web UI 由该服务在 `/` 直接渲染）。
+
+    旧版 `--ui` 会额外拉起 Streamlit 看板，该界面已整体移除；这里仍识别这个
+    参数并给出提示，避免老脚本/老文档撞上 argparse 的 "unrecognized arguments"。
+    """
+    if getattr(args, "ui", False):
+        print(
+            "Streamlit 界面已移除。请改用 `python serve_ui.py`"
+            "（浏览器打开 http://localhost:8800），或 `python run.py serve --api`。"
+        )
+        return 2
+
     import threading
-    
-    def start_api():
+
+    def start_api() -> None:
+        """在当前线程内以前台方式运行 uvicorn，端口取自 --port。"""
         import uvicorn
         from epitoperank.api.app import create_app
         uvicorn.run(create_app(), host=args.host, port=args.port)
-    
-    def start_ui():
-        import subprocess
-        ui_path = Path(__file__).resolve().parent / "epitoperank" / "interface" / "streamlit_app.py"
-        subprocess.run(
-            [sys.executable, "-m", "streamlit", "run", str(ui_path), "--server.port", "8501", "--server.address", "0.0.0.0"]
-        )
-    
-    threads = []
-    if args.api:
-        api_thread = threading.Thread(target=start_api, daemon=True)
-        api_thread.start()
-        threads.append(api_thread)
-        print(f"API server starting on http://{args.host}:{args.port}")
-    
-    if args.ui:
-        ui_thread = threading.Thread(target=start_ui, daemon=True)
-        ui_thread.start()
-        threads.append(ui_thread)
-        print("Streamlit UI starting on http://0.0.0.0:8501")
-    
-    if not threads:
-        print("Nothing to serve: pass --api or --ui.")
-        return 1
-    
-    # Keep main thread alive
+
+    thread = threading.Thread(target=start_api, daemon=True)
+    thread.start()
+    print(f"API server starting on http://{args.host}:{args.port}")
+
+    # 主线程只负责等待与优雅退出；uvicorn 自己处理信号。
     try:
-        for t in threads:
-            t.join()
+        thread.join()
     except KeyboardInterrupt:
         print("\nShutting down...")
-    
+
     return 0
 
 
@@ -355,9 +346,9 @@ def build_parser() -> argparse.ArgumentParser:
     status.add_argument("--project-id", required=True)
     status.set_defaults(func=_cmd_status)
 
-    serve = subparsers.add_parser("serve", help="Serve the API or the dashboard")
-    serve.add_argument("--api", action="store_true", help="Serve the FastAPI application")
-    serve.add_argument("--ui", action="store_true", help="Serve the Streamlit dashboard")
+    serve = subparsers.add_parser("serve", help="Serve the API (the web UI is served at /)")
+    serve.add_argument("--api", action="store_true", help="兼容旧脚本：现在 serve 总是启动 API")
+    serve.add_argument("--ui", action="store_true", help="已移除：旧 Streamlit 看板，传入会报错退出")
     serve.add_argument("--host", default="0.0.0.0")
     serve.add_argument("--port", type=int, default=8800)
     serve.set_defaults(func=_cmd_serve)

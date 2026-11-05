@@ -8,15 +8,17 @@
 
 打开 **Git Bash** 或 **WSL**，复制粘贴以下所有命令：
 
+> 下面的 `ssh` 命令会逐条提示输入密码（仓库不再保存密码）。想省掉反复输入，先执行一次
+> `ssh-copy-id -p 39145 wang_zi_wei@123.255.66.81` 配置密钥。
+
 ```bash
 # ===== 第1步：设置变量 =====
 SERVER="wang_zi_wei@123.255.66.81"
 PORT="39145"
-PASS="REDACTED-SSH-PASSWORD"
 REMOTE_DIR="/home/wang_zi_wei/epitoperank"
 
 # ===== 第2步：创建远程目录 =====
-sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "mkdir -p $REMOTE_DIR"
+ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "mkdir -p $REMOTE_DIR"
 
 # ===== 第3步：上传文件（使用 tar 管道）=====
 cd /e/EpitopeRank
@@ -30,12 +32,12 @@ tar czf - \
   --exclude='htmlcov' \
   --exclude='dist' \
   --exclude='build' \
-  . | sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
+  . | ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
 
 echo "✅ Files uploaded!"
 
 # ===== 第4步：配置环境变量 =====
-sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "
+ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "
 cd $REMOTE_DIR
 if [ ! -f .env ]; then
     cp .env.production.example .env
@@ -44,7 +46,7 @@ fi
 "
 
 # ===== 第5步：启动服务 =====
-sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "
+ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "
 cd $REMOTE_DIR
 echo 'Starting EpitopeRank...'
 docker compose pull
@@ -62,8 +64,7 @@ echo ""
 echo "=========================================="
 echo "✅ Deployment Complete!"
 echo "=========================================="
-echo "API: http://123.255.66.81:8800"
-echo "UI:  http://123.255.66.81:8501"
+echo "Web UI + API: http://123.255.66.81:8800"
 ```
 
 ---
@@ -75,7 +76,7 @@ echo "UI:  http://123.255.66.81:8501"
 ```bash
 # SSH 登录
 ssh -p 39145 wang_zi_wei@123.255.66.81
-# 密码: REDACTED-SSH-PASSWORD
+# 密码: 手动输入（仓库不保存）
 
 # 编辑配置文件
 cd ~/epitoperank
@@ -105,7 +106,6 @@ docker compose logs -f
 #!/bin/bash
 SERVER="wang_zi_wei@123.255.66.81"
 PORT="39145"
-PASS="REDACTED-SSH-PASSWORD"
 REMOTE_DIR="/home/wang_zi_wei/epitoperank"
 
 echo "Updating EpitopeRank..."
@@ -113,10 +113,10 @@ echo "Updating EpitopeRank..."
 # Upload files
 cd /e/EpitopeRank
 tar czf - --exclude='.git' --exclude='venv' --exclude='__pycache__' --exclude='*.pyc' --exclude='.env' --exclude='node_modules' --exclude='htmlcov' --exclude='dist' --exclude='build' . | \
-  sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
+  ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
 
 # Restart
-sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "
+ssh -o StrictHostKeyChecking=no -p $PORT $SERVER "
 cd $REMOTE_DIR
 docker compose up -d --build
 docker compose ps
@@ -157,7 +157,7 @@ ssh -p 39145 wang_zi_wei@123.255.66.81 "cd ~/epitoperank && docker compose logs 
    - 主机: `123.255.66.81`
    - 端口: `39145`
    - 用户: `wang_zi_wei`
-   - 密码: `REDACTED-SSH-PASSWORD`
+   - 密码: 登录时手动输入（仓库不保存）
 3. 将 `E:\EpitopeRank\` 文件夹拖拽到服务器的 `/home/wang_zi_wei/epitoperank/`
 4. 然后 SSH 登录执行第5步（启动服务）
 
@@ -168,12 +168,12 @@ ssh -p 39145 wang_zi_wei@123.255.66.81 "cd ~/epitoperank && docker compose logs 
 ```bash
 # 先上传核心代码
 tar czf - epitoperank/*.py requirements.txt Dockerfile docker-compose*.yml | \
-  sshpass -p "$PASS" ssh -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
+  ssh -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
 
 # 再上传子目录
 for dir in agent analysis api interface llm splicing; do
     tar czf - epitoperank/$dir/ | \
-      sshpass -p "$PASS" ssh -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
+      ssh -p $PORT $SERVER "cd $REMOTE_DIR && tar xzf -"
     echo "Uploaded $dir"
 done
 ```

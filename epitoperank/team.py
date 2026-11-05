@@ -40,6 +40,7 @@ class TeamRunResult:
     mode: str = "deterministic"
 
     def as_dict(self) -> dict[str, Any]:
+        """把运行结果转成可直接被 API 与前端序列化的字典。"""
         return {
             "messages": self.messages,
             "tool_calls": self.tool_calls,
@@ -81,6 +82,10 @@ def run_team(context: RunContext) -> TeamRunResult:
 
 
 async def _run_team_async(context: RunContext) -> TeamRunResult:
+    """组装 SelectorGroupChat 并流式跑完分析任务，记录消息与工具调用。
+
+    LLM 客户端不可用或运行报错时自动回退/记录到 stopped_reason，不向上抛出。
+    """
     started = time.monotonic()
     tools = build_tools(context)
     mode = "deterministic"
@@ -195,4 +200,5 @@ def _record_event(event: Any, result: TeamRunResult) -> None:
 
 
 def available_agent_names() -> tuple[str, ...]:
+    """返回团队内三个核心智能体的名称，供界面展示与参数校验使用。"""
     return ("bio_planner", "bio_analyst", "bio_interpreter")

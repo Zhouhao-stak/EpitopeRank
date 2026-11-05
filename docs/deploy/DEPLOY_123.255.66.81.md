@@ -11,8 +11,11 @@
 - **Docker**: ✅ 已安装 (v26.1.3)
 - **Docker Compose**: ✅ 已安装 (v2.27.0)
 - **部署目录**: /home/wang_zi_wei/epitoperank
-- **API 端口**: 8800
-- **UI 端口**: 8501
+- **API 端口**: 8800（Web UI 同端口，页面在 `/`）
+
+> **凭据不入库**：SSH 密码不写在仓库里的任何文件（本仓库是公开仓库）。
+> 执行部署时按提示手动输入，或先 `ssh-copy-id` 配置密钥。
+> 需要免交互的脚本/CI 可临时设置环境变量 `EPITOPERANK_SSH_PASS`。
 
 ---
 
@@ -51,7 +54,7 @@
 
 ```bash
 # SSH 登录服务器
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
+ssh -p 39145 wang_zi_wei@123.255.66.81
 
 # 编辑配置文件
 vim /home/wang_zi_wei/epitoperank/.env
@@ -99,18 +102,18 @@ curl http://123.255.66.81:8800/api/health
 
 在浏览器中打开：
 ```
-http://123.255.66.81:8501
+http://123.255.66.81:8800
 ```
 
 ### 查看日志
 
 ```bash
 # 实时日志
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker compose logs -f"
 
 # 最近 100 行
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker compose logs --tail 100"
 ```
 
@@ -121,35 +124,35 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 ### 重启服务
 
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker compose restart"
 ```
 
 ### 停止服务
 
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker compose down"
 ```
 
 ### 查看容器状态
 
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker compose ps"
 ```
 
 ### 查看资源使用
 
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker stats epitoperank-api"
 ```
 
 ### 备份数据库
 
 ```bash
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && \
    docker compose exec epitoperank-api cp /data/epitoperank.sqlite3 /tmp/backup.sqlite3 && \
    docker cp epitoperank-epitoperank-api-1:/tmp/backup.sqlite3 ./backup-$(date +%Y%m%d).sqlite3"
@@ -166,11 +169,11 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 **解决**:
 ```bash
 # 检查哪些进程占用了端口
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
-  "netstat -tuln | grep -E ':(8800|8501)'"
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
+  "netstat -tuln | grep -E ':8800'"
 
 # 修改 docker-compose.coolify.yml 中的端口映射
-# 例如改为 9800:8800 和 9501:8501
+# 例如改为 9800:8800
 ```
 
 ### 问题 2：内存不足
@@ -180,7 +183,7 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 **解决**:
 ```bash
 # 检查内存使用
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 "free -h"
+ssh -p 39145 wang_zi_wei@123.255.66.81 "free -h"
 
 # 减少资源限制（编辑 docker-compose.coolify.yml）
 deploy:
@@ -196,15 +199,15 @@ deploy:
 **解决**:
 ```bash
 # 检查 .env 文件
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cat /home/wang_zi_wei/epitoperank/.env | grep DEEPSEEK"
 
 # 编辑并添加正确的 API Key
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "vim /home/wang_zi_wei/epitoperank/.env"
 
 # 重启服务
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker compose restart"
 ```
 
@@ -215,11 +218,11 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 **解决**:
 ```bash
 # 手动测试健康检查
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "docker exec epitoperank-epitoperank-api-1 curl http://localhost:8800/api/health"
 
 # 查看详细日志
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "cd /home/wang_zi_wei/epitoperank && docker compose logs epitoperank-api"
 ```
 
@@ -231,7 +234,7 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
 
 ```bash
 # 在服务器上创建 cron job
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81
+ssh -p 39145 wang_zi_wei@123.255.66.81
 
 # 编辑 crontab
 crontab -e
@@ -244,11 +247,11 @@ crontab -e
 
 ```bash
 # 检查 Docker 占用
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "du -sh /var/lib/docker && df -h /home/wang_zi_wei"
 
 # 清理旧镜像
-sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
+ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "docker image prune -f"
 ```
 
@@ -265,8 +268,7 @@ sshpass -p 'REDACTED-SSH-PASSWORD' ssh -p 39145 wang_zi_wei@123.255.66.81 \
    ```bash
    # 请管理员配置 iptables 或 ufw
    sudo ufw allow 39145/tcp  # SSH
-   sudo ufw allow 8800/tcp   # API
-   sudo ufw allow 8501/tcp   # UI
+   sudo ufw allow 8800/tcp   # API + UI
    ```
 
 3. **使用 HTTPS**: 如果需要通过公网访问，建议配置 Nginx + SSL
