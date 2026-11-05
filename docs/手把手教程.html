@@ -142,7 +142,7 @@
     <thead><tr><th style="width:150px">准备项</th><th>说明</th><th style="width:110px">必需</th></tr></thead>
     <tbody>
       <tr><td>浏览器</td><td>Chrome 或 Edge，任意近三年版本</td><td>必需</td></tr>
-      <tr><td>rMATS 结果</td><td><code>SE / A5SS / A3SS / MXE / RI</code> 五个 <code>*.MATS.JC.txt</code>，可以有缺项</td><td>必需</td></tr>
+      <tr><td>rMATS 结果</td><td><code>SE / A5SS / A3SS / MXE / RI</code> 五类表，文件名不限（JC 或 JCEC 皆可），可以有缺项</td><td>必需</td></tr>
       <tr><td>编码序列对照表</td><td>四列：事件 ID、参考 CDS、改变后 CDS、连接点位置。文件名和列名都随意</td><td>生成肽时必需</td></tr>
       <tr><td>HLA 型别</td><td>如 <code>HLA-A*02:01</code>，可多个</td><td>可选</td></tr>
       <tr><td>网络</td><td>HLA 预测要走 IEDB 在线服务；不填 HLA 就不需要外网</td><td>仅预测时</td></tr>
@@ -234,7 +234,7 @@ venv\Scripts\python.exe serve_ui.py --port 8800
 └── 实验原始导出_序列.csv      ★ 编码序列对照表（名字随意）
 </code></pre>
 
-  <p><b>rMATS 五个表必须用官方文件名</b>（<code>SE.MATS.JC.txt</code> 等），因为系统靠文件名区分事件类型。少几个也可以，比如只做 SE 就只放 <code>SE.MATS.JC.txt</code>。</p>
+  <p><b>rMATS 五个表的文件名不限</b>，系统按<b>表头字段</b>自动识别事件类型，也会读文件名里的 <code>SE</code> / <code>A3SS</code> / <code>A5SS</code> / <code>MXE</code> / <code>RI</code> 词元。所以 <code>SE.MATS.JC.txt</code>、<code>UPF1_KD_vs_ctrl_SE.MATS.JCEC.txt</code>、<code>ri.mats.jc.txt</code> 都能直接用，带比较组前缀、大小写混用、<code>.gz</code> 压缩也都可以。唯一要求是文件里要保留 rMATS 的计数列（<code>IncLevel1</code>、<code>IJC_SAMPLE_1</code>、<code>SJC_SAMPLE_1</code>）。少几个事件类型也可以，比如只做 SE 就只放 SE 那张表。</p>
 
   <p><code>sample_metadata.tsv</code> 是可选的，但强烈建议放，否则分组比较和样本相关图表出不来：</p>
 <pre><code>sample_id	group	condition	tissue	batch
@@ -509,8 +509,8 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
   <h2>换成自己的数据</h2>
   <p class="lede">照着这张清单逐条核对，能避开九成的失败。</p>
 
-  <div class="checkline"><span class="tick">✓</span><div><b>rMATS 五个表用官方文件名。</b><code>SE.MATS.JC.txt</code> 就是 <code>SE.MATS.JC.txt</code>，改名成大写的 <code>SE.MATS.JC.TXT</code> 也能认，但改成 <code>跳跃.MATS.txt</code> 就认不出。</div></div>
-  <div class="checkline"><span class="tick">✓</span><div><b>用 JC 表而不是 JCEC 表。</b>官方推荐 JC（junction counts），JCEC 会引入外显子计数，PSI 定义不一致。</div></div>
+  <div class="checkline"><span class="tick">✓</span><div><b>rMATS 文件名不用改。</b>系统按表头自动识别，<code>SE.MATS.JC.txt</code>、<code>UPF1_vs_ctrl_SE.MATS.JCEC.txt</code>、<code>ri.mats.jc.txt</code> 都认。唯一的例外是 <b>A3SS 与 A5SS</b>：这两类表头逐列相同，只能靠文件名里的 <code>A3SS</code> / <code>A5SS</code> 区分，所以文件名别只写 <code>event.txt</code>。</div></div>
+  <div class="checkline"><span class="tick">✓</span><div><b>同一类事件优先放 JC 表。</b>官方推荐 JC（junction counts）；JCEC 也能读，但会引入外显子计数，PSI 定义与 JC 略有差别。两类同时存在时，系统自动优先用 JC。</div></div>
   <div class="checkline"><span class="tick">✓</span><div><b>CDS 必须是确定读码框的完整序列。</b>长度是 3 的倍数、只含 ACGT、首密码子是 ATG、无内部终止子。从 GTF + 基因组现拼一段外显子序列通常不满足这些条件，会被截断成空结果。</div></div>
   <div class="checkline"><span class="tick">✓</span><div><b>连接点位置填整数，不要填碱基。</b>最常见的错误是抄了一小段 <code>CCTGAC</code> 进去。系统会把它当 0 处理，然后一条肽都产不出来。</div></div>
   <div class="checkline"><span class="tick">✓</span><div><b>HLA 用 <code>HLA-A*02:01</code> 这种完整写法。</b><code>A2</code>、<code>HLA-A2</code>、<code>A0201</code> 都会被拒。</div></div>

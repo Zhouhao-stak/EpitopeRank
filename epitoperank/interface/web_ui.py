@@ -60,7 +60,7 @@ _HTML = """<!DOCTYPE html>
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { background: var(--bg); }
-body { font-family: var(--font-sans); background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px; -webkit-font-smoothing: antialiased; }
 body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; background: radial-gradient(circle at 82% -8%, rgba(94,234,212,.14), transparent 32%), radial-gradient(circle at 5% 100%, rgba(183,227,106,.08), transparent 28%), linear-gradient(120deg, rgba(255,255,255,.015) 1px, transparent 1px); background-size: auto, auto, 34px 34px; }
 .app { display: flex; min-height: 100vh; }
 .sidebar { width: 264px; background: rgba(7, 21, 30, .88); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0; overflow-y: auto; z-index: 100; backdrop-filter: blur(18px); }
@@ -69,25 +69,25 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .content { padding: 30px 34px 60px; max-width: 1600px; margin: 0 auto; }
 
 .brand { padding: 28px 22px 24px; border-bottom: 1px solid var(--border); position: relative; }
-.brand::before { content: ""; display: block; width: 34px; height: 34px; margin-bottom: 16px; border-radius: 11px; background: radial-gradient(circle at 30% 25%, #e7fff8 0 8%, var(--accent) 9% 35%, #157f83 36% 70%, #0b303a 71%); box-shadow: 0 0 0 5px rgba(94,234,212,.08), 0 0 32px rgba(94,234,212,.23); }
-.brand-name { font-size: 21px; font-weight: 750; color: var(--white); letter-spacing: -.4px; }
-.brand-tagline { font-size: 10px; color: var(--accent); margin-top: 4px; text-transform: uppercase; letter-spacing: 1.7px; font-weight: 700; }
+.brand::before { content: ""; display: block; width: 34px; height: 34px; margin-bottom: 16px; border-radius: var(--radius); background: radial-gradient(circle at 30% 25%, #e7fff8 0 8%, var(--accent) 9% 35%, #157f83 36% 70%, #0b303a 71%); box-shadow: 0 0 0 5px rgba(94,234,212,.08), 0 0 32px rgba(94,234,212,.23); }
+.brand-name { font-size: 20px; font-weight: 600; color: var(--white); letter-spacing: -.4px; }
+.brand-tagline { font-size: 12px; color: var(--accent); margin-top: 4px; text-transform: uppercase; letter-spacing: 1.7px; font-weight: 600; }
 .nav-section { padding: 22px 0 0; }
-.nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.7px; color: var(--text-muted); padding: 0 22px; margin-bottom: 9px; }
-.nav-item { display: flex; align-items: center; gap: 11px; padding: 11px 20px; margin: 3px 12px 3px 0; color: var(--text-secondary); cursor: pointer; transition: all .2s ease; font-size: 14px; font-weight: 600; border-left: 2px solid transparent; border-radius: 0 9px 9px 0; }
+.nav-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.7px; color: var(--text-muted); padding: 0 22px; margin-bottom: 9px; }
+.nav-item { display: flex; align-items: center; gap: 11px; padding: 11px 20px; margin: 3px 12px 3px 0; color: var(--text-secondary); cursor: pointer; transition: all .2s ease; font-size: 14px; font-weight: 600; border-left: 2px solid transparent; border-radius: 0 var(--radius) var(--radius) 0; }
 .nav-item:hover { background: rgba(94,234,212,.07); color: var(--white); }
 .nav-item.active { background: linear-gradient(90deg, rgba(94,234,212,.16), rgba(94,234,212,.04)); color: var(--white); border-left-color: var(--accent); box-shadow: inset 0 0 24px rgba(94,234,212,.04); }
 
 .card, .chart-container, .filters { background: linear-gradient(145deg, rgba(17,43,54,.92), rgba(10,29,39,.92)); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-5); box-shadow: var(--shadow-sm); }
 .card { transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
 .card:hover { border-color: rgba(94,234,212,.48); transform: translateY(-1px); box-shadow: var(--shadow); }
-.card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .9px; color: var(--text-secondary); }
+.card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .9px; color: var(--text-secondary); }
 .grid { display: grid; gap: 18px; }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
 
-.status { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; border: 1px solid transparent; }
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px; border: 1px solid transparent; }
 .status-running { background: rgba(94,234,212,.12); color: var(--accent); border-color: rgba(94,234,212,.22); }
 .status-completed { background: rgba(183,227,106,.12); color: var(--secondary); border-color: rgba(183,227,106,.22); }
 .status-waiting { background: rgba(118,146,157,.12); color: var(--text-secondary); border-color: rgba(118,146,157,.2); }
@@ -95,7 +95,7 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .status-running .status-dot { background: var(--accent); box-shadow: 0 0 0 3px rgba(94,234,212,.12), 0 0 12px var(--accent); }
 .status-completed .status-dot { background: var(--secondary); box-shadow: 0 0 0 3px rgba(183,227,106,.12); }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: 9px; border: 1px solid transparent; cursor: pointer; transition: all .2s ease; font-family: var(--font-sans); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 10px 18px; font-size: 13px; font-weight: 600; border-radius: var(--radius); border: 1px solid transparent; cursor: pointer; transition: all .2s ease; font-family: var(--font-sans); }
 .btn:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn-primary { background: linear-gradient(135deg, #6af3d9, #34bdb2); color: #062027; border-color: #6af3d9; box-shadow: 0 6px 20px rgba(94,234,212,.18); }
 .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 9px 25px rgba(94,234,212,.28); }
@@ -110,37 +110,37 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .neo-result-body th { position: sticky; top: 0; z-index: 1; background: #0d2430; white-space: nowrap; }
 .neo-result-body td { white-space: nowrap; font-family: var(--font-mono); font-size: 12px; padding: 8px 12px; }
 .neo-result-body pre { margin: 0; padding: 16px; font-size: 12px; line-height: 1.6; white-space: pre; color: var(--text-secondary); font-family: var(--font-mono); }
-.neo-path { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); word-break: break-all; margin-top: 10px; }
+.neo-path { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); word-break: break-all; margin-top: 10px; }
 
 .table-container { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead { background: rgba(94,234,212,.06); }
-th { text-align: left; padding: 11px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+th { text-align: left; padding: 11px 14px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .7px; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
 td { padding: 11px 14px; border-bottom: 1px solid rgba(36,73,87,.65); color: var(--text-secondary); }
 tr:last-child td { border-bottom: none; }
 tr:hover { background: rgba(94,234,212,.045); }
 
 .pipeline { display: flex; flex-direction: column; gap: 12px; }
-.pipeline-step { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); background: rgba(12,32,43,.78); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all .2s ease; }
+.pipeline-step { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); background: rgba(12,32,43,.78); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all .2s ease; }
 .pipeline-step:hover { border-color: var(--accent); transform: translateX(2px); }
 .pipeline-step.active { border-color: var(--accent); background: linear-gradient(90deg, rgba(94,234,212,.13), rgba(94,234,212,.03)); }
 .pipeline-step.completed { border-color: rgba(183,227,106,.46); }
-.step-number { width: 36px; height: 36px; border-radius: 11px; background: var(--surface-3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 750; color: var(--text-secondary); flex-shrink: 0; }
+.step-number { width: 36px; height: 36px; border-radius: var(--radius); background: var(--surface-3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--text-secondary); flex-shrink: 0; }
 .pipeline-step.active .step-number { background: var(--accent); color: #062027; }
 .pipeline-step.completed .step-number { background: rgba(183,227,106,.18); color: var(--secondary); }
 .step-info { flex: 1; }
-.step-name { font-weight: 700; font-size: 14px; margin-bottom: var(--space-1); }
+.step-name { font-weight: 600; font-size: 14px; margin-bottom: var(--space-1); }
 .step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
 .filters { display: flex; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-5); }
 .filter-group { display: flex; align-items: center; gap: var(--space-2); }
-.filter-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
+.filter-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
 .checkbox-group { display: flex; gap: var(--space-3); flex-wrap: wrap; }
-.checkbox-label { display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 7px; color: var(--text-secondary); }
+.checkbox-label { display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: var(--radius-sm); color: var(--text-secondary); }
 .checkbox-label:hover { background: rgba(94,234,212,.08); color: var(--white); }
 input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
 .search-bar { display: flex; gap: var(--space-3); margin-bottom: var(--space-5); }
-.search-input, input, select, textarea { flex: 1; padding: 10px 13px; border: 1px solid var(--border); border-radius: 9px; font-size: 14px; font-family: var(--font-sans); color: var(--text); background: rgba(8,25,34,.78); }
+.search-input, input, select, textarea { flex: 1; padding: 10px 13px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; font-family: var(--font-sans); color: var(--text); background: rgba(8,25,34,.78); }
 .search-input::placeholder, input::placeholder, textarea::placeholder { color: var(--text-muted); }
 .search-input:focus, input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(94,234,212,.1); }
 #upload-modal input, #project-name, #analysis-query { color: var(--text) !important; background: rgba(8,25,34,.9) !important; border-color: var(--border) !important; }
@@ -151,10 +151,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 .page { display: none; }
 .page.active { display: block; animation: pageIn .24s ease-out; }
-.hero-chip { padding: 7px 10px; border: 1px solid rgba(94,234,212,.26); border-radius: 999px; color: var(--text-secondary); background: rgba(94,234,212,.07); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.hero-chip { padding: 7px 10px; border: 1px solid rgba(94,234,212,.26); border-radius: 999px; color: var(--text-secondary); background: rgba(94,234,212,.07); font-size: 12px; font-weight: 600; white-space: nowrap; }
 .model-config-body { display: flex; flex-direction: column; gap: 10px; padding: 0 14px 14px; }
 .model-config-body .cfg-row { display: flex; align-items: center; gap: 10px; }
-.model-config-body .cfg-row label { flex: none; width: 88px; font-size: 12px; font-weight: 700; color: var(--text-secondary); }
+.model-config-body .cfg-row label { flex: none; width: 88px; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
 .model-config-body .cfg-row input { flex: 1; padding: 8px 10px; font-size: 13px; }
 .model-config-body .cfg-hint, .model-config-body .cfg-msg { font-size: 12px; line-height: 1.6; color: var(--text-muted); }
 .model-config-body .cfg-msg.ok { color: var(--secondary); }
@@ -163,15 +163,15 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 /* Smart-ingestion review dialog */
 #ingest-modal { display: none; position: fixed; inset: 0; z-index: 1200; padding: 24px; background: rgba(3,12,17,.84); backdrop-filter: blur(10px); align-items: center; justify-content: center; }
 #ingest-modal.open { display: flex; }
-.ingest-panel { width: min(980px, 96vw); max-height: 90vh; display: flex; flex-direction: column; background: linear-gradient(160deg, var(--surface), #091b25); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); overflow: hidden; }
+.ingest-panel { width: min(980px, 96vw); max-height: 90vh; display: flex; flex-direction: column; background: linear-gradient(160deg, var(--surface), #091b25); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden; }
 .ingest-head { display: flex; align-items: flex-start; gap: 12px; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); background: rgba(7,21,30,.72); }
-.ingest-head .ingest-title { font-size: 20px; font-weight: 750; color: var(--white); letter-spacing: -.3px; }
+.ingest-head .ingest-title { font-size: 20px; font-weight: 600; color: var(--white); letter-spacing: -.3px; }
 .ingest-head .ingest-sub { margin-top: 4px; font-size: 12px; color: var(--text-muted); }
-.ingest-close { margin-left: auto; flex: none; width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border); background: rgba(8,25,34,.7); color: var(--text-secondary); font-size: 18px; line-height: 1; cursor: pointer; }
+.ingest-close { margin-left: auto; flex: none; width: 32px; height: 32px; border-radius: var(--radius); border: 1px solid var(--border); background: rgba(8,25,34,.7); color: var(--text-secondary); font-size: 16px; line-height: 1; cursor: pointer; }
 .ingest-close:hover { color: var(--white); border-color: var(--accent); }
 .ingest-body { padding: 18px 24px 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
 .ingest-trace { display: flex; gap: 8px; flex-wrap: wrap; }
-.ingest-step { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(8,25,34,.55); font-size: 11px; font-weight: 650; color: var(--text-secondary); }
+.ingest-step { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(8,25,34,.55); font-size: 12px; font-weight: 600; color: var(--text-secondary); }
 .ingest-step .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); }
 .ingest-step.ok .dot { background: var(--secondary); box-shadow: 0 0 8px rgba(183,227,106,.5); }
 .ingest-step.warn .dot { background: var(--warning); }
@@ -180,27 +180,27 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .ingest-step.skip { opacity: .62; }
 .ingest-source { font-size: 12px; color: var(--text-muted); }
 .ingest-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.ingest-stat { padding: 12px 14px; border: 1px solid var(--border); border-radius: 11px; background: rgba(8,25,34,.52); }
-.ingest-stat .v { font-size: 22px; font-weight: 750; color: var(--white); line-height: 1.2; }
-.ingest-stat .k { font-size: 10px; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); margin-top: 3px; }
+.ingest-stat { padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(8,25,34,.52); }
+.ingest-stat .v { font-size: 20px; font-weight: 600; color: var(--white); line-height: 1.2; }
+.ingest-stat .k { font-size: 12px; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); margin-top: 3px; }
 .ingest-files { font-size: 12px; color: var(--text-muted); line-height: 1.85; }
-.ingest-files code { font-family: var(--font-mono); color: var(--text-secondary); background: rgba(94,234,212,.06); padding: 1px 5px; border-radius: 5px; }
-.ingest-section-title { font-size: 11px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+.ingest-files code { font-family: var(--font-mono); color: var(--text-secondary); background: rgba(94,234,212,.06); padding: 1px 5px; border-radius: var(--radius-sm); }
+.ingest-section-title { font-size: 12px; font-weight: 600; letter-spacing: 1.3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 .ingest-map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 16px; }
 .ingest-map-row { display: flex; align-items: center; gap: 9px; }
-.ingest-map-row label { flex: none; width: 132px; font-size: 12px; font-weight: 650; color: var(--text-secondary); }
-.ingest-map-row select { flex: 1; min-width: 0; padding: 7px 9px; font-size: 12px; border-radius: 8px; }
+.ingest-map-row label { flex: none; width: 132px; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.ingest-map-row select { flex: 1; min-width: 0; padding: 7px 9px; font-size: 12px; border-radius: var(--radius); }
 .ingest-map-row select.missing { border-color: rgba(243,189,114,.55); }
 .ingest-issues { display: flex; flex-direction: column; gap: 6px; }
-.ingest-issue { display: flex; gap: 8px; padding: 8px 10px; border-radius: 9px; font-size: 12px; line-height: 1.55; border: 1px solid var(--border); background: rgba(8,25,34,.45); color: var(--text-secondary); }
-.ingest-issue .tag { flex: none; font-weight: 800; font-size: 10px; letter-spacing: .6px; padding: 2px 6px; border-radius: 5px; height: fit-content; }
+.ingest-issue { display: flex; gap: 8px; padding: 8px 10px; border-radius: var(--radius); font-size: 12px; line-height: 1.55; border: 1px solid var(--border); background: rgba(8,25,34,.45); color: var(--text-secondary); }
+.ingest-issue .tag { flex: none; font-weight: 600; font-size: 12px; letter-spacing: .6px; padding: 2px 6px; border-radius: var(--radius-sm); height: fit-content; }
 .ingest-issue.error { border-color: rgba(251,113,133,.3); }
 .ingest-issue.error .tag { background: rgba(251,113,133,.14); color: var(--danger); }
 .ingest-issue.warning .tag { background: rgba(243,189,114,.14); color: var(--warning); }
 .ingest-issue.info .tag { background: rgba(94,234,212,.12); color: var(--accent); }
-.ingest-preview-table { max-height: 260px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; }
+.ingest-preview-table { max-height: 260px; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); }
 .ingest-preview-table table { min-width: 620px; }
-.ingest-privacy { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+.ingest-privacy { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
 .ingest-footer { display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-top: 1px solid var(--border); background: rgba(7,21,30,.9); }
 .ingest-footer .ingest-error { color: var(--danger); font-size: 12px; margin-right: auto; }
 @media (max-width: 760px) { .ingest-stats { grid-template-columns: repeat(2, 1fr); } .ingest-map-grid { grid-template-columns: 1fr; } .ingest-map-row label { width: 112px; } }
@@ -211,27 +211,27 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 #event-detail-modal { background: rgba(3,12,17,.78) !important; backdrop-filter: blur(8px); }
 #event-detail-modal > div { background: var(--surface) !important; border-color: var(--border) !important; color: var(--text) !important; box-shadow: var(--shadow-lg); }
 #event-detail-modal > div > div:first-child { background: linear-gradient(135deg, #0d4d56, #102a39) !important; }
-#event-detail-modal [style*="font-size: 32px"] { color: var(--accent) !important; }
+#event-detail-modal [style*="font-size: 28px"] { color: var(--accent) !important; }
 
 /* MCP tool console */
 .mcp-panel { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
 .mcp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.mcp-title { font-size: 16px; font-weight: 750; color: var(--white); letter-spacing: -.2px; }
-.mcp-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; letter-spacing: .4px; }
-.mcp-badge { padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 750; border: 1px solid var(--border); color: var(--text-secondary); background: rgba(8,25,34,.6); white-space: nowrap; }
+.mcp-title { font-size: 16px; font-weight: 600; color: var(--white); letter-spacing: -.2px; }
+.mcp-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; letter-spacing: .4px; }
+.mcp-badge { padding: 4px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); color: var(--text-secondary); background: rgba(8,25,34,.6); white-space: nowrap; }
 .mcp-badge.ok { color: var(--secondary); border-color: rgba(183,227,106,.35); background: rgba(183,227,106,.08); }
 .mcp-badge.err { color: var(--danger); border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); }
 .mcp-field { display: flex; flex-direction: column; gap: 6px; }
-.mcp-field > label { font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); }
+.mcp-field > label { font-size: 12px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); }
 .mcp-inline { display: flex; gap: 8px; align-items: center; }
 .mcp-inline select { flex: 1; min-width: 0; }
-.mcp-panel select, .mcp-panel textarea, .mcp-panel input[type="text"] { width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 9px; background: rgba(8,25,34,.9); color: var(--text); font-family: inherit; font-size: 13px; }
+.mcp-panel select, .mcp-panel textarea, .mcp-panel input[type="text"] { width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(8,25,34,.9); color: var(--text); font-family: inherit; font-size: 13px; }
 .mcp-panel input[type="text"]::placeholder { color: var(--text-muted); }
 .mcp-panel textarea { font-family: var(--font-mono); font-size: 12px; line-height: 1.55; resize: vertical; min-height: 86px; }
 .mcp-desc { font-size: 12px; line-height: 1.6; color: var(--text-secondary); min-height: 18px; }
-.mcp-hint { font-size: 11px; line-height: 1.5; color: var(--text-muted); word-break: break-all; }
+.mcp-hint { font-size: 12px; line-height: 1.5; color: var(--text-muted); word-break: break-all; }
 .mcp-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.mcp-result { margin: 0; padding: 12px; max-height: 300px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; background: rgba(3,12,17,.75); color: var(--text-secondary); font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+.mcp-result { margin: 0; padding: 12px; max-height: 300px; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(3,12,17,.75); color: var(--text-secondary); font-family: var(--font-mono); font-size: 12px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
 .mcp-result.err { color: var(--danger); }
 
 @keyframes pageIn { from { opacity: .25; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -239,25 +239,25 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 @media (max-width: 1100px) { .sidebar { width: 236px; } .main { margin-left: 236px; } .grid-4 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .content { padding: 20px 16px 40px; } .topbar { padding: 0 16px; } }
 .lang-toggle { display: inline-flex; align-items: center; gap: 2px; padding: 3px; background: rgba(8, 25, 34, .06); border: 1px solid var(--border); border-radius: 999px; }
-.lang-toggle button { border: 0; background: transparent; color: var(--text-secondary); font-family: inherit; font-size: 12px; font-weight: 700; line-height: 1; padding: 6px 10px; border-radius: 999px; cursor: pointer; transition: background .18s ease, color .18s ease; }
+.lang-toggle button { border: 0; background: transparent; color: var(--text-secondary); font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1; padding: 6px 10px; border-radius: 999px; cursor: pointer; transition: background .18s ease, color .18s ease; }
 .lang-toggle button:hover { color: var(--text); }
 .lang-toggle button.active { background: var(--black); color: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
-@media (max-width: 520px) { .lang-toggle button { padding: 5px 7px; font-size: 11px; } }
+@media (max-width: 520px) { .lang-toggle button { padding: 5px 7px; font-size: 12px; } }
 
 /* Task-oriented peptide workspace. Shared application colors remain authoritative. */
 .pep-workspace { max-width:1280px; margin:auto; }
 .pep-header { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-bottom:28px; }
-.pep-header h2 { font-size:30px; letter-spacing:-.025em; margin-bottom:8px; }
+.pep-header h2 { font-size:28px; letter-spacing:-.025em; margin-bottom:8px; }
 .pep-header p,.pep-help { color:var(--text-secondary); font-size:14px; }
 .pep-steps { list-style:none; display:flex; gap:32px; padding:18px 0; margin-bottom:28px; border-block:1px solid var(--border); }
 .pep-steps li { display:flex; align-items:center; gap:10px; color:var(--text-secondary); font-size:14px; }
 .pep-steps b { color:var(--accent); font-variant-numeric:tabular-nums; }
 .pep-layout { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:32px; align-items:start; }
-.pep-inputs { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:0 28px; }
+.pep-inputs { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0 28px; }
 .pep-section { padding:24px 0; }
 .pep-inputs .pep-section + .pep-section { border-top:1px solid var(--border); }
-.pep-workspace h3 { font-size:17px; font-weight:650; margin-bottom:10px; }
-.pep-options { padding:0 24px; background:var(--surface-2); border-radius:12px; }
+.pep-workspace h3 { font-size:16px; font-weight:600; margin-bottom:10px; }
+.pep-options { padding:0 24px; background:var(--surface-2); border-radius:var(--radius); }
 .pep-options .btn-primary { width:100%; min-height:46px; }
 .pep-guide { border-top:1px solid var(--border); padding:22px 0; }
 .pep-guide h3 { font-size:14px; }
@@ -269,13 +269,13 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .pep-output { margin-top:32px; padding:24px 0; border-block:1px solid var(--border); min-width:0; }
 #pep-results { overflow-x:auto; }
 #pep-results:empty::before { content:'完成序列与 HLA 设置后，点击「预测并排序」。结果将在这里显示。'; display:block; padding:26px 0; color:var(--text-secondary); font-size:14px; }
-.pep-project { margin-top:24px; padding:20px 24px; background:var(--surface); border-radius:12px; border:1px solid var(--border); }
-.pep-project summary { cursor:pointer; font-weight:650; }
+.pep-project { margin-top:24px; padding:20px 24px; background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); }
+.pep-project summary { cursor:pointer; font-weight:600; }
 .pep-project[open] summary { margin-bottom:16px; }
 :focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
 .btn:disabled { cursor:not-allowed; opacity:.55; }
 @media(max-width:1100px) { .pep-layout { grid-template-columns:1fr; } .pep-header { align-items:flex-start; } }
-@media(max-width:600px) { .pep-header { flex-direction:column; } .pep-header h2 { font-size:25px; } .pep-steps { gap:12px; flex-wrap:wrap; } .pep-steps li { font-size:12px; } .pep-inputs { padding:0 16px; } }
+@media(max-width:600px) { .pep-header { flex-direction:column; } .pep-header h2 { font-size:28px; } .pep-steps { gap:12px; flex-wrap:wrap; } .pep-steps li { font-size:12px; } .pep-inputs { padding:0 16px; } }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; animation:none !important; } }
 
 /* EpitopeRank research workspace: daylight surfaces, restrained teal, readable evidence. */
@@ -285,41 +285,41 @@ body { font-size:14px; } body::before { display:none; }
 * { scrollbar-width:thin; scrollbar-color:#b7c8cd transparent; }
 .sidebar { width:232px; background:#142e38; backdrop-filter:none; border:0; padding-bottom:24px; }
 .brand { padding:30px 24px; border-color:#ffffff16; }
-.brand::before { display:none; }.brand-name { color:#f6fbfa; font-size:24px; letter-spacing:-.7px; }.brand-tagline { color:#a8c4ca; font-size:11px; letter-spacing:1px; margin-top:8px; }
-.nav-section { padding-top:24px; }.nav-label { color:#90aeb7; font-size:11px; letter-spacing:.6px; padding-inline:24px; }
-.nav-item { width:calc(100% - 24px); margin:4px 12px; padding:12px; color:#c4d5db; border:0; border-radius:7px; background:transparent; text-align:left; font:500 14px var(--font-sans); }
+.brand::before { display:none; }.brand-name { color:#f6fbfa; font-size:20px; letter-spacing:-.7px; }.brand-tagline { color:#a8c4ca; font-size:12px; letter-spacing:1px; margin-top:8px; }
+.nav-section { padding-top:24px; }.nav-label { color:#90aeb7; font-size:12px; letter-spacing:.6px; padding-inline:24px; }
+.nav-item { width:calc(100% - 24px); margin:4px 12px; padding:12px; color:#c4d5db; border:0; border-radius:var(--radius-sm); background:transparent; text-align:left; font:400 14px var(--font-sans); }
 .nav-item::before { display:none !important; }.nav-item svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
 .nav-item:hover { background:#ffffff0c; color:#fff; }.nav-item.active { background:#284b53; box-shadow:none; color:#a5f0dc; }
 .main { margin-left:232px; min-width:0; }.topbar { height:74px; background:#ffffffed; border-bottom:1px solid var(--border); padding:0 36px; backdrop-filter:none; gap:16px; }
 #current-project { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .content { padding:32px 36px 64px; max-width:1560px; }.content:focus { outline:none; }
-.workspace-heading { display:flex; justify-content:space-between; align-items:center; gap:20px; margin-bottom:28px; }.workspace-heading h1,.pep-header h2 { font-size:28px; letter-spacing:-.7px; font-weight:650; line-height:1.3; }.workspace-heading p { margin-top:9px; color:var(--text-secondary); max-width:74ch; font-size:14px; }
-.workspace-tag { border:1px solid var(--border); border-radius:6px; padding:6px 11px; color:var(--text-secondary); white-space:nowrap; font-size:12px; background:#fff; }
-.start-guide { display:grid; grid-template-columns:1.3fr 1fr; gap:40px; background:#eaf3f0; padding:30px; border-radius:12px; margin-bottom:28px; }.start-guide h2 { font-size:21px; font-weight:650; }.start-guide p { margin:10px 0 22px; color:var(--text-secondary); max-width:52ch; }.start-guide .btn { margin:0 8px 8px 0; }.start-guide ol { list-style:none; display:grid; gap:16px; }.start-guide li { display:flex; gap:16px; font-size:12px; color:var(--text-secondary); }.start-guide li b { font-size:13px; color:var(--accent); padding-top:2px; font-variant-numeric:tabular-nums; }.start-guide strong { display:block; font-size:14px; color:var(--text); margin-bottom:3px; }
+.workspace-heading { display:flex; justify-content:space-between; align-items:center; gap:20px; margin-bottom:28px; }.workspace-heading h1,.pep-header h2 { font-size:28px; letter-spacing:-.7px; font-weight:600; line-height:1.3; }.workspace-heading p { margin-top:9px; color:var(--text-secondary); max-width:74ch; font-size:14px; }
+.workspace-tag { border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 11px; color:var(--text-secondary); white-space:nowrap; font-size:12px; background:#fff; }
+.start-guide { display:grid; grid-template-columns:1.3fr 1fr; gap:40px; background:#eaf3f0; padding:30px; border-radius:var(--radius); margin-bottom:28px; }.start-guide h2 { font-size:20px; font-weight:600; }.start-guide p { margin:10px 0 22px; color:var(--text-secondary); max-width:52ch; }.start-guide .btn { margin:0 8px 8px 0; }.start-guide ol { list-style:none; display:grid; gap:16px; }.start-guide li { display:flex; gap:16px; font-size:12px; color:var(--text-secondary); }.start-guide li b { font-size:13px; color:var(--accent); padding-top:2px; font-variant-numeric:tabular-nums; }.start-guide strong { display:block; font-size:14px; color:var(--text); margin-bottom:3px; }
 .card,.chart-container,.filters { background:var(--surface); box-shadow:none; border:1px solid var(--border); padding:24px; }.card:hover { transform:none; box-shadow:none; border-color:var(--border); }
 .card-title { text-transform:none; letter-spacing:0; font-size:14px; }.grid { gap:24px; }.grid > * { min-width:0; }
-#page-dashboard > .grid-4 { gap:0; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; }#page-dashboard > .grid-4 > .card { border:0; border-right:1px solid var(--border); border-radius:0; }#page-dashboard > .grid-4 > .card:last-child { border-right:0; }
-.btn { border-radius:7px; font-weight:600; min-height:40px; transition:background .15s,border-color .15s; }.btn-sm { min-height:34px; }.btn-primary { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:none; }.btn-primary:hover { background:#09685f; color:#fff; box-shadow:none; transform:none; filter:none; }.btn-secondary { background:#fff; color:var(--text); border-color:#cbd8dc; }.btn-secondary:hover { background:#edf5f2; color:#12675c; border-color:#8bb9ae; }.btn-danger { background:#fff3f4; border-color:#e8b5be; }.btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-input,select,textarea,.search-input { background:#fff; color:var(--text); min-width:0; border-color:#c6d5da; border-radius:7px; caret-color:var(--accent); }
+#page-dashboard > .grid-4 { gap:0; background:#fff; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }#page-dashboard > .grid-4 > .card { border:0; border-right:1px solid var(--border); border-radius:0; }#page-dashboard > .grid-4 > .card:last-child { border-right:0; }
+.btn { border-radius:var(--radius-sm); font-weight:600; min-height:40px; transition:background .15s,border-color .15s; }.btn-sm { min-height:34px; }.btn-primary { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:none; }.btn-primary:hover { background:#09685f; color:#fff; box-shadow:none; transform:none; filter:none; }.btn-secondary { background:#fff; color:var(--text); border-color:#cbd8dc; }.btn-secondary:hover { background:#edf5f2; color:#12675c; border-color:#8bb9ae; }.btn-danger { background:#fff3f4; border-color:#e8b5be; }.btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+input,select,textarea,.search-input { background:#fff; color:var(--text); min-width:0; border-color:#c6d5da; border-radius:var(--radius-sm); caret-color:var(--accent); }
 input[type=checkbox] { flex:0 0 16px; }.checkbox-label:hover { color:var(--text); background:#eef5f3; }input::placeholder,textarea::placeholder { color:#677b84; }
 #upload-modal input,#project-name,#analysis-query { background:#fff !important; }.search-input:focus,input:focus,select:focus,textarea:focus { box-shadow:0 0 0 3px #087e7214; }
 :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }.sidebar :focus-visible { outline-color:#a5f0dc; }
-.lang-toggle { background:#f5f7f8; border-color:var(--border); border-radius:7px; }.lang-toggle button { color:var(--text-secondary); white-space:nowrap; }.lang-toggle button.active { color:var(--accent); background:#dfeee9; border-radius:5px; }
+.lang-toggle { background:#f5f7f8; border-color:var(--border); border-radius:var(--radius-sm); }.lang-toggle button { color:var(--text-secondary); white-space:nowrap; }.lang-toggle button.active { color:var(--accent); background:#dfeee9; border-radius:var(--radius-sm); }
 .status { font-weight:600; }.status-dot { box-shadow:none !important; }.status-running { background:#e5f4ef; border-color:#bddfd4; }.status-completed { background:#eef5e9; border-color:#ccdfbf; }
 .pipeline-step { background:#fff; border-color:var(--border); padding:20px; cursor:default; }.pipeline-step:hover { transform:none; border-color:var(--border); }.pipeline-step.active { background:#eff8f5; border-color:#80bbaa; }.pipeline-step.active .step-number { color:#fff; }.step-number { border-radius:50%; font-variant-numeric:tabular-nums; }#progress-bar { background:var(--accent) !important; box-shadow:none !important; }
 #page-pipeline > .card:last-child { padding:28px; }.pipeline { gap:0; }.pipeline-step { border:0; border-radius:0; border-bottom:1px solid var(--border); }.pipeline-step:last-child { border-bottom:0; }
 #page-explorer .filters { border:0; border-radius:0; padding:0; box-shadow:none; gap:22px; }.filter-group { align-items:flex-start; flex-direction:column; }.filter-label { font-size:12px; }.table-container { background:white; }table { font-variant-numeric:tabular-nums; }th { background:#eff4f5; letter-spacing:0; font-size:12px; padding:13px 16px; }td { border-bottom:1px solid #e8eef0; padding:14px 16px; }tr:hover { background:#f5faf8; }
-#page-visualization > .grid { grid-template-columns:320px minmax(0,1fr); }#page-visualization .card { padding:20px; }#page-visualization .card .btn { border-color:transparent; border-radius:5px; background:#f5f8f8; }#page-visualization .card .btn:hover { background:#e5f1ec; }#chart-display { min-height:560px !important; display:flex; flex-direction:column; justify-content:center; }#chart-display img { max-width:100%; height:auto; }
+#page-visualization > .grid { grid-template-columns:320px minmax(0,1fr); }#page-visualization .card { padding:20px; }#page-visualization .card .btn { border-color:#bfdcff26; border-radius:var(--radius-sm); background:#162d42; color:#eaf4ff; }#page-visualization .card .btn:hover { background:#23465a; border-color:#82eed866; color:#f1fffb; }#chart-display { min-height:560px !important; display:flex; flex-direction:column; justify-content:center; }#chart-display img { max-width:100%; height:auto; }
 #page-gene .search-bar { max-width:800px; }#page-gene > div:nth-of-type(2) { border-left:0 !important; }#page-gene #gene-details .card { min-height:300px; display:grid; align-content:center; }
-#page-report > .card { padding:32px; }#report-output { background:#f7f9fa; border-radius:8px; border:1px dashed #c6d5da; min-height:240px; display:grid; align-content:center; }#page-report .card > div:last-child { border-left:0 !important; }
+#page-report > .card { padding:32px; }#report-output { background:#f7f9fa; border-radius:var(--radius); border:1px dashed #c6d5da; min-height:240px; display:grid; align-content:center; }#page-report .card > div:last-child { border-left:0 !important; }
 #page-settings > .grid { grid-template-columns:minmax(300px,.8fr) minmax(0,1.2fr); align-items:start; }.cfg-row { flex-wrap:wrap; gap:10px; margin-bottom:16px; }.cfg-row label { color:var(--text-secondary); }.mcp-panel { background:transparent; border:0; padding:0; }.mcp-result { background:#f3f6f7; color:var(--text); border-color:var(--border); }.mcp-badge { color:var(--text-secondary); background:#edf3f3; }
-#page-neoantigen > .card:first-of-type { max-width:none !important; padding:28px !important; }#page-neoantigen > .card:first-of-type > h2 { display:none; }#page-neoantigen > .card:first-of-type > div[style*='padding:16px'] { border:0 !important; border-top:1px solid var(--border) !important; border-radius:0 !important; padding:24px 0 !important; }#page-neoantigen p { color:var(--text-secondary); max-width:85ch; }#page-neoantigen details { padding:22px; background:#f2f6f7; border-radius:8px; }#page-neoantigen details h3 { margin:24px 0 8px; font-size:16px; }.neo-result-body,.neo-result-body th { background:#f6f9fa; }#neo-result-title { color:var(--text) !important; }
-.pep-options { background:#eaf3f0; }.pep-header { margin-bottom:28px; }.pep-section { padding:26px 0; }.pep-steps { margin-bottom:24px; }.pep-output { background:#fff; padding:24px; border:1px solid var(--border); border-radius:12px; }#pep-results:empty::before { color:var(--text-secondary); }#pep-sequences { background:#f8fafb !important; }
+#page-neoantigen > .card:first-of-type { max-width:none !important; padding:28px !important; }#page-neoantigen > .card:first-of-type > h2 { display:none; }#page-neoantigen > .card:first-of-type > div[style*='padding:16px'] { border:0 !important; border-top:1px solid var(--border) !important; border-radius:0 !important; padding:24px 0 !important; }#page-neoantigen p { color:var(--text-secondary); max-width:85ch; }#page-neoantigen details { padding:22px; background:#f2f6f7; border-radius:var(--radius); }#page-neoantigen details h3 { margin:24px 0 8px; font-size:16px; }.neo-result-body,.neo-result-body th { background:#f6f9fa; }#neo-result-title { color:var(--text) !important; }
+.pep-options { background:#eaf3f0; }.pep-header { margin-bottom:28px; }.pep-section { padding:26px 0; }.pep-steps { margin-bottom:24px; }.pep-output { background:#fff; padding:24px; border:1px solid var(--border); border-radius:var(--radius); }#pep-results:empty::before { color:var(--text-secondary); }#pep-sequences { background:#f8fafb !important; }
 #upload-modal { background:#112b3866 !important; backdrop-filter:blur(3px); }#upload-modal > div { box-shadow:var(--shadow-lg); border:0 !important; }#drop-zone { background:#f3f8f6 !important; }#ingest-modal { background:#112b3866; }.ingest-panel { background:#fff; }.ingest-head,.ingest-footer { background:#f7f9fa; }
 .mobile-menu { display:none; }.skip-link { position:fixed; left:250px; top:-70px; z-index:2000; padding:12px; background:white; color:var(--accent); }.skip-link:focus { top:12px; }
 @media(min-width:1600px) { .content { padding-top:40px; } }
 @media(max-width:1100px) { .sidebar { width:216px; }.main { margin-left:216px; }.content { padding:26px 24px 48px; }.topbar { padding:0 24px; }.start-guide { grid-template-columns:1fr; gap:24px; }.start-guide ol { grid-template-columns:repeat(3,1fr); }.start-guide li { gap:10px; }#page-visualization > .grid { grid-template-columns:260px minmax(0,1fr); }#page-settings > .grid { grid-template-columns:1fr; } }
-@media(max-width:768px) { .mobile-menu { display:inline-flex; }.sidebar { display:none; width:232px; top:74px; box-shadow:12px 0 35px #142e3833; }.navigation-open .sidebar { display:block; }.main { margin-left:0; }.topbar { gap:10px; padding:12px 16px; height:auto; min-height:74px; flex-wrap:wrap; }.topbar > div:last-child { gap:8px !important; flex-wrap:wrap; }.topbar #current-project { flex:1; }.content { padding:24px 16px 48px; }.workspace-heading { align-items:flex-start; }.workspace-heading h1,.pep-header h2 { font-size:25px; }.workspace-tag { display:none; }.start-guide { padding:24px; }.start-guide ol { grid-template-columns:1fr; }.grid-2,.grid-3,.grid-4,#page-visualization > .grid { grid-template-columns:1fr; }#page-dashboard > .grid-4 { grid-template-columns:repeat(2,1fr); }#page-dashboard > .grid-4 > .card { padding:18px; border-bottom:1px solid var(--border); }#chart-display { position:static !important; min-height:320px !important; }.search-bar { flex-wrap:wrap; }.search-bar input { flex-basis:100%; }.pipeline-step { padding:18px 0; flex-wrap:wrap; }.step-info { min-width:150px; }.card { padding:20px; }#page-report > .card { padding:20px; }#page-report .card > div:first-child { flex-wrap:wrap; gap:20px; }#page-report .card > div:first-child > div:last-child { flex-wrap:wrap; }.mcp-inline { flex-wrap:wrap; }.cfg-row { display:flex; flex-direction:column; align-items:stretch; }.cfg-row label { width:auto; }#neo-mapping-fields { grid-template-columns:1fr !important; }.skip-link { left:16px; }.pep-header { gap:18px; } }
+@media(max-width:768px) { .mobile-menu { display:inline-flex; }.sidebar { display:none; width:232px; top:74px; box-shadow:12px 0 35px #142e3833; }.navigation-open .sidebar { display:block; }.main { margin-left:0; }.topbar { gap:10px; padding:12px 16px; height:auto; min-height:74px; flex-wrap:wrap; }.topbar > div:last-child { gap:8px !important; flex-wrap:wrap; }.topbar #current-project { flex:1; }.content { padding:24px 16px 48px; }.workspace-heading { align-items:flex-start; }.workspace-heading h1,.pep-header h2 { font-size:28px; }.workspace-tag { display:none; }.start-guide { padding:24px; }.start-guide ol { grid-template-columns:1fr; }.grid-2,.grid-3,.grid-4,#page-visualization > .grid { grid-template-columns:1fr; }#page-dashboard > .grid-4 { grid-template-columns:repeat(2,1fr); }#page-dashboard > .grid-4 > .card { padding:18px; border-bottom:1px solid var(--border); }#chart-display { position:static !important; min-height:320px !important; }.search-bar { flex-wrap:wrap; }.search-bar input { flex-basis:100%; }.pipeline-step { padding:18px 0; flex-wrap:wrap; }.step-info { min-width:150px; }.card { padding:20px; }#page-report > .card { padding:20px; }#page-report .card > div:first-child { flex-wrap:wrap; gap:20px; }#page-report .card > div:first-child > div:last-child { flex-wrap:wrap; }.mcp-inline { flex-wrap:wrap; }.cfg-row { display:flex; flex-direction:column; align-items:stretch; }.cfg-row label { width:auto; }#neo-mapping-fields { grid-template-columns:1fr !important; }.skip-link { left:16px; }.pep-header { gap:18px; } }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
 
 #stat-samples,#stat-events,#stat-significant { color:var(--text) !important; text-shadow:none; }
@@ -352,14 +352,14 @@ input[type=checkbox] { flex:0 0 16px; }.checkbox-label:hover { color:var(--text)
 .page.active { animation:none; }
 .topbar { background:rgba(255,255,255,.87); backdrop-filter:blur(16px); }
 .start-guide { position:relative; isolation:isolate; overflow:hidden; background:#e6f2ec; border:1px solid #d1e7df; }
-.start-guide::before { content:''; position:absolute; z-index:-1; width:460px; height:460px; left:var(--light-x,65%); top:var(--light-y,30%); transform:translate(-50%,-50%); border-radius:44% 56% 62% 38% / 52% 42% 58% 48%; background:radial-gradient(ellipse at 40% 35%,#ffffffcf, #b9e7d788 44%, #a3d6e222 67%,transparent 72%); pointer-events:none; transition:border-radius .6s var(--motion-ease); }
-.start-guide:hover::before { border-radius:62% 38% 44% 56% / 38% 60% 40% 62%; }
+.start-guide::before { content:''; position:absolute; z-index:-1; width:460px; height:460px; left:var(--light-x,65%); top:var(--light-y,30%); transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(ellipse at 40% 35%,#ffffffcf, #b9e7d788 44%, #a3d6e222 67%,transparent 72%); pointer-events:none; transition:border-radius .6s var(--motion-ease); }
+.start-guide:hover::before { border-radius:50%; }
 .start-guide::after { content:''; position:absolute; z-index:-1; right:-60px; bottom:-120px; width:360px; height:300px; border:1px solid #9bcab766; border-radius:50%; transform:rotate(-28deg); pointer-events:none; }
-.start-guide ol { background:#ffffff70; border:1px solid #ffffffa8; border-radius:14px; padding:20px 24px; backdrop-filter:blur(8px); }
+.start-guide ol { background:#ffffff70; border:1px solid #ffffffa8; border-radius:var(--radius); padding:20px 24px; backdrop-filter:blur(8px); }
 .sidebar { isolation:isolate; }
 .nav-item { position:relative; z-index:1; transition:color .18s,background .18s; }
 .nav-item.active { background:transparent; }
-.nav-fluid-marker { position:absolute; left:12px; top:0; width:calc(100% - 24px); height:46px; border-radius:10px; background:linear-gradient(115deg,#365e66,#244a53); border:1px solid #7ea7ab45; box-shadow:0 5px 14px #071d2426; pointer-events:none; z-index:0; transition:transform .42s var(--motion-ease),height .25s var(--motion-ease),border-radius .3s; }
+.nav-fluid-marker { position:absolute; left:12px; top:0; width:calc(100% - 24px); height:46px; border-radius:var(--radius); background:linear-gradient(115deg,#365e66,#244a53); border:1px solid #7ea7ab45; box-shadow:0 5px 14px #071d2426; pointer-events:none; z-index:0; transition:transform .42s var(--motion-ease),height .25s var(--motion-ease),border-radius .3s; }
 .nav-fluid-marker::after { content:''; position:absolute; inset:0; border-radius:inherit; background:linear-gradient(110deg,#a8eee512,transparent 65%); }
 .nav-item:hover svg { transform:translateX(2px); }.nav-item svg { transition:transform .2s var(--motion-ease); }
 .btn { position:relative; isolation:isolate; overflow:hidden; transition:background .18s,border-color .18s,box-shadow .18s,transform .18s var(--motion-ease); }
@@ -367,16 +367,17 @@ input[type=checkbox] { flex:0 0 16px; }.checkbox-label:hover { color:var(--text)
 .btn-primary:hover { box-shadow:0 5px 14px #087e7226; }
 .press-wave { position:absolute; pointer-events:none; width:160px; height:160px; border-radius:50%; background:currentColor; opacity:.12; transform:translate(-50%,-50%) scale(0); animation:pressWave .48s var(--motion-ease) forwards; z-index:-1; }
 @keyframes pressWave { to { transform:translate(-50%,-50%) scale(2); opacity:0; } }
-#page-visualization .card .btn[aria-pressed=true] { background:#dceee6; border-color:#8bb9ae; color:#125e50; }
+#page-visualization .card .btn[aria-pressed=true] { background:#214c50; border-color:#82eed8; color:#effff9; }
+#page-visualization .card .btn:focus-visible { outline:2px solid #82eed8; outline-offset:3px; }
 #chart-display { transition:border-color .2s; }
 details[open] > :not(summary) { animation:detailReveal .22s var(--motion-ease); }
 @keyframes detailReveal { from { opacity:.4; transform:translateY(-3px); } to { opacity:1; transform:translateY(0); } }
-.quick-switch { padding-inline:12px; gap:10px; }.quick-switch kbd { border:1px solid var(--border); border-radius:4px; padding:1px 4px; font:10px var(--font-sans); color:var(--text-secondary); }
-.quick-dialog { border:1px solid #dce8e5; border-radius:18px; padding:0; width:min(540px,calc(100vw - 32px)); max-height:80vh; margin:12vh auto auto; color:var(--text); background:#ffffffed; box-shadow:0 24px 80px #142e3838; backdrop-filter:blur(18px); }
+.quick-switch { padding-inline:12px; gap:10px; }.quick-switch kbd { border:1px solid var(--border); border-radius:var(--radius-sm); padding:1px 4px; font:10px var(--font-sans); color:var(--text-secondary); }
+.quick-dialog { border:1px solid #dce8e5; border-radius:var(--radius); padding:0; width:min(540px,calc(100vw - 32px)); max-height:80vh; margin:12vh auto auto; color:var(--text); background:#ffffffed; box-shadow:0 24px 80px #142e3838; backdrop-filter:blur(18px); }
 .quick-dialog::backdrop { background:#102e3d66; backdrop-filter:blur(5px); }
 .quick-dialog[open] { animation:quickOpen .24s var(--motion-ease); }
 @keyframes quickOpen { from { opacity:0; transform:translateY(-10px) scale(.98); } to { opacity:1; transform:none; } }
-.quick-head { display:flex; gap:16px; align-items:center; justify-content:space-between; padding:20px 22px 8px; }.quick-head h2 { font-size:18px; }.quick-search { padding:12px 22px; }.quick-search input { width:100%; background:#f1f6f5; }.quick-results { display:grid; gap:4px; padding:0 12px 16px; overflow:auto; max-height:48vh; }.quick-result { text-align:left; padding:12px 14px; border:0; border-radius:8px; background:transparent; font:14px var(--font-sans); color:var(--text); cursor:pointer; }.quick-result:hover,.quick-result:focus-visible { background:#e5f2ec; }.quick-result[aria-current=page] { color:var(--accent); background:#f0f7f4; }.quick-result[hidden] { display:none; }.quick-empty { padding:20px 14px; color:var(--text-secondary); font-size:13px; }
+.quick-head { display:flex; gap:16px; align-items:center; justify-content:space-between; padding:20px 22px 8px; }.quick-head h2 { font-size:16px; }.quick-search { padding:12px 22px; }.quick-search input { width:100%; background:#f1f6f5; }.quick-results { display:grid; gap:4px; padding:0 12px 16px; overflow:auto; max-height:48vh; }.quick-result { text-align:left; padding:12px 14px; border:0; border-radius:var(--radius); background:transparent; font:14px var(--font-sans); color:var(--text); cursor:pointer; }.quick-result:hover,.quick-result:focus-visible { background:#e5f2ec; }.quick-result[aria-current=page] { color:var(--accent); background:#f0f7f4; }.quick-result[hidden] { display:none; }.quick-empty { padding:20px 14px; color:var(--text-secondary); font-size:13px; }
 .nav-scrim { display:none; }
 body.motion-paused *,body.motion-paused *::before,body.motion-paused *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
 body.motion-paused .start-guide::before { left:65% !important; top:30% !important; }
@@ -393,6 +394,176 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
 .drawer-close { display:none; }
 @media(max-width:768px) { body.navigation-open { overflow:hidden; } }
 @media(max-width:768px) { .drawer-close { display:flex; margin:16px 12px 0 auto; } }
+
+/* ---- Unified in-app notifications: replaces every native alert/confirm ---- */
+#toast-stack { position:fixed; top:86px; right:24px; z-index:3000; display:flex; flex-direction:column; gap:10px; width:min(382px, calc(100vw - 32px)); pointer-events:none; }
+.app-toast { pointer-events:auto; position:relative; display:flex; gap:12px; align-items:flex-start; padding:14px 12px 14px 16px; background:#fff; border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:var(--radius); box-shadow:0 14px 38px #142e3826; animation:toastIn .26s cubic-bezier(.16,1,.3,1); overflow:hidden; }
+.app-toast.leaving { animation:toastOut .22s ease forwards; }
+.app-toast-icon { flex:none; width:24px; height:24px; border-radius:50%; display:grid; place-items:center; color:#fff; background:var(--accent); margin-top:1px; }
+.app-toast-icon svg { width:14px; height:14px; }
+.app-toast-body { flex:1; min-width:0; }
+.app-toast-title { font-size:13px; font-weight:600; color:var(--text); line-height:1.45; }
+.app-toast-msg { font-size:13px; color:var(--text-secondary); line-height:1.6; margin-top:3px; white-space:pre-line; word-break:break-word; }
+.app-toast-close { flex:none; width:22px; height:22px; border:0; border-radius:var(--radius-sm); background:transparent; color:var(--text-muted); font-size:14px; line-height:1; cursor:pointer; display:grid; place-items:center; }
+.app-toast-close:hover { color:var(--text); background:#eef5f3; }
+.app-toast::after { content:''; position:absolute; left:0; bottom:0; height:2px; width:100%; background:currentColor; opacity:.18; transform-origin:left; animation:toastLife var(--toast-life,5.2s) linear forwards; }
+.app-toast.paused::after { animation-play-state:paused; }
+.app-toast.success { border-left-color:var(--secondary); color:var(--secondary); }
+.app-toast.success .app-toast-icon { background:var(--secondary); }
+.app-toast.error { border-left-color:var(--danger); color:var(--danger); }
+.app-toast.error .app-toast-icon { background:var(--danger); }
+.app-toast.warning { border-left-color:var(--warning); color:var(--warning); }
+.app-toast.warning .app-toast-icon { background:var(--warning); }
+@keyframes toastIn { from { opacity:0; transform:translateY(-10px) scale(.985); } to { opacity:1; transform:none; } }
+@keyframes toastOut { to { opacity:0; transform:translateX(14px); } }
+@keyframes toastLife { from { transform:scaleX(1); } to { transform:scaleX(0); } }
+
+.app-dialog { border:1px solid var(--border); border-radius:var(--radius); padding:0; width:min(524px, calc(100vw - 32px)); margin:auto; color:var(--text); background:#fff; box-shadow:0 26px 90px #142e3840; overflow:hidden; }
+.app-dialog::backdrop { background:#102e3d5c; backdrop-filter:blur(5px); }
+.app-dialog[open] { animation:appDialogIn .26s cubic-bezier(.16,1,.3,1); }
+@keyframes appDialogIn { from { opacity:0; transform:translateY(12px) scale(.975); } to { opacity:1; transform:none; } }
+.app-dialog-head { display:flex; gap:14px; align-items:flex-start; padding:24px 24px 0; }
+.app-dialog-mark { flex:none; width:42px; height:42px; border-radius:var(--radius); display:grid; place-items:center; background:#e8f2ef; color:var(--accent); }
+.app-dialog-mark svg { width:20px; height:20px; }
+.app-dialog.success .app-dialog-mark { background:#eaf3e6; color:#367344; }
+.app-dialog.error .app-dialog-mark { background:#fdeff1; color:var(--danger); }
+.app-dialog.warning .app-dialog-mark { background:#fbf2e4; color:#986015; }
+.app-dialog-titles { flex:1; min-width:0; padding-top:2px; }
+.app-dialog-title { font-size:16px; font-weight:600; letter-spacing:-.2px; color:var(--text); }
+.app-dialog-sub { font-size:12px; color:var(--text-muted); margin-top:4px; letter-spacing:.3px; }
+.app-dialog-close { flex:none; width:30px; height:30px; border-radius:var(--radius); border:1px solid var(--border); background:#f7f9fa; color:var(--text-muted); font-size:16px; line-height:1; cursor:pointer; display:grid; place-items:center; }
+.app-dialog-close:hover { color:var(--text); border-color:#b9cdd2; background:#eef5f3; }
+.app-dialog-body { padding:16px 24px 4px; font-size:14px; line-height:1.72; color:var(--text-secondary); white-space:pre-line; word-break:break-word; }
+.app-dialog-body strong { color:var(--text); font-weight:600; }
+.app-dialog-detail { margin-top:14px; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius); background:#f6f9fa; font-family:var(--font-mono); font-size:12px; line-height:1.6; color:var(--text-secondary); max-height:150px; overflow:auto; white-space:pre-wrap; }
+.app-dialog-list { margin:14px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; }
+.app-dialog-list li { position:relative; padding-left:18px; font-size:13px; color:var(--text-secondary); }
+.app-dialog-list li::before { content:''; position:absolute; left:4px; top:9px; width:5px; height:5px; border-radius:50%; background:#9fb6bd; }
+.app-dialog-foot { display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:18px 24px 22px; flex-wrap:wrap; }
+.app-dialog-foot .btn { min-height:38px; }
+.app-dialog-foot .btn-danger { background:var(--danger); color:#fff; border-color:var(--danger); }
+.app-dialog-foot .btn-danger:hover { background:#9c2c3e; border-color:#9c2c3e; color:#fff; }
+@media(max-width:768px) { #toast-stack { top:14px; right:14px; left:14px; width:auto; } .app-dialog-foot { flex-direction:column-reverse; align-items:stretch; } }
+
+/* Presentation glass: a luminous showcase above a daylight research workspace. */
+body { background:radial-gradient(ellipse at 90% 0%,#cce7e5,transparent 45%),#f0f4f5; }
+.sidebar { background:linear-gradient(165deg,#102e38,#071a26); box-shadow:10px 0 40px #143b4410; }
+.topbar { background:#ffffffb3; backdrop-filter:blur(24px) saturate(150%); }
+.workspace-heading h1 { font-size:28px; letter-spacing:-.03em; }
+.start-guide { min-height:360px; padding:44px; gap:36px; align-items:center; background:linear-gradient(125deg,#102c3d,#123e49 65%,#19574f); border:0; box-shadow:0 22px 44px #163c4426; color:#f1fffc; }
+.start-guide h2 { font-size:var(--fs-xl); line-height:1.24; letter-spacing:-.03em; max-width:13em; font-weight:600; }
+.start-guide p { color:#c4dedf; font-size:14px; line-height:1.85; }
+.start-guide::before { width:650px; height:650px; background:radial-gradient(ellipse,#5fe6cc35,transparent 65%); }
+.start-guide::after { display:none; }
+.start-guide > div,.start-guide ol { position:relative; z-index:1; }
+.start-guide ol { background:linear-gradient(135deg,#ffffff20,#ffffff07); border:1px solid #ffffff30; box-shadow:0 16px 38px #00151f35,inset 0 1px #ffffff25; backdrop-filter:blur(18px); padding:28px; gap:26px; }
+.start-guide li { color:#c1d9dc; }.start-guide strong { color:#f0fffc; font-size:14px; }.start-guide li b { color:#7ce9ce; }
+.start-guide .btn-primary { background:#9af2d7; border-color:transparent; color:#10392f; }
+.start-guide .btn-primary:hover { background:#c4ffe9; box-shadow:0 8px 22px #001b2655; }
+.start-guide .btn-secondary { background:#ffffff0d; color:#e1f8f3; border-color:#ffffff40; backdrop-filter:blur(10px); }
+.start-guide .btn-secondary:hover { background:#ffffff22; }
+.splice-art { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:.45; }
+.splice-art path { fill:none; stroke:#7de9d0; stroke-width:1; }
+.splice-art .signal { stroke:#dcfff5; stroke-width:2; stroke-dasharray:12 700; animation:spliceFlow 8s linear infinite; }
+@keyframes spliceFlow { to { stroke-dashoffset:-1424; } }
+.card { background:#ffffffda; }
+.btn:hover { transform:translateY(-2px); }.btn:active { transform:translateY(1px) scale(.98); }
+.btn[aria-busy="true"] { cursor:progress; padding-right:36px; }
+.btn[aria-busy="true"]::after { content:''; position:absolute; right:12px; top:calc(50% - 6px); width:12px; height:12px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:requestSpin .7s linear infinite; }
+@keyframes requestSpin { to { transform:rotate(360deg); } }
+#request-indicator { position:fixed; top:0; left:0; right:0; height:3px; z-index:4000; overflow:hidden; pointer-events:none; background:#69cdbd33; }
+#request-indicator[hidden] { display:none; }
+#request-indicator::after { content:''; display:block; width:35%; height:100%; background:#087e72; animation:requestSweep 1.2s ease-in-out infinite alternate; }
+@keyframes requestSweep { to { transform:translateX(190%); } }
+@media(max-width:1000px) { .start-guide { padding:30px; grid-template-columns:1fr; }.start-guide h2 { max-width:20em; } }
+@media(max-width:768px) { .start-guide { padding:26px 22px; gap:24px; }.start-guide ol { padding:22px; }.workspace-heading h1 { font-size:28px; } }
+@media(prefers-reduced-motion:reduce) { .splice-art .signal,#request-indicator::after,.btn[aria-busy="true"]::after { animation:none; } }
+
+
+/* P0 presentation normalization */
+:root { --fs-xs:12px; --fs-sm:13px; --fs-base:14px; --fs-md:16px; --fs-lg:20px; --fs-xl:28px; --fs-display:36px; --radius-sm:6px; --radius:10px; --radius-pill:999px; }
+body { font-size:var(--fs-base); }
+strong,b { font-weight:600; }
+table { font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1; }
+th { padding:9px 12px; font-size:var(--fs-xs); }
+td { padding:7px 12px; font-size:var(--fs-sm); }
+th.num,td.num { text-align:right; }
+td.mono { font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--text-muted); }
+.dpsi-cell { display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+.dpsi-value.up { color:var(--danger); }.dpsi-value.down { color:var(--secondary); }
+.dpsi-bar { position:relative; flex:none; width:44px; height:4px; background:#e6eef0; border-radius:999px; }
+.dpsi-bar::after { content:''; position:absolute; left:50%; top:-2px; bottom:-2px; width:1px; background:#c3d5da; }
+.dpsi-bar > span { position:absolute; top:0; bottom:0; }
+.dpsi-bar > .up { left:50%; background:var(--danger); border-radius:0 999px 999px 0; }
+.dpsi-bar > .down { right:50%; background:var(--secondary); border-radius:999px 0 0 999px; }
+#events-table .event-row { cursor:pointer; }#events-table .event-row:hover { background:#f1f8f5; }
+#events-table .event-row:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+.row-go { display:inline-flex; opacity:0; transform:translateX(-4px); transition:opacity .15s,transform .15s; color:var(--accent); }
+.event-row:hover .row-go,.event-row:focus-visible .row-go { opacity:1; transform:none; }
+.start-guide { min-height:0; padding:18px 28px; gap:24px; align-items:center; }
+.start-guide h2 { font-size:var(--fs-xl); line-height:1.32; letter-spacing:-.025em; max-width:20em; }
+.start-guide p { font-size:var(--fs-sm); line-height:1.65; margin:8px 0 14px; }
+.start-guide ol { padding:12px 18px; gap:8px; }.start-guide li { line-height:1.4; }.start-guide strong { font-size:var(--fs-base); }
+.start-guide::before { width:380px; height:380px; opacity:.55; }.start-guide .splice-art { opacity:.26; }.start-guide .btn { min-height:36px; }
+.sk { display:block; height:9px; border-radius:999px; background:linear-gradient(105deg,#e9f1f2 28%,#f7fbfb 46%,#e9f1f2 64%); background-size:220% 100%; animation:skSweep 1.1s linear infinite; }
+@keyframes skSweep { from { background-position:120% 0; } to { background-position:-120% 0; } }
+.skeleton-row td { padding:10px 12px; }
+@media(prefers-reduced-motion:reduce) { .sk { animation:none; } }
+
+/* Luminous research observatory — glass, depth and spectral light. */
+:root { color-scheme:dark; --bg:#060d18; --surface:#101e30; --surface-2:#14273a; --surface-3:#203b4e; --text:#eaf4ff; --text-secondary:#b0c4d9; --text-muted:#93abc3; --black:#eaf4ff; --gray-900:#eaf4ff; --gray-700:#b0c4d9; --gray-500:#93abc3; --gray-300:#31475e; --gray-100:#15273c; --accent:#82eed8; --secondary:#8fe4b5; --danger:#ff8d9f; --border:#ffffff19; --shadow-lg:0 30px 80px #0008; }
+html { background:#060d18; }body { background:radial-gradient(ellipse at 80% 3%,#183b5466,transparent 48%),radial-gradient(ellipse at 30% 55%,#25265940,transparent 50%),#060d18; }
+body::before { display:block; position:fixed; inset:0; z-index:0; background:radial-gradient(ellipse at 75% 20%,#317d8c20,transparent 45%); pointer-events:none; }
+.app { position:relative; z-index:1; }
+.sidebar { background:linear-gradient(170deg,#122537cc,#070f1cdd); border-right:1px solid #ffffff12; backdrop-filter:blur(28px); box-shadow:12px 0 42px #0002; }
+.brand { padding:34px 24px; }.brand-name { font-size:28px; letter-spacing:-.04em; }.brand-tagline { color:#9bb9d0; }
+.nav-item { color:#a9bed3; min-height:46px; }.nav-item:hover { background:#ffffff09; color:#eafffa; }.nav-item.active { color:#b1ffe9; background:transparent; }
+.nav-fluid-marker { background:linear-gradient(115deg,#7bf3d528,#85bfff12); border:1px solid #b4ffeb30; box-shadow:0 8px 20px #0003,inset 0 1px #ffffff16; }
+.topbar { background:#081323a8; border-bottom:1px solid #ffffff0c; backdrop-filter:blur(24px); }
+.content { padding-top:38px; }.workspace-heading { margin-bottom:30px; }.workspace-heading h1 { font-size:28px; color:#f3f8ff; }.workspace-heading p { color:#9fb6ce; }
+.workspace-tag { background:#94f8de0a; border-color:#94f8de30; color:#b4eedf; border-radius:999px; }
+.card,.chart-container,.filters,.pep-output { background:linear-gradient(135deg,#1b3045b8,#101d30b8); border:1px solid #d0e8ff1a; box-shadow:0 16px 36px #0002,inset 0 1px #ffffff08; backdrop-filter:blur(16px); }
+.card:hover { border-color:#c0fbed35; box-shadow:0 18px 40px #0003; }
+#page-dashboard > .grid-4 { background:linear-gradient(110deg,#20394fcc,#112033cc); border-color:#d0e8ff20; box-shadow:0 16px 40px #0003,inset 0 1px #ffffff12; }
+#page-dashboard > .grid-4 > .card { background:transparent; border-color:#d0e8ff14; box-shadow:none; backdrop-filter:none; }
+#stat-samples,#stat-events,#stat-significant { color:#caffed !important; }
+.start-guide { background:radial-gradient(ellipse at 72% 0%,#338ca53b,transparent 70%),linear-gradient(120deg,#112b40,#11213b 65%,#222948); box-shadow:0 24px 60px #0004,inset 0 1px #c5fff526; border:1px solid #abe7f32b; overflow:hidden; }
+.start-guide::before { background:radial-gradient(ellipse,#98fff52e,transparent 66%); opacity:1; }.start-guide .splice-art { opacity:.6; filter:drop-shadow(0 4px 8px #74ffe633); }
+.start-guide h2 { color:#efffff; }.start-guide p { color:#b9cfdf; }
+.start-guide ol { background:linear-gradient(125deg,#c1eaff16,#85bcff05); border:1px solid #d4eeff26; box-shadow:0 16px 32px #0003,inset 0 1px #ffffff20; backdrop-filter:blur(20px); }
+.start-guide strong { color:#eefaff; }.start-guide li { color:#acc6db; }
+.btn { border-radius:6px; transition:transform .22s var(--motion-ease),background .22s,box-shadow .22s,border-color .22s; }
+.btn-primary,.start-guide .btn-primary { background:linear-gradient(120deg,#b6ffe4,#78dfd3); color:#082c2d; border:1px solid #bfffea; box-shadow:0 6px 20px #061d2e66,inset 0 1px #ffffff88; }
+.btn-primary:hover,.start-guide .btn-primary:hover { background:linear-gradient(120deg,#d6fff0,#a4f4ed); color:#082c2d; box-shadow:0 10px 28px #0005; transform:translateY(-2px); }
+.btn-secondary { background:linear-gradient(130deg,#ffffff0e,#ffffff04); border:1px solid #c5dcff26; color:#c8dced; box-shadow:inset 0 1px #ffffff09; }
+.btn-secondary:hover { background:#b8eaff16; color:#e6fff6; border-color:#b4ffdf55; }
+input,select,textarea,.search-input,#upload-modal input,#project-name,#analysis-query,#pep-sequences { background:#0b1728 !important; color:#dfedfa; border-color:#b1d5ff2b; }
+input::placeholder,textarea::placeholder { color:#91a8bf; }input:focus,textarea:focus,select:focus { border-color:#82eed8; box-shadow:0 0 0 3px #82eed815; }
+.lang-toggle { background:#ffffff05; border-color:#ffffff12; }.lang-toggle button.active { background:#82eed81c; color:#b6ffe5; }
+.table-container { background:#0e1b2b; border-color:#ffffff18; }th { background:#172b3e; color:#a8c1d7; }td { border-color:#ffffff0b; }tr:hover,#events-table .event-row:hover { background:#80e5d60a; }
+.dpsi-bar { background:#365064; }.dpsi-bar::after { background:#a0bec9; }
+.pipeline-step { background:#112337; border-color:#ffffff15; }.pipeline-step.active { background:#173b42; border-color:#82eed84a; }
+.app-dialog,.quick-dialog,.app-toast,.ingest-panel,#upload-modal > div { background:#13243a !important; color:var(--text); border-color:#cce7ff26 !important; box-shadow:0 28px 90px #0008; }
+.app-dialog-detail,.app-dialog-close,.quick-result:hover,.quick-result[aria-selected="true"],.ingest-head,.ingest-footer,.ingest-close,.ingest-step,.ingest-stat,.ingest-issue,.pep-options { background:#1a3046; }
+#drop-zone { background:#112e3b !important; }#event-detail-modal > div > div:first-child { background:#19334a !important; }
+.sk { background:linear-gradient(105deg,#20394e 28%,#35586b 46%,#20394e 64%); background-size:220% 100%; }
+.status-waiting { background:#a1c1db12; color:#bfd2e3; }.status-dot { box-shadow:0 2px 6px #0003; }
+::selection { background:#82eed84a; color:#effffb; }* { scrollbar-color:#35556b transparent; }
+.spectral-ribbon { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:-1; }
+.spectral-ribbon::before { content:''; position:absolute; width:70%; height:180%; top:-50%; left:20%; background:linear-gradient(105deg,transparent 20%,#b4ffec08 40%,#b9c9ff12 50%,transparent 65%); transform:rotate(-24deg); animation:spectralDrift 14s ease-in-out infinite alternate; }
+@keyframes spectralDrift { to { transform:translateX(20%) rotate(-12deg); } }
+body.motion-paused .spectral-ribbon::before { animation:none; }
+@media(max-width:768px) { .content { padding-top:24px; }.sidebar { background:#0b1c2ef5; }.brand-name { font-size:28px; } }
+@media(prefers-reduced-motion:reduce) { .spectral-ribbon::before { animation:none; } }
+
+/* Spectral illumination passes through the shared glass surfaces. */
+body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),radial-gradient(ellipse at 48% 85%,#51429344,transparent 55%),#060d18; }
+.start-guide { background:radial-gradient(ellipse at 85% 110%,#7558b65c,transparent 60%),radial-gradient(ellipse at 20% 0%,#20c8ae38,transparent 65%),linear-gradient(115deg,#123548,#182a48); }
+#page-dashboard > .grid-4 { background:linear-gradient(115deg,#20526388,#22324dbb 60%,#38315d88); border-color:#b3e6ff35; }
+.card { transition:border-color .25s,box-shadow .25s,background .25s; }
+.card:hover { background:linear-gradient(130deg,#244356cc,#1b2b46cc); border-color:#b9ffe84a; box-shadow:0 20px 50px #0004,inset 0 1px #e6fff322; }
+.btn-primary::before { content:''; position:absolute; inset:-100% -50%; background:linear-gradient(100deg,transparent 35%,#ffffff66 50%,transparent 65%); transform:translateX(-90%) rotate(15deg); transition:transform .65s; pointer-events:none; }
+.btn-primary:hover::before { transform:translateX(90%) rotate(15deg); }
 </style>
 </head>
 <body>
@@ -433,7 +604,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
     <div class="content" id="workspace-content" tabindex="-1">
       <div class="page active" id="page-dashboard">
         <header class="workspace-heading"><div><h1>项目工作台</h1><p>管理剪接分析项目，追踪进度，回到每一次研究的结果。</p></div><span class="workspace-tag">研究工作区</span></header>
-        <section class="start-guide" aria-label="开始使用"><div><h2>开始一次新的分析</h2><p>上传事件数据，确认字段与分组，再查看统计结果和研究报告。</p><button class="btn btn-primary" onclick="showUploadModal()">新建分析项目</button><button class="btn btn-secondary" onclick="navigateTo('peptide')">已有肽序列？直接预测</button></div><ol><li><b>01</b><span><strong>准备数据</strong>支持事件表与报告目录导入</span></li><li><b>02</b><span><strong>检查与分析</strong>确认数据映射，跟踪每一步进度</span></li><li><b>03</b><span><strong>探索与导出</strong>浏览候选事件，生成图表与报告</span></li></ol></section>
+        
         <div class="grid grid-4" style="margin-bottom: 32px;">
           <div class="card">
             <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-500); margin-bottom: 12px;">总样本数</div>
@@ -455,15 +626,16 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
             <div style="margin-top: 8px;" id="stat-status"><span class="status status-waiting"><span class="status-dot"></span>空闲</span></div>
           </div>
         </div>
+<section class="start-guide" aria-label="开始使用"><span class="spectral-ribbon" aria-hidden="true"></span><svg class="splice-art" viewBox="0 0 1100 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path d="M0 300 C250 300 250 70 550 70 S850 290 1100 120 M0 320 C250 320 250 90 550 90 S850 310 1100 140 M0 340 C250 340 250 110 550 110 S850 330 1100 160"/><path class="signal" d="M0 300 C250 300 250 70 550 70 S850 290 1100 120"/></svg><div><h2>从剪接事件，走向新的研究线索。</h2><p>上传事件数据，确认字段与分组，再查看统计结果和研究报告。</p><button class="btn btn-primary" onclick="showUploadModal()">新建分析项目</button><button class="btn btn-secondary" onclick="navigateTo('peptide')">已有肽序列？直接预测</button></div><ol><li><b>01</b><span><strong>准备数据</strong>支持事件表与报告目录导入</span></li><li><b>02</b><span><strong>检查与分析</strong>确认数据映射，跟踪每一步进度</span></li><li><b>03</b><span><strong>探索与导出</strong>浏览候选事件，生成图表与报告</span></li></ol></section>
         <div class="grid grid-2">
           <div class="card">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-              <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">当前运行 Agent</div>
+              <div style="font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">当前运行 Agent</div>
               <div id="current-agent-indicator" style="display: none;"><span class="status status-running"><span class="status-dot"></span>分析中</span></div>
             </div>
             <div id="current-agent">
               <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;"></div>
+                <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.3;"></div>
                 <div style="font-size: 14px;">暂无运行中的分析</div>
                 <button class="btn btn-primary" style="margin-top: 16px;" onclick="showUploadModal()">启动新分析</button>
               </div>
@@ -471,17 +643,17 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
           </div>
           <div class="card">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-              <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">历史项目</div>
+              <div style="font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">历史项目</div>
               <button class="btn btn-sm btn-secondary" onclick="loadDashboard()">刷新</button>
             </div>
-            <input aria-label="搜索历史项目" id="project-search" type="search" placeholder="搜索历史项目" oninput="renderProjectHistory()" style="width:100%;margin-bottom:12px;padding:9px;border:1px solid var(--border);border-radius:6px;">
+            <input aria-label="搜索历史项目" id="project-search" type="search" placeholder="搜索历史项目" oninput="renderProjectHistory()" style="width:100%;margin-bottom:12px;padding:9px;border:1px solid var(--border);border-radius:var(--radius-sm);">
             <div id="recent-projects" style="max-height:440px;overflow:auto;">
               <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;"></div>
+                <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.3;"></div>
                 <div style="font-size: 14px;">暂无项目</div>
               </div>
             </div>
-            <div id="storage-hint" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;line-height:1.6;color:var(--text-muted);">
+            <div id="storage-hint" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;line-height:1.6;color:var(--text-muted);">
               数据目录：读取中…
             </div>
           </div>
@@ -490,8 +662,8 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
         <section class="card" id="project-detail" style="margin-top: 24px; display: none;">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
             <div>
-              <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">历史项目详情</div>
-              <div style="font-size:20px;font-weight:700;margin-top:4px;" id="detail-title">-</div>
+              <div style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">历史项目详情</div>
+              <div style="font-size:20px;font-weight:600;margin-top:4px;" id="detail-title">-</div>
               <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;" id="detail-meta">-</div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -503,20 +675,20 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
               <button class="btn btn-sm btn-danger" onclick="deleteCurrentProject()" style="color:var(--danger);"> 删除项目</button>
             </div>
           </div>
-          <div id="detail-bundle-hint" style="font-size:11px;color:var(--text-muted);margin:-6px 0 10px;"></div>
+          <div id="detail-bundle-hint" style="font-size:12px;color:var(--text-muted);margin:-6px 0 10px;"></div>
           <div class="grid grid-2" style="gap:20px;">
             <div>
-              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:10px;">样本分组</div>
+              <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:10px;">样本分组</div>
               <div id="detail-groups" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
-              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">事件类型分布</div>
+              <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">事件类型分布</div>
               <div id="detail-types" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
-              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">流程日志（最近 12 条）</div>
+              <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">流程日志（最近 12 条）</div>
               <div id="detail-logs" style="max-height:220px;overflow:auto;font-size:12px;line-height:1.7;"></div>
             </div>
             <div>
-              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:10px;">图表（点击放大）</div>
+              <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:10px;">图表（点击放大）</div>
               <div id="detail-figures" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
-              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">候选事件 Top 10</div>
+              <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 10px;">候选事件 Top 10</div>
               <div id="detail-candidates" style="max-height:260px;overflow:auto;font-size:12px;"></div>
             </div>
           </div>
@@ -526,18 +698,18 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
         <div class="card" style="margin-bottom: 24px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
             <div>
-              <div style="font-size: 18px; font-weight: 700;">分析进度</div>
+              <div style="font-size: 16px; font-weight: 600;">分析进度</div>
               <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;" id="pipeline-status-text">等待启动...</div>
             </div>
-            <div id="pipeline-progress" style="font-size: 24px; font-weight: 800; color: var(--accent);">0%</div>
+            <div id="pipeline-progress" style="font-size: 20px; font-weight: 600; color: var(--accent);">0%</div>
           </div>
-          <div style="height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);">
+          <div style="height: 8px; background: var(--gray-100); border-radius: var(--radius-sm); overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);">
             <div id="progress-bar" style="height: 100%; width: 0%; background: var(--black); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(8, 145, 178, 0.3);"></div>
           </div>
         </div>
         
         <div class="card" style="margin-bottom: 24px;">
-          <div style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--text);">Agent 工作流</div>
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px; color: var(--text);">Agent 工作流</div>
           <div class="pipeline" id="pipeline-steps">
             <div class="pipeline-step waiting">
               <div class="step-number">1</div>
@@ -592,7 +764,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
       </div>
       <div class="page" id="page-explorer"><header class="workspace-heading"><div><h1>事件浏览器</h1><p>按基因、事件类型与显著性筛选，追溯候选事件的统计依据。</p></div></header>
         <div class="card" style="margin-bottom: 24px;">
-          <div style="font-size: 16px; font-weight: 700; margin-bottom: 20px;">筛选条件</div>
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">筛选条件</div>
           <div class="search-bar" style="margin-bottom: 20px;">
             <input type="text" class="search-input" placeholder="搜索基因名称、事件ID或染色体位置..." aria-label="搜索事件" id="search-input" onkeypress="if(event.key==='Enter') applyFilters()">
             <button class="btn btn-primary" onclick="applyFilters()"> 应用筛选</button>
@@ -613,7 +785,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
               <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
                 <label class="checkbox-label"><input type="checkbox" id="filter-significant"> 仅显著事件</label>
                 <label class="checkbox-label">排序
-                  <select id="filter-order" style="margin-left:6px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-family:inherit;font-size:12px;">
+                  <select id="filter-order" style="margin-left:6px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text);font-family:inherit;font-size:12px;">
                     <option value="fdr">按 FDR</option>
                     <option value="delta_psi">按 |ΔPSI|</option>
                     <option value="gene">按基因名</option>
@@ -630,15 +802,15 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
                 <th>事件 ID</th>
                 <th>基因</th>
                 <th>类型</th>
-                <th>Delta PSI</th>
-                <th>FDR</th>
-                <th>操作</th>
+                <th class="num">ΔPSI</th>
+                <th class="num">FDR</th>
+                <th aria-label="查看详情"></th>
               </tr>
             </thead>
             <tbody id="events-table">
               <tr>
                 <td colspan="6" style="text-align: center; padding: 60px; color: var(--text-muted);">
-                  <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></div>
+                  <div style="font-size: 36px; margin-bottom: 16px; opacity: 0.3;"></div>
                   <div style="font-size: 16px; font-weight: 600;">未加载事件数据</div>
                   <div style="font-size: 14px; margin-top: 8px;">请完成分析后查看结果</div>
                 </td>
@@ -661,65 +833,65 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
         <div class="mobile-chart-select"><label for="chart-select-mobile">图表类型</label><select id="chart-select-mobile" onchange="if(this.value) loadChart(this.value)"><option value="">选择要查看的图表</option><option value="volcano">火山图 Volcano</option><option value="dpsi_waterfall">ΔPSI 瀑布图 Waterfall</option><option value="dpsi_ecdf">ΔPSI 累积分布 ECDF</option><option value="fdr_scree">显著性碎石图 Scree</option><option value="event_type_counts">事件类型分布</option><option value="event_significance">类型×显著性堆叠图</option><option value="event_schematic">剪接机制示意图 Schematic</option><option value="psi_heatmap">PSI 热图 Heatmap</option><option value="psi_distribution">分组 PSI 箱线图</option><option value="sample_composition">队列构成图</option><option value="candidate_ranking">候选基因排名</option><option value="score_components">评分分解堆叠图</option><option value="enrichment">功能富集点图</option></select></div><div class="grid grid-2">
           <div>
             <div class="card" style="margin-bottom: 20px;">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> 核心统计图</div>
+              <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text);"> 核心统计图</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">差异剪接的显著性与效应量</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('volcano')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 火山图 Volcano</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">ΔPSI vs -log10(FDR)，标注显著性阈值</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 火山图 Volcano</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">ΔPSI vs -log10(FDR)，标注显著性阈值</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('dpsi_waterfall')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> ΔPSI 瀑布图 Waterfall</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Top 25 效应量排序，区分包含上调/下调</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> ΔPSI 瀑布图 Waterfall</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">Top 25 效应量排序，区分包含上调/下调</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('dpsi_ecdf')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> ΔPSI 累积分布 ECDF</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">效应量经验累积分布与阈值占比</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> ΔPSI 累积分布 ECDF</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">效应量经验累积分布与阈值占比</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('fdr_scree')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 显著性碎石图 Scree</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">候选排名 vs -log10(FDR)，定位显著性拐点</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 显著性碎石图 Scree</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">候选排名 vs -log10(FDR)，定位显著性拐点</div></div>
                 </button>
               </div>
             </div>
             <div class="card" style="margin-bottom: 20px;">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> 事件组成与机制</div>
+              <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text);"> 事件组成与机制</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">剪接事件类型构成与分子机制</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('event_type_counts')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 事件类型分布</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">SE/MXE/A5SS/A3SS/RI 五类事件计数</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 事件类型分布</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">SE/MXE/A5SS/A3SS/RI 五类事件计数</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('event_significance')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 类型×显著性堆叠图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">各类型中显著与非显著事件构成</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 类型×显著性堆叠图</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">各类型中显著与非显著事件构成</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('event_schematic')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 剪接机制示意图 Schematic</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">五类可变剪接的外显子-内含子结构模式图</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 剪接机制示意图 Schematic</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">五类可变剪接的外显子-内含子结构模式图</div></div>
                 </button>
               </div>
             </div>
             <div class="card" style="margin-bottom: 20px;">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> 样本与质控</div>
+              <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text);"> 样本与质控</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">队列构成与样本水平 PSI 模式</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('psi_heatmap')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> PSI 热图 Heatmap</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">Top 事件逐样本 PSI 聚类热图</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> PSI 热图 Heatmap</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">Top 事件逐样本 PSI 聚类热图</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('psi_distribution')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 分组 PSI 箱线图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">各组 PSI 分布与离群样本检测</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 分组 PSI 箱线图</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">各组 PSI 分布与离群样本检测</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('sample_composition')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 队列构成图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">分组占比与批次分布（QC 必备）</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 队列构成图</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">分组占比与批次分布（QC 必备）</div></div>
                 </button>
               </div>
             </div>
             <div class="card">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text);"> AI 排序与功能富集</div>
+              <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text);"> AI 排序与功能富集</div>
               <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">智能体候选评分与通路注释</div>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="loadChart('candidate_ranking')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 候选基因排名</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">综合评分 Top 15 候选事件条形图</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 候选基因排名</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">综合评分 Top 15 候选事件条形图</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('score_components')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 评分分解堆叠图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">显著性/效应/生物学/文献四维贡献</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 评分分解堆叠图</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">显著性/效应/生物学/文献四维贡献</div></div>
                 </button>
                 <button class="btn btn-secondary" onclick="loadChart('enrichment')" style="justify-content: flex-start; padding: 12px 16px; text-align: left;">
-                  <div><div style="font-weight: 700; margin-bottom: 2px;"> 功能富集点图</div><div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">GO/KEGG 富集倍数 vs FDR 气泡图</div></div>
+                  <div><div style="font-weight: 600; margin-bottom: 2px;"> 功能富集点图</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 400;">GO/KEGG 富集倍数 vs FDR 气泡图</div></div>
                 </button>
               </div>
             </div>
@@ -727,8 +899,8 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
           <div>
             <div class="chart-container" id="chart-display" style="min-height: 600px; position: sticky; top: 88px;">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
-                <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></div>
-                <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">选择图表类型</div>
+                <div style="font-size: 36px; margin-bottom: 20px; opacity: 0.3;"></div>
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">选择图表类型</div>
                 <div style="font-size: 14px;">选择图表后，预览将在这里显示</div>
               </div>
             </div>
@@ -741,7 +913,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
           <button class="btn btn-primary" onclick="exploreGene()"> 探索</button>
         </div>
         <div style="margin-bottom: 24px; padding: 20px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--gray-700);">
-          <div style="font-size: 13px; font-weight: 700; color: var(--secondary); margin-bottom: 8px;"> 提示</div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--secondary); margin-bottom: 8px;"> 提示</div>
           <div style="font-size: 13px; line-height: 1.8; color: var(--text);">
             输入基因符号查看该基因的所有剪接事件、统计信息和文献证据。支持热门基因如 TP53、BRCA1、MYC、EGFR 等。
           </div>
@@ -749,7 +921,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
         <div id="gene-details">
           <div class="card">
             <div style="padding: 60px; text-align: center; color: var(--text-muted);">
-              <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;"></div>
+              <div style="font-size: 36px; margin-bottom: 16px; opacity: 0.3;"></div>
               <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">探索基因剪接模式</div>
               <div style="font-size: 14px;">在上方输入基因符号以探索其剪接事件和生物学功能</div>
             </div>
@@ -760,7 +932,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
         <div class="card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
             <div>
-              <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">生成分析报告</div>
+              <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">生成分析报告</div>
               <div style="font-size: 13px; color: var(--text-secondary);">基于当前分析结果生成专业报告</div>
             </div>
             <div style="display: flex; gap: 12px;">
@@ -775,14 +947,14 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
           
           <div id="report-output">
             <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-              <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></div>
+              <div style="font-size: 36px; margin-bottom: 20px; opacity: 0.3;"></div>
               <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">准备生成报告</div>
               <div style="font-size: 14px;">完成分析后可生成包含统计结果、可视化和生物学解读的专业报告</div>
             </div>
           </div>
           
           <div style="margin-top: 24px; padding: 20px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--black);">
-            <div style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 8px;"> 报告内容</div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 8px;"> 报告内容</div>
             <div style="font-size: 13px; line-height: 1.8; color: var(--text);">
               <div>• 项目概览与样本统计</div>
               <div>• 显著剪接事件列表（FDR < 0.05）</div>
@@ -797,7 +969,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
       <div class="page" id="page-settings"><header class="workspace-heading"><div><h1>工作区设置</h1><p>配置 AI 解读服务与外部工具，查看连接状态。</p></div></header>
         <div class="grid grid-2">
           <div class="card">
-            <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;"> 模型配置</div>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px;"> 模型配置</div>
             <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 18px;">
               用于报告里的 AI 解读与 MCP 工具的自然语言调用。密钥只保存在本机，不会写入报告或日志。
             </div>
@@ -869,19 +1041,19 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
       <div class="card" style="max-width: 880px; padding: 24px;">
         <h2>剪接来源候选新抗原</h2>
         <p>使用当前项目查找候选肽。先检查数据，再决定是否进行 HLA 结合预测。</p>
-        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+        <div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius);margin:16px 0;">
           <strong>第一步：检查项目数据</strong>
           <p style="margin:6px 0 12px;">系统会检查剪接事件和生成肽所需的编码序列表。</p>
           <button class="btn btn-secondary" type="button" id="neo-check" onclick="checkNeoReadiness()">检查当前项目</button>
           <div id="neo-readiness" style="white-space:pre-wrap;margin-top:12px;" aria-live="polite">请先选择一个项目。</div>
         </div>
-        <div style="padding:16px;border:1px solid var(--border);border-radius:12px;margin:16px 0;">
+        <div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius);margin:16px 0;">
           <strong>第二步：选择编码序列表，生成候选肽</strong>
           <p style="margin:6px 0 10px;">编码序列表就是「每个剪接事件对应的参考 CDS 与改变后 CDS」。系统按表头自动识别，<b>文件名不限</b>；下面若已列出文件，直接选即可。</p>
           <label for="neo-cds-select">编码序列表</label>
           <select id="neo-cds-select" style="display:block;width:100%;padding:10px;margin:8px 0 10px;"></select>
-          <div id="neo-mapping-panel" style="display:none;border:1px solid var(--border);border-radius:10px;padding:12px;margin:0 0 12px;background:rgba(255,255,255,.02);">
-            <div style="font-weight:650;margin-bottom:4px;">确认列的含义</div>
+          <div id="neo-mapping-panel" style="display:none;border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin:0 0 12px;background:rgba(255,255,255,.02);">
+            <div style="font-weight:600;margin-bottom:4px;">确认列的含义</div>
             <p id="neo-mapping-note" style="margin:0 0 10px;font-size:13px;color:var(--text-muted);">这张表的列名不是标准写法，系统已按内容猜测。请核对下面四项，确认后只需设置一次。</p>
             <div id="neo-mapping-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
             <div id="neo-mapping-preview" style="margin-top:10px;overflow-x:auto;"></div>
@@ -902,9 +1074,9 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
           <div id="neo-status" style="margin-top:12px;white-space:pre-wrap;" aria-live="polite"></div>
         </div>
         <details style="margin-top:20px;">
-        <summary style="cursor:pointer;font-weight:650;">高级选项：其他文件和专业分析工具</summary>
+        <summary style="cursor:pointer;font-weight:600;">高级选项：其他文件和专业分析工具</summary>
         <h3>moPepGen · Docker 变异肽生成</h3>
-        <p>自动识别当前项目中的 rMATS JC 文件。请提供版本匹配的参考文件并启动 Docker；生成的是蛋白质组学变异肽，不是 HLA 预测或 CDS 对照表。</p>
+        <p>自动识别当前项目中的 rMATS 事件表（JC 或 JCEC，文件名不限）。请提供版本匹配的参考文件并启动 Docker；生成的是蛋白质组学变异肽，不是 HLA 预测或 CDS 对照表。</p>
         <div id="mopep-fields"></div>
         <button class="btn btn-secondary" type="button" id="mopep-run" onclick="runMopepgen()">运行 moPepGen</button>
         <div id="mopep-status" style="white-space:pre-wrap;margin:12px 0;" aria-live="polite"></div>
@@ -928,7 +1100,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
           <div>
             <div class="card-title" style="margin-bottom:4px;">分析结果</div>
-            <div id="neo-result-title" style="font-size:18px;font-weight:750;color:var(--white);">—</div>
+            <div id="neo-result-title" style="font-size:16px;font-weight:600;color:var(--white);">—</div>
             <div id="neo-result-meta" style="font-size:12px;color:var(--text-muted);margin-top:4px;"></div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -955,7 +1127,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
             单次最多 200 条肽、8 个 HLA（接口限制），避免触发 IEDB 频率限制。
           </p>
           <textarea id="pep-sequences" rows="7" spellcheck="false"
-            style="display:block;width:100%;padding:10px;margin:8px 0 6px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:var(--font-mono,monospace);font-size:13px;line-height:1.6;resize:vertical;"
+            style="display:block;width:100%;padding:10px;margin:8px 0 6px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text);font-family:var(--font-mono,monospace);font-size:13px;line-height:1.6;resize:vertical;"
             placeholder="SLYNTVATL&#10;GILGFVFTL&#10;NLVPMVATV"></textarea>
           <div id="pep-seq-count" role="status" aria-live="polite" style="font-size:12px;color:var(--text-muted);">已识别 0 条肽段</div>
         </section>
@@ -972,7 +1144,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
           </div>
           <input id="pep-alleles" type="text" list="pep-allele-list" autocomplete="off" spellcheck="false"
             placeholder="例如 HLA-A*02:01, HLA-B*07:02"
-            style="display:block;width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
+            style="display:block;width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
           <datalist id="pep-allele-list"></datalist>
           <div id="pep-allele-hint" style="font-size:12px;color:var(--text-muted);margin-top:6px;">参考表尚未加载。</div>
           <div id="pep-allele-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
@@ -982,7 +1154,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
           <div style="display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px;">
             <div>
               <label for="pep-mhc-class" style="display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px;">MHC 类别</label>
-              <select id="pep-mhc-class" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
+              <select id="pep-mhc-class" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
                 <option value="class1">class1（MHC-I，8–11 aa）</option>
                 <option value="class2">class2（MHC-II，11–30 aa）</option>
                 <option value="both">both（按类别拆分）</option>
@@ -990,7 +1162,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
             </div>
             <div>
               <label for="pep-predictor" style="display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px;">预测器</label>
-              <select id="pep-predictor" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
+              <select id="pep-predictor" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
                 <option value="iedb">IEDB（在线）</option>
                 <option value="local">MHCflurry（本地，需安装）</option>
                 <option value="auto">auto（本地优先，失败转 IEDB）</option>
@@ -1037,7 +1209,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
   <div style="background: var(--white); border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
       <h2 style="font-size: 20px; font-weight: 600; color: var(--black);">新建分析项目</h2>
-      <button onclick="closeUploadModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-700);">×</button>
+      <button onclick="closeUploadModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-700);">×</button>
     </div>
     <div style="margin-bottom: 20px;">
       <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--gray-700);">项目名称</label>
@@ -1050,7 +1222,7 @@ body.motion-paused .start-guide::before { left:65% !important; top:30% !importan
     <div style="margin-bottom: 24px;">
       <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--gray-700);">上传文件</label>
       <div id="drop-zone" role="button" tabindex="0" aria-label="选择数据文件" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('file-input').click();}" style="border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--gray-100);" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('file-input').click()">
-        <div style="font-size: 48px; margin-bottom: 12px;"></div>
+        <div style="font-size: 36px; margin-bottom: 12px;"></div>
         <div style="font-size: 14px; color: var(--gray-700);">拖拽文件到此处，或点击选择文件</div>
         <div style="font-size: 12px; color: var(--gray-500); margin-top: 8px;">支持 CSV、TSV、TXT、文本 .xls、Excel .xls/.xlsx/.xlsm 及压缩文本 .gz；表达量表会被识别并提示所需事件数据</div>
       </div>
@@ -1551,9 +1723,15 @@ function pepRenderChips() {
     wrap.appendChild(chip);
   });
 }
-function pepFillExample() {
+async function pepFillExample() {
   const field = document.getElementById('pep-sequences');
-  if (field.value.trim() && !window.confirm('填入示例会替换当前肽序列和 HLA 设置，是否继续？')) return;
+  if (field.value.trim()) {
+    const confirmed = await AppNotify.confirm(
+      '填入示例会覆盖当前填写好的肽序列和 HLA 型别。',
+      { kind: 'warning', title: '替换当前输入？', confirmLabel: '填入示例', cancelLabel: '保留输入' }
+    );
+    if (!confirmed) return;
+  }
   field.value = ['SLYNTVATL', 'GILGFVFTL', 'NLVPMVATV'].join(String.fromCharCode(10));
   document.getElementById('pep-alleles').value = 'HLA-A*02:01';
   document.getElementById('pep-mhc-class').value = 'class1';
@@ -2059,30 +2237,30 @@ async function loadProjectDetail(projectId) {
     `<div style="display:flex;gap:8px;border-bottom:1px dashed var(--border);padding:4px 0;">
        <span style="color:var(--text-muted);white-space:nowrap;">${ingestEsc((l.created_at || '').replace('T', ' ').slice(5, 16))}</span>
        <span style="color:var(--text-secondary);">[${ingestEsc(l.agent || '')}] ${ingestEsc(l.action || '')}</span>
-       <span style="margin-left:auto;color:${l.status === 'ok' ? 'var(--success)' : 'var(--danger)'};">${ingestEsc(l.status || '')}</span>
+       <span style="margin-left:auto;color:${l.status === 'ok' ? 'var(--secondary)' : 'var(--danger)'};">${ingestEsc(l.status || '')}</span>
      </div>`).join('') : '<span style="font-size:12px;color:var(--text-muted);">无日志</span>';
 
   const figures = (status.artifacts || []).filter(a => (a.kind || '').startsWith('figure:'));
   document.getElementById('detail-figures').innerHTML = figures.length ? figures.map(a => {
     const name = a.kind.split(':')[1];
     const url = `/api/figure/${encodeURIComponent(projectId)}/${encodeURIComponent(name)}`;
-    return `<a href="${url}" target="_blank" rel="noopener" style="display:block;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:rgba(3,12,17,.5);">
+    return `<a href="${url}" target="_blank" rel="noopener" style="display:block;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:rgba(3,12,17,.5);">
       <img src="${url}" alt="${ingestEsc(name)}" loading="lazy" style="width:100%;height:96px;object-fit:cover;display:block;">
-      <div style="font-size:11px;padding:4px 6px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ingestEsc(name)}</div>
+      <div style="font-size:12px;padding:4px 6px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ingestEsc(name)}</div>
     </a>`;
   }).join('') : '<span style="font-size:12px;color:var(--text-muted);">该项目没有保存图表</span>';
 
   const candidates = status.candidates || [];
   document.getElementById('detail-candidates').innerHTML = candidates.length ? `<table style="width:100%;border-collapse:collapse;">
-      <thead><tr style="text-align:left;color:var(--text-muted);font-size:11px;">
+      <thead><tr style="text-align:left;color:var(--text-muted);font-size:12px;">
         <th style="padding:4px 6px;">#</th><th style="padding:4px 6px;">基因</th><th style="padding:4px 6px;">类型</th>
         <th style="padding:4px 6px;">ΔPSI</th><th style="padding:4px 6px;">FDR</th></tr></thead>
       <tbody>${candidates.map(c => `<tr style="border-top:1px solid var(--border);">
         <td style="padding:4px 6px;">${ingestEsc(c.rank)}</td>
         <td style="padding:4px 6px;font-weight:600;">${ingestEsc(c.gene_symbol || c.gene_id || '-')}</td>
         <td style="padding:4px 6px;">${ingestEsc(c.event_type || '-')}</td>
-        <td style="padding:4px 6px;color:${(c.delta_psi || 0) > 0 ? 'var(--danger)' : 'var(--success)'};">${c.delta_psi === null || c.delta_psi === undefined ? '-' : Number(c.delta_psi).toFixed(3)}</td>
-        <td style="padding:4px 6px;">${c.fdr === null || c.fdr === undefined ? '-' : Number(c.fdr).toExponential(2)}</td>
+        <td style="padding:4px 6px;color:${(c.delta_psi || 0) > 0 ? 'var(--danger)' : 'var(--secondary)'};">${c.delta_psi === null || c.delta_psi === undefined ? '-' : Number(c.delta_psi).toFixed(3)}</td>
+        <td style="padding:4px 6px;">${c.fdr === null || c.fdr === undefined ? '-' : fmtFdr(c.fdr)}</td>
       </tr>`).join('')}</tbody></table>`
     : '<span style="font-size:12px;color:var(--text-muted);">该项目没有候选事件记录</span>';
 }
@@ -2096,7 +2274,7 @@ async function revealProjectBundle() {
   const say = (text, ok) => {
     if (!hint) return;
     hint.textContent = text;
-    hint.style.color = ok ? 'var(--success)' : 'var(--danger)';
+    hint.style.color = ok ? 'var(--secondary)' : 'var(--danger)';
   };
   if (hint) say('正在整理成果文件夹…', true);
   try {
@@ -2114,7 +2292,7 @@ async function packageProject() {
   const say = (text, ok) => {
     if (!hint) return;
     hint.textContent = text;
-    hint.style.color = ok ? 'var(--success)' : 'var(--danger)';
+    hint.style.color = ok ? 'var(--secondary)' : 'var(--danger)';
   };
   if (hint) say('正在打包…', true);
   try {
@@ -2135,9 +2313,13 @@ async function deleteCurrentProject() {
   if (!state.currentProject) return;
   const project = (state.projects || []).find(p => p.project_id === state.currentProject) || {};
   const label = project.name || state.currentProject;
-  if (!confirm(`确定删除项目「${label}」吗？\n\n会删除数据库记录和该项目的图表/报告目录，无法撤销。\n原始输入数据不会被删除。`)) return;
+  const confirmed = await AppNotify.confirm(
+    `项目「${label}」的数据库记录、图表与报告目录都会被移除，且无法撤销。原始输入数据不会被删除。`,
+    { kind: 'warning', title: '删除这个项目？', confirmLabel: '删除项目', cancelLabel: '保留项目', danger: true }
+  );
+  if (!confirmed) return;
   const response = await fetch(`/api/projects/${encodeURIComponent(state.currentProject)}`, { method: 'DELETE' });
-  if (!response.ok) { alert('删除失败：' + response.status); return; }
+  if (!response.ok) { AppNotify.toast('删除失败：HTTP ' + response.status, 'error'); return; }
   localStorage.removeItem('epitoperank.currentProject');
   state.currentProject = null;
   state.detail = null;
@@ -2156,14 +2338,14 @@ function renderProjectHistory() {
       return `<div style="padding: 11px 12px; border-bottom: 1px solid var(--border); cursor: pointer; ${active ? 'background:var(--gray-100);border-left:3px solid var(--black);' : 'border-left:3px solid transparent;'}" onclick="selectProject('${ingestEsc(p.project_id)}')">
         <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;">
           <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ingestEsc(p.name || p.project_id)}</div>
-          <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;">${ingestEsc(fmtDate(p.created_at).slice(0, 10))}</div>
+          <div style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${ingestEsc(fmtDate(p.created_at).slice(0, 10))}</div>
         </div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap;">
           <span>${ingestEsc(p.source_format || '-')}</span>
           <span>事件 ${fmtCount(p.event_count)}</span>
           <span style="color:var(--danger);">显著 ${fmtCount(p.significant_count)}</span>
         </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ingestEsc(p.query || '分析查询')}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ingestEsc(p.query || '分析查询')}</div>
       </div>`;
     }).join('') || '<div style="padding:20px;text-align:center;color:var(--text-muted);">没有匹配的项目</div>';
   }
@@ -2277,7 +2459,10 @@ async function loadEventPage(page) {
     significant_only: filters.significant_only ? 'true' : 'false',
     order_by: filters.order_by,
   });
-  const data = await apiCall(`/projects/${encodeURIComponent(state.currentProject)}/events?${params.toString()}`);
+  const skeletonTimer = setTimeout(eventsSkeleton, 120);
+  let data;
+  try { data = await apiCall(`/projects/${encodeURIComponent(state.currentProject)}/events?${params.toString()}`); }
+  finally { clearTimeout(skeletonTimer); }
   if (!data || data.events === undefined) {
     document.getElementById('events-table').innerHTML =
       '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--danger);">读取事件失败（项目可能已被删除）</td></tr>';
@@ -2297,6 +2482,44 @@ function gotoEventPage(page) {
   const target = Math.min(Math.max(1, Number(page) || 1), state.eventPages || 1);
   loadEventPage(target);
 }
+function fmtSci(value, digits) {
+  if (value === null || value === undefined || value === '') return '-';
+  const n = Number(value);
+  if (!isFinite(n)) return '-';
+  if (n === 0) return '0';
+  if (Math.abs(n) < 1e-300) return n > 0 ? '<1e-300' : '>-1e-300';
+  const parts = n.toExponential(digits === undefined ? 2 : digits).split('e');
+  let mantissa = parts[0];
+  if (mantissa.indexOf('.') >= 0) mantissa = mantissa.replace(/0+$/, '').replace(/[.]$/, '');
+  return mantissa + 'e' + String(Number(parts[1]));
+}
+function fmtFdr(value) {
+  if (value === null || value === undefined || value === '') return '-';
+  const n = Number(value);
+  if (!isFinite(n)) return '-';
+  if (n === 0) return '0';
+  return n >= 0.001 ? n.toFixed(3) : fmtSci(n, 2);
+}
+function dpsiCell(value) {
+  if (value === null || value === undefined || value === '' || !isFinite(Number(value))) return '<td class="num">-</td>';
+  const n = Number(value), direction = n > 0 ? 'up' : n < 0 ? 'down' : 'neutral';
+  return `<td class="num"><span class="dpsi-cell"><span class="dpsi-value ${direction}">${n > 0 ? '+' : ''}${n.toFixed(3)}</span><span class="dpsi-bar" aria-hidden="true"><span class="${direction}" style="width:${(Math.min(Math.abs(n),1)*50).toFixed(1)}%"></span></span></span></td>`;
+}
+function eventsSkeleton() {
+  const tbody = document.getElementById('events-table');
+  if (!tbody) return;
+  tbody.innerHTML = Array.from({length:9}, () => '<tr class="skeleton-row">' + [70,52,38,34,44].map((width,i) => `<td><span class="sk" style="width:${width}%;${i > 2 ? 'margin-left:auto;' : ''}"></span></td>`).join('') + '<td></td></tr>').join('');
+}
+const eventTable = document.getElementById('events-table');
+function openEventRow(event) {
+  const row = event.target.closest('tr[data-event]');
+  if (!row || !eventTable.contains(row)) return;
+  if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+  if (event.type === 'keydown') event.preventDefault();
+  viewEventDetails(row.dataset.event);
+}
+eventTable.addEventListener('click', openEventRow);
+eventTable.addEventListener('keydown', openEventRow);
 function renderEventsTable(events) {
   const tbody = document.getElementById('events-table');
   if (!events || events.length === 0) {
@@ -2308,16 +2531,16 @@ function renderEventsTable(events) {
     const gene = event.gene_symbol || event.gene || event.gene_id || '-';
     const eventType = event.event_type || event.type || '-';
     const dpsi = (event.delta_psi !== null && event.delta_psi !== undefined) ? Number(event.delta_psi).toFixed(3) : '-';
-    const fdr = (event.fdr !== null && event.fdr !== undefined) ? Number(event.fdr).toExponential(2) : '-';
-    const color = (Number(event.delta_psi) || 0) > 0 ? 'var(--danger)' : 'var(--success)';
-    const flag = event.significant ? '' : ' <span style="font-size:10px;color:var(--text-muted);">(不显著)</span>';
-    return `<tr>
-      <td style="font-family:var(--font-mono);font-size:12px;">${ingestEsc(eventId)}</td>
+    const fdr = (event.fdr !== null && event.fdr !== undefined) ? fmtFdr(event.fdr) : '-';
+    const color = (Number(event.delta_psi) || 0) > 0 ? 'var(--danger)' : 'var(--secondary)';
+    const flag = event.significant ? '' : ' <span style="font-size:12px;color:var(--text-muted);">(不显著)</span>';
+    return `<tr class="event-row" tabindex="0" data-event="${ingestEsc(eventId)}">
+      <td class="mono">${ingestEsc(eventId)}</td>
       <td><strong>${ingestEsc(gene)}</strong>${flag}</td>
       <td>${ingestEsc(eventType)}</td>
-      <td style="color:${color};">${dpsi}</td>
-      <td>${fdr}</td>
-      <td><button class="btn btn-sm btn-secondary" onclick="viewEventDetails('${ingestEsc(eventId)}')">查看</button></td>
+      ${dpsiCell(event.delta_psi)}
+      <td class="num">${ingestEsc(fdr)}</td>
+      <td><span class="row-go" aria-hidden="true">›</span></td>
     </tr>`;
   }).join('');
 }
@@ -2334,7 +2557,7 @@ function loadChart(chartType) {
   if (!state.currentProject) { 
     container.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 600px; color: var(--text-muted);">
-        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></div>
+        <div style="font-size: 36px; margin-bottom: 16px; opacity: 0.3;"></div>
         <div style="font-size: 16px; font-weight: 600;">未选择项目</div>
         <div style="font-size: 14px; margin-top: 8px;">请先在仪表盘选择一个分析项目</div>
       </div>`; 
@@ -2360,7 +2583,7 @@ function loadChart(chartType) {
   
   container.innerHTML = `
     <div style="padding: 24px;">
-      <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text);">${info[0]}</div>
+      <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text);">${info[0]}</div>
       <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6;">${info[1]}</div>
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 500px; background: var(--gray-100); border-radius: var(--radius);">
         <div style="width: 48px; height: 48px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
@@ -2379,7 +2602,7 @@ function loadChart(chartType) {
   img.onload = function() {
     container.innerHTML = `
       <div style="padding: 24px;">
-        <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text);">${info[0]}</div>
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text);">${info[0]}</div>
         <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6;">${info[1]}</div>
       </div>
     `;
@@ -2389,7 +2612,7 @@ function loadChart(chartType) {
   img.onerror = function() { 
     container.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 600px; color: var(--text-muted);">
-        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></div>
+        <div style="font-size: 36px; margin-bottom: 16px; opacity: 0.3;"></div>
         <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">图表不可用</div>
         <div style="font-size: 14px;">该项目可能尚未生成此图表，请完成分析后重试</div>
       </div>
@@ -2399,7 +2622,7 @@ function loadChart(chartType) {
 async function exploreGene() {
   const geneSymbol = document.getElementById('gene-search').value.trim();
   if (!geneSymbol) {
-    alert('请输入基因符号');
+    AppNotify.toast('请输入基因符号', 'warning');
     return;
   }
   
@@ -2408,7 +2631,7 @@ async function exploreGene() {
     container.innerHTML = `
       <div class="card">
         <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-          <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.3;"></div>
+          <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.3;"></div>
           <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">请先选择项目</div>
           <div style="font-size: 14px;">在仪表盘选择一个分析项目后再探索基因</div>
         </div>
@@ -2433,8 +2656,8 @@ async function exploreGene() {
     container.innerHTML = `
       <div class="card">
         <div style="padding: 60px; text-align: center; color: var(--text-muted);">
-          <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;"></div>
-          <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">未找到 ${geneSymbol} 的剪接事件</div>
+          <div style="font-size: 36px; margin-bottom: 16px; opacity: 0.3;"></div>
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">未找到 ${geneSymbol} 的剪接事件</div>
           <div style="font-size: 14px;">该基因可能不在当前分析的候选列表中，或未达到显著性阈值</div>
           <button class="btn btn-secondary" style="margin-top: 20px;" onclick="navigateTo('explorer')">浏览所有事件</button>
         </div>
@@ -2461,27 +2684,27 @@ async function exploreGene() {
     <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
       <thead>
         <tr style="border-bottom: 2px solid var(--border);">
-          <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">事件 ID</th>
-          <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">类型</th>
-          <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">Delta PSI</th>
-          <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">FDR</th>
-          <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">评分</th>
-          <th style="text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">操作</th>
+          <th style="text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">事件 ID</th>
+          <th style="text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">类型</th>
+          <th style="text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">Delta PSI</th>
+          <th style="text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">FDR</th>
+          <th style="text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">评分</th>
+          <th style="text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary);">操作</th>
         </tr>
       </thead>
       <tbody>
         ${geneEvents.map(e => {
           const dpsi = Number(e.delta_psi).toFixed(3);
-          const fdr = Number(e.fdr).toExponential(2);
+          const fdr = fmtFdr(e.fdr);
           const score = e.score !== undefined ? Number(e.score).toFixed(3) : '-';
           const sigLevel = e.fdr < 0.001 ? '***' : e.fdr < 0.01 ? '**' : e.fdr < 0.05 ? '*' : '';
           const sigColor = e.fdr < 0.001 ? '#dc2626' : e.fdr < 0.01 ? '#f59e0b' : e.fdr < 0.05 ? '#059669' : '#94a3b8';
           
           return `<tr style="border-bottom: 1px solid var(--border);">
             <td style="padding: 12px 16px; font-family: monospace;">${e.event_id || '-'}</td>
-            <td style="padding: 12px 16px;"><span style="background: var(--bg); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">${e.event_type || '-'}</span></td>
+            <td style="padding: 12px 16px;"><span style="background: var(--bg); padding: 4px 10px; border-radius: var(--radius); font-size: 12px; font-weight: 600;">${e.event_type || '-'}</span></td>
             <td style="padding: 12px 16px; font-family: monospace; font-weight: 600;">${dpsi}</td>
-            <td style="padding: 12px 16px; font-family: monospace; font-weight: 600; color: ${sigColor};">${fdr} ${sigLevel}</td>
+            <td style="padding: 12px 16px; font-family: monospace; font-weight: 600; color: ${sigColor};">${ingestEsc(fdr)} ${sigLevel}</td>
             <td style="padding: 12px 16px; font-family: monospace;">${score}</td>
             <td style="padding: 12px 16px;"><button class="btn btn-sm btn-secondary" onclick="viewEventDetails('${e.event_id || e.id}')">详情</button></td>
           </tr>`;
@@ -2509,7 +2732,7 @@ async function exploreGene() {
     <div class="card" style="margin-bottom: 24px;">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
         <div>
-          <div style="font-size: 28px; font-weight: 800; background: var(--black); ">${geneSymbol}</div>
+          <div style="font-size: 28px; font-weight: 600; background: var(--black); ">${geneSymbol}</div>
           <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">基因剪接分析报告</div>
         </div>
         <button class="btn btn-secondary" onclick="navigateTo('explorer')">返回事件列表</button>
@@ -2517,32 +2740,32 @@ async function exploreGene() {
       
       <div class="grid grid-3" style="margin-bottom: 28px;">
         <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); text-align: center;">
-          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #0e7490; font-weight: 700; margin-bottom: 8px;">总事件数</div>
-          <div style="font-size: 32px; font-weight: 800; color: #0e7490;">${geneEvents.length}</div>
+          <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #0e7490; font-weight: 600; margin-bottom: 8px;">总事件数</div>
+          <div style="font-size: 28px; font-weight: 600; color: #0e7490;">${geneEvents.length}</div>
         </div>
         <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); text-align: center;">
-          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #065f46; font-weight: 700; margin-bottom: 8px;">显著事件</div>
-          <div style="font-size: 32px; font-weight: 800; color: #065f46;">${significantEvents.length}</div>
+          <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #065f46; font-weight: 600; margin-bottom: 8px;">显著事件</div>
+          <div style="font-size: 28px; font-weight: 600; color: #065f46;">${significantEvents.length}</div>
         </div>
         <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); text-align: center;">
-          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; font-weight: 700; margin-bottom: 8px;">平均 |ΔPSI|</div>
-          <div style="font-size: 32px; font-weight: 800; color: #7c3aed;">${avgDeltaPSI.toFixed(3)}</div>
+          <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #7c3aed; font-weight: 600; margin-bottom: 8px;">平均 |ΔPSI|</div>
+          <div style="font-size: 28px; font-weight: 600; color: #7c3aed;">${avgDeltaPSI.toFixed(3)}</div>
         </div>
       </div>
       
       <div style="margin-bottom: 24px; padding: 16px; background: var(--bg); border-radius: var(--radius);">
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">事件类型分布</div>
+        <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">事件类型分布</div>
         <div style="font-size: 14px; line-height: 1.6;">${eventTypeSummary}</div>
       </div>
       
       <div style="margin-bottom: 24px;">
-        <div style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--text);">剪接事件详情</div>
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px; color: var(--text);">剪接事件详情</div>
         ${eventsHtml}
       </div>
       
       ${evidence ? `
       <div>
-        <div style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--text);">文献证据</div>
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px; color: var(--text);">文献证据</div>
         <div style="padding: 20px; background: var(--bg); border-radius: var(--radius); font-size: 14px; line-height: 1.8;">
           ${evidence}
         </div>
@@ -2553,7 +2776,7 @@ async function exploreGene() {
 }
 async function generateReport(format) {
   if (!state.currentProject) { 
-    alert('请先选择一个项目'); 
+    AppNotify.toast('请先选择一个项目', 'warning'); 
     return; 
   }
   
@@ -2588,9 +2811,9 @@ async function generateReport(format) {
     output.innerHTML = `
       <div style="padding: 24px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--gray-900);">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-          <div style="font-size: 24px;"></div>
+          <div style="font-size: 20px;"></div>
           <div>
-            <div style="font-size: 16px; font-weight: 700; color: var(--success);">报告生成成功！</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--secondary);">报告生成成功！</div>
             <div style="font-size: 13px; color: var(--text-secondary);">文件已自动下载</div>
           </div>
         </div>
@@ -2604,9 +2827,9 @@ async function generateReport(format) {
     output.innerHTML = `
       <div style="padding: 24px; background: var(--gray-100); border-radius: var(--radius); border-left: 2px solid var(--gray-900);">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-          <div style="font-size: 24px;"></div>
+          <div style="font-size: 20px;"></div>
           <div>
-            <div style="font-size: 16px; font-weight: 700; color: var(--error);">报告生成失败</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--error);">报告生成失败</div>
             <div style="font-size: 13px; color: var(--text-secondary);">${error.message}</div>
           </div>
         </div>
@@ -2693,7 +2916,7 @@ function handleFileSelect(event) {
 function handleReportDirectory(event) {
   const files = Array.from(event.target.files).filter(file => /.+[.](SE|MXE|A3SS|A5SS|RI)[.]xls$/i.test(file.name));
   if (!files.length) {
-    alert('目录中没有找到华大逐样本剪接表（如 OC_001.SE.xls）');
+    AppNotify.toast('目录中没有找到华大逐样本剪接表（如 OC_001.SE.xls）', 'error');
     return;
   }
   handleFiles(files);
@@ -2717,7 +2940,7 @@ function updateFileList() {
     fileListDiv.innerHTML = (selectedFiles.length > 30 ? '<div style="margin-bottom:8px">已选择 ' + selectedFiles.length + ' 个文件（仅显示前 30 个）</div>' : '') + selectedFiles.slice(0, 30).map((file, index) => 
       `<div style="padding: 8px; background: var(--bg); border-radius: var(--radius); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
         <span style="font-size: 13px;">${file.name}</span>
-        <button onclick="removeFile(${index})" style="background: none; border: none; cursor: pointer; color: var(--error); font-size: 18px;">×</button>
+        <button onclick="removeFile(${index})" style="background: none; border: none; cursor: pointer; color: var(--error); font-size: 16px;">×</button>
       </div>`
     ).join('');
     startBtn.disabled = false;
@@ -2735,17 +2958,17 @@ async function startAnalysis() {
     (selectedFiles.some(file => /.+[.](SE|MXE|A3SS|A5SS|RI)[.]xls$/i.test(file.name)) ? 'Explore per-sample PSI' : '');
   
   if (!projectName) {
-    alert('请输入项目名称');
+    AppNotify.toast('请输入项目名称', 'warning');
     return;
   }
   
   if (!analysisQuery) {
-    alert('请输入分析查询');
+    AppNotify.toast('请输入分析查询', 'warning');
     return;
   }
   
   if (selectedFiles.length === 0) {
-    alert('请至少选择一个文件');
+    AppNotify.toast('请至少选择一个文件', 'warning');
     return;
   }
   
@@ -2827,7 +3050,13 @@ async function startAnalysis() {
   } catch (error) {
     console.error('Analysis error:', error);
     statusDiv.innerHTML = '<span class="status status-waiting"><span class="status-dot"></span>空闲</span>';
-    alert(`操作失败：${error.message}\n\n请检查：\n1. 文件格式是否正确\n2. 文件大小是否过大\n3. 网络连接是否正常`);
+    AppNotify.dialog({
+      kind: 'error',
+      title: '上传没有完成',
+      message: '文件或数据目录在上传阶段中断，分析尚未启动。',
+      detail: String(error && error.message ? error.message : error),
+      bullets: ['确认文件格式为 CSV、TSV、TXT 或表格型 XLS', '单个文件不要过大，必要时先拆分', '检查网络与本地服务是否可用']
+    });
   }
 }
 
@@ -2858,7 +3087,12 @@ function runAnalysisOnDir(analysisQuery, inputDir, projectName, statusDiv) {
     if (!analyzeResponse.ok) {
       const errorText = await analyzeResponse.text();
       statusDiv.innerHTML = '<span class="status status-waiting"><span class="status-dot"></span>空闲</span>';
-      alert(`分析失败 (${analyzeResponse.status}): ${errorText}`);
+      AppNotify.dialog({
+        kind: 'error',
+        title: '分析未能完成',
+        message: '服务返回了错误，本次分析已中止。修正输入后可以重新发起。',
+        detail: 'HTTP ' + analyzeResponse.status + '\\n' + String(errorText || '').slice(0, 800)
+      });
       return;
     }
     const analyzeResult = await analyzeResponse.json();
@@ -2870,12 +3104,27 @@ function runAnalysisOnDir(analysisQuery, inputDir, projectName, statusDiv) {
     statusDiv.innerHTML = '<span class="status status-completed"><span class="status-dot"></span>已完成</span>';
     loadPipeline();
     loadDashboard();
-    alert('分析完成！可在事件浏览器、可视化和报告页面查看结果。');
+    AppNotify.dialog({
+      kind: 'success',
+      title: '分析完成',
+      subtitle: '结果已写入当前项目',
+      message: '事件表已解析，显著性筛选与候选排序都已完成。接下来可以逐条查看事件，或直接生成研究报告。',
+      actions: [
+        { label: '生成研究报告', value: 'report', onClick: function () { navigateTo('report'); } },
+        { label: '查看可视化', value: 'visualization', onClick: function () { navigateTo('visualization'); } },
+        { label: '浏览事件', variant: 'primary', value: 'explorer', onClick: function () { navigateTo('explorer'); } }
+      ]
+    });
   }).catch(fetchError => {
     clearInterval(pollTimer);
     console.error('Analysis request error:', fetchError);
     statusDiv.innerHTML = '<span class="status status-waiting"><span class="status-dot"></span>空闲</span>';
-    alert(`分析请求失败：${fetchError.message}（分析可能仍在后台运行，请稍后刷新查看）`);
+    AppNotify.dialog({
+      kind: 'warning',
+      title: '连接已中断',
+      message: '前端没能拿到分析响应，但后台任务可能仍在运行。稍后点击右上角「刷新」即可看到最新进度。',
+      detail: String(fetchError && fetchError.message ? fetchError.message : fetchError)
+    });
   });
 }
 
@@ -2925,7 +3174,7 @@ function ingestSci(value) {
   const num = Number(value);
   if (value === null || value === undefined || value === '' || !isFinite(num)) return '—';
   if (num === 0) return '0';
-  return num.toExponential(2);
+  return fmtSci(num, 2);
 }
 
 function ingestTraceSteps(trace) {
@@ -3108,7 +3357,7 @@ function renderIngestModal() {
 
   const sampleEvents = preview.events || [];
   if (sampleEvents.length) {
-    const head = ingestT('事件 ID', 'Event ID') + '</th><th>' + ingestT('基因', 'Gene') + '</th><th>' + ingestT('类型', 'Type') + '</th><th>ΔPSI</th><th>FDR</th><th>' + ingestT('坐标', 'Coordinates');
+    const head = ingestT('事件 ID', 'Event ID') + '</th><th>' + ingestT('基因', 'Gene') + '</th><th>' + ingestT('类型', 'Type') + '</th><th>ΔPSI</th><th class="num">FDR</th><th>' + ingestT('坐标', 'Coordinates');
     const rows = sampleEvents.map(function (event) {
       return '<tr><td>' + ingestEsc(event.event_id) + '</td><td>' + ingestEsc(event.gene) + '</td><td>' + ingestEsc(event.event_type) + '</td><td>' + ingestFixed(event.delta_psi, 3) + '</td><td>' + ingestSci(event.fdr) + '</td><td>' + ingestEsc(event.coordinates) + '</td></tr>';
     }).join('');
@@ -3321,20 +3570,20 @@ document.addEventListener('epitoperank:language', function () {
 
 function viewEventDetails(eventId) { 
   const event = state.events.find(e => (e.event_id || e.id) === eventId);
-  if (!event) { alert('事件未找到'); return; }
+  if (!event) { AppNotify.toast('事件未找到', 'warning'); return; }
   
   const gene = event.gene_symbol || event.gene || 'Unknown';
   const eventType = event.event_type || event.type || 'Unknown';
   const dpsi = event.delta_psi !== null && event.delta_psi !== undefined ? Number(event.delta_psi).toFixed(4) : 'N/A';
-  const fdr = event.fdr !== null && event.fdr !== undefined ? Number(event.fdr).toExponential(3) : 'N/A';
-  const pValue = event.p_value !== null && event.p_value !== undefined ? Number(event.p_value).toExponential(3) : 'N/A';
+  const fdr = event.fdr !== null && event.fdr !== undefined ? fmtFdr(event.fdr) : 'N/A';
+  const pValue = event.p_value !== null && event.p_value !== undefined ? fmtSci(event.p_value, 3) : 'N/A';
   const score = event.score !== null && event.score !== undefined ? Number(event.score).toFixed(3) : 'N/A';
   
   // Determine significance level
   let sigLevel = 'ns';
   let sigColor = '#94a3b8';
   if (fdr !== 'N/A') {
-    const fdrNum = parseFloat(fdr);
+    const fdrNum = parseFloat(String(fdr).replace('<', ''));
     if (fdrNum < 0.001) { sigLevel = '***'; sigColor = '#dc2626'; }
     else if (fdrNum < 0.01) { sigLevel = '**'; sigColor = '#f59e0b'; }
     else if (fdrNum < 0.05) { sigLevel = '*'; sigColor = '#059669'; }
@@ -3368,11 +3617,11 @@ function viewEventDetails(eventId) {
       <div style="background: var(--white); border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 0; max-width: 900px; width: 95%; max-height: 90vh; overflow-y: auto;">
         <!-- Header -->
         <div style="background: var(--black); padding: 32px; color: white; position: relative;">
-          <button onclick="closeEventModal()" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; width: 36px; height: 36px; border-radius: 50%; color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
+          <button onclick="closeEventModal()" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; width: 36px; height: 36px; border-radius: 50%; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
           <div style="font-size: 28px; font-weight: 600; margin-bottom: 8px;">${gene}</div>
           <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 500;">${eventType}</span>
-            <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 500;">FDR ${fdr} ${sigLevel}</span>
+            <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 400;">${eventType}</span>
+            <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 400;">FDR ${ingestEsc(fdr)} ${sigLevel}</span>
           </div>
         </div>
         
@@ -3381,16 +3630,16 @@ function viewEventDetails(eventId) {
           <!-- Key Metrics -->
           <div class="grid grid-3" style="margin-bottom: 28px;">
             <div style="background: var(--gray-100); border: 1px solid var(--gray-300); padding: 20px; border-radius: var(--radius); text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-700); font-weight: 600; margin-bottom: 8px;">Delta PSI</div>
-              <div style="font-size: 32px; font-weight: 600; color: var(--black);">${dpsi}</div>
+              <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-700); font-weight: 600; margin-bottom: 8px;">Delta PSI</div>
+              <div style="font-size: 28px; font-weight: 600; color: var(--black);">${dpsi}</div>
             </div>
             <div style="background: var(--gray-100); border: 1px solid var(--gray-300); padding: 20px; border-radius: var(--radius); text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-700); font-weight: 600; margin-bottom: 8px;">FDR</div>
-              <div style="font-size: 32px; font-weight: 600; color: var(--black);">${fdr}</div>
+              <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-700); font-weight: 600; margin-bottom: 8px;">FDR</div>
+              <div style="font-size: 28px; font-weight: 600; color: var(--black);">${ingestEsc(fdr)}</div>
             </div>
             <div style="background: var(--gray-100); border: 1px solid var(--gray-300); padding: 20px; border-radius: var(--radius); text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-700); font-weight: 600; margin-bottom: 8px;">评分</div>
-              <div style="font-size: 32px; font-weight: 600; color: var(--black);">${score}</div>
+              <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-700); font-weight: 600; margin-bottom: 8px;">评分</div>
+              <div style="font-size: 28px; font-weight: 600; color: var(--black);">${score}</div>
             </div>
           </div>
           
@@ -3412,7 +3661,7 @@ function viewEventDetails(eventId) {
             <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
               <tr style="border-bottom: 1px solid var(--gray-300);">
                 <td style="padding: 12px 16px; font-weight: 600; color: var(--gray-700); width: 40%;">P值</td>
-                <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 14px; color: var(--gray-900);">${pValue}</td>
+                <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 14px; color: var(--gray-900);">${ingestEsc(pValue)}</td>
               </tr>
               <tr style="border-bottom: 1px solid var(--gray-300);">
                 <td style="padding: 12px 16px; font-weight: 600; color: var(--gray-700);">Delta PSI</td>
@@ -3420,7 +3669,7 @@ function viewEventDetails(eventId) {
               </tr>
               <tr style="border-bottom: 1px solid var(--gray-300);">
                 <td style="padding: 12px 16px; font-weight: 600; color: var(--gray-700);">FDR校正值</td>
-                <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 14px; color: var(--gray-900);">${fdr}</td>
+                <td style="padding: 12px 16px; font-family: var(--font-mono); font-size: 14px; color: var(--gray-900);">${ingestEsc(fdr)}</td>
               </tr>
               <tr>
                 <td style="padding: 12px 16px; font-weight: 600; color: var(--gray-700);">综合评分</td>
@@ -3853,6 +4102,255 @@ document.addEventListener('epitoperank:language', function () {
 document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModelConfig(); setInterval(() => { if (state.currentPage === 'pipeline' && state.currentProject) { loadPipeline(); } }, 5000); });
 </script>
 <script>
+// 统一的应用内提示层：toast（轻量、自动消失）与 dialog（需要用户确认）。
+// 不再使用浏览器原生 alert/confirm —— 原生弹窗在 Chrome / WebView2 / Electron
+// 里样式各不相同，无法跟随本应用的主题、语言与圆角体系。
+(function () {
+  "use strict";
+
+  var ICONS = {
+    success: '<path d="M4.5 12.4l4.8 4.8L19.6 6.9"/>',
+    error: '<path d="M6.6 6.6l10.8 10.8M17.4 6.6L6.6 17.4"/>',
+    warning: '<path d="M12 4.8v9.4"/><circle cx="12" cy="18.9" r="1.45" fill="currentColor" stroke="none"/>',
+    info: '<path d="M12 10.6v8.6"/><circle cx="12" cy="6.1" r="1.45" fill="currentColor" stroke="none"/>'
+  };
+  var TITLES = {
+    success: ["完成", "Done"],
+    error: ["未完成", "Not completed"],
+    warning: ["请注意", "Please check"],
+    info: ["提示", "Notice"]
+  };
+  var CLOSE_LABEL = ["关闭", "Close"];
+  var DISMISS_LABEL = ["知道了", "Got it"];
+  var TOAST_LIMIT = 4;
+
+  function currentLang() {
+    var i18n = window.__epitoperankI18n;
+    var value = i18n && i18n.getLang ? i18n.getLang() : "zh";
+    return value === "en" || value === "zh-Hant" ? value : "zh";
+  }
+  function pair(item) { return currentLang() === "en" ? item[1] : item[0]; }
+  function translate(text) {
+    var i18n = window.__epitoperankI18n;
+    var raw = String(text === null || text === undefined ? "" : text);
+    if (currentLang() === "zh") return raw;
+    if (!i18n || !i18n.translate) return raw;
+    // translateOne 按整串匹配字典，多段文案需要逐段翻译。
+    var parts = raw.split("\\n\\n");
+    for (var i = 0; i < parts.length; i++) parts[i] = i18n.translate(parts[i]);
+    return parts.join("\\n\\n");
+  }
+  function iconSvg(kind) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      (ICONS[kind] || ICONS.info) + "</svg>";
+  }
+  function resolveStack() {
+    var node = document.getElementById("toast-stack");
+    if (!node) {
+      node = document.createElement("div");
+      node.id = "toast-stack";
+      node.setAttribute("role", "region");
+      node.setAttribute("aria-live", "polite");
+      document.body.appendChild(node);
+    }
+    return node;
+  }
+
+  function dismissToast(node, immediate) {
+    if (!node || node.getAttribute("data-leaving") === "1") return;
+    node.setAttribute("data-leaving", "1");
+    if (immediate) { node.remove(); return; }
+    node.classList.add("leaving");
+    setTimeout(function () { node.remove(); }, 220);
+  }
+
+  function toast(message, kind, options) {
+    options = options || {};
+    kind = ICONS[kind] ? kind : "info";
+    var stack = resolveStack();
+    while (stack.children.length >= TOAST_LIMIT) dismissToast(stack.firstElementChild, true);
+
+    var life = typeof options.duration === "number" ? options.duration : 5200;
+    var node = document.createElement("div");
+    node.className = "app-toast " + kind;
+    node.setAttribute("role", kind === "error" ? "alert" : "status");
+    node.style.setProperty("--toast-life", life + "ms");
+
+    var head = options.title ? translate(options.title) : pair(TITLES[kind]);
+    var body = translate(message);
+    node.innerHTML =
+      '<span class="app-toast-icon">' + iconSvg(kind) + "</span>" +
+      '<div class="app-toast-body"><div class="app-toast-title"></div>' +
+      (body ? '<div class="app-toast-msg"></div>' : "") + "</div>" +
+      '<button type="button" class="app-toast-close" aria-label="' + pair(CLOSE_LABEL) + '">&#10005;</button>';
+    node.querySelector(".app-toast-title").textContent = head;
+    if (body) node.querySelector(".app-toast-msg").textContent = body;
+
+    var timer = null;
+    function arm(ms) {
+      clearTimeout(timer);
+      timer = setTimeout(function () { dismissToast(node); }, ms);
+    }
+    node.addEventListener("mouseenter", function () {
+      clearTimeout(timer);
+      node.classList.add("paused");
+      node.style.removeProperty("--toast-life");
+    });
+    node.addEventListener("mouseleave", function () {
+      node.classList.remove("paused");
+      arm(1600);
+    });
+    node.addEventListener("click", function (event) {
+      if (event.target.closest(".app-toast-close")) dismissToast(node);
+    });
+    stack.appendChild(node);
+    if (life > 0) arm(life);
+    return node;
+  }
+
+  var activeActions = [];
+  var activeResolve = null;
+  var dismissValue = null;
+
+  function dialogNode() {
+    var node = document.getElementById("app-dialog");
+    if (!node) {
+      node = document.createElement("dialog");
+      node.id = "app-dialog";
+      node.className = "app-dialog";
+      document.body.appendChild(node);
+    }
+    return node;
+  }
+
+  function settle(value) {
+    var node = dialogNode();
+    if (node.open) {
+      try { node.close(); } catch (e) {}
+    }
+    var resolve = activeResolve;
+    activeResolve = null;
+    activeActions = [];
+    if (resolve) resolve(value);
+  }
+
+  function dialog(options) {
+    options = options || {};
+    var kind = ICONS[options.kind] ? options.kind : "info";
+    var node = dialogNode();
+    if (node.open) settle(null);
+
+    activeActions = options.actions && options.actions.length ? options.actions.slice() : [{
+      label: pair(DISMISS_LABEL), variant: "primary", value: true
+    }];
+    dismissValue = "dismissValue" in options ? options.dismissValue : (activeActions.length === 1 ? activeActions[0].value : null);
+
+    node.className = "app-dialog " + kind;
+    var html =
+      '<div class="app-dialog-head">' +
+        '<div class="app-dialog-mark">' + iconSvg(kind) + "</div>" +
+        '<div class="app-dialog-titles">' +
+          '<div class="app-dialog-title" id="app-dialog-title"></div>' +
+          (options.subtitle ? '<div class="app-dialog-sub"></div>' : "") +
+        "</div>" +
+        '<button type="button" class="app-dialog-close" aria-label="' + pair(CLOSE_LABEL) + '">&#10005;</button>' +
+      "</div>" +
+      '<div class="app-dialog-body"></div>' +
+      '<div class="app-dialog-foot"></div>';
+    node.innerHTML = html;
+    node.querySelector(".app-dialog-title").textContent = translate(options.title || pair(TITLES[kind]));
+    if (options.subtitle) node.querySelector(".app-dialog-sub").textContent = translate(options.subtitle);
+
+    var body = node.querySelector(".app-dialog-body");
+    body.textContent = translate(options.message || "");
+    if (options.detail) {
+      var detail = document.createElement("div");
+      detail.className = "app-dialog-detail";
+      detail.textContent = translate(options.detail);
+      body.appendChild(detail);
+    }
+    if (options.bullets && options.bullets.length) {
+      var list = document.createElement("ul");
+      list.className = "app-dialog-list";
+      options.bullets.forEach(function (item) {
+        var li = document.createElement("li");
+        li.textContent = translate(item);
+        list.appendChild(li);
+      });
+      body.appendChild(list);
+    }
+
+    var foot = node.querySelector(".app-dialog-foot");
+    activeActions.forEach(function (action, index) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "btn " + (action.variant === "primary" ? "btn-primary"
+        : action.variant === "danger" ? "btn-danger" : "btn-secondary");
+      button.setAttribute("data-app-action", String(index));
+      button.textContent = translate(action.label || "");
+      foot.appendChild(button);
+    });
+    foot.lastElementChild && foot.lastElementChild.focus({ preventScroll: true });
+
+    node.onclick = function (event) {
+      var button = event.target.closest("[data-app-action]");
+      if (button) {
+        var action = activeActions[Number(button.getAttribute("data-app-action"))];
+        var value = action && "value" in action ? action.value : true;
+        settle(value);
+        if (action && typeof action.onClick === "function") setTimeout(action.onClick, 0);
+        return;
+      }
+      if (event.target.closest(".app-dialog-close")) settle(dismissValue);
+    };
+    node.oncancel = function (event) {
+      event.preventDefault();
+      settle(dismissValue);
+    };
+
+    return new Promise(function (resolve) {
+      var opener = document.activeElement;
+      activeResolve = function (value) {
+        // 关闭后把焦点还给触发元素，避免键盘用户丢失位置。
+        if (opener && opener.isConnected && typeof opener.focus === "function") {
+          try { opener.focus({ preventScroll: true }); } catch (e) {}
+        }
+        resolve(value);
+      };
+      node.showModal();
+    });
+  }
+
+  function confirmAsync(message, options) {
+    options = options || {};
+    return dialog({
+      kind: options.kind || "warning",
+      title: options.title,
+      message: message,
+      actions: [
+        { label: options.cancelLabel || pair(["取消", "Cancel"]), value: false },
+        { label: options.confirmLabel || pair(["继续", "Continue"]),
+          variant: options.danger ? "danger" : "primary", value: true }
+      ],
+      dismissValue: false
+    }).then(function (value) { return value === true; });
+  }
+
+  window.AppNotify = {
+    toast: toast,
+    dialog: dialog,
+    confirm: confirmAsync,
+    translate: translate,
+    clear: function () {
+      var stack = document.getElementById("toast-stack");
+      if (stack) Array.prototype.slice.call(stack.children).forEach(function (node) { dismissToast(node, true); });
+    }
+  };
+})();
+</script>
+
+<script>
 (function () {
   "use strict";
   // 繁简转换依赖 opencc-cn2t.js（约 1.1MB，占整个前端静态资源的大头）。
@@ -3868,7 +4366,7 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     // 资源拿不到时不能静默：用户点了繁體却看到简体，必须说明原因。
     function reportFailure() {
       if (lang === "zh-Hant") {
-        window.alert("繁體中文轉換資源載入失敗，已保持簡體顯示。請檢查網路後重新整理。");
+        AppNotify.toast("繁體中文轉換資源載入失敗，已保持簡體顯示。請檢查網路後重新整理。", "error");
       }
     }
     converterLoad = new Promise(function (resolve) {
@@ -3910,8 +4408,6 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "基因浏览器": "Gene Browser",
     "报告": "Report",
     "设置": "Settings",
-    " 设置": " Settings",
-    " 你": " You",
     "主菜单": "Main Menu",
     "分析工具": "Analysis Tools",
     "智能助手": "Assistant",
@@ -3938,17 +4434,11 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "分析进度": "Analysis Progress",
     "等待启动...": "Waiting to start...",
     "Agent 工作流": "Agent Workflow",
-    " 数据 Agent": " Data Agent",
     "加载并验证输入数据，检查文件格式和完整性": "Load and validate input data, checking file format and integrity",
-    " 质控 Agent": " QC Agent",
     "执行质量控制检查，过滤低质量样本": "Run quality-control checks and filter low-quality samples",
-    " 剪接检测 Agent": " Splicing Detection Agent",
     "使用统计模型检测可变剪接事件": "Detect alternative splicing events with statistical models",
-    " 统计 Agent": " Statistics Agent",
     "计算显著性（FDR）和效应量（Delta PSI）": "Compute significance (FDR) and effect size (Delta PSI)",
-    " 注释 Agent": " Annotation Agent",
     "功能注释、通路富集和文献证据收集": "Functional annotation, pathway enrichment, and literature evidence collection",
-    " 解读 Agent": " Interpretation Agent",
     "生成生物学解读和专业分析报告": "Generate biological interpretation and a professional analysis report",
     "等待中": "Waiting",
     "运行中": "Running",
@@ -3973,29 +4463,11 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "查看": "View",
     "筛选条件": "Filters",
     "统计阈值": "Statistical Thresholds",
-    " 应用筛选": " Apply Filters",
-    " 探索": " Explore",
     "搜索基因名称、事件ID或染色体位置...": "Search gene name, event ID, or chromosome position...",
     "选择图表类型": "Select chart type",
     "左侧共 13 张专业科研图，点击即可渲染": "13 publication-ready figures on the left; click to render",
-    " 核心统计图": " Core Statistics",
-    " 样本与质控": " Samples and QC",
-    " 事件组成与机制": " Event Composition and Mechanisms",
-    " AI 排序与功能富集": " AI Ranking and Functional Enrichment",
-    " 火山图 Volcano": " Volcano Plot",
-    " ΔPSI 累积分布 ECDF": " ΔPSI ECDF",
-    " 显著性碎石图 Scree": " Significance Scree Plot",
-    " 类型×显著性堆叠图": " Type × Significance Stacked Plot",
-    " 剪接机制示意图 Schematic": " Splicing Mechanism Schematic",
-    " PSI 热图 Heatmap": " PSI Heatmap",
-    " 分组 PSI 箱线图": " Grouped PSI Box Plot",
-    " 队列构成图": " Cohort Composition",
-    " 候选基因排名": " Candidate Gene Ranking",
-    " 评分分解堆叠图": " Score Decomposition Stacked Plot",
-    " 功能富集点图": " Functional Enrichment Dot Plot",
     "差异剪接的显著性与效应量": "Significance and effect size of differential splicing",
     "ΔPSI vs -log10(FDR)，标注显著性阈值": "ΔPSI vs -log10(FDR) with significance thresholds",
-    " ΔPSI 瀑布图 Waterfall": " ΔPSI Waterfall",
     "Top 25 效应量排序，区分包含上调/下调": "Top 25 by effect size, separating inclusion up/down",
     "SE/MXE/A5SS/A3SS/RI 五类事件计数": "Counts of the five event classes: SE/MXE/A5SS/A3SS/RI",
     "五类可变剪接的外显子-内含子结构模式图": "Exon-intron schematic of the five alternative splicing classes",
@@ -4011,8 +4483,6 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "显著性/效应/生物学/文献四维贡献": "Four-dimensional contribution: significance / effect / biology / literature",
     "GO/KEGG 富集倍数 vs FDR 气泡图": "GO/KEGG enrichment fold vs FDR bubble plot",
     "智能体候选评分与通路注释": "Agent-based candidate scoring and pathway annotation",
-    " 事件类型分布": " Event Type Distribution",
-    " 分析结果": " Analysis Results",
     "SE (外显子跳跃)": "SE (skipped exon)",
     "MXE (互斥外显子)": "MXE (mutually exclusive exons)",
     "A5SS (可变5'剪接)": "A5SS (alternative 5' splice site)",
@@ -4023,7 +4493,6 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "通路富集": "Pathway Enrichment",
     "剪接解读": "Splice Interpretation",
     "支持基因注释、文献搜索、通路富集和剪接事件解读等专业技能": "Professional skills including gene annotation, literature search, pathway enrichment, and splice event interpretation",
-    " 模型配置": " Model configuration",
     "模型配置": "Model configuration",
     "检查中…": "Checking…",
     "模型名": "Model",
@@ -4039,7 +4508,6 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "配置已保存（保留原 Key）": "Saved (existing key kept)",
     "选择左侧的技能按钮执行专业分析": "Choose a skill on the left to run a professional analysis",
     "请选择上方的技能按钮开始，或直接输入你的问题。": "Choose a skill above to start, or type your question.",
-    " EpitopeRank 智能助手": " EpitopeRank Assistant",
     "• 项目概览与样本统计": "• Project overview and sample statistics",
     "• 显著剪接事件列表（FDR": "• Significant splicing event list (FDR",
     "• 显著剪接事件列表（FDR < 0.05）": "• Significant splicing event list (FDR < 0.05)",
@@ -4050,7 +4518,6 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "• 执行通路富集分析": "• Run pathway enrichment analysis",
     "• 解读剪接事件的临床意义": "• Interpret the clinical significance of splicing events",
     "• 查询基因注释和剪接位点信息": "• Query gene annotation and splice-site information",
-    " MCP 工具": " MCP Tools",
     "Model Context Protocol · 运行时外部工具调用": "Model Context Protocol · runtime external tool calls",
     "未加载": "Not loaded",
     "自然语言指令": "Natural-language instruction",
@@ -4101,13 +4568,7 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "重试": "Retry",
     "正在生成报告...": "Generating report...",
     "这可能需要几分钟时间，请耐心等待": "This may take a few minutes. Please wait.",
-    " 分析完成": " Analysis complete",
-    " 分析失败": " Analysis failed",
     "未知错误": "Unknown error",
-    " 通路富集分析结果": " Pathway Enrichment Results",
-    " 文献搜索结果": " Literature Search Results",
-    " 剪接事件解读": " Splice Event Interpretation",
-    " 总结": " Summary",
     "无标题": "Untitled",
     "查看原文 →": "View source →",
     "被引次数:": "Citations:",
@@ -4187,11 +4648,511 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "解读 Agent 正在生成生物学解读...": "Interpretation Agent is generating biological interpretation...",
     "生成分析报告": "Generate Analysis Report",
     "基于当前分析结果生成专业报告": "Generate a professional report from the current analysis",
-    " 报告内容": " Report Contents",
-    " HTML 报告": " HTML Report",
-    " PDF 报告": " PDF Report",
     "完成分析后可生成包含统计结果、可视化和生物学解读的专业报告": "Generate a professional report with statistics, visualizations, and biological interpretation after analysis",
-    " 提示": " Tip"
+    "你": "You",
+    "数据 Agent": "Data Agent",
+    "质控 Agent": "QC Agent",
+    "剪接检测 Agent": "Splicing Detection Agent",
+    "统计 Agent": "Statistics Agent",
+    "注释 Agent": "Annotation Agent",
+    "解读 Agent": "Interpretation Agent",
+    "应用筛选": "Apply filters",
+    "探索": "Explore",
+    "核心统计图": "Core statistics",
+    "样本与质控": "Samples and QC",
+    "事件组成与机制": "Event composition and mechanisms",
+    "AI 排序与功能富集": "AI ranking and enrichment",
+    "火山图 Volcano": "Volcano plot",
+    "ΔPSI 累积分布 ECDF": "ΔPSI ECDF",
+    "显著性碎石图 Scree": "Significance scree plot",
+    "类型×显著性堆叠图": "Type × significance stacked plot",
+    "剪接机制示意图 Schematic": "Splicing mechanism schematic",
+    "PSI 热图 Heatmap": "PSI heatmap",
+    "分组 PSI 箱线图": "Grouped PSI box plot",
+    "队列构成图": "Cohort composition",
+    "候选基因排名": "Candidate gene ranking",
+    "评分分解堆叠图": "Score decomposition stacked plot",
+    "功能富集点图": "Functional enrichment dot plot",
+    "ΔPSI 瀑布图 Waterfall": "ΔPSI waterfall",
+    "分析结果": "Analysis results",
+    "EpitopeRank 智能助手": "EpitopeRank Assistant",
+    "MCP 工具": "MCP tools",
+    "分析完成": "Analysis complete",
+    "分析失败": "Analysis failed",
+    "通路富集分析结果": "Pathway Enrichment Results",
+    "文献搜索结果": "Literature Search Results",
+    "剪接事件解读": "Splice Event Interpretation",
+    "总结": "Summary",
+    "报告内容": "Report contents",
+    "HTML 报告": "HTML report",
+    "PDF 报告": "PDF report",
+    "提示": "Tip",
+    "Agent 已读取数据结构，请确认字段映射后开始分析。": "The agent has read the data structure. Confirm the field mapping to start.",
+    "HLA 型别": "HLA type",
+    "HLA-I 型别（可选，多个用逗号分隔）": "HLA-I alleles (optional, comma-separated)",
+    "IEDB（在线）": "IEDB (online)",
+    "MHC 类别": "MHC class",
+    "MHCflurry（本地，需安装）": "MHCflurry (local, requires install)",
+    "Percentile rank 越低越好。": "Lower percentile rank is better.",
+    "auto（本地优先，失败转 IEDB）": "auto (local first, fall back to IEDB)",
+    "both（按类别拆分）": "both (split by class)",
+    "moPepGen · Docker 变异肽生成": "moPepGen · Docker variant peptide generation",
+    "上一页": "Previous",
+    "上传事件数据，确认字段与分组，再查看统计结果和研究报告。": "Upload event data, confirm fields and groups, then review statistics and the research report.",
+    "下一页": "Next",
+    "下载 PDF": "Download PDF",
+    "下载当前文件": "Download this file",
+    "主导航": "Primary navigation",
+    "仅显著事件": "Significant only",
+    "从候选序列出发，比较 HLA 结合能力，找到值得进一步研究的肽段。": "Start from candidate sequences, compare HLA binding, and find peptides worth following up.",
+    "从当前项目生成候选肽": "Generate candidate peptides from the current project",
+    "从当前项目生成并排序": "Generate and rank from the current project",
+    "从本机添加编码序列表…": "Add a coding-sequence table from this computer…",
+    "以基因为线索，连接剪接事件、统计结果与生物学证据。": "Follow a gene to connect splicing events, statistics, and biological evidence.",
+    "使用当前项目查找候选肽。先检查数据，再决定是否进行 HLA 结合预测。": "Find candidate peptides from the current project. Check the data first, then decide whether to run HLA binding prediction.",
+    "使用当前项目的剪接事件与已重建的编码序列对照表生成跨连接点候选肽（对照表按表头自动识别，文件名不限）， 再按上面的 HLA 与预测选项排序。读码框与 ORF 必须由上游提供，平台不会从坐标猜测序列。": "Build junction-spanning candidate peptides from the current project's splicing events and reconstructed coding-sequence table (the table is detected by its header, file name unrestricted), then rank them with the HLA and prediction options above. The reading frame and ORF must come from upstream; the platform never guesses sequences from coordinates.",
+    "使用当前项目逐阶段运行。每次确认只执行下一阶段；输入文件应位于项目数据目录。流程进度会保存。": "Run the current project stage by stage. Each confirmation executes only the next stage; input files should live in the project data directory. Progress is saved.",
+    "使用所选文件生成候选肽": "Generate candidate peptides from the selected files",
+    "例如 HLA-A*02:01, HLA-B*07:02": "e.g. HLA-A*02:01, HLA-B*07:02",
+    "例如 HLA-A*02:01,HLA-B*07:02": "e.g. HLA-A*02:01,HLA-B*07:02",
+    "候选事件 Top 10": "Top 10 candidate events",
+    "候选肽序列": "Candidate peptide sequences",
+    "先选类别，再选择运行方式。在线预测需要网络连接。": "Choose the class first, then the run mode. Online prediction requires a network connection.",
+    "关闭导航": "Close navigation",
+    "关闭快捷跳转": "Close quick switch",
+    "关闭菜单": "Close menu",
+    "准备候选肽": "Prepare candidate peptides",
+    "准备数据": "Prepare data",
+    "分析流程": "Analysis pipeline",
+    "分阶段证据审计": "Staged evidence audit",
+    "删除项目": "Delete project",
+    "剪接事件与候选肽分析": "Splicing events and candidate peptide analysis",
+    "剪接候选新抗原": "Splice-derived neoantigens",
+    "剪接来源候选新抗原": "Splice-derived candidate neoantigens",
+    "加工预测（proteasome / TAP）": "Processing prediction (proteasome / TAP)",
+    "动态：开": "Motion: on",
+    "历史项目": "Project history",
+    "历史项目详情": "Project details",
+    "参考表尚未加载。": "The reference table is not loaded yet.",
+    "可视化工作室": "Visualization studio",
+    "可选：选择其他文件进行独立分析": "Optional: choose other files for a standalone analysis",
+    "图表类型": "Chart type",
+    "图表（点击放大）": "Figures (click to enlarge)",
+    "基因探索": "Gene explorer",
+    "基因符号": "Gene symbol",
+    "填入示例": "Fill example",
+    "填写后，候选肽和 HLA 型别会分批发送至 IEDB 做 NetMHCpan 结合预测（需要联网，几百条肽通常 30–90 秒）。预测不等于免疫原性验证。": "After you fill them in, candidate peptides and HLA alleles are sent in batches to IEDB for NetMHCpan binding prediction (network required; a few hundred peptides usually take 30–90 s). Prediction is not proof of immunogenicity.",
+    "复制全部": "Copy all",
+    "如何看结果？": "How to read the results",
+    "它代表相对排名，不是亲和力 Kd。": "It is a relative ranking, not an affinity Kd.",
+    "密钥仅保存在本机 .env / 配置大模型.env，保存后即时生效。": "The key is stored only in a local .env file and applies immediately after saving.",
+    "将当前项目的统计结果、图表和解读整理为可分享的研究报告。": "Assemble the current project's statistics, figures, and interpretation into a shareable research report.",
+    "工作区": "Workspace",
+    "工作区设置": "Workspace settings",
+    "已有肽序列？直接预测": "Already have peptides? Predict directly",
+    "已识别 0 条肽段": "0 peptides recognized",
+    "常用 MHC-I 面板": "Common MHC-I panels",
+    "常用 MHC-II 面板": "Common MHC-II panels",
+    "开头的标题行会被忽略。 单次最多 200 条肽、8 个 HLA（接口限制），避免触发 IEDB 频率限制。": "Leading header lines are ignored. Up to 200 peptides and 8 HLA alleles per run (API limits) to stay under IEDB rate limits.",
+    "开始一次新的分析": "Start a new analysis",
+    "开始使用": "Getting started",
+    "开始阶段 0 审计": "Start stage 0 audit",
+    "快捷跳转": "Quick switch",
+    "快速前往工作区": "Jump to a workspace",
+    "成果文件夹": "Results folder",
+    "打包 ZIP": "Package ZIP",
+    "打开 HTML 报告": "Open HTML report",
+    "打开结果目录": "Open results directory",
+    "报告与交付": "Reports and delivery",
+    "按 FDR": "By FDR",
+    "按 |ΔPSI|": "By |ΔPSI|",
+    "按基因、事件类型与显著性筛选，追溯候选事件的统计依据。": "Filter by gene, event type, and significance to trace the statistical basis of each candidate.",
+    "按基因名": "By gene name",
+    "排序": "Sort",
+    "探索与导出": "Explore and export",
+    "探索性候选肽生成": "Exploratory candidate peptide generation",
+    "搜索事件": "Search events",
+    "搜索历史项目": "Search project history",
+    "搜索工作区": "Search workspace",
+    "搜索页面，如 肽预测、报告…": "Search pages, e.g. peptide, report…",
+    "支持 CSV、TSV、TXT、文本 .xls、Excel .xls/.xlsx/.xlsm 及压缩文本 .gz；表达量表会被识别并提示所需事件数据": "Supports CSV, TSV, TXT, text .xls, Excel .xls/.xlsx/.xlsm, and gzipped text .gz; expression matrices are detected and the required event data is reported",
+    "支持事件表与报告目录导入": "Import event tables and report directories",
+    "数据目录：读取中…": "Data directory: reading…",
+    "文件名不限": "Any file name",
+    "智能接入检查": "Smart ingestion check",
+    "末页": "Last",
+    "查看数据处理、统计分析与解读进度，定位当前执行阶段。": "Track data processing, statistical analysis, and interpretation, and see which stage is running.",
+    "查询 IEDB 已知表位": "Query known IEDB epitopes",
+    "样本分组": "Sample groups",
+    "检查与分析": "Check and analyze",
+    "检查当前项目": "Check the current project",
+    "检查编码序列，生成跨连接点候选肽，再进入结合预测与证据审计。": "Validate coding sequences, build junction-spanning candidate peptides, then move on to binding prediction and evidence audit.",
+    "正在读取当前项目…": "Reading the current project…",
+    "每行一个肽段（8–30 aa）；可直接粘贴 FASTA 序列，": "One peptide per line (8–30 aa); FASTA can be pasted directly,",
+    "流程日志（最近 12 条）": "Pipeline log (last 12 entries)",
+    "浏览候选事件，生成图表与报告": "Browse candidate events, generate figures and reports",
+    "浏览全部事件": "Browse all events",
+    "清空型别": "Clear alleles",
+    "生成候选肽": "Generate candidate peptides",
+    "用于报告里的 AI 解读与 MCP 工具的自然语言调用。密钥只保存在本机，不会写入报告或日志。": "Used for AI interpretation in reports and natural-language MCP tool calls. The key stays on this machine and is never written to reports or logs.",
+    "研究工作区": "Research workspace",
+    "确认列的含义": "Confirm what each column means",
+    "确认并执行下一阶段": "Confirm and run the next stage",
+    "确认数据映射，跟踪每一步进度": "Confirm the data mapping and follow every step",
+    "确认映射并分析": "Confirm mapping and analyze",
+    "确认这套对应关系": "Confirm this mapping",
+    "第一步：检查项目数据": "Step 1: check project data",
+    "第二步：选择编码序列表，生成候选肽": "Step 2: choose a coding-sequence table and generate candidate peptides",
+    "管理剪接分析项目，追踪进度，回到每一次研究的结果。": "Manage splicing projects, track progress, and return to each study's results.",
+    "系统会检查剪接事件和生成肽所需的编码序列表。": "The system checks the splicing events and the coding-sequence table needed to build peptides.",
+    "结合预测不等于抗原呈递，也不等于免疫原性。排序仅用于探索性候选筛选。": "Binding prediction is not antigen presentation and not immunogenicity. Ranking is for exploratory candidate triage only.",
+    "编码序列对照表需包含": "The coding-sequence table must contain",
+    "编码序列表": "Coding-sequence table",
+    "编码序列表就是「每个剪接事件对应的参考 CDS 与改变后 CDS」。系统按表头自动识别，": "A coding-sequence table maps each splicing event to its reference CDS and altered CDS. It is detected by header,",
+    "肽预测": "Peptide prediction",
+    "肽预测工作台": "Peptide prediction workbench",
+    "自动识别当前项目中的 rMATS 事件表（JC 或 JCEC，文件名不限）。请提供版本匹配的参考文件并启动 Docker；生成的是蛋白质组学变异肽，不是 HLA 预测或 CDS 对照表。": "Auto-detect rMATS event tables in the current project (JC or JCEC, any file name). Provide a version-matched reference and start Docker; the output is proteomic variant peptides, not HLA predictions or a CDS table.",
+    "菜单": "Menu",
+    "请先选择一个项目。": "Select a project first.",
+    "请先选择项目并填写已知证据。": "Select a project and fill in the known evidence first.",
+    "跳到工作区": "Skip to workspace",
+    "运行 moPepGen": "Run moPepGen",
+    "这张表的列名不是标准写法，系统已按内容猜测。请核对下面四项，确认后只需设置一次。": "This table does not use standard column names, so the system guessed from the content. Check the four fields below; you only need to confirm once.",
+    "选择 HLA": "Select HLA",
+    "选择华大报告目录": "Choose a BGI report directory",
+    "选择图表后，预览将在这里显示": "Pick a chart and the preview appears here",
+    "选择数据文件": "Choose data files",
+    "选择研究问题对应的图表，查看当前项目的可视化结果。": "Choose the chart that matches your research question to view this project's visualizations.",
+    "选择要查看的图表": "Choose a chart",
+    "逗号分隔；输入时会在 IEDB 等位基因表中搜索（最多显示 500 条）。class-I 与 class-II 需分别预测， 选择“both”时平台会按类别拆分。": "Comma-separated; typing searches the IEDB allele table (up to 500 matches). class-I and class-II are predicted separately; choosing \\"both\\" splits by class.",
+    "配置 AI 解读服务与外部工具，查看连接状态。": "Configure the AI interpretation service and external tools, and check their connection status.",
+    "项目工作台": "Project workspace",
+    "预测与解读": "Prediction and interpretation",
+    "预测器": "Predictor",
+    "预测并排序": "Predict and rank",
+    "预测流程": "Prediction pipeline",
+    "预测结果": "Prediction results",
+    "预测设置": "Prediction settings",
+    "首页": "First",
+    "高级选项：其他文件和专业分析工具": "Advanced: other files and specialist tools",
+    "默认使用当前项目已上传的数据。编码序列对照表按表头自动识别，文件名不限；也可在下方选择文件进行独立分析。MHC 结合预测不等于免疫原性验证。": "Uses the data already uploaded to the current project by default. The coding-sequence table is detected by header with no file-name restriction; you can also pick files below for a standalone analysis. MHC binding prediction is not immunogenicity validation.",
+    "，其中 junction_nt 是异常 CDS 内新连接点前的核苷酸数。": ", where junction_nt is the number of nucleotides before the novel junction in the altered CDS.",
+    "；下面若已列出文件，直接选即可。": "; if files are already listed below, just pick one.",
+    "完成": "Done",
+    "未完成": "Not completed",
+    "请注意": "Please check",
+    "通知": "Notice",
+    "上传没有完成": "Upload did not finish",
+    "文件或数据目录在上传阶段中断，分析尚未启动。": "The upload was interrupted before analysis started.",
+    "确认文件格式为 CSV、TSV、TXT 或表格型 XLS": "Check the file is CSV, TSV, TXT, or a table-style XLS",
+    "单个文件不要过大，必要时先拆分": "Keep individual files small; split them if needed",
+    "检查网络与本地服务是否可用": "Check that the network and the local service are up",
+    "分析未能完成": "Analysis did not finish",
+    "服务返回了错误，本次分析已中止。修正输入后可以重新发起。": "The service returned an error and this run was stopped. Fix the input and start again.",
+    "结果已写入当前项目": "Results written to the current project",
+    "事件表已解析，显著性筛选与候选排序都已完成。接下来可以逐条查看事件，或直接生成研究报告。": "The event table is parsed; significance filtering and candidate ranking are done. You can now review events one by one, or generate the research report.",
+    "生成研究报告": "Generate report",
+    "查看可视化": "View figures",
+    "浏览事件": "Browse events",
+    "连接已中断": "Connection lost",
+    "前端没能拿到分析响应，但后台任务可能仍在运行。稍后点击右上角「刷新」即可看到最新进度。": "The UI did not receive the response, but the job may still be running. Use Refresh at the top right shortly to see the latest progress.",
+    "删除这个项目？": "Delete this project?",
+    "保留项目": "Keep project",
+    "替换当前输入？": "Replace the current input?",
+    "填入示例会覆盖当前填写好的肽序列和 HLA 型别。": "Filling in the example will overwrite the peptide sequences and HLA alleles you already entered.",
+    "保留输入": "Keep input",
+    "删除失败：": "Delete failed:",
+    "删除失败：HTTP": "Delete failed: HTTP",
+    "Agent 已读取数据结构。确认字段映射后，将标准化并进入原有分析流程。": "The agent has read the data structure. After you confirm the field mapping it will normalize the data and enter the standard analysis pipeline.",
+    "Agent 正在规划 MCP 工具调用…": "The agent is planning an MCP tool call…",
+    "Agent 规划（": "Agent plan (",
+    "Agent 调用失败：": "Agent call failed:",
+    "Agent 调用异常：": "Agent call error:",
+    "FDR 覆盖": "FDR coverage",
+    "FPKM、TPM 和 read_count 是表达量，不是剪接事件 PSI；请上传 SE/MXE/A3SS/A5SS/RI 事件表。": "FPKM, TPM, and read_count are expression levels, not splicing PSI; please upload SE/MXE/A3SS/A5SS/RI event tables.",
+    "GENCODE 或 ENSEMBL": "GENCODE or ENSEMBL",
+    "GTEx 基因组版本": "GTEx genome build",
+    "GTEx 蛋白 FASTA 文件名": "GTEx protein FASTA file name",
+    "GTEx 连接点表文件名": "GTEx junction table file name",
+    "HLA 分型来源": "HLA typing source",
+    "HLA 置信度": "HLA confidence",
+    "HLA-I 型别，逗号分隔": "HLA-I alleles, comma-separated",
+    "IEDB 在线 · MHCflurry": "IEDB online · MHCflurry",
+    "LLM 规划": "LLM plan",
+    "percentile rank 越低越好；预测不等于呈递或免疫原性。": "Lower percentile rank is better; prediction is not presentation or immunogenicity.",
+    "— 未映射 —": "— not mapped —",
+    "— 请选择 —": "— select —",
+    "。原报告没有组间 p 值或 FDR，不会报告显著差异。": ". The original report has no between-group p-values or FDR, so no significant differences are reported.",
+    "。将读取项目目录中的事件表和编码序列对照表。": ". Event tables and the coding-sequence table will be read from the project directory.",
+    "上传失败": "Upload failed",
+    "上游 ORF 表文件名（留空自动识别）": "Upstream ORF table file name (leave blank to auto-detect)",
+    "不可解析": "Unparseable",
+    "个等位基因": "alleles",
+    "事件基因组版本": "Event genome build",
+    "事件表": "Event table",
+    "事件表完整性：complete / subset / unknown": "Event table completeness: complete / subset / unknown",
+    "事件连接点表文件名": "Event junction table file name",
+    "事件类型分布 Composition": "Event type composition",
+    "事件类型：": "Event types:",
+    "例如 GRCh38 / GENCODE vXX（须与上游一致）": "e.g. GRCh38 / GENCODE vXX (must match upstream)",
+    "保存失败": "Save failed",
+    "保存失败:": "Save failed:",
+    "信息": "Info",
+    "候选基因排名 Ranking": "Candidate gene ranking",
+    "全蛋白组 FASTA 文件名": "Whole-proteome FASTA file name",
+    "内置": "Built-in",
+    "分组 PSI 箱线图 Box Plot": "Grouped PSI box plot",
+    "剪接事件：": "Splicing events:",
+    "功能富集点图 Dot Plot": "Functional enrichment dot plot",
+    "加载中…": "Loading…",
+    "动态：关": "Motion: off",
+    "动态：系统关闭": "Motion: off by system",
+    "单次最多 200 条肽，当前输入": "At most 200 peptides per run; currently",
+    "单次最多 8 个 HLA 型别，当前输入": "At most 8 HLA alleles per run; currently",
+    "原生格式：": "Native format:",
+    "参数不是合法 JSON：": "Arguments are not valid JSON:",
+    "参数必须是 JSON 对象，例如 {\\"project_id\\": \\"SPN-XXXX\\"}": "Arguments must be a JSON object, e.g. {\\"project_id\\": \\"SPN-XXXX\\"}",
+    "参考基因组 FASTA 文件": "Reference genome FASTA file",
+    "参考来源（GENCODE 或 ENSEMBL）": "Reference source (GENCODE or ENSEMBL)",
+    "参考蛋白组 FASTA 文件": "Reference proteome FASTA file",
+    "参考表加载失败": "Failed to load the reference table",
+    "参考表加载失败：": "Failed to load the reference table:",
+    "参考表：共": "Reference table:",
+    "参考（正常）编码序列": "Reference (normal) coding sequence",
+    "另有": "Additionally",
+    "可以继续生成候选肽。检查只确认了表头，序列的读码框仍需由专业人员核实。": "You can continue generating candidate peptides. The check only confirmed headers; a specialist must still verify the reading frames.",
+    "可用": "Available",
+    "可解析": "Parseable",
+    "同一列不能承担两个角色，请分别选择。": "One column cannot serve two roles; choose them separately.",
+    "图表": "Chart",
+    "在": "in",
+    "坐标": "Coordinates",
+    "坐标基准": "Coordinate basis",
+    "基因组及注释版本": "Genome and annotation build",
+    "基因组版本": "Genome build",
+    "复制失败，请手动选择表格内容": "Copy failed; select the table content manually",
+    "大模型 + 规则": "LLM + rules",
+    "大模型已提出分组建议，请核对。": "The LLM suggested groups; please verify.",
+    "失败": "Failed",
+    "字段映射": "Field mapping",
+    "字符": "characters",
+    "完成：候选": "Done: candidates",
+    "审计失败": "Audit failed",
+    "尚无可靠的完整分组建议，可修改分组名称并批量分配。": "No reliable complete grouping yet; rename groups and assign samples in bulk.",
+    "尚未选择项目。请先在“仪表盘”新建或选择一个项目，再回来生成候选肽。": "No project selected. Create or select one on the Dashboard, then come back to generate candidate peptides.",
+    "尚未选择项目，请先在仪表盘选择或新建项目。": "No project selected. Select or create one on the Dashboard first.",
+    "已从相同事件文件的历史样本表恢复分组建议。": "Group suggestions restored from a previous sample table for the same event file.",
+    "已保存过映射。": "A mapping has already been saved.",
+    "已保存，按这套映射可为": "Saved; this mapping can be used for",
+    "已停止：": "Stopped:",
+    "已在文件管理器中打开结果目录": "Opened the results directory in the file manager",
+    "已复制到剪贴板": "Copied to clipboard",
+    "已打开：": "Opened:",
+    "已有读码框正确的 CDS": "CDS with a verified reading frame already available",
+    "已添加": "Added",
+    "已触发下载；桌面窗口若未保存文件，请直接查看表格或复制全部": "Download triggered; if the desktop window did not save the file, view the table or copy everything",
+    "已识别": "Recognized",
+    "已识别 rMATS 文件：": "rMATS files recognized:",
+    "已识别华大逐样本剪接表。确认真实分组后可生成探索性 PSI 表；原报告没有组间显著性检验。": "Per-sample BGI splicing tables recognized. After you confirm the real groups an exploratory PSI table can be generated; the original report has no between-group significance test.",
+    "已读取上传的样本表。": "The uploaded sample table has been read.",
+    "已连接": "Connected",
+    "已配置 ·": "Configured ·",
+    "当前密钥": "Current key",
+    "当前项目已切换，请重新检查。": "The current project changed; please check again.",
+    "当前项目：": "Current project:",
+    "成功": "OK",
+    "打包失败": "Packaging failed",
+    "打包失败：": "Packaging failed:",
+    "打开成果文件夹失败": "Failed to open the results folder",
+    "打开成果文件夹失败：": "Failed to open the results folder:",
+    "执行失败": "Run failed",
+    "执行失败，请查看日志。": "Run failed; check the log.",
+    "执行完成。": "Run finished.",
+    "探索性事件表已生成：": "Exploratory event table generated:",
+    "接受跳过缺失的连接点或组织表达检查": "Allow skipping missing junction or tissue-expression checks",
+    "改变后（变异）编码序列": "Altered (variant) coding sequence",
+    "数据校验未通过": "Data validation failed",
+    "文件已自动选中。": "The file has been selected automatically.",
+    "文件已读取并识别为表达量矩阵。请另选剪接事件结果表进行剪接分析。": "The file was read and identified as an expression matrix. Choose a splicing event result table for splicing analysis.",
+    "文件画像": "File profile",
+    "新剪接连接点位置（整数）": "Novel junction position (integer)",
+    "方法": "Method",
+    "无": "None",
+    "无法开始：": "Cannot start:",
+    "无法恢复流程，请重新开始审计。": "The pipeline cannot be resumed; restart the audit.",
+    "无法打开目录：": "Cannot open the directory:",
+    "无法继续：": "Cannot continue:",
+    "无法自动标准化": "Cannot normalize automatically",
+    "无法访问此项目的原始数据目录。请重新选择该项目的数据文件，或联系管理员检查存储位置。": "The project's raw data directory is not accessible. Re-select the project's data files, or ask an administrator to check the storage location.",
+    "无法运行：": "Cannot run:",
+    "映射来源：": "Mapping source:",
+    "显著性碎石图 Scree Plot": "Significance scree plot",
+    "最低 junction 支持读数": "Minimum junction-support reads",
+    "最低有效样本数": "Minimum informative samples",
+    "有效事件": "Valid events",
+    "未分配项 → 第一组": "Unassigned → group 1",
+    "未分配项 → 第二组": "Unassigned → group 2",
+    "未分组": "Ungrouped",
+    "未安装": "Not installed",
+    "未知阶段": "Unknown stage",
+    "未能从这些文件中识别出可分析的剪接事件表。": "No analyzable splicing event table could be identified in these files.",
+    "未连接": "Not connected",
+    "未配置": "Not configured",
+    "条服务错误，见下方说明": "service errors, see below",
+    "条肽段（8–30 aa）": "peptides (8–30 aa)",
+    "查看或调整逐样本分组": "Review or adjust per-sample groups",
+    "标准化": "Standardization",
+    "标准化中…": "Standardizing…",
+    "标准化失败：": "Standardization failed:",
+    "标准化预览（前 5 行）": "Normalized preview (first 5 rows)",
+    "样本": "Samples",
+    "样本分组确认": "Confirm sample groups",
+    "样本表": "Sample table",
+    "检查失败": "Check failed",
+    "检查失败：": "Check failed:",
+    "检查结果": "Check results",
+    "检测到": "Detected",
+    "模型映射": "LLM mapping",
+    "模型正在选择工具…": "The model is choosing a tool…",
+    "正在上传": "Uploading",
+    "正在上传和分析…": "Uploading and analyzing…",
+    "正在使用当前项目数据分析…": "Analyzing with the current project's data…",
+    "正在保存…": "Saving…",
+    "正在加载等位基因参考表…": "Loading the allele reference table…",
+    "正在审计…": "Auditing…",
+    "正在打包…": "Packaging…",
+    "正在执行阶段": "Running stage",
+    "正在整理成果文件夹…": "Assembling the results folder…",
+    "正在检查项目数据…": "Checking project data…",
+    "正在生成候选肽并查询 IEDB（": "Generating candidate peptides and querying IEDB (",
+    "正在读取项目数据并生成候选肽，预测可能需要数十秒…": "Reading project data and generating candidate peptides; prediction may take tens of seconds…",
+    "正在调用预测服务（": "Calling the prediction service (",
+    "正在运行 Docker，耗时取决于输入大小，请勿关闭程序…": "Docker is running; duration depends on input size, please keep the app open…",
+    "正在连接 MCP 服务器…": "Connecting to MCP servers…",
+    "正在通过 MCP 调用": "Calling via MCP",
+    "正常对照设计": "Normal control design",
+    "正常组织表达表文件名": "Normal tissue expression table file name",
+    "没有匹配的页面，试试「报告」或「设置」。": "No matching page. Try \\"Report\\" or \\"Settings\\".",
+    "没有每样本 PSI 数据，无法生成真实的样本箱线图或热图。": "No per-sample PSI data, so a real sample box plot or heatmap cannot be produced.",
+    "注释版本": "Annotation release",
+    "流程已停止或完成": "The pipeline has stopped or finished",
+    "火山图 Volcano Plot": "Volcano plot",
+    "点下方「从本机添加编码序列表」就能直接补上，不用重新跑整个分析。": "Use \\"Add a coding-sequence table from this computer\\" below to fill the gap without re-running the whole analysis.",
+    "点击移除": "Click to remove",
+    "点左侧按钮从本机添加，或重新上传项目时把它一起放进去。": "Use the button on the left to add it from this computer, or include it the next time you upload the project.",
+    "状态：": "Status:",
+    "理由：": "Reason:",
+    "生成候选肽失败": "Failed to generate candidate peptides",
+    "用时": "Elapsed",
+    "目录中没有找到华大逐样本剪接表（如 OC_001.SE.xls）": "No per-sample BGI splicing table (e.g. OC_001.SE.xls) found in this directory",
+    "相对于项目上传目录的文件路径": "Path relative to the project upload directory",
+    "确定性规则": "Deterministic rules",
+    "确认分组并生成探索性表": "Confirm groups and generate the exploratory table",
+    "确认并执行阶段": "Confirm and run stage",
+    "确认支持读数为 junction 读数": "Confirm support reads are junction reads",
+    "确认输入为已量化事件": "Confirm the input is quantified events",
+    "类型 × 显著性堆叠图": "Type × significance stacked plot",
+    "粘贴你的 API Key": "Paste your API key",
+    "结果目录：": "Results directory:",
+    "结果：": "Result:",
+    "编码序列表：已自动识别": "Coding-sequence table: detected",
+    "编码序列表：暂未找到": "Coding-sequence table: not found yet",
+    "置信度": "Confidence",
+    "肽段": "Peptide",
+    "肿瘤表达及复现率表文件名": "Tumor expression and recurrence table file name",
+    "能力信息加载失败": "Failed to load capability information",
+    "能力信息加载失败：": "Failed to load capability information:",
+    "自动猜测结果，确认后以后不再询问。": "Automatically guessed; confirm once and it will not ask again.",
+    "自动识别": "Auto-detect",
+    "行": "rows",
+    "行 ·": "rows ·",
+    "行无效输入": "invalid input lines",
+    "规则回退": "Rule fallback",
+    "规则映射": "Rule mapping",
+    "评分分解堆叠图 Decomposition": "Score decomposition stacked plot",
+    "请为每个样本选择分组，并确保两组都有样本。": "Assign a group to every sample and make sure both groups are non-empty.",
+    "请先在上方填写 HLA 型别。": "Enter the HLA alleles above first.",
+    "请先补全映射": "Complete the mapping first",
+    "请先输入至少一条 8–30 aa 的候选肽序列。": "Enter at least one candidate peptide of 8–30 aa.",
+    "请先选择已上传数据的项目，或选择文件进行独立分析。": "Select a project with uploaded data, or choose files for a standalone analysis.",
+    "请先选择项目。": "Select a project first.",
+    "请先选择项目和编码序列表。": "Select a project and a coding-sequence table first.",
+    "请填写已知证据并开始审计。": "Fill in the known evidence and start the audit.",
+    "请填写新审计的证据，再点击开始阶段 0。": "Fill in the new audit evidence, then start stage 0.",
+    "请映射 FDR 或 p 值，否则无法筛选显著事件。": "Map FDR or a p-value, otherwise significant events cannot be filtered.",
+    "请映射 ΔPSI，或同时映射两组平均 PSI。": "Map ΔPSI, or map both group mean PSI values.",
+    "请核对每个样本的分组，确认后开始分析。": "Verify each sample's group, then start the analysis.",
+    "请至少填写一个 HLA 型别，或点击常用面板快速填充。": "Enter at least one HLA allele, or use a common panel.",
+    "请至少映射基因符号或基因 ID。": "Map at least the gene symbol or gene ID.",
+    "调用中…": "Calling…",
+    "调用失败：": "Call failed:",
+    "调用异常：": "Call error:",
+    "转录本注释 GTF 文件": "Transcript annotation GTF file",
+    "输入数据类型": "Input data type",
+    "输出目录：": "Output directory:",
+    "还没有可用的编码序列表。点第一步下方的「从本机添加编码序列表」补上，再回来生成。": "No coding-sequence table available yet. Add one with \\"Add a coding-sequence table from this computer\\" under step 1, then come back to generate.",
+    "还没有选择项目。请先创建或选择一个项目，再回来检查。": "No project selected. Create or select one, then come back to check.",
+    "连接中…": "Connecting…",
+    "连接失败": "Connection failed",
+    "连接方式：": "Connection:",
+    "配对正常蛋白 FASTA 文件名": "Matched normal protein FASTA file name",
+    "错误": "Error",
+    "队列构成图 Cohort QC": "Cohort composition",
+    "阶段": "Stage",
+    "需要一份含 event_id、reference_cds、altered_cds、junction_nt 四列的表，文件名随意。": "Needs a table with event_id, reference_cds, altered_cds, and junction_nt columns; the file name does not matter.",
+    "项目：": "Project:",
+    "预测失败": "Prediction failed",
+    "预测完成：候选": "Prediction complete: candidates",
+    "高": "high",
+    "中": "medium",
+    "低": "low",
+    "（无描述）": "(no description)",
+    "（当前匹配": "(currently matching",
+    "（显示前": "(showing first",
+    "（未提供，已根据样本名推断分组）": "(not provided; groups inferred from sample names)",
+    "（未连接）": "(not connected)",
+    "（空列名）": "(empty column name)",
+    "（请选择）": "(select)",
+    "（还没有可用的编码序列表）": "(no coding-sequence table available yet)",
+    "，列：": ", columns:",
+    "，可在下拉里切换。": "; switch in the dropdown.",
+    "，失败": ", failed",
+    "，忽略": ", ignored",
+    "，留空保持不变": ", leave blank to keep",
+    "；HLA 结合预测成功": "; HLA binding prediction succeeded",
+    "；无服务错误": "; no service errors",
+    "；有": "; there are",
+    "；服务错误": "; service errors",
+    "；未填写 HLA，只生成候选肽，未做任何外部预测。": "; no HLA alleles given, so only candidate peptides were generated and no external prediction was run.",
+    "；超出单次上限的部分（": "; the part beyond the per-run limit (",
+    "项没有选择。": "options not selected.",
+    "个 HLA 型别，通常 30–90 秒，请勿关闭页面）…": "HLA alleles, usually 30–90 s, please keep the page open)…",
+    "个 HLA）…": "HLA)…",
+    "个文件看着像编码序列表，但没被采用（不影响下面的生成）：": "files look like coding-sequence tables but were not used (this does not affect generation):",
+    "个；请分批预测。": "; please predict in batches.",
+    "份（": "files (",
+    "份，默认用": "files, defaulting to",
+    "条": "items",
+    "条，排序": "items, ranked",
+    "条，预测": "peptides, predicted",
+    "条，预测记录": "entries, prediction records",
+    "条；证据分层": "entries; evidence tiers",
+    "条；请分批预测。": "; please predict in batches.",
+    "条）未预测，可缩小 CDS 表后重跑": ") were not predicted; shrink the CDS table and rerun",
+    "条（详见 manifest 的 prediction_errors）": "(see prediction_errors in the manifest)",
+    "条肽 ×": "peptides ×",
+    "列": "column",
+    "分数": "Score",
+    "· 参考表 class1": "· reference table class1",
+    "· 已知表位": "· known epitopes",
+    "· 模型回退": "· model fallback",
+    "ms · 失败": "ms · failed",
+    "ΔPSI 覆盖": "ΔPSI coverage",
+    "系统通知": "System notifications",
+    "已归档": "Archived",
+    "数据目录：": "Data directory: ",
+    "列出本机已分析的 EpitopeRank 项目及 project_id。": "Lists analyzed EpitopeRank projects on this machine with their project_id.",
+    "MHC-I 参考表：共 0 个等位基因": "MHC-I reference: 0 alleles",
   };
 
   var RULES = [
@@ -4297,7 +5258,42 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     }
   ];
 
-  var ATTRS = ["placeholder", "title"];
+  // 动态拼接文案（含数字/用户名等），用正则匹配后套模板。
+  var PATTERN_RULES = [
+    [/^共 ([\\d,]+) 个事件 · 每页 ([\\d,]+) 条 · 已按(.+?)排序$/, "About $1 events · $2 per page · sorted by $3"],
+    [/^事件 ([\\d,]+)$/, "Events $1"],
+    [/^显著 ([\\d,]+)$/, "Significant $1"],
+    [/^·\\s*数据库 ([\\d.,]+ MB)$/, "· Database $1"],
+    [/^(\\S+) · (.+?) · 输入格式 (\\S+) · ([\\d,]+) 个事件 \\/ ([\\d,]+) 个显著$/, "$1 · $2 · input $3 · $4 events / $5 significant"],
+    [/^MHC-I 参考表：共 ([\\d,]+) 个等位基因（显示前 ([\\d,]+)）$/, "MHC-I reference table: $1 alleles (showing first $2)"],
+    [/^IEDB 在线 · MHCflurry 未安装 · 参考表 class1 ([\\d,]+) \\/ class2 ([\\d,]+) · 已知表位 ([\\d,]+)$/, "IEDB online · MHCflurry not installed · reference class1 $1 / class2 $2 · known epitopes $3"],
+    [/^IEDB 在线 · MHCflurry 已安装 · 参考表 class1 ([\\d,]+) \\/ class2 ([\\d,]+) · 已知表位 ([\\d,]+)$/, "IEDB online · MHCflurry installed · reference class1 $1 / class2 $2 · known epitopes $3"],
+    [/^当前项目：(.+?)。将读取项目目录中的事件表和编码序列对照表。$/, "Current project: $1. Event tables and the coding-sequence table will be read from the project directory."],
+    [/^(\\d+) \\/ (\\d+) 已连接$/, "$1 / $2 connected"],
+    [/^连接方式：(.+)$/, "Connection: $1"],
+    [/^数据目录：(.+)$/, "Data directory: $1"],
+    [/^已打包（(.+?) MB）：(.+)$/, "Packaged ($1 MB): $2"],
+    [/^正在执行阶段 (.+)$/, "Running stage $1"],
+    [/^项目「(.+?)」的数据库记录、图表与报告目录都会被移除，且无法撤销。原始输入数据不会被删除。$/, "The database record, figures, and report folder for “$1” will be removed. This cannot be undone. Raw input data is not deleted."],
+    [/^删除失败：HTTP (\\d+)$/, "Delete failed: HTTP $1"],
+    [/^([\\d,]+) 行无效输入$/, "$1 invalid input lines"],
+    [/^已保存，按这套映射可为 ([\\d,]+) 行样本生成肽。$/, "Saved; this mapping can be used for $1 sample rows."],
+    [/^(.+?) · (.+?) · ([\\d,]+) 工具(（未连接）)?$/, "$1 · $2 · $3 tools$4"],
+  ];
+
+  function applyPatternRules(value) {
+    for (var i = 0; i < PATTERN_RULES.length; i++) {
+      var pattern = PATTERN_RULES[i][0];
+      if (!pattern.test(value)) continue;
+      return value.replace(pattern, PATTERN_RULES[i][1])
+        .replace(/基因名/g, "gene name")
+        .replace(/内置/g, "built-in")
+        .replace(/（未连接）/g, " (not connected)");
+    }
+    return null;
+  }
+
+  var ATTRS = ["placeholder", "title", "aria-label"];
   var NL2 = String.fromCharCode(10, 10);
   var originalText = new WeakMap();
   var originalAttrs = new WeakMap();
@@ -4318,13 +5314,23 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     if (lang === "zh-Hant") return toTraditional(text);
     var trimmed = text.trim();
     if (!trimmed) return text;
-    if (Object.prototype.hasOwnProperty.call(DICT, trimmed)) {
+    // 字典键统一按「空白归一化后的单行文本」查：HTML 里跨行书写的长句、
+    // 以及带缩进/换行的模板文本都能命中同一个键。
+    var key = trimmed.replace(/\\s+/g, " ");
+    if (Object.prototype.hasOwnProperty.call(DICT, key)) {
+      return replaceTrimmed(text, DICT[key]);
+    }
+    if (key !== trimmed && Object.prototype.hasOwnProperty.call(DICT, trimmed)) {
       return replaceTrimmed(text, DICT[trimmed]);
     }
     for (var i = 0; i < RULES.length; i++) {
-      var out = RULES[i](trimmed);
+      var out = RULES[i](key);
+      if (!out && key !== trimmed) out = RULES[i](trimmed);
       if (out) return replaceTrimmed(text, out);
     }
+    var patterned = applyPatternRules(key);
+    if (!patterned && key !== trimmed) patterned = applyPatternRules(trimmed);
+    if (patterned) return replaceTrimmed(text, patterned);
     return text;
   }
 
@@ -4437,11 +5443,24 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     } catch (e) {}
   }
 
+  window.__epitoperankI18n = {
+    apply: applyLanguage,
+    translate: translateOne,
+    translateText: translateText,
+    getLang: function () { return lang; }
+  };
+
+  // 兜底：任何遗漏的 alert() 都转成应用内 toast，不再弹原生对话框。
+  // 业务代码已显式调用 AppNotify；这里只覆盖第三方库或历史遗留调用。
   window.alert = function (message) {
+    if (window.AppNotify) {
+      window.AppNotify.toast(String(message), "info");
+      return;
+    }
     var notice = document.createElement("div");
     notice.setAttribute("role", "status");
     notice.textContent = lang === "zh" ? String(message) : translateText(String(message));
-    notice.style.cssText = "position:fixed;right:24px;bottom:24px;z-index:99999;max-width:520px;padding:16px 20px;border-radius:12px;background:#12313b;color:#fff;box-shadow:0 12px 36px #0008;white-space:pre-line;font-size:14px;cursor:pointer";
+    notice.style.cssText = "position:fixed;right:24px;bottom:24px;z-index:99999;max-width:520px;padding:16px 20px;border-radius:var(--radius);background:#12313b;color:#fff;box-shadow:0 12px 36px #0008;white-space:pre-line;font-size:14px;cursor:pointer";
     notice.onclick = function () { notice.remove(); };
     document.body.appendChild(notice);
     setTimeout(function () { notice.remove(); }, 8000);
@@ -4449,12 +5468,6 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
   var nativeConfirm = window.confirm.bind(window);
   window.confirm = function (message) {
     return nativeConfirm(lang === "zh" ? String(message) : translateText(String(message)));
-  };
-
-  window.__epitoperankI18n = {
-    apply: applyLanguage,
-    translate: translateOne,
-    getLang: function () { return lang; }
   };
 
   function init() {
@@ -4575,6 +5588,35 @@ window.addEventListener('resize', () => { document.querySelector('main').inert =
 new ResizeObserver(syncFluidMarker).observe(document.getElementById('app-navigation'));
 syncMotionPreference(); syncFluidMarker();
 document.getElementById('app-navigation').inert = window.innerWidth <= 768;
+</script>
+
+<div id="toast-stack" role="region" aria-label="系统通知" aria-live="polite" aria-relevant="additions"></div>
+<dialog id="app-dialog" class="app-dialog" aria-labelledby="app-dialog-title"></dialog>
+<script>
+// Track actual requests initiated by a click without changing request outcomes.
+(() => {
+  const indicator = document.createElement('div');
+  indicator.id = 'request-indicator'; indicator.hidden = true;
+  indicator.setAttribute('role', 'status'); indicator.setAttribute('aria-label', '正在加载');
+  document.body.append(indicator);
+  let activeButton = null, pending = 0;
+  const counts = new WeakMap();
+  document.addEventListener('click', event => {
+    activeButton = event.target.closest('button');
+    queueMicrotask(() => { activeButton = null; });
+  }, true);
+  const originalFetch = window.fetch;
+  window.fetch = async function(...args) {
+    const button = activeButton;
+    if (button) { counts.set(button, (counts.get(button) || 0) + 1); button.setAttribute('aria-busy','true'); }
+    pending++; indicator.hidden = false;
+    try { return await originalFetch.apply(this,args); }
+    finally {
+      if (--pending === 0) indicator.hidden = true;
+      if (button) { const remaining = counts.get(button) - 1; counts.set(button,remaining); if (!remaining) button.removeAttribute('aria-busy'); }
+    }
+  };
+})();
 </script>
 </body>
 </html>"""
