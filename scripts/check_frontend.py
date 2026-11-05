@@ -79,7 +79,7 @@ with sync_playwright() as p:
  page.goto('http://localhost:8877');page.wait_for_timeout(300)
  page.locator('.lang-toggle button[data-lang=zh-Hant]').click();page.wait_for_timeout(500)
  assert page.evaluate("document.querySelector('.nav-item[data-page=dashboard]').textContent.trim()") == '仪表盘'
- assert '載入失敗' in page.evaluate("Array.from(document.querySelectorAll('[role=status]')).map(n=>n.textContent).join('|')")
+ assert '載入失敗' in page.evaluate("Array.from(document.querySelectorAll('[role=status],[role=alert]')).map(n=>n.textContent).join('|')")
  print('opencc 加载失败时的降级路径通过')
  assert not errors, errors
  print('All 18 views, drawer, quick search, motion preferences, example interaction and zh-Hant lazy-load passed.')

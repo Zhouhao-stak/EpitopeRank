@@ -50,7 +50,9 @@ llm:
   #
   # Effort used when thinking is enabled. Empty = vendor default.
   # One of: minimal, low, medium, high, xhigh, max.
-  reasoning_effort: ""
+  # 默认拉满：自主规划/报告解读等不带 tools 的调用会带上 reasoning_effort=max；
+  # tool-calling 轮次按 DeepSeek 兼容性要求仍自动关闭 thinking（见 client.py）。
+  reasoning_effort: "max"
 
 paths:
   # Runtime state lives on local disk by default: SQLite databases cannot
@@ -107,6 +109,15 @@ agent:
     enabled: true
     max_calls: 4
     timeout: 10
+  #
+  # 自主规划：模型在 OODA 每一步都参与「下一步做什么」，从完整动作表里选，
+  # 而不是只在收尾时补一条洞察。规则链始终是校验与安全回退。
+  autonomous_planning: true
+  plan_budget: 8
+  # 工具权限：外网访问（web_fetch / 外部 MCP）与项目目录内写入（ORF 重建）。
+  # 关掉任一项即可退回完全离线、只做确定性分析的旧行为。
+  allow_network: true
+  allow_file_write: true
 
 report:
   formats:

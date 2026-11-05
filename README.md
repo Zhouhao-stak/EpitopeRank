@@ -163,6 +163,20 @@ HLA-A*02:01,HLA-B*07:02
 - 单次最多 20000 个「肽 × 等位基因」组合，超了截断并在 manifest 里标注；
 - 留空则只出肽、不联网。
 
+**CDS 对照表不用再手工造**：新抗原页的「自动重建编码序列表」直接从项目里的 rMATS 事件坐标
+重建 ORF，产出四列表 + 可审计 manifest（`epitoperank/splicing/orf_builder.py`）。
+参考源可选 Ensembl REST（联网、缓存到运行根）或本地 GTF + FASTA（离线可复现）；
+支持 SE / RI，其余事件类型记录跳过原因。坐标必须与参考基因组版本一致。
+
+**结果自动分级**：预测完成后额外写出 `ranked_candidates.tsv`，按 `percentile_rank` 升序，
+标注 `strong`（<0.5%）/ `weak`（<2%）/ `none`，并带基因、事件、ΔPSI、FDR 等元数据；
+manifest 与界面状态栏同时给出分档计数。
+
+**自主智能体与外网**：`agent.autonomous_planning` 让大模型在 OODA 每一步从完整动作表
+（含 `web_fetch`、`rebuild_orf_table`、`call_mcp_tool`）里选下一步，规则链始终作为安全回退；
+工具权限可用 `agent.allow_network` / `agent.allow_file_write` 关闭。设置页可连接外部 MCP 服务器，
+内置 `web_fetch` 工具按域名白名单访问 Ensembl/NCBI/IEDB 等站点。
+
 命令行：
 
 ```bash

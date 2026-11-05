@@ -32,7 +32,7 @@ if not exist ".env" (
             echo MODEL_NAME=deepseek-flash
             echo MODEL_API_KEY=sk-YOUR_API_KEY_HERE
             echo MODEL_THINKING=auto
-            echo MODEL_REASONING_EFFORT=low
+            echo MODEL_REASONING_EFFORT=max
         ) > .env
         echo Created .env file. Please edit it with your API key.
         echo.

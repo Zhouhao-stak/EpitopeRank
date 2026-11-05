@@ -61,7 +61,7 @@ MODEL_API_BASE_URL=https://api.deepseek.com
 MODEL_NAME=deepseek-flash
 MODEL_API_KEY=sk-your-api-key-here
 MODEL_THINKING=auto
-MODEL_REASONING_EFFORT=low
+MODEL_REASONING_EFFORT=max
 ```
 
 ### 方式二：通过 docker-compose.yml 环境变量

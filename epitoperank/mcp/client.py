@@ -17,7 +17,7 @@ import asyncio
 import json
 import os
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, AsyncIterator
 
@@ -111,6 +111,61 @@ class MCPClient:
                 builtin=True,
             ),
         )
+
+    def save_config(self) -> None:
+        """把外部 MCP 服务器配置写回 ``servers.json``（内置服务不落盘）。"""
+        payload = {"servers": [asdict(cfg) for cfg in self.servers.values()
+                               if not cfg.builtin]}
+        self.config_dir.mkdir(parents=True, exist_ok=True)
+        self.config_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def add_server(self, *, name: str, transport: str = "http",
+                   url: str | None = None, command: str | None = None,
+                   args: list[str] | None = None,
+                   protocol: str = "auto", timeout: float = 30.0,
+                   enabled: bool = True) -> MCPServerConfig:
+        """注册（或更新）一个外部 MCP 服务器，并持久化到配置目录。
+
+        ``http`` / ``sse`` 走 URL（可指向公网 MCP 服务）；``stdio`` 走本地命令。
+        这是「访问外网直接连接 MCP」的入口：配置一次后，设置页与 AI 调用
+        即可像内置工具一样列出并调用远端工具。
+        """
+        import re
+
+        clean = str(name or "").strip()
+        if not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", clean):
+            raise ValueError("服务器名称只能包含字母、数字、点、下划线与连字符")
+        if clean == BUILTIN_SERVER_NAME:
+            raise ValueError("内置服务器名称不可覆盖")
+        mode = str(transport or "http").strip().lower()
+        if mode not in {"http", "sse", "stdio"}:
+            raise ValueError("transport 只能是 http / sse / stdio")
+        if mode in {"http", "sse"}:
+            if not url or not str(url).startswith(("http://", "https://")):
+                raise ValueError("http/sse 服务器需要提供 http(s) URL")
+        elif not command:
+            raise ValueError("stdio 服务器需要提供启动命令")
+        cfg = MCPServerConfig(
+            name=clean, transport=mode, url=url, command=command,
+            args=list(args or []), timeout=float(timeout),
+            protocol=str(protocol or "auto").lower(),
+            enabled=bool(enabled), builtin=False,
+        )
+        self.servers[clean] = cfg
+        self._tools_cache.pop(clean, None)
+        self._connected_via.pop(clean, None)
+        self.save_config()
+        return cfg
+
+    def remove_server(self, name: str) -> bool:
+        """移除一个外部 MCP 服务器；内置服务不可移除。"""
+        if name == BUILTIN_SERVER_NAME or name not in self.servers:
+            return False
+        self.servers.pop(name, None)
+        self._tools_cache.pop(name, None)
+        self.save_config()
+        return True
 
     # -- official MCP SDK sessions ---------------------------------------
     @asynccontextmanager

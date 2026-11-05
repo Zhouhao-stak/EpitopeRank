@@ -26,7 +26,7 @@
 | `MODEL_NAME` | 模型名称 | `deepseek-flash` |
 | `MODEL_API_KEY` | **你的 API 密钥（必填）** | - |
 | `MODEL_THINKING` | 推理模式 | `auto`（智能切换） |
-| `MODEL_REASONING_EFFORT` | 推理强度 | `low` |
+| `MODEL_REASONING_EFFORT` | 推理强度 | `max` |
 
 ## Thinking 模式说明
 

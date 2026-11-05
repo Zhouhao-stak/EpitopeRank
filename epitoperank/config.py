@@ -129,6 +129,15 @@ class AgentSettings:
     skills: SkillSettings = field(default_factory=SkillSettings)
     #: Run the pre-registered statistical hypothesis tests before interpreting.
     hypothesis_testing: bool = True
+    #: 让模型在 OODA 循环的每一步参与规划（而不是仅在收尾时补一条洞察）。
+    #: 关闭后完全退回规则链，离线行为与旧版本一致。
+    autonomous_planning: bool = True
+    #: 单次运行允许的模型规划调用次数上限。
+    plan_budget: int = 8
+    #: 允许智能体通过 web_fetch / 外部 MCP 访问外网。
+    allow_network: bool = True
+    #: 允许智能体在项目目录内写文件（如 ORF 重建产物）。
+    allow_file_write: bool = True
 
     @property
     def agentic(self) -> bool:
@@ -370,6 +379,12 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
         autonomy=str(os.getenv("EPITOPERANK_AUTONOMY", block.get("autonomy", "auto")) or "auto"),
         skills=skills,
         hypothesis_testing=_bool("EPITOPERANK_HYPOTHESIS_TESTING", "hypothesis_testing", True),
+        autonomous_planning=_bool("EPITOPERANK_AGENT_AUTONOMOUS_PLANNING",
+                                  "autonomous_planning", True),
+        plan_budget=max(_int("EPITOPERANK_AGENT_PLAN_BUDGET", "plan_budget", 8), 0),
+        allow_network=_bool("EPITOPERANK_AGENT_ALLOW_NETWORK", "allow_network", True),
+        allow_file_write=_bool("EPITOPERANK_AGENT_ALLOW_FILE_WRITE",
+                               "allow_file_write", True),
     )
 
 

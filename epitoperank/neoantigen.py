@@ -695,6 +695,12 @@ def run(input_dir: str | Path, cds_table: str | Path, output_dir: str | Path,
         with (target/name).open('w', encoding='utf-8', newline='') as handle:
             writer = csv.DictWriter(handle, fieldnames=names, delimiter='\t')
             writer.writeheader(); writer.writerows(rows)
+    # 自动分级：把 IEDB 原始分数按 percentile_rank 排成可直接判读的候选表
+    from epitoperank.peptide.binding_tiers import rank_predictions, tier_summary, write_ranked
+
+    ranked = rank_predictions(scores, candidates) if scores else []
+    write_ranked(target/'ranked_candidates.tsv', ranked)
+    binding_tiers = tier_summary(ranked)
     manifest = {'input_dir': str(Path(input_dir).resolve()), 'cds_table': str(Path(cds_table).resolve()),
                 'candidate_count': len(candidates), 'prediction_count': len(scores),
                 'prediction_method': 'IEDB NetMHCpan 4.1 EL' if alleles else None,
@@ -704,6 +710,8 @@ def run(input_dir: str | Path, cds_table: str | Path, output_dir: str | Path,
                 'prediction_unmatched': max(0, len(pairs) - len(scores) - len(errors)),
                 'column_mapping': mapping_used,
                 'alleles': alleles,
+                'binding_tiers': binding_tiers,
+                'ranked_file': 'ranked_candidates.tsv',
                 'skipped': skipped, 'prediction_errors': errors,
                 'workflow_status': 'exploratory_only',
                 'limitations': ['This exploratory workflow does not implement the full staged neoantigen pipeline or its evidence gates',

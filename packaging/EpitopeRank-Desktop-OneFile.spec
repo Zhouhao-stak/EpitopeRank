@@ -93,6 +93,10 @@ hiddenimports += [
 hiddenimports += [
     "epitoperank.report",
     "epitoperank.report.generator",
+    # 运行时动态导入的新能力，显式列出避免冻结包漏掉。
+    "epitoperank.splicing.orf_builder",
+    "epitoperank.peptide.binding_tiers",
+    "epitoperank.web_fetch",
 ]
 
 excludes = [

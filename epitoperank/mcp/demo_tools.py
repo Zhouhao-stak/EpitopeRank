@@ -352,7 +352,32 @@ TOOL_SPECS: list[dict[str, Any]] = [
             "additionalProperties": False,
         },
     },
+    {
+        "name": "web_fetch",
+        "description": "访问外网获取文本/JSON（Ensembl REST、NCBI、IEDB 等白名单域名），返回状态码与正文。",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "url": {"type": "string", "description": "完整 http/https URL"},
+                "max_bytes": {"type": "integer", "description": "读取上限，默认 200000 字节",
+                              "minimum": 1000, "maximum": 200000},
+            },
+            "required": ["url"],
+            "additionalProperties": False,
+        },
+    },
 ]
+
+def web_fetch(url: str, max_bytes: int = 200000) -> dict[str, Any]:
+    """受控访问外网：抓取白名单域名内的文本/JSON，返回状态、类型与正文。"""
+    from epitoperank.web_fetch import fetch_url
+
+    try:
+        limit = max(1000, min(200000, int(max_bytes)))
+    except (TypeError, ValueError):
+        limit = 200000
+    return fetch_url(url, max_bytes=limit)
+
 
 TOOL_FUNCTIONS = {
     "list_projects": list_projects,
@@ -360,6 +385,7 @@ TOOL_FUNCTIONS = {
     "search_events": search_events,
     "explain_event_type": explain_event_type,
     "compute_delta_psi": compute_delta_psi,
+    "web_fetch": web_fetch,
 }
 
 

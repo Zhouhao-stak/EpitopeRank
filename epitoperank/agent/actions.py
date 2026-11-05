@@ -9,8 +9,10 @@ per-gene deep dive).
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Callable
 
 from epitoperank.splicing.filtering import FilterSettings, passes_quality, passes_significance
@@ -912,6 +914,93 @@ def persist_knowledge(context: RunContext, state: AgentState, top_n: int = 10) -
 # --------------------------------------------------------------------------
 
 
+# -- 自主智能体的扩展工具：外网 / 文件写入 / MCP ---------------------------
+def web_fetch_action(context: RunContext, state: AgentState,
+                     url: str = "", max_bytes: int = 200000) -> str:
+    """工具：受控访问外网抓取文本或 JSON，结果写入黑板并返回摘要。
+
+    域名白名单、体积上限与超时由 ``epitoperank.web_fetch`` 统一约束；
+    ``agent.allow_network`` 关闭时直接拒绝，保证离线可复现。
+    """
+    from epitoperank.web_fetch import fetch_url
+
+    if not getattr(context.settings.agent, "allow_network", True):
+        return "外网访问已被配置关闭（agent.allow_network=false）"
+    if not url:
+        return "缺少 url 参数"
+    result = fetch_url(str(url), max_bytes=max(1000, min(200000, int(max_bytes))))
+    excerpt = str(result.get("text", ""))[:600]
+    state.facts["last_web_fetch"] = {
+        "url": url, "ok": result.get("ok"),
+        "status": result.get("status"), "error": result.get("error"),
+    }
+    context.log("agent", "web_fetch", "ok" if result.get("ok") else "error", str(url)[:200])
+    return json.dumps({"ok": result.get("ok"), "url": url,
+                       "status": result.get("status"), "error": result.get("error"),
+                       "excerpt": excerpt}, ensure_ascii=False)
+
+
+def rebuild_orf_table(context: RunContext, state: AgentState,
+                      max_events: int = 25, fdr_max: float = 0.05,
+                      min_abs_dpsi: float = 0.1) -> str:
+    """工具：从项目 rMATS 事件坐标重建 CDS 对照表，供下游肽预测直接使用。
+
+    这是「数据缺口自己补」的关键动作：写文件仅限项目数据目录，
+    且同时受 ``agent.allow_file_write`` 与 ``agent.allow_network`` 约束。
+    """
+    from epitoperank.splicing.orf_builder import EnsemblReference, build_orf_table
+
+    if not getattr(context.settings.agent, "allow_file_write", True):
+        return "项目目录写入已被配置关闭（agent.allow_file_write=false）"
+    if not getattr(context.settings.agent, "allow_network", True):
+        return "在线参考源不可用（agent.allow_network=false）；请改用本地 GTF/FASTA"
+    input_dir = Path(context.dataset.source_dir)
+    output = input_dir / "splice_orfs.tsv"
+    provider = EnsemblReference(
+        cache_dir=Path(context.settings.paths.runtime_root) / "orf_cache")
+    manifest = build_orf_table(
+        input_dir, output, provider=provider,
+        max_events=max(1, min(200, int(max_events))),
+        fdr_max=float(fdr_max), min_abs_dpsi=float(min_abs_dpsi))
+    state.facts["orf_rebuild"] = {
+        "output": str(output), "written": manifest["written"],
+        "event_count": manifest["event_count"],
+        "reference": manifest["reference"],
+    }
+    context.log("agent", "rebuild_orf_table", "ok",
+                f"written={manifest['written']}/{manifest['event_count']}")
+    return (f"已重建 {manifest['written']}/{manifest['event_count']} 条 CDS 对照 → {output.name}；"
+            f"参考 {manifest['reference']}；跳过 {len(manifest['skipped'])} 个事件")
+
+
+def call_mcp_tool_action(context: RunContext, state: AgentState,
+                         tool: str = "", server: str = "epitoperank-builtin",
+                         arguments: str = "{}") -> str:
+    """工具：调用任意已连接的 MCP 工具（含外部服务器），结果写入黑板。"""
+    from epitoperank.llm.enrich import run_async
+    from epitoperank.mcp import mcp_call_tool
+
+    if not getattr(context.settings.agent, "allow_network", True):
+        return "外网访问已被配置关闭（agent.allow_network=false）"
+    if not tool:
+        return "缺少 tool 参数"
+    try:
+        payload = json.loads(arguments) if isinstance(arguments, str) else dict(arguments)
+        if not isinstance(payload, dict):
+            raise ValueError("arguments 必须是 JSON 对象")
+    except (ValueError, TypeError) as error:
+        return f"参数无效：{error}"
+    try:
+        result = run_async(mcp_call_tool(str(server), str(tool), payload))
+    except Exception as error:  # noqa: BLE001
+        context.log("agent", "call_mcp_tool", "error", str(error)[:200])
+        return f"MCP 调用失败：{error}"
+    state.facts["last_mcp_call"] = {"server": server, "tool": tool,
+                                    "ok": bool(result.get("success", True))}
+    context.log("agent", "call_mcp_tool", "ok", f"{server}/{tool}")
+    return json.dumps(result, ensure_ascii=False, default=str)[:1500]
+
+
 def build_registry() -> dict[str, Action]:
     """All actions the decision engine may pick from."""
     actions = [
@@ -983,6 +1072,22 @@ def build_registry() -> dict[str, Action]:
             "Pathway enrichment via KEGG/Reactome native APIs (bioservices)",
             enrich_pathways_bioservices,
             requires=("filtered", "has_significant"),
+        ),
+        # 自主智能体新增：外网访问、缺数据自补、任意 MCP 工具调用。
+        Action(
+            "web_fetch",
+            "Fetch a whitelisted external URL (Ensembl/NCBI/IEDB etc.) and read the result",
+            web_fetch_action,
+        ),
+        Action(
+            "rebuild_orf_table",
+            "Rebuild the CDS pair table (splice_orfs.tsv) from rMATS event coordinates when it is missing",
+            rebuild_orf_table,
+        ),
+        Action(
+            "call_mcp_tool",
+            "Call a tool on any connected MCP server, including external internet MCP servers",
+            call_mcp_tool_action,
         ),
     ]
     return {action.name: action for action in actions}

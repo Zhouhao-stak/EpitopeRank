@@ -21,7 +21,7 @@ services:
       - MODEL_NAME=deepseek-flash
       - MODEL_API_KEY=${MODEL_API_KEY:-}
       - MODEL_THINKING=auto
-      - MODEL_REASONING_EFFORT=low
+      - MODEL_REASONING_EFFORT=max
       # Runtime settings
       - EPITOPERANK_RUNTIME_ROOT=/data/runtime
       - EPITOPERANK_ENABLE_PUBMED=true

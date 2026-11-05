@@ -102,7 +102,7 @@ MODEL_API_BASE_URL=https://api.deepseek.com
 MODEL_NAME=deepseek-flash
 MODEL_API_KEY=sk-your-api-key-here
 MODEL_THINKING=auto
-MODEL_REASONING_EFFORT=low
+MODEL_REASONING_EFFORT=max
 ```
 
 - **PyInstaller**: `.env` 放在 EXE 同目录

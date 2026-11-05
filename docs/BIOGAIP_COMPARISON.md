@@ -380,7 +380,7 @@ config/
 llm:
   enabled: true
   thinking: auto  # auto/disabled/enabled
-  reasoning_effort: ""  # minimal/low/medium/high/xhigh/max
+  reasoning_effort: "max"  # minimal/low/medium/high/xhigh/max
   max_calls_per_run: 16  # 预算控制
 
 analysis:

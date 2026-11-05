@@ -26,14 +26,14 @@ PRESETS: dict[str, dict[str, str]] = {
         "MODEL_API_BASE_URL": "https://api.deepseek.com",
         "MODEL_NAME": "deepseek-flash",
         "MODEL_THINKING": "auto",
-        "MODEL_REASONING_EFFORT": "low",
+        "MODEL_REASONING_EFFORT": "max",
     },
     "deepseek-pro": {
         "label": "DeepSeek V4-Pro",
         "MODEL_API_BASE_URL": "https://api.deepseek.com",
         "MODEL_NAME": "deepseek-v4-pro",
         "MODEL_THINKING": "auto",
-        "MODEL_REASONING_EFFORT": "low",
+        "MODEL_REASONING_EFFORT": "max",
     },
     "openai": {
         "label": "OpenAI GPT-4o mini",

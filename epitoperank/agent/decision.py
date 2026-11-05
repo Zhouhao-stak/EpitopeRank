@@ -32,6 +32,23 @@ DECIDE_SYSTEM = (
     "Never invent numbers; never repeat an action that is already done."
 )
 
+#: 自主规划提示词：允许模型使用全量动作表（含联网/写文件工具），并要求
+#: 明确说明为什么这一步在当前证据下最有价值。执行与校验仍完全在本地。
+PLAN_SYSTEM = (
+    "You are the planning brain of EpitopeRank, an autonomous computational-biology "
+    "agent running an OODA loop (observe, verify, decide, act, reflect). You are given "
+    "the current blackboard as JSON: completed facts, open issues, chosen thresholds, "
+    "actions already executed, unmet goal criteria, and the FULL list of available "
+    "actions (including web_fetch, ORF reconstruction and MCP tool calls). "
+    "Choose exactly ONE next action that best advances the unmet criteria. "
+    "Prefer actions whose required facts are already satisfied. Do not repeat an "
+    "action that has already succeeded unless there is a concrete reason in the issues. "
+    "If a required input is missing (for example a CDS pair table), prefer an action "
+    "that can create it from the available data. Reply with JSON only: "
+    '{"action": "<name>", "args": {...}, "rationale": "<=30 words"}. '
+    "Use only scalar argument values. Never invent numbers, gene names or file paths."
+)
+
 
 #: Actions that make no sense to repeat once they succeeded.
 ONCE_ACTIONS = frozenset(
@@ -105,6 +122,11 @@ class DecisionEngine:
         self.registry = build_registry()
         self.llm_advisory = bool(llm_advisory)
         self._advisory_calls = 0
+        agent_cfg = getattr(settings, "agent", None)
+        #: 模型在 OODA 每一步参与规划；关闭后行为与旧版规则链完全一致。
+        self.autonomous_planning = bool(getattr(agent_cfg, "autonomous_planning", True))
+        self.plan_budget = max(0, int(getattr(agent_cfg, "plan_budget", 8) or 0))
+        self._plan_calls = 0
         self.trace: list[dict[str, Any]] = []
         #: Optional human-in-the-loop gate (``autonomy: assisted``).
         self.gate = gate
@@ -116,12 +138,20 @@ class DecisionEngine:
         state = self.state
         satisfied, unmet = state.goal.evaluate(state)
         if satisfied:
-            decision = self._optional_insight()
-            if decision is not None:
-                return decision
+            # 自主规划模式下模型已在每一步参与过决策，不再重复追加收尾洞察。
+            if not self.autonomous_planning:
+                decision = self._optional_insight()
+                if decision is not None:
+                    return decision
             return Decision("stop", rationale="Goal satisfied: " + ", ".join(c.code for c in state.goal.criteria))
 
         decision = self._fix_blockers()
+        if decision is not None:
+            return decision
+
+        # 模型规划优先：每个 OODA 迭代都让模型从「完整动作表」里选下一步，
+        # 规则链退居安全回退。校验、执行、预算仍全部在本地。
+        decision = self._model_plan(unmet)
         if decision is not None:
             return decision
 
@@ -400,6 +430,75 @@ class DecisionEngine:
         if action is None:
             return False
         return all(bool(self.state.facts.get(fact)) for fact in action.requires)
+
+    # -- autonomous model planning ---------------------------------------
+    def _model_plan(self, unmet: list[str]) -> Decision | None:
+        """让模型在 OODA 的当前迭代里，从完整动作表中选择下一步动作。
+
+        与旧的 ``_optional_insight`` 不同：这里在目标未达成时、每一步都会调用，
+        动作范围是注册表全量（含联网 / 写文件类工具），因此模型可以连续多步
+        自己规划，而不是只补一条洞察。所有提议仍要经过本地校验：
+        动作是否存在、前置事实是否满足、重试次数是否超限、参数是否为标量。
+        任何异常都静默退回规则链，离线运行不受影响。
+        """
+        if not self.autonomous_planning or self._plan_calls >= self.plan_budget:
+            return None
+        settings = self.settings
+        if settings is None or not getattr(getattr(settings, "llm", None), "usable", False):
+            return None
+        state = self.state
+        # 安全闸门：出图/出报告不能在筛选、排序、解读之前被模型提前触发，
+        # 否则会写出一份内容不完整的报告并让目标提前达成。
+        early_guard = {
+            "generate_figures": ("filtered",),
+            "generate_report": ("filtered", "ranked", "interpreted"),
+        }
+        available = [
+            {"name": name, "description": action.description}
+            for name, action in self.registry.items()
+            if self._requirements_met(name)
+            and not state_overused(state, name)
+            and all(bool(state.facts.get(f)) for f in early_guard.get(name, ()))
+        ]
+        if not available:
+            return None
+        payload = {
+            "unmet_criteria": unmet,
+            "facts": state.facts,
+            "issues": [issue.as_dict() for issue in state.issues],
+            "params": state.params,
+            "action_counts": dict(state.action_counts),
+            "steps": [getattr(step, "action", "") for step in state.steps[-8:]],
+            "available_actions": available,
+        }
+        self._plan_calls += 1
+        try:
+            from epitoperank.llm.enrich import LLMEnhancer, extract_json
+
+            enhancer = LLMEnhancer(settings)
+            text = enhancer.complete(
+                system=PLAN_SYSTEM,
+                user=json.dumps(payload, ensure_ascii=False, default=str)[:6000],
+                max_tokens=400, json_output=True, timeout=60,
+            )
+            data = extract_json(text or "")
+            if not isinstance(data, dict):
+                return None
+            action = str(data.get("action") or "")
+            if action not in {item["name"] for item in available}:
+                return None
+            args = data.get("args") if isinstance(data.get("args"), dict) else {}
+            # 只允许简单标量参数：杜绝模型往工具里塞任意结构或路径对象
+            args = {str(k): v for k, v in args.items()
+                    if isinstance(v, (str, int, float, bool))}
+            rationale = str(data.get("rationale") or "model planning")[:200]
+            decision = Decision("act", action, args, rationale,
+                                source="llm", confidence=0.75)
+            self.trace.append({"kind": "model_plan", "action": action,
+                               "args": args, "rationale": rationale})
+            return decision
+        except Exception:  # noqa: BLE001 - 规划是可选增强，失败必须回退规则链
+            return None
 
     # -- optional model advisory -----------------------------------------
     def _optional_insight(self) -> Decision | None:

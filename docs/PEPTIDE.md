@@ -257,6 +257,13 @@ python scripts/fetch_peptide_reference.py --skip-epitopes
 `lookup_epitopes=true` 时最多查前 **10** 条肽。预测需要联网（IEDB）或本地 `mhcflurry`；
 `predictor=none` 时不调用模型、只返回空预测（用于离线冒烟）。`processing` 默认 `true`。
 
+裸肽列表按**原序列长度**提交给 IEDB MHC-II（`length=asis`），不套用 CDS 模式的 15-mer 窗口，
+因此 11–30 aa 的肽都能得到结果；CDS/CLI 生成的 `class2_context` 仍走 `--class2-window`（默认 15）。
+MHC-I 只提交 8–11 aa：更长的肽、或缺少对应类别等位基因的输入会在 `errors` 里写明中文原因，
+不再静默返回 0 条预测。`predictor=local` 且未安装 mhcflurry 时 API 返回 422 并提示改用
+`iedb` / `auto`（Web 下拉会在未安装时禁用该选项）；`auto` 在本地模型可用且只做 I 类时优先离线，
+否则走 IEDB。
+
 `/api/peptide/run` 的 `cds_table` 与 `peptides_file` 只能二选一；两者都不给且提供
 `project_id` 时，会按表头自动识别项目目录里的编码序列对照表（文件名不限；多份时优先 `splice_orfs` / `coding_pairs`），也可用 `cds_table` 显式指定。所有输入文件
 （含 `self_fastas`）必须位于 `input_dir` 内。`predictor` 同样接受 `none`（只做本地属性/排序）。
@@ -343,7 +350,7 @@ rank  peptide    length  event_id    gene_symbol   event_type  fdr   delta_psi  
 | `IEDB did not return a table` | 等位基因或长度不被该方法接受；先用 `--capabilities` 核对方法键，再用 IEDB 网页确认该等位基因受支持 |
 | processing 返回 HTTP 500 | IEDB processing 对“FASTA + 多长度”不稳定；客户端已改为每个 (等位基因, 长度) 单独请求。若仍失败，检查是否被网关拦截 |
 | `HLA allele ...` 报错 | 必须是两字段名，如 `HLA-A*02:01`、`HLA-DRB1*15:01`；`A*02:01` 也可，`HLA-E*01:01` 不受支持 |
-| `mhcflurry is not installed` | `--predictor local` 需要 `pip install mhcflurry`；或用 `--predictor iedb` / `auto` |
+| `mhcflurry is not installed` | `--predictor local` 需要 `pip install mhcflurry`；Web API 会直接返回 422 中文提示且页面禁用该选项；请改用 `--predictor iedb` / `auto` |
 | 运行成功但没有预测 | 检查是否有 `errors`；`--predictor none` 只做本地属性/排序；`predictor≠none` 但未填 `--alleles` 会直接报错 |
 | 肽表行被跳过 | 长度不在 8–30 aa，或序列含非标准残基；见 `manifest.json` 的 `skipped` |
 | 复现结果不一致 | 方法版本已固定（如 `netmhcpan_el-4.1`）；IEDB 服务端仍可能更新版本，`request_id` 与 `raw` 用于核对 |

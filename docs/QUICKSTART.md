@@ -57,7 +57,7 @@ docker-compose logs -f
    MODEL_NAME=deepseek-flash
    MODEL_API_KEY=sk-your-actual-api-key-here
    MODEL_THINKING=auto
-   MODEL_REASONING_EFFORT=low
+   MODEL_REASONING_EFFORT=max
    ```
 
 2. **获取 API 密钥**

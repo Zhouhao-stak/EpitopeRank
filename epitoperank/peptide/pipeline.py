@@ -306,8 +306,12 @@ def _class2_contexts(candidates: Sequence[dict]) -> tuple[list[str], int]:
 
 
 def _run_iedb(candidates: Sequence[dict], alleles: Sequence[HlaAllele],
-              options: PeptideOptions) -> dict[str, object]:
+              options: PeptideOptions, *, class2_length: int | str | None = None) -> dict[str, object]:
     """经 IEDB 联网预测 I/II 类结合（可选加工、稳定性、MHC-NP）。
+
+    ``class2_length`` 覆盖默认的 ``options.class2_window``：CDS/CLI 模式提交的是
+    预先截好的窗口，必须用固定长度；裸肽列表（API）传入 ``"asis"``，让 IEDB
+    按每条肽的原长返回，否则长肽会被切成 15-mer 窗口而在结果过滤阶段全部丢失。
 
     每个阶段独立捕获 :class:`IedbError` 并记入 ``errors``，单阶段失败不会
     中断其余阶段；返回预测记录、错误列表与调用记录。
@@ -349,10 +353,11 @@ def _run_iedb(candidates: Sequence[dict], alleles: Sequence[HlaAllele],
         method = options.methods.get(2, DEFAULT_METHODS[2])
         methods_used[2] = method
         attempt("mhc_ii_binding", client.predict_mhcii, contexts, class2_alleles,
-                length=options.class2_window, method=method)
+                length=class2_length if class2_length is not None else options.class2_window,
+                method=method)
     if short_contexts and options.mhc_class in {"class2", "both"}:
         errors.append({"stage": "mhc_ii_binding",
-                       "error": f"{short_contexts} candidates had a class-II context shorter than 11 aa"})
+                       "error": f"{short_contexts} 条候选的 MHC-II 上下文短于 11 aa，未提交 II 类预测"})
 
     return {"predictions": predictions, "errors": errors,
             "methods": methods_used, "calls": list(client.calls)}
@@ -739,8 +744,12 @@ def run(*, output_dir: str | Path,
 
 
 def _run_iedb_with(client: IedbClient, candidates: Sequence[dict],
-                   alleles: Sequence[HlaAllele], options: PeptideOptions) -> dict[str, object]:
-    """Same as :func:`_run_iedb` but reusing an injected client (tests/API)."""
+                   alleles: Sequence[HlaAllele], options: PeptideOptions, *,
+                   class2_length: int | str | None = None) -> dict[str, object]:
+    """Same as :func:`_run_iedb` but reusing an injected client (tests/API).
+
+    ``class2_length`` 语义同 :func:`_run_iedb`；默认沿用 CDS 窗口长度。
+    """
     grouped = split_by_class(list(alleles))
     predictions: list[dict[str, object]] = []
     errors: list[dict[str, object]] = []
@@ -769,10 +778,11 @@ def _run_iedb_with(client: IedbClient, candidates: Sequence[dict],
         method = options.methods.get(2, DEFAULT_METHODS[2])
         methods_used[2] = method
         attempt("mhc_ii_binding", client.predict_mhcii, contexts, class2_alleles,
-                length=options.class2_window, method=method)
+                length=class2_length if class2_length is not None else options.class2_window,
+                method=method)
     if short_contexts and options.mhc_class in {"class2", "both"}:
         errors.append({"stage": "mhc_ii_binding",
-                       "error": f"{short_contexts} candidates had a class-II context shorter than 11 aa"})
+                       "error": f"{short_contexts} 条候选的 MHC-II 上下文短于 11 aa，未提交 II 类预测"})
     return {"predictions": predictions, "errors": errors, "methods": methods_used,
             "calls": list(client.calls)}
 
@@ -780,7 +790,14 @@ def _run_iedb_with(client: IedbClient, candidates: Sequence[dict],
 def predict_peptides(peptides: Sequence[str], alleles: Sequence[str], *,
                      mhc_class: str = "class1", predictor: str = "iedb",
                      processing: bool | None = None) -> dict[str, object]:
-    """Predict a bare peptide list without writing files (API convenience)."""
+    """Predict a bare peptide list without writing files (API convenience).
+
+    与 CDS/CLI 模式不同，这里的每条序列就是用户提交的肽本身，MHC-II 必须用
+    ``length="asis"`` 提交：否则 IEDB 会把长肽切成固定长度窗口，返回的 peptide
+    不再等于提交序列，在 :meth:`IedbClient._binding_records` 的精确序列过滤中
+    被全部丢弃，表现为「预测完成，0 条」且无任何错误。长度/型别不匹配的输入
+    一律写入 ``errors``，不再静默返回空结果。
+    """
     options = PeptideOptions(
         alleles=list(alleles),
         mhc_class=mhc_class,
@@ -793,19 +810,54 @@ def predict_peptides(peptides: Sequence[str], alleles: Sequence[str], *,
     candidates = [{"peptide": peptide, "length": len(peptide),
                    "class2_context": peptide} for peptide in cleaned]
     parsed = parse_panel(options.alleles, allow_mixed_classes=True)
+    grouped = split_by_class(list(parsed))
+
     if predictor == "none":
         result: dict[str, object] = {"predictions": [], "errors": [], "methods": {}, "calls": []}
-    elif predictor in {"iedb", "auto"}:
-        result = _run_iedb(candidates, parsed, options)
-    else:
+    elif predictor == "local":
+        from . import local_models
+
+        if not local_models.available():
+            raise ValueError(
+                "本地预测器 MHCflurry 未安装，无法完成预测。请改用「IEDB（在线）」或 auto，"
+                "或在本机执行 pip install mhcflurry 后重试。"
+            )
         result = _run_local(candidates, parsed)
+    elif predictor == "auto":
+        from . import local_models
+
+        # auto 按界面文案执行：本地模型可用且只做 I 类时优先离线，失败再回退 IEDB。
+        if options.mhc_class == "class1" and local_models.available():
+            local_result = _run_local(candidates, parsed)
+            result = (local_result if not local_result["errors"]
+                      else _run_iedb(candidates, parsed, options, class2_length="asis"))
+        else:
+            result = _run_iedb(candidates, parsed, options, class2_length="asis")
+    else:
+        result = _run_iedb(candidates, parsed, options, class2_length="asis")
+
+    notes: list[dict[str, object]] = []
+    if options.mhc_class == "class1":
+        too_long = [item for item in cleaned if len(item) > 11]
+        if too_long:
+            notes.append({"stage": "input_length", "error": (
+                f"{len(too_long)} 条肽长于 11 aa（MHC-I 只支持 8–11 aa），未提交结合预测；"
+                "长肽请把「MHC 类别」改成 class2 或 both。例：" + "、".join(too_long[:3])
+            )})
+    if options.mhc_class in {"class2", "both"} and not grouped[2] and any(
+            len(item) >= 11 for item in cleaned):
+        notes.append({"stage": "alleles", "error": (
+            "未检测到 MHC-II 型别（如 HLA-DRB1*15:01），长肽无法做 II 类预测；"
+            "请填写 HLA-II 等位基因，或改选 class1 并只提交 8–11 aa 的肽。"
+        )})
+
     predictions = dedupe_predictions(result["predictions"])
     for row in predictions:
         if isinstance(row.get("raw"), dict):
             row["raw"] = {key: row["raw"][key] for key in list(row["raw"])[:12]}
     return {
         "predictions": predictions,
-        "errors": result["errors"],
+        "errors": list(result["errors"]) + notes,
         "methods": {str(key): METHODS[value].label if value in METHODS else value
                     for key, value in result["methods"].items()},
     }

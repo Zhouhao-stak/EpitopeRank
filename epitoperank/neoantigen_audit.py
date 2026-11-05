@@ -26,7 +26,7 @@ def audit(dataset: Dataset, evidence: dict) -> dict:
     return {'stage': 0, 'event_count': len(dataset.events), 'groups': groups,
             'declared_evidence': declared, 'has_frame_correct_cds': has_cds,
             'missing': missing,
-            'boundary': '支持事件审计和已重建 ORF 的下游分析；自动 ORF 重建尚未实现。NMD 距离规则需要最后外显子连接点，正常过滤需要独立参考数据。',
+            'boundary': '支持事件审计和已重建 ORF 的下游分析；项目内 ORF 重建请见「剪接候选新抗原」页的自动重建入口（splicing/orf_builder.py），本分阶段流程不自动串联它。NMD 距离规则需要最后外显子连接点，正常过滤需要独立参考数据。',
             'requires_confirmation': True}
 
 

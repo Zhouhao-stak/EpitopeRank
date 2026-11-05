@@ -1066,6 +1066,81 @@ def create_app() -> FastAPI:
                 'cds_files': [item['name'] for item in discovered],
                 'cds_selected': name, 'columns': info['header']}
 
+    @app.post("/api/orf/build")
+    def orf_build(payload: dict[str, Any]) -> dict[str, Any]:
+        """从项目里的 rMATS 事件坐标重建 CDS 对照表（项目内 ORF 重建入口）。
+
+        参考源 ``ensembl`` 走 Ensembl REST（联网、结果缓存到运行根）；
+        ``local`` 用本地 GTF + FASTA，路径必须落在允许目录内。
+        """
+        from epitoperank.splicing.orf_builder import (
+            EnsemblReference, LocalReference, build_orf_table)
+
+        project_id = str(payload.get('project_id') or '').strip()
+        if project_id:
+            directory, roots = _project_input_dirs(project_id)
+        else:
+            directory = _ingest_input_dir(str(payload.get('input_dir', '')))
+            roots = [directory]
+        source = str(payload.get('source') or 'ensembl').strip().lower()
+        if source == 'local':
+            def _reference(value: Any) -> Path:
+                raw = str(value or '').strip()
+                if not raw:
+                    raise HTTPException(status_code=422, detail='本地参考源需要 GTF 与 FASTA 路径')
+                path = Path(raw).expanduser().resolve()
+                allowed = [r.resolve() for r in roots] + [settings.paths.runtime_root.resolve(),
+                                                          Path.cwd().resolve()]
+                if not path.is_file() or not any(
+                        path == root or root in path.parents for root in allowed):
+                    raise HTTPException(status_code=422, detail=f'参考文件不在允许目录内：{raw}')
+                return path
+
+            provider = LocalReference(_reference(payload.get('gtf')),
+                                      _reference(payload.get('fasta')))
+        elif source == 'ensembl':
+            provider = EnsemblReference(cache_dir=settings.paths.runtime_root / 'orf_cache')
+        else:
+            raise HTTPException(status_code=422, detail='source 只能是 ensembl 或 local')
+
+        def _bounded(key: str, default: int, low: int, high: int) -> int:
+            try:
+                return max(low, min(high, int(payload.get(key) or default)))
+            except (TypeError, ValueError):
+                return default
+
+        def _float(key: str, default: float) -> float:
+            try:
+                return float(payload.get(key) or default)
+            except (TypeError, ValueError):
+                return default
+
+        raw_ids = payload.get('event_ids') or []
+        if isinstance(raw_ids, str):
+            raw_ids = [part.strip() for part in raw_ids.split(',')]
+        event_ids = [str(x).strip() for x in raw_ids if str(x).strip()] or None
+        name = Path(str(payload.get('output') or 'splice_orfs.tsv')).name
+        if not name.endswith(('.tsv', '.csv', '.txt')):
+            name = 'splice_orfs.tsv'
+        output = directory / name
+        try:
+            manifest = build_orf_table(
+                directory, output, provider=provider, event_ids=event_ids,
+                fdr_max=_float('fdr_max', 0.05),
+                min_abs_dpsi=_float('min_abs_dpsi', 0.1),
+                max_events=_bounded('max_events', 25, 1, 200),
+                time_budget=max(30.0, min(600.0, _float('time_budget', 180.0))))
+        except (ValueError, OSError, RuntimeError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return {
+            'ok': True, 'output': str(output), 'output_name': name,
+            'reference': manifest['reference'], 'event_count': manifest['event_count'],
+            'written': manifest['written'], 'skipped': manifest['skipped'],
+            'genome_build': manifest['genome_build'],
+            'manifest': str(output) + '.manifest.json',
+            'cds_status': 'available' if manifest['written'] else 'empty',
+        }
+
     @app.post("/api/neoantigen/run")
     def neoantigen_run(payload: dict[str, Any]) -> dict[str, Any]:
         """Generate auditable junction peptides; optionally query IEDB."""
@@ -1101,9 +1176,10 @@ def create_app() -> FastAPI:
 
     @app.get("/api/neoantigen/file")
     def neoantigen_file(input_dir: str, name: str) -> FileResponse:
-        """下载新抗原结果文件，仅允许三个固定文件名。"""
+        """下载新抗原结果文件，仅允许固定白名单内的文件名。"""
         directory = _ingest_input_dir(input_dir)
-        if name not in {"splice_peptides.tsv", "mhc_i_predictions.tsv", "neoantigen_manifest.json"}:
+        if name not in {"splice_peptides.tsv", "mhc_i_predictions.tsv",
+                        "ranked_candidates.tsv", "neoantigen_manifest.json"}:
             raise HTTPException(status_code=400, detail="Unsupported result file")
         path = directory / "neoantigen_results" / name
         if not path.is_file():
@@ -1496,6 +1572,44 @@ def create_app() -> FastAPI:
             "config_path": str(client.config_path),
             "builtin_server": "epitoperank-builtin",
         }
+
+    @app.post("/api/mcp/servers")
+    async def mcp_add_server(payload: dict[str, Any]) -> dict[str, Any]:
+        """注册外部 MCP 服务器（访问外网的入口），随后尝试连接并列出工具。"""
+        from epitoperank.mcp import get_mcp_client
+
+        client = get_mcp_client()
+        try:
+            config = client.add_server(
+                name=str(payload.get("name") or ""),
+                transport=str(payload.get("transport") or "http"),
+                url=str(payload.get("url") or "").strip() or None,
+                command=str(payload.get("command") or "").strip() or None,
+                args=list(payload.get("args") or []),
+                protocol=str(payload.get("protocol") or "auto"),
+            )
+        except (ValueError, OSError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        status, tools = "disconnected", []
+        try:
+            if await client.connect(config.name):
+                status = "connected"
+                tools = [t.name for t in await client.list_tools(config.name)]
+        except Exception as error:  # noqa: BLE001 - 配置已保存，连接失败只回报状态
+            status = f"error: {error}"
+        return {"ok": True, "name": config.name, "status": status,
+                "tools": tools, "config_path": str(client.config_path)}
+
+    @app.delete("/api/mcp/servers/{name}")
+    def mcp_remove_server(name: str) -> dict[str, Any]:
+        """移除一个外部 MCP 服务器。"""
+        from epitoperank.mcp import get_mcp_client
+
+        client = get_mcp_client()
+        removed = client.remove_server(name)
+        if not removed:
+            raise HTTPException(status_code=404, detail="服务器不存在或为内置服务")
+        return {"ok": True, "removed": name}
 
     @app.post("/api/mcp/call")
     async def mcp_call_tool(payload: dict[str, Any]) -> dict[str, Any]:

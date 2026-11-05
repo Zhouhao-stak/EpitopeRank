@@ -14,7 +14,7 @@
 
 也可以增加 `--a3ss`、`--a5ss`、`--mxe`、`--ri`。基因组 FASTA、GTF 与蛋白 FASTA 版本必须一致，并与事件坐标和染色体命名对应；版本声明不能代替核验。脚本保存命令、输入 SHA-256、容器镜像摘要和日志。不同版本的工具可能要求原始 rMATS 完整列，供应商转换表和技术性分组不能自动等同于原始组间统计。桌面界面会自动识别项目目录中标准命名的 rMATS JC 文件并调用 Docker，结果仍不能自动进入 ORF 阶段。
 
-**当前状态：探索性分析，尚未实现 `docs/prompts/splice-neoantigen-pipeline.md` 中的完整流程。** 现有网页生成入口不会自动执行该文档要求的事件质量门控、ORF 重建、NMD 判断、配对正常/GTEx/全蛋白组过滤、表达与复现率分析，也不生成完整的六段报告。不得将其结果解释为经过这些阶段验证的新抗原。
+**当前状态：探索性分析，尚未实现 `docs/prompts/splice-neoantigen-pipeline.md` 中的完整流程。** 网页生成入口不会自动执行该文档要求的事件质量门控、NMD 判断、配对正常/GTEx/全蛋白组过滤、表达与复现率分析，也不生成完整的六段报告。ORF 重建已有独立入口（见下文「项目内 ORF 重建」），但不会自动串联进分阶段流程。不得将其结果解释为经过这些阶段验证的新抗原。
 
 网页提供分阶段入口：选择当前项目，填写表单并逐步确认。进度保存到本机运行目录，可在重启后恢复；项目输入改变时须重新审计。输入必须是已经量化的事件表，阶段 1 不执行 reads/BAM 事件发现或 BH 校正。阶段 2 需提供明确阈值并确认 `total_support_reads` 是 junction 支持读数；缺失质量字段的事件不会被当成通过。
 
@@ -22,7 +22,23 @@
 
 阶段 4 对配对正常、GTEx 蛋白及全蛋白组 FASTA 分层精确过滤。事件连接点表必须有 `event_id, chromosome, intron_start, intron_end, strand`；GTEx 表有相同坐标列（不含 event_id），均为 1-based inclusive 内含子范围，基因组版本需一致。任何一个事件连接点命中即排除该事件的候选肽；GTEx 未检出不能证明正常组织中不存在。正常表达表包含 `gene_id, tissue, expression, unit`，报告观测值，缺失不等于零，不自动设高表达阈值。文件来源、覆盖范围及版本须由用户核实。
 
-阶段 5 表含 `event_id, expression, expression_unit`，可选 `recurrence_count, recurrence_total`。阶段 6 填写 HLA、来源和置信度后发送 IEDB；阶段 7 输出六段结构化报告。所有输入文件须位于项目数据目录。自动 ORF 重建尚未实现，且本入口仍是实验性实现，不是完整符合文档的流程。
+阶段 5 表含 `event_id, expression, expression_unit`，可选 `recurrence_count, recurrence_total`。阶段 6 填写 HLA、来源和置信度后发送 IEDB；阶段 7 输出六段结构化报告。所有输入文件须位于项目数据目录。分阶段入口仍是实验性实现，不是完整符合文档的流程。
+
+## 项目内 ORF 重建（新增）
+
+「剪接候选新抗原」页的「自动重建编码序列表」使用 `epitoperank/splicing/orf_builder.py`，
+从项目里的原始 rMATS 表读取事件坐标，按参考转录本 CDS 结构组装 `reference_cds` /
+`altered_cds` 并计算 `junction_nt`，输出 `splice_orfs.tsv` + `*.manifest.json`：
+
+- **Ensembl REST**（默认，联网）：取转录本、CDS 区段与基因组序列，结果缓存到运行根 `orf_cache/`；
+  基因组版本由 REST 返回并写进 manifest。
+- **本地 GTF + FASTA**（离线可复现）：自动建立 `.fai` 索引，路径须位于项目目录或运行根内。
+- 支持 **SE**（删去盒式外显子）与 **RI**（插入保留内含子）；A3SS/A5SS/MXE 明确记为跳过原因。
+- 默认筛选 FDR < 0.05 且 |ΔPSI| > 0.1，最多处理若干事件，并有时间预算与跳过原因审计。
+
+**边界**：只重建所选参考转录本的读码框，不证明该转录本在样本中实际表达；事件坐标必须与
+参考基因组版本一致；输出仍属探索性候选，NMD 判断、配对正常/GTEx/全蛋白组过滤与
+表达/复现率分析仍需另行完成。
 
 ## 输入与边界
 

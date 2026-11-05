@@ -564,6 +564,54 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
 .card:hover { background:linear-gradient(130deg,#244356cc,#1b2b46cc); border-color:#b9ffe84a; box-shadow:0 20px 50px #0004,inset 0 1px #e6fff322; }
 .btn-primary::before { content:''; position:absolute; inset:-100% -50%; background:linear-gradient(100deg,transparent 35%,#ffffff66 50%,transparent 65%); transform:translateX(-90%) rotate(15deg); transition:transform .65s; pointer-events:none; }
 .btn-primary:hover::before { transform:translateX(90%) rotate(15deg); }
+
+/* Readability: earlier daylight rules painted result tables white while the
+   dark theme keeps light text. Restore dark surfaces and readable table type. */
+.neo-result-body, .neo-result-body th, .neo-result-body td,
+#page-neoantigen details, #page-neoantigen details pre {
+  background:#0e1b2b; color:#eaf4ff;
+}
+.neo-result-body { border:1px solid #ffffff1c; }
+.neo-result-body:empty { display:none; }
+.neo-result-body th { position:sticky; top:0; z-index:1; background:#172b3e; color:#cfe4f5; border-bottom:1px solid #ffffff26; font-weight:600; }
+.neo-result-body td { color:#dbeaf8; border-bottom:1px solid #ffffff12; }
+.neo-result-body tr:hover td { background:#82eed80e; }
+.neo-result-body pre { color:#dbeaf8; }
+#page-neoantigen details { border:1px solid #ffffff1c; border-radius:var(--radius); }
+#page-neoantigen details summary { color:#eaf4ff; }
+#page-neoantigen details pre { border-radius:var(--radius-sm); padding:12px; }
+.card table th, .card table td { color:#dbeaf8; }
+.card table th { background:#172b3e; color:#cfe4f5; }
+.card table td { border-color:#ffffff12; }
+
+/* Visualization: keep the sidebar compact and show a whole chart on one screen. */
+#page-visualization > .grid { align-items:start; }
+#page-visualization > .grid > div:first-child {
+  align-self:start; position:sticky; top:88px;
+  max-height:min(62vh, 520px); overflow-y:auto; padding-right:8px;
+}
+#page-visualization > .grid > div:first-child > .card { margin-bottom:14px; }
+#page-visualization .card .btn { padding:10px 14px; }
+#chart-display { min-height:0 !important; justify-content:flex-start !important; }
+#chart-display img {
+  display:block; width:auto; max-width:100%; height:auto;
+  max-height:min(72vh, 680px); object-fit:contain; margin:0 auto;
+}
+
+/* Project detail becomes a side drawer opened from the sidebar. */
+.detail-drawer-backdrop { position:fixed; inset:0; z-index:1500; background:#030b14b8; backdrop-filter:blur(3px); opacity:0; visibility:hidden; transition:opacity .22s,visibility .22s; }
+body.detail-open .detail-drawer-backdrop { opacity:1; visibility:visible; }
+#project-detail.detail-drawer {
+  position:fixed; z-index:1501; top:0; right:0; bottom:0;
+  width:min(920px,92vw); margin:0; padding:28px; border-radius:0;
+  border:0; border-left:1px solid #ffffff26;
+  background:linear-gradient(160deg,#152a3f,#0b1728);
+  box-shadow:-24px 0 70px #0009; overflow-y:auto;
+  transform:translateX(102%); visibility:hidden;
+  transition:transform .28s ease,visibility .28s;
+}
+body.detail-open #project-detail.detail-drawer { transform:translateX(0); visibility:visible; }
+@media(max-width:768px) { #project-detail.detail-drawer { width:100vw; padding:20px; } }
 </style>
 </head>
 <body>
@@ -583,6 +631,7 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
       <button type="button" class="nav-item" data-page="peptide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h5v5H5z M14 13h5v5h-5z M10 8h7v5 M7 11v5h7"/></svg>肽预测</button>
     </div>
     <div class="nav-section"><div class="nav-label">工作区</div>
+      <button type="button" class="nav-item" data-detail="1" onclick="openProjectDetail()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M4 9h16 M9 9v11 M14 4v5"/></svg>项目详情</button>
       <button type="button" class="nav-item" data-page="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3 M12 18v3 M3 12h3 M18 12h3 M6 6l2 2 M16 16l2 2 M6 18l2-2 M16 8l2-2 M8 12a4 4 0 1 0 8 0a4 4 0 1 0-8 0"/></svg>设置</button>
     </div>
   </aside>
@@ -659,7 +708,8 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
           </div>
         </div>
 
-        <section class="card" id="project-detail" style="margin-top: 24px; display: none;">
+        <div class="detail-drawer-backdrop" id="detail-backdrop" onclick="closeProjectDetail()" aria-hidden="true"></div>
+        <section class="card detail-drawer" id="project-detail" aria-label="历史项目详情">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
             <div>
               <div style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">历史项目详情</div>
@@ -667,6 +717,7 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
               <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;" id="detail-meta">-</div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-sm btn-secondary" type="button" onclick="closeProjectDetail()">关闭详情</button>
               <button class="btn btn-sm btn-secondary" onclick="openReport('html')"> 打开 HTML 报告</button>
               <button class="btn btn-sm btn-secondary" onclick="openReport('pdf')"> 下载 PDF</button>
               <button class="btn btn-sm btn-secondary" onclick="revealProjectBundle()"> 成果文件夹</button>
@@ -1017,6 +1068,16 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
               </div>
 
               <div class="mcp-field">
+                <label for="mcp-ext-url">连接外部 MCP 服务器（访问外网）</label>
+                <div class="mcp-inline">
+                  <input id="mcp-ext-name" type="text" placeholder="名称，例如 remote-tools" style="width:34%;">
+                  <input id="mcp-ext-url" type="text" placeholder="https://host/mcp" style="flex:1;">
+                  <button class="btn btn-secondary btn-sm" type="button" onclick="addExternalMcpServer()">连接</button>
+                </div>
+                <div class="mcp-hint" id="mcp-ext-status">配置保存在 ~/.epitoperank/mcp/servers.json；内置 web_fetch 工具可直接访问白名单域名。</div>
+              </div>
+
+              <div class="mcp-field">
                 <label for="mcp-tool-select">工具</label>
                 <select id="mcp-tool-select" onchange="onMcpToolChange()"></select>
                 <div class="mcp-desc" id="mcp-tool-desc">选择服务器与工具后调用</div>
@@ -1046,6 +1107,30 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
           <p style="margin:6px 0 12px;">系统会检查剪接事件和生成肽所需的编码序列表。</p>
           <button class="btn btn-secondary" type="button" id="neo-check" onclick="checkNeoReadiness()">检查当前项目</button>
           <div id="neo-readiness" style="white-space:pre-wrap;margin-top:12px;" aria-live="polite">请先选择一个项目。</div>
+        </div>
+        <div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius);margin:16px 0;">
+          <strong>可选：从 rMATS 事件自动重建编码序列表（ORF 重建）</strong>
+          <p style="margin:6px 0 12px;">不需要外部脚本。平台读取项目里的原始 rMATS 表，参考转录本 CDS 结构重建「参考 / 改变后」CDS 对并写入项目目录；完成后第二步会自动选中它。仅重建 SE 与 RI，其余事件类型会记录跳过原因。</p>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+            <label for="orf-source">参考源</label>
+            <select id="orf-source" onchange="toggleOrfSource()" style="padding:8px;"><option value="ensembl">Ensembl REST（在线 GRCh38）</option><option value="local">本地 GTF + FASTA（离线可复现）</option></select>
+            <label for="orf-max-events">最多处理事件数</label>
+            <input id="orf-max-events" type="number" value="12" min="1" max="200" style="padding:8px;">
+            <label for="orf-fdr">FDR 上限</label>
+            <input id="orf-fdr" type="number" value="0.05" step="0.01" min="0" style="padding:8px;">
+            <label for="orf-dpsi">|ΔPSI| 下限</label>
+            <input id="orf-dpsi" type="number" value="0.1" step="0.05" min="0" style="padding:8px;">
+          </div>
+          <div id="orf-local-fields" style="display:none;margin:10px 0;">
+            <label for="orf-gtf">GTF 文件路径（项目目录或运行根内）</label>
+            <input id="orf-gtf" type="text" placeholder="例如 annotation.gtf" style="display:block;width:100%;padding:8px;margin:4px 0 8px;">
+            <label for="orf-fasta">基因组 FASTA 路径（项目目录或运行根内）</label>
+            <input id="orf-fasta" type="text" placeholder="例如 genome.fa" style="display:block;width:100%;padding:8px;margin:4px 0 8px;">
+          </div>
+          <label for="orf-event-ids">指定事件 ID（可选，逗号分隔，留空则取显著事件）</label>
+          <input id="orf-event-ids" type="text" placeholder="例如 SE:77508,RI:5737" style="display:block;width:100%;padding:8px;margin:4px 0 12px;">
+          <button class="btn btn-secondary" type="button" id="orf-build" onclick="buildOrfTable()">自动重建编码序列表</button>
+          <div id="orf-status" style="margin-top:12px;white-space:pre-wrap;" aria-live="polite"></div>
         </div>
         <div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius);margin:16px 0;">
           <strong>第二步：选择编码序列表，生成候选肽</strong>
@@ -1123,8 +1208,9 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
         <section class="pep-section">
           <h3><label for="pep-sequences">候选肽序列</label></h3>
           <p style="margin:6px 0 10px;color:var(--text-secondary);font-size:13px;">
-            每行一个肽段（8–30 aa）；可直接粘贴 FASTA 序列，<code>&gt;</code> 开头的标题行会被忽略。
-            单次最多 200 条肽、8 个 HLA（接口限制），避免触发 IEDB 频率限制。
+            每行一个肽段；<b>MHC-I 请用 8–11 aa，MHC-II 请用 11–30 aa</b>；可直接粘贴 FASTA 序列，
+            <code>&gt;</code> 开头的标题行会被忽略。页面单次最多 200 条肽、8 个 HLA（API 上限 2000 条），
+            避免触发 IEDB 频率限制。
           </p>
           <textarea id="pep-sequences" rows="7" spellcheck="false"
             style="display:block;width:100%;padding:10px;margin:8px 0 6px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text);font-family:var(--font-mono,monospace);font-size:13px;line-height:1.6;resize:vertical;"
@@ -1164,7 +1250,7 @@ body { background:radial-gradient(ellipse at 95% 15%,#126e7e55,transparent 45%),
               <label for="pep-predictor" style="display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px;">预测器</label>
               <select id="pep-predictor" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text);font-family:inherit;font-size:13px;">
                 <option value="iedb">IEDB（在线）</option>
-                <option value="local">MHCflurry（本地，需安装）</option>
+                <option value="local" id="pep-predictor-local">MHCflurry（本地，需安装）</option>
                 <option value="auto">auto（本地优先，失败转 IEDB）</option>
               </select>
             </div>
@@ -1522,6 +1608,44 @@ async function restoreNeoWorkflow() {
     renderNeoWorkflow(await response.json());
   } catch (error) { buildNeoForm(0); document.getElementById('neo-stage-result').textContent = String(error.message || error); }
 }
+const NEO_RESULT_FILES = ['splice_peptides.tsv','ranked_candidates.tsv','mhc_i_predictions.tsv','neoantigen_manifest.json'];
+function toggleOrfSource() {
+  const local = document.getElementById('orf-source').value === 'local';
+  document.getElementById('orf-local-fields').style.display = local ? 'block' : 'none';
+}
+async function buildOrfTable() {
+  const status = document.getElementById('orf-status');
+  const button = document.getElementById('orf-build');
+  if (!state.currentProject) { status.textContent = '请先选择一个项目。'; return; }
+  const ids = document.getElementById('orf-event-ids').value.split(',').map(v => v.trim()).filter(Boolean);
+  const payload = {
+    project_id: state.currentProject,
+    source: document.getElementById('orf-source').value,
+    max_events: Number(document.getElementById('orf-max-events').value || 25),
+    fdr_max: Number(document.getElementById('orf-fdr').value || 0.05),
+    min_abs_dpsi: Number(document.getElementById('orf-dpsi').value || 0.1),
+    event_ids: ids
+  };
+  if (payload.source === 'local') {
+    payload.gtf = document.getElementById('orf-gtf').value.trim();
+    payload.fasta = document.getElementById('orf-fasta').value.trim();
+  }
+  button.disabled = true;
+  status.textContent = '正在重建 ORF（在线参考源需联网，可能耗时几十秒）…';
+  try {
+    const response = await fetch('/api/orf/build', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || '重建失败');
+    const reasons = (data.skipped || []).reduce((acc, item) => { acc[item.reason] = (acc[item.reason] || 0) + 1; return acc; }, {});
+    const reasonText = Object.keys(reasons).map(k => k + ' ' + reasons[k]).join('、');
+    status.innerHTML = '已重建 <b>' + Number(data.written) + '</b> 条 CDS（共检查 ' + Number(data.event_count) + ' 个事件）' +
+      '<br>参考：' + neoEscape(data.reference) + ' / ' + neoEscape(data.genome_build) +
+      '<br>输出：' + neoEscape(data.output_name) + (reasonText ? '<br>跳过原因：' + neoEscape(reasonText) : '');
+    await checkNeoReadiness();
+    if (data.written) document.getElementById('neo-cds-select').value = data.output_name;
+  } catch (error) { status.textContent = String(error.message || error); }
+  finally { button.disabled = false; }
+}
 async function runNeoantigen(useProject = false) {
   const status = document.getElementById('neo-status');
   const files = useProject ? [] : Array.from(document.getElementById('neo-files').files);
@@ -1549,7 +1673,7 @@ async function runNeoantigen(useProject = false) {
     if (!response.ok) throw new Error(result.detail || '分析失败');
     const resultDir = result.input_dir;
     const base = '/api/neoantigen/file?input_dir=' + encodeURIComponent(resultDir) + '&name=';
-    const links = ['splice_peptides.tsv','mhc_i_predictions.tsv','neoantigen_manifest.json'].map(name => '<a href="' + base + encodeURIComponent(name) + '">' + name + '</a>').join(' · ');
+    const links = NEO_RESULT_FILES.map(name => '<a href="' + base + encodeURIComponent(name) + '">' + name + '</a>').join(' · ');
     const failures = (result.prediction_errors || []).length;
     const truncated = Number(result.prediction_truncated || 0);
     let summary = '使用编码序列表：' + neoEscape(result.cds_table_name || '自动识别') + '<br>候选肽段 ' + Number(result.candidate_count) + ' 条';
@@ -1557,7 +1681,15 @@ async function runNeoantigen(useProject = false) {
       summary += '；HLA 结合预测成功 ' + Number(result.prediction_count) + ' 条';
       if (failures) summary += '，失败 ' + failures + ' 条（详见 manifest 的 prediction_errors）';
       if (truncated) summary += '；超出单次上限的部分（' + truncated + ' 条）未预测，可缩小 CDS 表后重跑';
-      summary += '。<br><span style="color:var(--text-muted);font-size:12px;">预测发往 IEDB（NetMHCpan 4.1 EL），结合力不等于免疫原性。</span>';
+      summary += '。';
+      const tiers = result.binding_tiers;
+      if (tiers && tiers.total) {
+        summary += '<br><b>自动分级（percentile_rank）：强结合 &lt;0.5% ' + Number(tiers.strong_count) +
+                   ' 条 · 弱结合 0.5~2% ' + Number(tiers.weak_count) + ' 条 · 其余 ' +
+                   Number(tiers.not_binding_count + tiers.unknown_count) + ' 条</b>' +
+                   '<br><span style="color:var(--text-muted);font-size:12px;">已按 rank 升序写入 ranked_candidates.tsv；' +
+                   'EL 分数不等于实测亲和力或免疫原性。</span>';
+      }
     } else {
       summary += '；未填写 HLA，只生成候选肽，未做任何外部预测。';
     }
@@ -1567,11 +1699,12 @@ async function runNeoantigen(useProject = false) {
     document.getElementById('neo-result-panel').style.display = 'block';
     const tabs = document.getElementById('neo-result-tabs');
     tabs.replaceChildren();
-    ['splice_peptides.tsv','mhc_i_predictions.tsv','neoantigen_manifest.json'].forEach(name => {
+    NEO_RESULT_FILES.forEach(name => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-secondary btn-sm'; button.textContent = name;
       button.onclick = () => openNeoResult(name); tabs.appendChild(button);
     });
-    await openNeoResult('splice_peptides.tsv');
+    const tiers = result.binding_tiers;
+    await openNeoResult(alleles.length && tiers && tiers.total ? 'ranked_candidates.tsv' : 'splice_peptides.tsv');
   } catch (error) { status.textContent = String(error.message || error); }
 }
 
@@ -1832,6 +1965,14 @@ async function pepLoadMeta() {
     pepState.capabilities = payload;
     const local = (payload.predictors || {}).mhcflurry || {};
     const reference = payload.reference || {};
+    const localOption = document.getElementById('pep-predictor-local');
+    const predictorSelect = document.getElementById('pep-predictor');
+    if (localOption && predictorSelect) {
+      const ready = !!local.available;
+      localOption.disabled = !ready;
+      localOption.textContent = 'MHCflurry（本地，' + (ready ? '可用' : '未安装') + '）';
+      if (!ready && predictorSelect.value === 'local') predictorSelect.value = 'iedb';
+    }
     const label = document.getElementById('pep-capabilities');
     if (label) {
       label.textContent = 'IEDB 在线 · MHCflurry ' + (local.available ? '可用 ' + (local.version || '') : '未安装')
@@ -2025,9 +2166,13 @@ async function pepPredict() {
     pepRenderPredictionTable();
     pepRenderEpitopes(data.epitope_matches || []);
     const errorCount = (data.errors || []).length;
+    const count = Number(data.prediction_count || pepState.predictions.length);
+    const zeroHint = (!count && !errorCount && payload.predictor !== 'none')
+      ? ' 未产生预测记录：请核对肽长度与 MHC 类别、HLA 型别是否匹配（MHC-I 8–11 aa / MHC-II 11–30 aa）。'
+      : '';
     const suffix = errorCount ? '；有 ' + errorCount + ' 条服务错误，见下方说明' : '；无服务错误';
     pepSetStatus(status, '预测完成：候选 ' + Number(data.candidate_count || 0) + ' 条，预测记录 '
-      + Number(data.prediction_count || pepState.predictions.length) + ' 条' + suffix + '。'
+      + count + ' 条' + suffix + '。' + zeroHint
       + ' percentile rank 越低越好；预测不等于呈递或免疫原性。', errorCount ? 'error' : 'muted');
   } catch (error) {
     pepState.predictions = [];
@@ -2126,6 +2271,7 @@ function toggleNavigation(force) {
 }
 function navigateTo(page) {
   if (!document.getElementById('page-' + page)) return;
+  closeProjectDetail();
   const previousPage = state.currentPage;
   toggleNavigation(false);
   document.querySelectorAll('.nav-item').forEach(item => {
@@ -2179,7 +2325,7 @@ async function loadDashboard() {
     document.getElementById('stat-samples').textContent = '-';
     document.getElementById('stat-events').textContent = '-';
     document.getElementById('stat-significant').textContent = '-';
-    document.getElementById('project-detail').style.display = 'none';
+    closeProjectDetail();
   }
 
   renderProjectHistory();
@@ -2210,12 +2356,20 @@ function renderStorageHint() {
   box.innerHTML = `数据目录：<span style="font-family:var(--font-mono);word-break:break-all;color:var(--text-secondary);">${ingestEsc(root)}</span>`
     + `　·　数据库 ${db.size_mb || 0} MB`;
 }
+function openProjectDetail() {
+  if (!state.currentProject) {
+    AppNotify.toast('请先在仪表盘选择一个项目，再打开项目详情。', 'warning');
+    return;
+  }
+  toggleNavigation(false);
+  document.body.classList.add('detail-open');
+  if (!state.detail) loadProjectDetail(state.currentProject);
+}
+function closeProjectDetail() { document.body.classList.remove('detail-open'); }
 async function loadProjectDetail(projectId) {
   const status = await apiCall(`/status/${projectId}`);
   state.detail = status || null;
-  const panel = document.getElementById('project-detail');
-  if (!status) { panel.style.display = 'none'; return; }
-  panel.style.display = 'block';
+  if (!status) { closeProjectDetail(); return; }
 
   const project = status.project || {};
   document.getElementById('detail-title').textContent = project.name || project.project_id || projectId;
@@ -2323,7 +2477,7 @@ async function deleteCurrentProject() {
   localStorage.removeItem('epitoperank.currentProject');
   state.currentProject = null;
   state.detail = null;
-  document.getElementById('project-detail').style.display = 'none';
+  closeProjectDetail();
   await loadDashboard();
 }
 function renderProjectHistory() {
@@ -3942,6 +4096,23 @@ async function callMcpTool() {
   }
 }
 
+async function addExternalMcpServer() {
+  const status = document.getElementById('mcp-ext-status');
+  const name = document.getElementById('mcp-ext-name').value.trim();
+  const url = document.getElementById('mcp-ext-url').value.trim();
+  if (!name || !url) { status.textContent = '请填写服务器名称与 URL。'; return; }
+  status.textContent = '正在注册并连接…';
+  try {
+    const response = await fetch('/api/mcp/servers', {method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name: name, url: url, transport: 'http', protocol: 'auto'})});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || '连接失败');
+    status.textContent = '状态：' + data.status + ' · 可用工具 ' + (data.tools || []).length + ' 个 · 配置：' + data.config_path;
+    await loadMcpServers(true);
+    document.getElementById('mcp-server-select').value = data.name;
+    onMcpServerChange();
+  } catch (error) { status.textContent = String(error.message || error); }
+}
 async function runMcpAgent() {
   const question = document.getElementById('mcp-agent-question').value.trim();
   const statusEl = document.getElementById('mcp-agent-status');
@@ -4733,6 +4904,8 @@ document.addEventListener('DOMContentLoaded', () => { loadDashboard(); loadModel
     "动态：开": "Motion: on",
     "历史项目": "Project history",
     "历史项目详情": "Project details",
+    "项目详情": "Project details",
+    "关闭详情": "Close details",
     "参考表尚未加载。": "The reference table is not loaded yet.",
     "可视化工作室": "Visualization studio",
     "可选：选择其他文件进行独立分析": "Optional: choose other files for a standalone analysis",
@@ -5546,7 +5719,7 @@ function openQuickSwitch() {
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'quick-result'; button.textContent = item.textContent.trim();
     if (item.dataset.page === state.currentPage) button.setAttribute('aria-current','page');
-    button.onclick = () => { dialog.close(); navigateTo(item.dataset.page); };
+    button.onclick = () => { dialog.close(); if (item.dataset.detail) openProjectDetail(); else navigateTo(item.dataset.page); };
     results.appendChild(button);
   });
   const empty = document.createElement('p'); empty.className = 'quick-empty'; empty.id = 'quick-empty'; empty.textContent = '没有匹配的页面，试试「报告」或「设置」。'; empty.hidden = true; results.appendChild(empty);
@@ -5561,6 +5734,7 @@ function filterQuickSwitch() {
   document.getElementById('quick-empty').hidden = matches > 0;
 }
 document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.body.classList.contains('detail-open')) closeProjectDetail();
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && document.getElementById('upload-modal').style.display !== 'flex' && !document.getElementById('ingest-modal').classList.contains('open')) { event.preventDefault(); openQuickSwitch(); }
   if (event.key === 'ArrowDown' && document.getElementById('quick-dialog').open && event.target.id === 'quick-search') { const first = document.querySelector('.quick-result:not([hidden])'); if (first) { event.preventDefault(); first.focus(); } }
 });
