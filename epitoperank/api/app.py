@@ -745,7 +745,7 @@ def create_app() -> FastAPI:
         from epitoperank.data.loader import load_dataset
         from epitoperank.neoantigen import (CDS_FIELD_LABELS, CDS_FIELDS, discover_cds_tables,
                                            pick_cds_table)
-        from epitoperank.splicing.parsers.rmats import RMATS_EVENT_FILES
+        from epitoperank.splicing.parsers.rmats import discover_rmats_tables
         project = project_status(project_id, settings)
         if not project:
             raise HTTPException(status_code=404, detail='未找到项目，请先选择项目')
@@ -787,7 +787,8 @@ def create_app() -> FastAPI:
                                      'reason': item['reason']} for item in partial[:5]],
                     'field_labels': CDS_FIELD_LABELS,
                     'required_fields': list(CDS_FIELDS),
-                    'rmats_files': [filename for root in roots for filename in RMATS_EVENT_FILES.values() if (root / filename).is_file()],
+                    'rmats_files': [table.name for root in roots
+                                    for table in discover_rmats_tables(root).values()],
                     'note': '仅检查表头与列内容，序列读码框和数据质量须在分析时进一步核实。'}
         except (ValueError, OSError, UnicodeError, csv.Error) as error:
             raise HTTPException(status_code=422, detail=f'无法读取项目数据：{error}') from error
@@ -819,9 +820,10 @@ def create_app() -> FastAPI:
             if payload.get(key):
                 tables[key] = input_file(payload[key])
         if not tables:
-            from epitoperank.splicing.parsers.rmats import RMATS_EVENT_FILES
-            tables = {kind.lower(): path for kind, filename in RMATS_EVENT_FILES.items()
-                      for path in [root / filename] if path.is_file() and path.resolve().parent == root}
+            from epitoperank.splicing.parsers.rmats import discover_rmats_tables
+            # 文件名不限定：按表头与命名自动识别五类事件表，找到几类用几类。
+            tables = {event_type.lower(): table.path
+                      for event_type, table in discover_rmats_tables(root).items()}
         if not tables:
             raise HTTPException(status_code=422, detail='当前项目未找到原始 rMATS JC 文件；请在高级选项指定文件')
         output = directory / 'mopepgen_results' / secrets.token_hex(12)

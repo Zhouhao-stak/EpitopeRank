@@ -18,6 +18,7 @@ The loader normalizes everything into one :class:`Dataset`.
 from __future__ import annotations
 
 import csv
+import gzip
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping
@@ -167,22 +168,31 @@ def _has_standard_event_header(path: Path) -> bool:
     return set(CORE_EVENT_FIELDS).issubset(columns)
 
 
-#: Header markers that identify a single rMATS JC table.
-_RMATS_MARKERS = ("IncLevel1", "IJC_SAMPLE_1", "SJC_SAMPLE_1")
+#: Header markers that identify a single rMATS JC table（小写，兼容各版本列名大小写）。
+_RMATS_MARKERS = frozenset(
+    {"inclevel1", "inc_level_1", "ijc_sample_1", "sjc_sample_1", "ijc_sample1", "sjc_sample1"}
+)
 
 
 def _looks_like_rmats_table(path: Path) -> bool:
-    """True if ``path`` is one rMATS junction-count table."""
-    if path.suffix.lower() not in {".txt", ".tsv", ".csv"}:
+    """True if ``path`` is one rMATS junction-count table.
+
+    只按表头内容判断，不看文件名——客户的文件名千差万别，强制改名不可行。
+    """
+    name = path.name.lower()
+    if name.endswith(".gz"):
+        name = name[: -len(".gz")]
+    if Path(name).suffix not in {".txt", ".tsv", ".csv", ".tab"}:
         return False
     try:
-        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        opener = gzip.open if path.suffix.lower() == ".gz" else open
+        with opener(path, "rt", encoding="utf-8-sig", errors="replace", newline="") as handle:
             header = next(csv.reader(handle, delimiter="\t"), None)
-    except (OSError, csv.Error):
+    except (OSError, csv.Error, UnicodeError):
         return False
     if not header:
         return False
-    return any(marker in header for marker in _RMATS_MARKERS)
+    return any(column.strip().strip('"').lower() in _RMATS_MARKERS for column in header)
 
 
 def _find_standard_event_table(directory: Path) -> Path | None:
@@ -241,7 +251,10 @@ def load_dataset(input_path: str | Path) -> Dataset:
         raise FileNotFoundError(f"Input path not found: {directory}")
 
     samples: list[SampleMetadata] = []
-    metadata_path = _find_file(directory, METADATA_FILENAMES)
+    # 输入既可以是目录，也可以是单个文件；单文件时样本表放在同级目录里。
+    is_directory_input = directory.is_dir()
+    metadata_dir = directory if is_directory_input else directory.parent
+    metadata_path = _find_file(metadata_dir, METADATA_FILENAMES) if metadata_dir.is_dir() else None
     if metadata_path:
         samples = load_sample_metadata(metadata_path)
     groups = group_sample_ids(samples)
@@ -255,7 +268,7 @@ def load_dataset(input_path: str | Path) -> Dataset:
     de_genes: list[DifferentialGene] = []
     extra_files: dict[str, Path] = {}
 
-    if directory.is_dir():
+    if is_directory_input:
         if is_rmats_directory(directory):
             source_format = "rMATS"
             events = parse_rmats_directory(directory, group1, group2)
@@ -265,11 +278,18 @@ def load_dataset(input_path: str | Path) -> Dataset:
                 source_format = "standard"
                 events = load_events_tsv(standard_path)
             else:
+                seen = sorted(
+                    entry.name
+                    for entry in directory.iterdir()
+                    if entry.is_file() and not entry.name.startswith(".")
+                )[:8]
                 raise ValueError(
-                    f"No recognizable rMATS data in {directory}. Expected the rMATS JC "
-                    "tables (SE.MATS.JC.txt, A3SS.MATS.JC.txt, A5SS.MATS.JC.txt, "
-                    "MXE.MATS.JC.txt, RI.MATS.JC.txt) or a standardized "
-                    "AS_event_master.tsv produced by the upload step."
+                    f"No recognizable rMATS data in {directory}. "
+                    "文件名不限定，程序按表头字段自动识别 SE/A3SS/A5SS/MXE/RI 五类结果表，"
+                    "也接受 gzip 压缩；但文件内必须保留 rMATS 的计数列"
+                    "（IncLevel1、IJC_SAMPLE_1、SJC_SAMPLE_1）与坐标列。"
+                    "若数据已标准化，也可提供 AS_event_master.tsv。"
+                    f"当前目录内的文件：{', '.join(seen) if seen else '（空目录）'}"
                 )
         annotation_path = _find_file(directory, ANNOTATION_FILENAMES)
         if annotation_path:
@@ -291,7 +311,11 @@ def load_dataset(input_path: str | Path) -> Dataset:
             events = load_events_tsv(directory)
 
     if not events:
-        raise ValueError(f"No AS events could be parsed from {directory}")
+        raise ValueError(
+            f"No AS events could be parsed from {directory}. "
+            "文件里没有可解析的事件行；若只有 A3SS/A5SS 数据，这两类表头完全相同，"
+            "需要在文件名中带上 A3SS 或 A5SS 才能确定类型。"
+        )
 
     return Dataset(
         name=directory.name,

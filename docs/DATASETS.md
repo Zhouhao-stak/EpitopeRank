@@ -97,7 +97,9 @@ public_datasets/TCGA_PanCan_AS/
 **不能做什么**
 
 - 不能直接 `run.py analyze`：实测报错
-  `No recognizable rMATS data ...`（平台只认 rMATS JC 表或 `AS_event_master.tsv`）。
+  `No recognizable rMATS data ...`。平台的数据入口是 rMATS 事件表（文件名不限，
+  按表头自动识别）或 `AS_event_master.tsv`；这里是一张基因层汇总表，缺少
+  逐样本 PSI 与事件类型列，属于“内容不匹配”而非“命名不匹配”。
 - **不能在这张表上重做全表 BH 校正**：文件已经是“每基因最显著事件”的子集，`p_val_adj`
   是上游在全表上算好的；把它当完整事件表重新校正会得到错误结论。
 - 没有逐样本 PSI、没有事件类型列，不能进入肽预测的 ORF 重建。
