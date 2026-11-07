@@ -133,6 +133,7 @@ class AgentSettings:
     #: 关闭后完全退回规则链，离线行为与旧版本一致。
     autonomous_planning: bool = True
     #: 单次运行允许的模型规划调用次数上限。
+    replay: str | None = None
     plan_budget: int = 8
     #: 允许智能体通过 web_fetch / 外部 MCP 访问外网。
     allow_network: bool = True
@@ -367,6 +368,7 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
     )
 
     return AgentSettings(
+        replay=block.get("replay"),
         mode=str(os.getenv("EPITOPERANK_AGENT_MODE", block.get("mode", "agentic")) or "agentic"),
         max_steps=max(_int("EPITOPERANK_AGENT_MAX_STEPS", "max_steps", 20), 1),
         max_seconds=max(_float("EPITOPERANK_AGENT_MAX_SECONDS", "max_seconds", 900.0), 1.0),

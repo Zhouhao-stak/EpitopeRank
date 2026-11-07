@@ -2,8 +2,8 @@
 
 **AI 驱动的可变剪接分析 + 剪接新抗原候选肽生成平台**
 
-[![Tests](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml)
-[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/EpitopeRank?display_name=tag)](https://github.com/Zhouhao-stak/EpitopeRank/releases)
+[![Tests](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/SpliceGAIP?display_name=tag)](https://github.com/Zhouhao-stak/SpliceGAIP/releases)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 
@@ -42,11 +42,15 @@ rMATS JC 五类事件表 + 样本元数据
 - [测试与 CI](#测试与-ci)
 - [文档索引](#文档索引)
 - [致谢与许可](#致谢与许可)
+- [模型轨迹录制与决策重放](#模型轨迹录制与决策重放)
 
 ## 下载即用
 
-到 [Releases](https://github.com/Zhouhao-stak/EpitopeRank/releases) 下载最新的
+到 [Releases](https://github.com/Zhouhao-stak/SpliceGAIP/releases) 下载最新的
 `EpitopeRank-*-windows.zip`，解压后双击 `EpitopeRank-Desktop.exe`。
+
+> 最新版新增：**模型调用轨迹录制与严格离线重放**（`record → replay → compare`）、MHC-II 11–30 aa 长肽预测、深色主题结果表格可读性修复。
+> 详见文末 [模型轨迹录制与决策重放](#模型轨迹录制与决策重放)。
 
 程序会在本机起一个服务并自动打开浏览器（地址形如 `http://127.0.0.1:8800/`），
 **不需要装 Python，也不需要联网**——只有想用 AI 解读或跑 HLA 预测时才需要网络。
@@ -89,6 +93,8 @@ python run.py analyze --input examples/demo_rmats --query "分析RNA剪接变化
 # 在已有项目上追问，不重跑整条流水线
 python run.py followup --project-id SPN-XXXX --query "只看 SE 事件"
 ```
+
+> 需要复现一次带模型参与的分析？见文末 [模型轨迹录制与决策重放](#模型轨迹录制与决策重放)。
 
 Docker：
 
@@ -226,13 +232,14 @@ Docker 容器内 `/data`（命名卷 `epitoperank-data`），可用 `EPITOPERANK
 |---|---|---|
 | AgentState | `agent/state.py` | 事实/问题/步骤黑板 + 可判定的验收标准 |
 | Profile | `agent/profile.py` | 数据画像：规模、FDR 覆盖率、缺失、支持读数、组平衡 |
-| Actions | `agent/actions.py` | 动作注册表（8 个工具 + 画像/质检/调阈值/深挖基因） |
+| Actions | `agent/actions.py` | 24 个动作注册表（画像/质检/调阈值/统计检验/外网/ORF 重建/MCP） |
 | DecisionEngine | `agent/decision.py` | 自我决策核心：规则链优先，模型建议为辅 |
 | Verifier | `agent/verify.py` | 结果体检，产出 Issue(code, severity, suggestion) |
 | Reflector | `agent/reflector.py` | 问题 → 补救动作（改阈值 / 重试 / 降级接受） |
 | AutonomousAgent | `agent/loop.py` | OODA 主循环 + 步数/时间/错误三重预算 + 决策轨迹 |
 | EpisodicMemory | `agent/episodic.py` | 跨运行经验：相似数据上次用什么阈值成功过 |
 | Session | `agent/session.py` | 多轮追问：状态快照 + 意图解析 + followup |
+| ModelTrace | `llm/trace.py` | 录制每次模型调用（prompt/响应/采样参数）并支持严格离线重放 |
 
 决策**以规则为主、模型为辅**，所以离线（无 key）时同样是真决策，不是放录像。
 
@@ -271,6 +278,7 @@ EpitopeRank/
 ├── splicing/          # schema + parsers(rmats) + filtering + ranking
 ├── analysis/          # statistics / enrichment / visualization
 ├── knowledge/         # RAG（内置知识库 + PubMed + 全文 BM25 段落检索）
+├── llm/               # 模型客户端 / 增强任务 / trace.py（轨迹录制与重放）
 ├── memory/            # SQLite Analysis Memory（项目/事件/候选/日志）
 ├── peptide/           # 肽预测：序列/理化/HLA/IEDB 客户端/novelty/评分/流水线
 ├── neoantigen*.py     # 剪接候选新抗原：junction 肽、分阶段流程、审计
@@ -295,7 +303,7 @@ pytest tests/unit tests/integration -v
 pytest --cov=epitoperank --cov-report=html
 ```
 
-当前 **268 个测试全部通过**（单元 + API/UI 集成）。
+当前 **331 个测试全部通过**（单元 + API/UI 集成，含轨迹录制与重放回归）。
 
 CI 在每次推送时跑：
 
@@ -326,7 +334,7 @@ CI 在每次推送时跑：
 2. 增加剪接领域专用智能层（标准化、排序、证据）；
 3. 无 LLM key 时全流程仍可运行（规则驱动的确定性决策）；
 4. 可无缝接入 Phase 2（FASTQ → 比对 → 剪接检测 → 现有 AI 层）；
-5. 全程可复现：workflow、参数、软件版本、日志全部留痕；
+5. 全程可复现：workflow、参数、软件版本、日志全部留痕；模型调用写入 `agent_state.json`，可用 `run.py replay` 严格离线重放、`run.py compare` 逐项比对；
 6. 结论必须有证据支撑，严格区分「已证实的统计结果」与「待验证的假设」。
 
 ## 路线图
@@ -343,3 +351,48 @@ CI 在每次推送时跑：
 - 本仓库：**AGPL-3.0**，见 [LICENSE](LICENSE)
 - BioGAIP 原始代码保留在 `legacy/`，遵循其原始 AGPL-3.0 许可
 - 第三方预测能力来自 IEDB（NetMHCpan 4.1 EL 等），使用时请遵守其许可与引用要求
+
+## 模型轨迹录制与决策重放
+
+默认 `agentic` 分析会把本次完整生命周期的模型调用写入输出项目的
+`agent_state.json`：包括分析前的意图理解、`model_plan`、`insight`、
+`enrichment:<feature>`（叙述、解读、自评等）。无需额外录制开关。
+`model_calls` 保存有序编号、脱敏后的完整 prompt、SHA-256、模型名、实际生效温度、
+max_tokens/json_output、原始响应、解析对象、耗时、重试次数与时间。
+`meta` 保存 schema_version=1、输入文件指纹、脱敏配置快照、完整决策序列、
+排序结果及报告 SHA-256。旧版无这些字段的状态仍可用于普通 load_state/followup，
+但不能当作完整的重放轨迹。
+
+在项目根目录执行（PowerShell；录制时模型凭据沿用本地环境）：
+
+```powershell
+$env:EPITOPERANK_ENABLE_PUBMED = "false"
+venv/Scripts/python.exe run.py analyze --input examples/demo_rmats --query "Analyze splicing" --agent-mode agentic --skills off --project-id TRACE-DEMO --out artifacts/record
+venv/Scripts/python.exe run.py replay --input examples/demo_rmats --trace artifacts/record/TRACE-DEMO/agent_state.json --out artifacts/replay
+venv/Scripts/python.exe run.py compare artifacts/record/TRACE-DEMO/agent_state.json artifacts/replay/TRACE-DEMO/agent_state.json
+```
+
+也可在 YAML 中配置 `agent.replay: <agent_state.json 路径>`，随后调用
+`run_analysis()`。重放会校验输入内容和 query，恢复录制时的 agent/llm/analysis
+配置，保留录制项目 ID；`--out` 是项目根目录。必须使用独立输出目录。
+重放不需要模型密钥，不调用 `LLMEnhancer.complete()`，直接调用该方法会抛出
+`ReplayError`。动作工具仍正常执行，叙述增强消费录制响应。此功能针对全新分析，
+不支持将 replay 配置用于 followup 或绕过 pipeline 的低层入口。
+
+轨迹缺失、顺序或 prompt/参数不匹配、输入指纹变化、完整性校验失败、排序结果或
+报告哈希不同均使重放失败；不会悄悄退回规则链。错误写入输出目录中的
+`replay_errors.json` 的 `errors`；已有运行状态也标记失败。CLI 返回非零。
+整体 SHA-256 用于检测文件意外改动，并非数字签名。
+
+报告时间与 PDF 元数据固定以实现字节一致。报告 Methods 展示录制时每个动作的
+`source=llm/rule/reflection/...`，并说明实际执行来源以运行状态为准：
+重放状态/API 的决策步骤标记 `source=replay`。报告保留原始来源，因此可以逐字节
+比较；运行来源、执行耗时、输出目录消息属于运行元数据。
+`compare` 比较动作、参数、状态、消息、排序与报告哈希，归一化输出目录，忽略
+`source` 和 `seconds` 的预期差异；一致打印 `identical` 并返回 0。
+
+重放只冻结模型响应与决策，不冻结外部服务（包括 IEDB）、文献库或实验室知识库。
+请保留相同输入、依赖版本和外部缓存；这些服务返回值或本地数据库变化可能使
+重新执行工具后的报告不同，此时严格重放报错，不宣称复现成功。
+轨迹写盘前删除密钥字段并脱敏 prompt/响应中的凭据；完整 prompt 可能包含输入
+研究信息，应按项目数据管理。

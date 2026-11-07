@@ -6,7 +6,10 @@ run the multi-agent team -> persist results.
 
 from __future__ import annotations
 
+from epitoperank.llm.trace import ReplayError
+
 import uuid
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -168,7 +171,90 @@ class AnalysisOutcome:
         return team.as_dict()
 
 
-def run_analysis(
+
+def run_analysis(query: str, input_path: str | Path, *, settings: Settings | None = None,
+                 project_id: str | None = None, project_name: str | None = None,
+                 output_root: str | Path | None = None, confirm_handler: Any | None = None) -> AnalysisOutcome:
+    """Record a complete analysis, or strictly replay agent.replay without LLM I/O."""
+    import dataclasses
+    from datetime import datetime, timezone
+    from epitoperank.llm.trace import ACTIVE, ModelTrace, fingerprints, file_hash
+    if settings is None:
+        settings, _ = load_prepared_settings()
+    replay = getattr(settings.agent, "replay", None)
+    trace = None
+    output_dir = Path(output_root or settings.paths.runtime_root / "projects") / (project_id or "replay_failed")
+    try:
+        trace = ModelTrace(settings, replay)
+        inputs = fingerprints(input_path)
+        if replay:
+            if inputs != trace.meta.get("input_fingerprints") or query != trace.meta.get("query"):
+                trace.fail("input fingerprints/query mismatch")
+            config = trace.meta["config"]
+            def restore(block, values):
+                return dataclasses.replace(block, **{k: restore(getattr(block, k), v)
+                    if dataclasses.is_dataclass(getattr(block, k)) else v for k, v in values.items()})
+            settings = dataclasses.replace(settings, agent=restore(settings.agent, config["agent"]),
+                llm=restore(settings.llm, config["llm"]), analysis=restore(settings.analysis, config["analysis"]),
+                report_formats=tuple(config["report_formats"]))
+            settings = dataclasses.replace(settings, agent=dataclasses.replace(settings.agent, replay=str(replay)))
+            project_id = trace.meta["project_id"]
+        else:
+            if not settings.agent.agentic:
+                return _run_analysis(query, input_path, settings=settings, project_id=project_id,
+                    project_name=project_name, output_root=output_root, confirm_handler=confirm_handler)
+            project_id = project_id or f"SPN-{uuid.uuid4().hex[:8].upper()}"
+            trace.meta = trace.clean({"schema_version": 1, "input_fingerprints": inputs,
+                "model_name": settings.llm.model, "llm_enabled": settings.llm.usable,
+                "config": {"agent": dataclasses.asdict(settings.agent), "llm": dataclasses.asdict(settings.llm),
+                    "analysis": dataclasses.asdict(settings.analysis), "report_formats": settings.report_formats},
+                "query": query, "project_id": project_id,
+                "report_time": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')})
+        output_dir = Path(output_root or settings.paths.runtime_root / "projects") / project_id
+        if replay and output_dir.resolve() == Path(replay).resolve().parent:
+            output_dir = output_dir.parent / (output_dir.name + "-replay-failed")
+            trace.fail("replay output directory must differ from the recorded project directory")
+        token = ACTIVE.set(trace)
+        try:
+            outcome = _run_analysis(query, input_path, settings=settings, project_id=project_id,
+                project_name=project_name, output_root=output_root, confirm_handler=confirm_handler)
+            trace.finish()
+            if replay:
+                actual_steps = [{"action": s.action, "args": s.args, "status": s.status} for s in outcome.team.steps]
+                expected_steps = [{k: s[k] for k in ("action", "args", "status")} for s in trace.expected["steps"]]
+                if actual_steps != expected_steps:
+                    trace.fail("replay steps/actions/arguments/status mismatch")
+            state_path = outcome.output_dir / "agent_state.json"
+            data = json.loads(state_path.read_text(encoding="utf-8"))
+            reports = {k: file_hash(Path(v)) for k, v in outcome.report_paths.items()}
+            ranked = [c.as_dict() for c in outcome.context.candidates]
+            if replay:
+                if data["params"] != trace.expected["params"] or ranked != trace.meta["ranked"]:
+                    trace.fail("replay params/ranked results mismatch (external data may have changed)")
+                if reports != trace.meta["reports"]:
+                    trace.fail("replay report sha256 mismatch (external data may have changed)")
+            trace.meta.update(decisions=trace.decisions, ranked=ranked, reports=reports, output_dir=str(outcome.output_dir))
+            data.update(model_calls=trace.calls, meta=trace.meta, errors=trace.errors)
+            data = trace.clean(data)
+            data["meta"]["integrity"] = trace.checksum(data)
+            state_path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+            return outcome
+        finally:
+            ACTIVE.reset(token)
+    except ReplayError as error:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        failure = {"errors": trace.errors if trace and trace.errors else [{"error": str(error)}],
+                   "replay_success": False}
+        state_path = output_dir / "agent_state.json"
+        if state_path.exists():
+            failed_state = json.loads(state_path.read_text(encoding="utf-8"))
+            failed_state.update(failure)
+            state_path.write_text(json.dumps(failed_state, ensure_ascii=False, indent=2), encoding="utf-8")
+        (output_dir / "replay_errors.json").write_text(json.dumps(failure, ensure_ascii=False, indent=2), encoding="utf-8")
+        raise
+
+
+def _run_analysis(
     query: str,
     input_path: str | Path,
     *,
@@ -223,7 +309,9 @@ def run_analysis(
     context.log("system", "run_started", "ok", f"query={query!r} input={dataset.source_dir}")
 
     # Pre-analysis intent understanding (model-based when configured).
-    if settings.llm.usable:
+    from epitoperank.llm.trace import ACTIVE
+    trace = ACTIVE.get()
+    if settings.llm.usable or (trace and trace.replay and trace.meta.get("llm_enabled")):
         try:
             from epitoperank.llm.tasks import understand_query
 
@@ -235,6 +323,8 @@ def run_analysis(
                 f"type={context.understanding.get('analysis_type')} "
                 f"source={context.understanding.get('source')}",
             )
+        except ReplayError:
+            raise
         except Exception as error:  # noqa: BLE001 - never block the run
             context.log("llm", "understand_query", "warning", str(error)[:300])
 
@@ -251,6 +341,8 @@ def run_analysis(
         from epitoperank.llm.tasks import enrich_context
 
         enrich_context(context)
+    except ReplayError:
+        raise
     except Exception as error:  # noqa: BLE001 - enrichment is optional
         print(f"[epitoperank] warning: LLM enrichment skipped ({error})")
         context.log("llm", "enrich_context", "warning", str(error)[:300])
@@ -296,6 +388,8 @@ def resume_analysis(
         settings, storage_warnings = load_prepared_settings()
         for warning in storage_warnings:
             print(f"[epitoperank] warning: {warning}")
+    if settings.agent.replay:
+        raise ReplayError("Replay requires a fresh run_analysis, not followup")
     ensure_runtime_dirs(settings)
 
     memory = ProjectMemory(settings.paths.memory_db)
@@ -349,6 +443,8 @@ def resume_analysis(
 
         _filter_events(context, prior_params.get("fdr"), prior_params.get("delta_psi"))
         _rank_candidates(context, prior_params.get("top_n"))
+    except ReplayError:
+        raise
     except Exception as error:  # noqa: BLE001 - derived state is best-effort
         context.log("agent", "resume_restore", "warning", str(error)[:200])
 
@@ -400,6 +496,8 @@ def resume_analysis(
         from epitoperank.llm.tasks import enrich_context
 
         enrich_context(context)
+    except ReplayError:
+        raise
     except Exception as error:  # noqa: BLE001 - enrichment is optional
         context.log("llm", "enrich_context", "warning", str(error)[:300])
 

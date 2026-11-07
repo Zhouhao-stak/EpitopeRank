@@ -12,6 +12,8 @@ Rules run offline, so the agent behaves like an agent even without a model.
 
 from __future__ import annotations
 
+from epitoperank.llm.trace import ReplayError
+
 import json
 from dataclasses import dataclass, field
 from typing import Any, Sequence
@@ -21,6 +23,7 @@ from .interactive import ACCEPT_LIMITATION, EXTERNAL_CALL, RELAX_THRESHOLDS
 from .reflector import MAX_RETRIES, remediate
 from .skills_bridge import skills_enabled
 from .state import AgentState
+from epitoperank.llm.trace import traced_decision, model_request
 
 DECIDE_SYSTEM = (
     "You are the decision module of EpitopeRank, an autonomous alternative-splicing "
@@ -133,6 +136,7 @@ class DecisionEngine:
         self._asked: set[str] = set()
 
     # -- public -----------------------------------------------------------
+    @traced_decision
     def decide(self) -> Decision:
         """决定下一步动作：目标已达成则（或追加一步增强后）停止，否则先修 blocker、再按计划链推进。"""
         state = self.state
@@ -321,6 +325,8 @@ class DecisionEngine:
                                 "Enhance gene annotations with Ensembl transcript details.",
                             )
                         )
+                except ReplayError:
+                    raise
                 except Exception:
                     pass
             
@@ -335,6 +341,8 @@ class DecisionEngine:
                                 "Supplement enrichment with KEGG/Reactome native pathways.",
                             )
                         )
+                except ReplayError:
+                    raise
                 except Exception:
                     pass
 
@@ -476,7 +484,8 @@ class DecisionEngine:
             from epitoperank.llm.enrich import LLMEnhancer, extract_json
 
             enhancer = LLMEnhancer(settings)
-            text = enhancer.complete(
+            text = model_request(enhancer,
+                stage="model_plan",
                 system=PLAN_SYSTEM,
                 user=json.dumps(payload, ensure_ascii=False, default=str)[:6000],
                 max_tokens=400, json_output=True, timeout=60,
@@ -497,6 +506,8 @@ class DecisionEngine:
             self.trace.append({"kind": "model_plan", "action": action,
                                "args": args, "rationale": rationale})
             return decision
+        except ReplayError:
+            raise
         except Exception:  # noqa: BLE001 - 规划是可选增强，失败必须回退规则链
             return None
 
@@ -544,7 +555,8 @@ class DecisionEngine:
                     "interpret_splice_event",
                 ],
             }
-            text = enhancer.complete(
+            text = model_request(enhancer,
+                stage="insight",
                 system=DECIDE_SYSTEM,
                 user=json.dumps(payload, ensure_ascii=False)[:4000],
                 max_tokens=200,
@@ -574,6 +586,8 @@ class DecisionEngine:
                 source="llm",
                 confidence=0.7,
             )
+        except ReplayError:
+            raise
         except Exception:  # noqa: BLE001 - advisory is strictly optional
             return None
 

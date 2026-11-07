@@ -17,6 +17,8 @@ Guarantees:
 
 from __future__ import annotations
 
+from epitoperank.llm.trace import ReplayError
+
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -151,6 +153,7 @@ class AutonomousAgent:
         self.state = state if state is not None else AgentState(
             context=context, goal=_build_goal(context)
         )
+        context.agent_state = self.state
         self.followup = list(followup or [])
         self.result = AgentRunResult(mode="agentic")
         #: Budgeted bridge to the async external skills (Phase 2).
@@ -197,6 +200,15 @@ class AutonomousAgent:
 
     def _load_experience(self) -> None:
         """从事前情节记忆读取可比数据集的历史阈值，写入 facts["episodic_hint"] 供阈值选择参考。"""
+        from epitoperank.llm.trace import ACTIVE
+        trace = ACTIVE.get()
+        if trace and trace.replay:
+            hint = trace.meta.get("episodic_hint")
+            if hint:
+                self.state.facts["episodic_hint"] = dict(hint)
+                self.context.log("agent", "episodic_hint", "ok",
+                                 f"Previous comparable run used {hint}; it will bias threshold selection.")
+            return
         if not getattr(self.config, "episodic", True):
             return
         memory = EpisodicMemory(self.context.settings.paths.memory_db)
@@ -242,6 +254,8 @@ class AutonomousAgent:
         try:
             if self.context.output_dir is not None:
                 save_state(self.state, self.context.output_dir)
+        except ReplayError:
+            raise
         except Exception as error:  # noqa: BLE001 - persistence must never break a run
             self.context.log("agent", "save_state", "warning", str(error)[:200])
 
@@ -255,6 +269,8 @@ class AutonomousAgent:
             return "skipped", f"Preconditions not met for {name}: missing {', '.join(missing)}"
         try:
             message = action.func(self.context, self.state, **args)
+        except ReplayError:
+            raise
         except Exception as error:  # noqa: BLE001 - one broken action must not kill the run
             return "error", f"{name} failed: {error}"
         return "ok", str(message or "")
@@ -273,6 +289,10 @@ class AutonomousAgent:
             # Resume: the blackboard is already populated; just refresh facts.
             state.observe()
         self._load_experience()
+        from epitoperank.llm.trace import ACTIVE
+        trace = ACTIVE.get()
+        if trace and not trace.replay:
+            trace.meta["episodic_hint"] = state.facts.get("episodic_hint")
 
         # Follow-up intent runs as a short prefix before the normal loop
         # re-satisfies the tail criteria (interpret + report).
@@ -285,9 +305,14 @@ class AutonomousAgent:
             llm_advisory=bool(getattr(self.config, "llm_advisory", True)),
             gate=self.gate,
         )
+        from epitoperank.llm.trace import ACTIVE
+        trace = ACTIVE.get()
         errors = 0
         while len(state.steps) < int(getattr(self.config, "max_steps", MAX_STEPS_DEFAULT)):
-            if elapsed() > float(getattr(self.config, "max_seconds", MAX_SECONDS_DEFAULT)):
+            if trace and trace.replay and trace.decision_cursor == len(trace.decisions):
+                result.stopped_reason = trace.meta.get("stopped_reason", "recorded decision sequence exhausted")
+                break
+            if not (trace and trace.replay) and elapsed() > float(getattr(self.config, "max_seconds", MAX_SECONDS_DEFAULT)):
                 result.stopped_reason = "time budget exhausted"
                 break
             state.iteration += 1
@@ -373,6 +398,8 @@ class AutonomousAgent:
             )
             context.log("agent", "generate_report", status, "safety net :: " + message[:200])
 
+        if trace and not trace.replay:
+            trace.meta["stopped_reason"] = result.stopped_reason
         result = self._finalize(elapsed())
         self._persist()
         return result
@@ -414,6 +441,8 @@ class AutonomousAgent:
                     context.external["recurrent_genes"] = recurrent
                 
                 state.facts["knowledge_persisted"] = True
+            except ReplayError:
+                raise
             except Exception:  # noqa: BLE001 - best effort, never crash the run
                 pass
 
@@ -473,9 +502,18 @@ class AutonomousAgent:
             "external_skills": self.bridge.summary_line(),
             "human_confirmations": self.gate.summary_line(),
         }
+        from epitoperank.llm.trace import ACTIVE
+        trace = ACTIVE.get()
+        if trace:
+            if trace.replay:
+                context.plan = dict(trace.meta["agent_plan"])
+            else:
+                trace.meta["agent_plan"] = dict(context.plan)
         if hasattr(context.memory, "save_plan"):
             try:
                 context.memory.save_plan(context.project_id, context.plan)
+            except ReplayError:
+                raise
             except Exception:  # noqa: BLE001
                 pass
         context.log(
@@ -503,6 +541,9 @@ def run_autonomous(
     used to *resume* a prior run with a follow-up intent (see
     :mod:`epitoperank.agent.session`).
     """
+    from epitoperank.llm.trace import ACTIVE
+    if getattr((settings or context.settings).agent, "replay", None) and ACTIVE.get() is None:
+        raise ReplayError("Replay must use pipeline.run_analysis or run.py replay for full lifecycle validation")
     return AutonomousAgent(
         context,
         settings,

@@ -70,3 +70,10 @@ packaging/build-log.txt
 /public_datasets/
 /data_public/
 /converted/
+
+# --- independent desktop builds (binaries + smoke outputs, never commit) ---
+/releases/
+/packaging/*.log
+/packaging/*-build-info.json
+/packaging/latest-independent-build.json
+/packaging/EpitopeRank-*-2026*.spec

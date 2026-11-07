@@ -65,7 +65,8 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
         f"| hypothesis tests: {'on' if settings.agent.hypothesis_testing else 'off'}"
     )
     print(f"[epitoperank] query: {args.query}")
-    outcome = run_analysis(args.query, args.input, settings=settings, project_id=args.project_id)
+    outcome = run_analysis(args.query, args.input, settings=settings, project_id=args.project_id,
+                           output_root=args.out)
     summary = outcome.summary()
     print(f"[epitoperank] project: {summary['project_id']}")
     print(f"[epitoperank] dataset: {json.dumps(summary['dataset'], ensure_ascii=False)}")
@@ -98,6 +99,30 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
     print(f"[epitoperank] report: {json.dumps(summary['report_paths'], ensure_ascii=False)}")
     print(f"[epitoperank] output dir: {summary['output_dir']}")
     return 0
+
+
+def _cmd_replay(args):
+    from epitoperank.config import load_prepared_settings
+    from epitoperank.pipeline import run_analysis
+    from epitoperank.llm.trace import ReplayError
+    settings, _ = load_prepared_settings(args.config)
+    settings = dataclasses.replace(settings, agent=dataclasses.replace(settings.agent, replay=args.trace))
+    try:
+        trace = json.loads(Path(args.trace).read_text(encoding="utf-8"))
+        result = run_analysis(trace.get("meta", {}).get("query", ""), args.input,
+                              settings=settings, output_root=args.out)
+    except (ReplayError, ValueError, KeyError) as error:
+        print(f"replay failed: {error}", file=sys.stderr)
+        return 1
+    print(f"replay verified: {result.output_dir}")
+    return 0
+
+
+def _cmd_compare(args):
+    from epitoperank.llm.trace import compare
+    differences = compare(args.trace_a, args.trace_b)
+    print("; ".join(differences) if differences else "identical")
+    return 1 if differences else 0
 
 
 def _cmd_followup(args: argparse.Namespace) -> int:
@@ -318,6 +343,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="enable/disable the external knowledge skills (MyGene / PubMed / Enrichr / splice interpretation)",
     )
+    analyze.add_argument("--out", default=None, help="Output project root; model trace recorded automatically")
     analyze.set_defaults(func=_cmd_analyze)
 
     followup = subparsers.add_parser(
@@ -393,6 +419,15 @@ def build_parser() -> argparse.ArgumentParser:
                          help="Print available methods, reference tables and limits, then exit")
     peptide.set_defaults(func=_cmd_peptide)
 
+    replay = subparsers.add_parser("replay", help="Strict offline model/decision replay")
+    replay.add_argument("--input", required=True)
+    replay.add_argument("--trace", required=True)
+    replay.add_argument("--out", required=True)
+    replay.set_defaults(func=_cmd_replay)
+    compare = subparsers.add_parser("compare", help="Compare steps, params, ranked results and report hashes")
+    compare.add_argument("trace_a")
+    compare.add_argument("trace_b")
+    compare.set_defaults(func=_cmd_compare)
     return parser
 
 

@@ -38,6 +38,8 @@ def save_state(state: AgentState, project_dir: str | Path) -> Path:
     """
     project_dir = Path(project_dir)
     payload: dict[str, Any] = {
+        "model_calls": state.model_calls,
+        "meta": state.meta,
         "facts": state.facts,
         "params": state.params,
         "action_counts": state.action_counts,
@@ -48,6 +50,12 @@ def save_state(state: AgentState, project_dir: str | Path) -> Path:
         "accepted_limitations": list(state.facts.get("accepted_limitations", [])),
         "steps": [step.as_dict() for step in state.steps],
     }
+    from epitoperank.llm.trace import ACTIVE
+    trace = ACTIVE.get()
+    if trace:
+        payload.update(model_calls=trace.calls, meta=dict(trace.meta, decisions=trace.decisions), errors=trace.errors)
+        payload = trace.clean(payload)
+        payload["meta"]["integrity"] = trace.checksum(payload)
     path = project_dir / STATE_FILE
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, default=str),
@@ -77,10 +85,11 @@ def load_state(project_dir: str | Path, context: Any) -> AgentState | None:
             description=str(goal_data.get("description", "")),
         ),
     )
-    for key in ("facts", "params", "action_counts", "profile"):
+    for key in ("facts", "params", "action_counts", "profile", "meta"):
         value = data.get(key)
         if isinstance(value, dict):
             setattr(state, key, dict(value))
+    state.model_calls = list(data.get("model_calls") or [])
     state.iteration = int(data.get("iteration", 0))
     state.issues = [
         Issue(

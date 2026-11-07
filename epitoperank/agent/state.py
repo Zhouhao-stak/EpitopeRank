@@ -182,6 +182,8 @@ class AgentState:
     steps: list[StepRecord] = field(default_factory=list)
     #: How many times each action has been executed.
     action_counts: dict[str, int] = field(default_factory=dict)
+    model_calls: list[dict[str, Any]] = field(default_factory=list)
+    meta: dict[str, Any] = field(default_factory=dict)
     iteration: int = 0
     #: Bridge to the async external skills (budgeted, timeout-guarded).
     bridge: Any | None = None

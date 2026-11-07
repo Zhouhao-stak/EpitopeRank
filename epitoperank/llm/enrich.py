@@ -123,8 +123,10 @@ class LLMEnhancer:
         *,
         logger: Callable[[str, str, str, str], None] | None = None,
         features: Iterable[str] | None = None,
+        recorder: Any | None = None,
     ) -> None:
         """按配置初始化功能开关、调用预算、超时、缓存与重试参数，不做任何网络请求。"""
+        self.recorder = recorder
         self.settings = settings
         self.logger = logger
         llm = settings.llm
@@ -156,7 +158,10 @@ class LLMEnhancer:
     @property
     def enabled(self) -> bool:
         """凭据可用且至少启用了一个功能时才为真。"""
-        return bool(self.settings.llm.usable) and bool(self.features)
+        from .trace import ACTIVE
+        trace = self.recorder or ACTIVE.get()
+        usable = trace.meta.get("llm_enabled", False) if trace and trace.replay else self.settings.llm.usable
+        return bool(usable) and bool(self.features)
 
     @property
     def model(self) -> str:
@@ -200,6 +205,7 @@ class LLMEnhancer:
         Returns the raw text, or ``None`` on any failure. Failures are recorded
         in :attr:`errors` so the caller can surface them to the UI.
         """
+        self._trace_attempts = getattr(self, "_trace_attempts", 0) + 1
         try:
             return run_async(
                 self._create(
@@ -218,6 +224,7 @@ class LLMEnhancer:
                 # Some OpenAI-compatible gateways reject structured output;
                 # retry once as plain text and parse it ourselves.
                 try:
+                    self._trace_attempts += 1
                     return run_async(
                         self._create(
                             system,
@@ -233,6 +240,15 @@ class LLMEnhancer:
                         {"feature": feature or "generic", "error": f"retry: {retry_error}"}
                     )
             return None
+
+    def request(self, **kwargs):
+        """Injectable recording/replay boundary, outside complete (the network guard)."""
+        from .trace import ACTIVE
+        trace = getattr(self, "recorder", None) or ACTIVE.get()
+        if trace is not None:
+            return trace.request(self, kwargs)
+        kwargs.pop("stage", None)
+        return self.complete(**kwargs)
 
     def complete(
         self,
@@ -253,6 +269,10 @@ class LLMEnhancer:
         every feature to its deterministic fallback — which would otherwise
         look exactly like "the API key is not being used".
         """
+        from .trace import ACTIVE, ReplayError
+        trace = self.recorder or ACTIVE.get()
+        if trace is not None and trace.replay:
+            raise ReplayError("LLMEnhancer.complete called during replay")
         if feature and not self.has(feature):
             return None
         if not self.enabled:
@@ -312,7 +332,7 @@ class LLMEnhancer:
         timeout: float | None = None,
     ) -> Any:
         """Model call parsed as JSON; ``None`` on any failure."""
-        text = self.complete(
+        text = self.request(
             system=system,
             user=user,
             feature=feature,
@@ -331,7 +351,7 @@ class LLMEnhancer:
         # or emit a non-JSON acknowledgement. Retry once as plain text and try
         # to recover the JSON from reasoning/prose before giving up.
         self._note("retry", feature or "generic", "JSON parse failed; retrying as plain text")
-        text = self.complete(
+        text = self.request(
             system=system,
             user=user,
             feature=feature,

@@ -12,6 +12,8 @@ to invent numbers, genes or citations.
 
 from __future__ import annotations
 
+from epitoperank.llm.trace import ReplayError
+
 import json
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -618,10 +620,14 @@ def enrich_context(context: Any, *, enhancer: LLMEnhancer | None = None) -> dict
         insights["limitations"] = extend_limitations(
             enhancer, base_limitations, facts=facts, language=language
         )
+    except ReplayError:
+        raise
     except Exception as error:  # noqa: BLE001 - enrichment must never break a run
         insights["errors"] = list(enhancer.errors) + [{"feature": "enrich_context", "error": str(error)}]
         try:
             context.log("llm", "enrich_context", "error", str(error)[:400])
+        except ReplayError:
+            raise
         except Exception:  # noqa: BLE001
             pass
     finally:

@@ -21,7 +21,7 @@ WINDOW_TITLE = "EpitopeRank"
 # native window chrome continues the app's ocean-lab theme. Without this the
 # caption is painted white whenever Windows itself runs a light theme, and the
 # bright strip fights the dark UI underneath it.
-_CAPTION_BG = "#07151e"  # --bg
+_CAPTION_BG = "#000000"  # --bg
 _CAPTION_FG = "#e8f5f4"  # --text
 _CAPTION_BORDER = "#173944"  # --surface-3
 
