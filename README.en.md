@@ -2,8 +2,8 @@
 
 **AI-driven alternative splicing analysis and splice-derived neoantigen ranking**
 
-[![Tests](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml)
-[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/SpliceGAIP?display_name=tag)](https://github.com/Zhouhao-stak/SpliceGAIP/releases)
+[![Tests](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/EpitopeRank?display_name=tag)](https://github.com/Zhouhao-stak/EpitopeRank/releases)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 
@@ -34,7 +34,7 @@ input is already-quantified splicing output, not raw sequencing data.
 ## Download and run
 
 Grab the latest `EpitopeRank-*-windows.zip` from
-[Releases](https://github.com/Zhouhao-stak/SpliceGAIP/releases), unzip and
+[Releases](https://github.com/Zhouhao-stak/EpitopeRank/releases), unzip and
 double-click `EpitopeRank-Desktop.exe`.
 
 The current release adds **model-call trace recording and strict offline replay** (`record -> replay -> compare`), MHC-II 11-30 aa peptide prediction and dark-theme result-table readability fixes. See the Chinese README for the full replay workflow.
@@ -217,4 +217,4 @@ dataset (112,908 splicing events), with on-screen step captions:
 
 [![EpitopeRank v1.3.0 demo](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
 
-[Download the MP4 from the v1.3.0 release](https://github.com/Zhouhao-stak/SpliceGAIP/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+[Download the MP4 from the v1.3.0 release](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)

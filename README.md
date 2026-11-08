@@ -2,8 +2,8 @@
 
 **AI 驱动的可变剪接分析 + 剪接新抗原候选肽生成平台**
 
-[![Tests](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/SpliceGAIP/actions/workflows/test.yml)
-[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/SpliceGAIP?display_name=tag)](https://github.com/Zhouhao-stak/SpliceGAIP/releases)
+[![Tests](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml/badge.svg)](https://github.com/Zhouhao-stak/EpitopeRank/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/v/release/Zhouhao-stak/EpitopeRank?display_name=tag)](https://github.com/Zhouhao-stak/EpitopeRank/releases)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 
@@ -47,7 +47,7 @@ rMATS JC 五类事件表 + 样本元数据
 
 ## 下载即用
 
-到 [Releases](https://github.com/Zhouhao-stak/SpliceGAIP/releases) 下载最新的
+到 [Releases](https://github.com/Zhouhao-stak/EpitopeRank/releases) 下载最新的
 `EpitopeRank-*-windows.zip`，解压后双击 `EpitopeRank-Desktop.exe`。
 
 > 最新版新增：**模型调用轨迹录制与严格离线重放**（`record → replay → compare`）、MHC-II 11–30 aa 长肽预测、深色主题结果表格可读性修复。
@@ -72,7 +72,7 @@ MODEL_NAME=deepseek-flash
 
 [![EpitopeRank v1.3.0 演示视频](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
 
-- [在线观看 / 下载 MP4（Release 资产）](https://github.com/Zhouhao-stak/SpliceGAIP/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+- [在线观看 / 下载 MP4（Release 资产）](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
 - [仓库内 MP4](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
 
 内容：仪表盘与项目详情抽屉 → 事件浏览器 → 可视化火山图 → 剪接候选新抗原 →
