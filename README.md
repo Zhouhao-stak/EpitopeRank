@@ -32,6 +32,7 @@ rMATS JC 五类事件表 + 样本元数据
 ## 目录
 
 - [下载即用](#下载即用)
+- [演示视频](#演示视频)
 - [从源码运行](#从源码运行)
 - [一次完整分析长什么样](#一次完整分析长什么样)
 - [输入数据](#输入数据)
@@ -63,6 +64,20 @@ MODEL_API_BASE_URL=https://api.deepseek.com
 MODEL_API_KEY=sk-...
 MODEL_NAME=deepseek-flash
 ```
+
+## 演示视频
+
+用 **UPF1 真实 rMATS 数据**（112,908 个剪接事件）录制的 v1.3.0 界面演示，
+约 60 秒、无配音、带步骤字幕：
+
+[![EpitopeRank v1.3.0 演示视频](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+
+- [在线观看 / 下载 MP4（Release 资产）](https://github.com/Zhouhao-stak/SpliceGAIP/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+- [仓库内 MP4](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+
+内容：仪表盘与项目详情抽屉 → 事件浏览器 → 可视化火山图 → 剪接候选新抗原 →
+肽预测 MHC-I / MHC-II 长肽。旧版两段中英双语录屏仍保留在 `master` 分支的
+`media/videos/` 中。
 
 ## 从源码运行
 

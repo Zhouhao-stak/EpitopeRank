@@ -209,3 +209,12 @@ builds the Windows portable build and publishes a release.
 [BioGAIP](https://github.com/zhangjy859/BioGAIP) (kept in `legacy/` under its
 original licence). HLA predictions come from IEDB; observe their citation and
 licence terms.
+
+## Demo video
+
+A ~60-second narration-free UI walkthrough recorded with the real UPF1 rMATS
+dataset (112,908 splicing events), with on-screen step captions:
+
+[![EpitopeRank v1.3.0 demo](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+
+[Download the MP4 from the v1.3.0 release](https://github.com/Zhouhao-stak/SpliceGAIP/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
