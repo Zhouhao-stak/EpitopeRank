@@ -212,8 +212,9 @@ licence terms.
 
 ## Demo video
 
-A ~60-second narration-free UI walkthrough recorded with the real UPF1 rMATS
-dataset (112,908 splicing events), with on-screen step captions:
+A ~62-second narration-free UI walkthrough recorded with the real UPF1 rMATS
+dataset (112,908 splicing events), with on-screen step captions and real IEDB
+prediction results:
 
 [![EpitopeRank v1.3.0 demo](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
 
