@@ -70,10 +70,13 @@ MODEL_NAME=deepseek-flash
 用 **UPF1 真实 rMATS 数据**（112,908 个剪接事件）录制的 v1.3.0 界面演示，
 约 62 秒、无配音、带步骤字幕，含真实 IEDB 预测结果：
 
-[![EpitopeRank v1.3.0 演示视频](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+[![肽预测过程预览（自动循环动图）](media/posters/EpitopeRank-v1.3.0-UPF1-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
 
-- [在线观看 / 下载 MP4（Release 资产）](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
-- [仓库内 MP4](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+> 上方是视频中段（真实 IEDB 预测结果）的循环预览；点它或下面的链接，可在浏览器中直接播放完整 62 秒视频。GitHub 不内嵌 mp4 播放器，因此用动图做首页预览。
+
+- [在线播放完整视频（Release 资产，video/mp4）](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+- [仓库内 MP4 副本](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+- [静态封面](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)
 
 内容：仪表盘与项目详情抽屉 → 事件浏览器 → 可视化火山图 → 剪接候选新抗原 →
 肽预测 MHC-I / MHC-II 长肽（含点击「预测并排序」后的真实结果表与排序）。

@@ -216,6 +216,8 @@ A ~62-second narration-free UI walkthrough recorded with the real UPF1 rMATS
 dataset (112,908 splicing events), with on-screen step captions and real IEDB
 prediction results:
 
-[![EpitopeRank v1.3.0 demo](media/posters/EpitopeRank-v1.3.0-UPF1-demo.jpg)](media/videos/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+[![Peptide prediction preview (looping GIF)](media/posters/EpitopeRank-v1.3.0-UPF1-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
 
-[Download the MP4 from the v1.3.0 release](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+> A looping preview of the real IEDB prediction results. GitHub does not embed mp4 players in README files, so an inline GIF is used; click it to play the full 62-second video.
+
+[Play the full video in your browser (release asset, video/mp4)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
