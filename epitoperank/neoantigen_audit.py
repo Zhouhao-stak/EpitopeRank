@@ -7,6 +7,7 @@ from math import isfinite
 from epitoperank.data.loader import Dataset
 
 
+# 中文备注：epitoperank：辅助处理审计（参数：dataset、evidence）
 def audit(dataset: Dataset, evidence: dict) -> dict:
     """Report supplied evidence without inferring biological provenance."""
     groups = {name: len(ids) for name, ids in dataset.groups.items()}
@@ -30,6 +31,7 @@ def audit(dataset: Dataset, evidence: dict) -> dict:
             'requires_confirmation': True}
 
 
+# 中文备注：epitoperank：筛选剪接事件（参数：dataset、min_support、min_samples、support_is_junction_reads）
 def filter_events(dataset: Dataset, *, min_support: int | None, min_samples: int | None,
                   support_is_junction_reads: bool = False) -> dict:
     """Filter only when all required quality evidence and thresholds exist."""

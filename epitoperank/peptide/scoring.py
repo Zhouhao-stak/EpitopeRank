@@ -56,6 +56,7 @@ def _number(value: object) -> float | None:
     return result
 
 
+# 中文备注：肽预测：辅助处理component分数（参数：row）
 def component_scores(row: Mapping[str, object]) -> dict[str, float]:
     """Compute the available components for one candidate row."""
     components: dict[str, float] = {}
@@ -89,6 +90,7 @@ def evidence_tier(components: Mapping[str, float]) -> str:
     return "D"
 
 
+# 中文备注：肽预测：辅助处理composite（参数：row、weights）
 def composite(row: Mapping[str, object], weights: Mapping[str, float] | None = None) -> dict[str, object]:
     """Attach score, tier and provenance to one candidate row."""
     weights = dict(weights or DEFAULT_WEIGHTS)
@@ -108,6 +110,7 @@ def composite(row: Mapping[str, object], weights: Mapping[str, float] | None = N
     }
 
 
+# 中文备注：肽预测：排序rank（参数：rows、weights、limit）
 def rank(rows: Iterable[Mapping[str, object]], *, weights: Mapping[str, float] | None = None,
          limit: int | None = None) -> list[dict[str, object]]:
     """Score and sort candidate rows, best first."""
@@ -124,6 +127,7 @@ def rank(rows: Iterable[Mapping[str, object]], *, weights: Mapping[str, float] |
     return scored[:limit] if limit else scored
 
 
+# 中文备注：肽预测：描述describe（参数：无）
 def describe() -> dict[str, object]:
     """Machine-readable description used by the API and the report."""
     return {

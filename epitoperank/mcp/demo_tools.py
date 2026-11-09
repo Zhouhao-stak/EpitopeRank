@@ -389,6 +389,7 @@ TOOL_FUNCTIONS = {
 }
 
 
+# 中文备注：调用 MCP 服务器上的指定工具（参数：tool_name、arguments）
 def call_tool(tool_name: str, arguments: dict[str, Any] | None = None) -> dict[str, Any]:
     """Execute a demo tool by name; raises for unknown tools/arguments."""
     function = TOOL_FUNCTIONS.get(tool_name)

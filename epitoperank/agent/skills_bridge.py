@@ -47,6 +47,7 @@ def _env_bool(name: str) -> bool | None:
     return None
 
 
+# 中文备注：智能体内核：辅助处理技能enabled（参数：settings）
 def skills_enabled(settings: Any | None = None) -> bool:
     """Whether external (network) skills may be used at all."""
     override = _env_bool("EPITOPERANK_ENABLE_SKILLS")
@@ -111,6 +112,7 @@ class SkillBridge:
 
     # -- budget -----------------------------------------------------------
     @property
+    # 中文备注：智能体内核：辅助处理used（参数：无）
     def used(self) -> int:
         """Budget consumed so far (a cached answer costs nothing)."""
         return sum(1 for call in self.calls if call.status in {"ok", "empty"})
@@ -125,6 +127,7 @@ class SkillBridge:
         return self.remaining <= 0
 
     # -- execution --------------------------------------------------------
+    # 中文备注：智能体内核：执行skill（参数：name、factory）
     def run_skill(self, name: str, factory: Callable[[], Any], **kwargs: Any) -> Any | None:
         """Execute an async skill and return its ``SkillResult`` (or ``None``)."""
         key = _cache_key(name, kwargs)

@@ -131,6 +131,7 @@ REMEDIATIONS: dict[str, Any] = {
 }
 
 
+# 中文备注：智能体内核：补救remediate（参数：code、state）
 def remediate(code: str, state: AgentState) -> Remediation | None:
     """Propose a follow-up action for ``code``, or ``None`` to accept it."""
     handler = REMEDIATIONS.get(code)
@@ -142,6 +143,7 @@ def remediate(code: str, state: AgentState) -> Remediation | None:
         return None
 
 
+# 中文备注：智能体内核：反思reflect（参数：state）
 def reflect(state: AgentState) -> list[Remediation]:
     """Collect remediation proposals for every open issue."""
     proposals: list[Remediation] = []

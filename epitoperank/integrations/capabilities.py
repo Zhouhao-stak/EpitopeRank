@@ -78,6 +78,7 @@ def _version_of(module: str) -> str:
 
 
 @lru_cache(maxsize=1)
+# 中文备注：外部集成：辅助处理capabilities（参数：无）
 def capabilities() -> tuple[Capability, ...]:
     """Probe every known optional backend once per process."""
     found: list[Capability] = []
@@ -108,6 +109,7 @@ def capabilities() -> tuple[Capability, ...]:
     return tuple(found)
 
 
+# 中文备注：外部集成：判断backend（参数：name）
 def has_backend(name: str) -> bool:
     """True when the capability ``name`` is importable."""
     return any(item.name == name and item.available for item in capabilities())

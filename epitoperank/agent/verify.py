@@ -158,6 +158,7 @@ def _rule_figures_missing(state: AgentState) -> Issue | None:
     )
 
 
+# 中文备注：智能体内核：辅助处理ruleconfounded（参数：state）
 def _rule_confounded(state: AgentState) -> Issue | None:
     """A rejected hypothesis test means the result needs a caveat."""
     confounds = state.facts.get("hypothesis_confounds") or []
@@ -201,6 +202,7 @@ RULES = (
 )
 
 
+# 中文备注：智能体内核：验证状态（参数：state）
 def verify_state(state: AgentState) -> list[Issue]:
     """Run every rule and return the issues found (replacing the old set)."""
     issues: list[Issue] = []
@@ -230,6 +232,7 @@ def verify_state(state: AgentState) -> list[Issue]:
     return issues
 
 
+# 中文备注：智能体内核：辅助处理问题摘要（参数：issues）
 def issue_summary(issues: list[Issue]) -> dict[str, Any]:
     """Counts by severity, for logs and the API payload."""
     return {

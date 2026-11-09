@@ -66,6 +66,7 @@ class PubMedRetriever:
         self._reachable: bool | None = None
 
     @property
+    # 中文备注：知识库：辅助处理available（参数：无）
     def available(self) -> bool:
         """Whether pymed is importable AND NCBI answered the pre-check."""
         if self._available is None:
@@ -103,6 +104,7 @@ class PubMedRetriever:
         client = self._ensure_client()
         return list(client.query(keyword, max_results=max_results) or [])
 
+    # 中文备注：知识库：检索search（参数：keyword、max_results）
     def search(self, keyword: str, max_results: int = 5) -> list[PubMedArticle]:
         """Search PubMed; returns an empty list on any failure or timeout."""
         if not self.available:
@@ -131,6 +133,7 @@ class PubMedRetriever:
             )
         return articles
 
+    # 中文备注：知识库：检索基因（参数：genes、max_per_gene）
     def search_for_genes(self, genes: list[str], max_per_gene: int = 2) -> dict[str, list[PubMedArticle]]:
         """Search alternative-splicing literature for each gene."""
         found: dict[str, list[PubMedArticle]] = {}
@@ -141,6 +144,7 @@ class PubMedRetriever:
         return found
 
 
+# 中文备注：知识库：辅助处理记录基因（参数：genes）
 def records_for_genes(genes: list[str]) -> list[KnowledgeRecord]:
     """Convenience re-export of the bundled lookup used by tools."""
     from epitoperank.knowledge.base import lookup_genes

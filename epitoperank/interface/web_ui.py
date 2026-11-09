@@ -48,8 +48,8 @@ _HTML = """<!DOCTYPE html>
      因此项目不携带字体二进制，无需分发 OFL/Apache 字体授权文本；
      Segoe UI / Roboto / Consolas 等为各自平台自带字体，仅按名称引用。
      如需引入 Web 字体，请同步在 NOTICE 中注明授权。 */
-  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  --font-sans: system-ui, ui-sans-serif, -apple-system, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", Consolas, monospace;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
   --shadow-sm: 0 4px 16px rgba(0, 0, 0, .18);
@@ -104,7 +104,7 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-i
 .btn-sm { padding: 7px 13px; font-size: 12px; }
 
 .neo-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
-.neo-tab.active { background: rgba(94,234,212,.14); border-color: var(--accent); color: var(--accent); }
+
 .neo-result-body { max-height: 58vh; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(8,25,34,.6); }
 .neo-result-body table { font-size: 12px; }
 .neo-result-body th { position: sticky; top: 0; z-index: 1; background: #0d2430; white-space: nowrap; }
@@ -279,7 +279,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; animation:none !important; } }
 
 /* EpitopeRank research workspace: daylight surfaces, restrained teal, readable evidence. */
-:root { --black:#172f39; --gray-900:#172f39; --gray-700:#445b65; --gray-500:#60737c; --gray-300:#d6e0e3; --gray-100:#f0f4f5; --white:#fff; --bg:#f5f7f8; --surface:#fff; --surface-2:#edf4f3; --surface-3:#e3efec; --text:#172f39; --text-secondary:#455f69; --text-muted:#60737c; --accent:#087e72; --secondary:#367344; --warning:#986015; --danger:#b33449; --border:#d9e3e6; --shadow-sm:none; --shadow:none; --shadow-lg:0 20px 60px #162f3920; --radius:12px; --font-sans:'Segoe UI','Microsoft YaHei',system-ui,sans-serif; }
+:root { --black:#172f39; --gray-900:#172f39; --gray-700:#445b65; --gray-500:#60737c; --gray-300:#d6e0e3; --gray-100:#f0f4f5; --white:#fff; --bg:#f5f7f8; --surface:#fff; --surface-2:#edf4f3; --surface-3:#e3efec; --text:#172f39; --text-secondary:#455f69; --text-muted:#60737c; --accent:#087e72; --secondary:#367344; --warning:#986015; --danger:#b33449; --border:#d9e3e6; --shadow-sm:none; --shadow:none; --shadow-lg:0 20px 60px #162f3920; --radius:12px; }
 body { font-size:14px; } body::before { display:none; }
 ::selection { background:#c4e9e1; color:#173c36; }
 * { scrollbar-width:thin; scrollbar-color:#b7c8cd transparent; }
@@ -542,7 +542,7 @@ body.detail-open #project-detail.detail-drawer { transform:translateX(0); visibi
 /* Dala / constellation on a black canvas. */
 :root { color-scheme:dark; --bg:#000000; --surface:#000000; --surface-2:#000000; --surface-3:#151019; --text:#ffffff; --text-secondary:#bdbdbd; --text-muted:#9a9a9a; --black:#ffffff; --gray-900:#ffffff; --gray-700:#bdbdbd; --gray-500:#9a9a9a; --gray-300:#28242e; --gray-100:#000000; --accent:#a98aff; --secondary:#9ddecf; --danger:#f3b7c4; --border:#ffffff19; --radius:16px; --radius-sm:6px; --shadow-sm:none; --shadow:none; --shadow-lg:none; }
 html,body { background:var(--bg); }
-body::before,.spectral-ribbon,.splice-art,.start-guide::before,.start-guide::after,.btn-primary::before { display:none; }
+body::before,.splice-art,.start-guide::before,.start-guide::after,.btn-primary::before { display:none; }
 * { scrollbar-color:#514760 #000000; }
 ::selection { background:#a98aff; color:#000000; }
 input,textarea { caret-color:#a98aff; }
@@ -563,7 +563,7 @@ input,textarea { caret-color:#a98aff; }
 .start-guide p { color:#bdbdbd; max-width:34em; line-height:1.6; margin:18px 0 24px; }
 .start-guide ol { background:transparent; border:0; border-radius:0; box-shadow:none; backdrop-filter:none; padding:12px 0 12px 24px; gap:22px; border-left:1px solid #ffffff20; }
 .start-guide li { color:#bdbdbd; }.start-guide strong { color:#ffffff; font-weight:500; }.start-guide li b { color:#a98aff; font-weight:400; }
-.data-orb { position:absolute; width:360px; height:360px; left:31%; top:-28px; z-index:-1; opacity:.38; pointer-events:none; }
+
 .btn { font-weight:500; border-radius:6px; box-shadow:none; }.btn:hover { transform:none; box-shadow:none; }.btn-primary,.start-guide .btn-primary { color:#000000; background:linear-gradient(90deg,#a98aff 0%,#ffffff 26%,#fffdfa 48%,#fad1ff 100%); border:1px solid transparent; box-shadow:none; }
 .btn-primary:hover,.start-guide .btn-primary:hover { background:linear-gradient(90deg,#e0fffd,#ffb829); color:#000000; box-shadow:none; transform:none; }
 .btn-secondary,.start-guide .btn-secondary { background:#000000; border:1px solid #ffffff24; color:#ffffff; backdrop-filter:none; }.btn-secondary:hover,.start-guide .btn-secondary:hover { background:#151019; border-color:#bdbdbd; }
@@ -580,8 +580,8 @@ tr:hover,#events-table .event-row:hover,.neo-result-body tr:hover td { backgroun
 #drop-zone { background:#000000 !important; }#event-detail-modal > div > div:first-child { background:#000000 !important; }
 .sk { background:#28242e; animation:none; }.dpsi-bar { background:#28242e; }.dpsi-bar::after { background:#bdbdbd; }
 .status-waiting { background:#ffffff08; color:#bdbdbd; }.status-dot { box-shadow:none; }
-@media(max-width:1000px) { .start-guide { padding:28px; }.start-guide ol { border-left:0; border-top:1px solid #ffffff20; padding:24px 0 0; }.data-orb { left:auto; right:-70px; opacity:.22; } }
-@media(max-width:768px) { .sidebar { background:#000000; }.content { padding-top:24px; }.workspace-heading h1 { font-size:26px; }.start-guide { padding:24px; }.start-guide h2 { font-size:28px; }.data-orb { top:0; width:280px; height:280px; } }
+@media(max-width:1000px) { .start-guide { padding:28px; }.start-guide ol { border-left:0; border-top:1px solid #ffffff20; padding:24px 0 0; } }
+@media(max-width:768px) { .sidebar { background:#000000; }.content { padding-top:24px; }.workspace-heading h1 { font-size:26px; }.start-guide { padding:24px; }.start-guide h2 { font-size:28px; } }
 
 
 /* Typography and open composition: scale carries hierarchy. */
@@ -6181,6 +6181,7 @@ document.getElementById('app-navigation').inert = window.innerWidth <= 768;
 </html>"""
 
 
+# 中文备注：渲染单页 Web 界面 HTML（参数：title）
 def render(title: str = "EpitopeRank") -> HTMLResponse:
     """Render the modern EpitopeRank web UI."""
     return HTMLResponse(content=_HTML.replace("__TITLE__", title))

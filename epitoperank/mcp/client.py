@@ -73,6 +73,7 @@ class MCPClient:
         self._load_config()
 
     # -- configuration ----------------------------------------------------
+    # 中文备注：MCP 工具：加载配置（参数：无）
     def _load_config(self) -> None:
         """Load MCP server configuration from JSON file."""
         if self.config_path.exists():
@@ -270,6 +271,7 @@ class MCPClient:
         return True
 
     # -- connection -------------------------------------------------------
+    # 中文备注：探测并连接 MCP 服务器（参数：server_name）
     async def connect(self, server_name: str) -> bool:
         """Probe a configured MCP server. Returns True on success."""
         server = self.servers.get(server_name)
@@ -317,6 +319,7 @@ class MCPClient:
         await client.aclose()
         return False
 
+    # 中文备注：断开 MCP 服务器并清空缓存（参数：server_name）
     async def disconnect(self, server_name: str) -> None:
         """Forget a server's connection state and cached tools."""
         client = self._http_clients.pop(server_name, None)
@@ -333,6 +336,7 @@ class MCPClient:
         return await self.connect(server_name)
 
     # -- tools ------------------------------------------------------------
+    # 中文备注：列出 MCP 服务器提供的工具（参数：server_name）
     async def list_tools(self, server_name: str) -> list[MCPToolInfo]:
         """List all tools available from an MCP server."""
         if server_name in self._tools_cache:
@@ -384,6 +388,7 @@ class MCPClient:
             print(f"[MCP] Failed to list tools for {server_name}: {exc}")
             return []
 
+    # 中文备注：调用 MCP 服务器上的指定工具（参数：server_name、tool_name、arguments）
     async def call_tool(
         self,
         server_name: str,
@@ -431,6 +436,7 @@ class MCPClient:
             return {"error": f"Tool call exception: {exc}"}
 
     @staticmethod
+    # 中文备注：MCP 工具：辅助处理normalise请求体（参数：payload）
     def _normalise_payload(payload: dict[str, Any]) -> dict[str, Any]:
         """Expose the same keys for SDK (snake_case) and simple-HTTP results."""
         if "structuredContent" not in payload and "structured_content" in payload:
@@ -475,6 +481,7 @@ class MCPClient:
             return text
         return json.dumps(payload, ensure_ascii=False, default=str)
 
+    # 中文备注：MCP 工具：关闭close_all（参数：无）
     async def close_all(self) -> None:
         """Close all HTTP connections and reset SDK flags."""
         for server_name in list(self._http_clients) + list(self._sdk_ready):
@@ -483,6 +490,7 @@ class MCPClient:
 
 # Convenience functions for synchronous usage in FastAPI endpoints
 
+# 中文备注：返回进程内共享的 MCP 客户端（参数：无）
 def get_mcp_client() -> MCPClient:
     """Get or create the global MCP client instance."""
     if not hasattr(get_mcp_client, "_instance"):
@@ -490,6 +498,7 @@ def get_mcp_client() -> MCPClient:
     return get_mcp_client._instance
 
 
+# 中文备注：MCP 工具：列出MCP服务（参数：无）
 async def mcp_list_servers() -> dict[str, list[str]]:
     """List configured MCP servers and their tool names (connected only)."""
     client = get_mcp_client()
@@ -501,6 +510,7 @@ async def mcp_list_servers() -> dict[str, list[str]]:
     return result
 
 
+# 中文备注：MCP 工具：调用MCP工具（参数：server_name、tool_name、arguments）
 async def mcp_call_tool(
     server_name: str,
     tool_name: str,

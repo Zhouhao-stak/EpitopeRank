@@ -55,6 +55,7 @@ _WORKFLOW: list[dict[str, Any]] = [
 ]
 
 
+# 中文备注：多智能体：分类查询（参数：query）
 def classify_query(query: str) -> tuple[str, str]:
     """Map the user query to (analysis_type, goal sentence)."""
     lowered = query.lower()
@@ -67,6 +68,7 @@ def classify_query(query: str) -> tuple[str, str]:
     )
 
 
+# 中文备注：由自然语言目标生成可审阅的分析计划（参数：context）
 def build_plan(context: RunContext) -> dict[str, Any]:
     """Build the Planner's plan JSON from the query and dataset state."""
     analysis_type, goal = classify_query(context.query)
@@ -100,6 +102,7 @@ def _planner_text(context: RunContext) -> str:
     return json.dumps(build_plan(context), indent=2)
 
 
+# 中文备注：多智能体：辅助处理analystscript（参数：context）
 def _analyst_script(context: RunContext) -> list[dict[str, Any]]:
     """Ordered analyst tool calls (arguments from platform configuration)."""
     analysis = context.settings.analysis
@@ -130,6 +133,7 @@ def _interpreter_script(context: RunContext) -> list[dict[str, Any]]:
     ]
 
 
+# 中文备注：多智能体：辅助处理analystfinal文本（参数：context）
 def _analyst_final_text(context: RunContext) -> str:
     """Analyst summary, generated from the run context after tools executed."""
     from epitoperank.tools.analysis_tools import analysis_summary
@@ -151,6 +155,7 @@ def _analyst_final_text(context: RunContext) -> str:
     )
 
 
+# 中文备注：多智能体：辅助处理interpreterfinal文本（参数：context）
 def _interpreter_final_text(context: RunContext) -> str:
     """Interpreter summary, generated from the run context after tools executed."""
     from epitoperank.report.generator import build_interpretation
@@ -166,6 +171,7 @@ def _interpreter_final_text(context: RunContext) -> str:
     )
 
 
+# 中文备注：多智能体：构建deterministicclients（参数：context）
 def build_deterministic_clients(
     context: RunContext,
 ) -> tuple[DeterministicClient, DeterministicClient, DeterministicClient]:
@@ -178,6 +184,7 @@ def build_deterministic_clients(
     return planner, analyst, interpreter
 
 
+# 中文备注：多智能体：辅助处理speakerorder（参数：无）
 def speaker_order() -> list[str]:
     """Planned speaker order: planner once, analyst per tool + final, interpreter per tool + final."""
     analyst_turns = len(_WORKFLOW[:5]) + 1  # 5 tool calls + final summary

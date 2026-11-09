@@ -72,6 +72,7 @@ def _strings(value: Any, limit: int = MAX_LIST_ITEMS, max_len: int = 400) -> lis
 # ---------------------------------------------------------------------------
 # fact extraction
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：辅助处理上下文事实（参数：context、max_candidates、max_terms）
 def context_facts(context: Any, *, max_candidates: int = 12, max_terms: int = 10) -> dict[str, Any]:
     """Compact, JSON-serialisable fact sheet for one run."""
     dataset = context.dataset
@@ -126,6 +127,7 @@ def context_facts(context: Any, *, max_candidates: int = 12, max_terms: int = 10
     }
 
 
+# 中文备注：大模型层：摘要证据（参数：context、per_gene）
 def evidence_digest(context: Any, *, per_gene: int = 2) -> dict[str, list[str]]:
     """Map gene -> list of evidence texts (trimmed)."""
     digest: dict[str, list[str]] = {}
@@ -139,6 +141,7 @@ def evidence_digest(context: Any, *, per_gene: int = 2) -> dict[str, list[str]]:
 # ---------------------------------------------------------------------------
 # 1. query / intent understanding
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：辅助处理understand查询（参数：query、settings、enhancer、facts）
 def understand_query(
     query: str,
     *,
@@ -213,6 +216,7 @@ def understand_query(
     return merged
 
 
+# 中文备注：大模型层：分类查询fallback（参数：query、error）
 def classify_query_fallback(query: str, error: str = "") -> dict[str, Any]:
     """Rule-based intent baseline (used when the model path is unavailable)."""
     from epitoperank.agents.policy import classify_query
@@ -234,6 +238,7 @@ def classify_query_fallback(query: str, error: str = "") -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # 2. planner refinement
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：规划enhance（参数：enhancer、query、facts、base_plan）
 def enhance_plan(
     enhancer: LLMEnhancer,
     *,
@@ -279,6 +284,7 @@ def enhance_plan(
 # ---------------------------------------------------------------------------
 # 3. narrative interpretation
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：辅助处理narrate（参数：enhancer、query、facts、deterministic）
 def narrate(
     enhancer: LLMEnhancer,
     *,
@@ -325,6 +331,7 @@ def narrate(
 # ---------------------------------------------------------------------------
 # 4. per-gene biological annotation
 # ---------------------------------------------------------------------------
+# 中文备注：注释候选基因（参数：enhancer、genes、facts、language）
 def annotate_genes(
     enhancer: LLMEnhancer,
     genes: Sequence[str],
@@ -367,6 +374,7 @@ def annotate_genes(
 # ---------------------------------------------------------------------------
 # 5. literature evidence summarisation
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：汇总证据（参数：enhancer、evidence、language）
 def summarize_evidence(
     enhancer: LLMEnhancer,
     evidence: Mapping[str, Sequence[str]],
@@ -406,6 +414,7 @@ def summarize_evidence(
 # ---------------------------------------------------------------------------
 # 6. limitations
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：辅助处理extend局限性（参数：enhancer、base、facts、language）
 def extend_limitations(
     enhancer: LLMEnhancer,
     base: Sequence[str],
@@ -448,6 +457,7 @@ def extend_limitations(
 # ---------------------------------------------------------------------------
 # 7. hypotheses + validation plan
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：提出假设hypothesize（参数：enhancer、facts、language）
 def hypothesize(
     enhancer: LLMEnhancer,
     *,
@@ -488,6 +498,7 @@ def hypothesize(
 # ---------------------------------------------------------------------------
 # 8. critique
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：审查critique（参数：enhancer、narrative、facts、deterministic）
 def critique(
     enhancer: LLMEnhancer,
     narrative: Mapping[str, Any],
@@ -534,6 +545,7 @@ def critique(
 # ---------------------------------------------------------------------------
 # orchestration
 # ---------------------------------------------------------------------------
+# 中文备注：大模型层：富集上下文（参数：context、enhancer）
 def enrich_context(context: Any, *, enhancer: LLMEnhancer | None = None) -> dict[str, Any]:
     """Run every enabled enrichment for one run and store it on the context.
 

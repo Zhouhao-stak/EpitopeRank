@@ -57,6 +57,7 @@ class RankedCandidate:
         }
 
 
+# 中文备注：剪接解析：辅助处理normalizedsignificance（参数：fdr、floor）
 def _normalized_significance(fdr: float | None, floor: float = 1e-300) -> float:
     """Map FDR to (0, 1]: smaller FDR -> closer to 1."""
     if fdr is None:
@@ -65,6 +66,7 @@ def _normalized_significance(fdr: float | None, floor: float = 1e-300) -> float:
     return value
 
 
+# 中文备注：剪接解析：辅助处理normalizedeffect（参数：delta_psi）
 def _normalized_effect(delta_psi: float | None) -> float:
     """Map |delta PSI| to (0, 1]: |dPSI| >= 0.5 saturates at 1."""
     if delta_psi is None:
@@ -72,6 +74,7 @@ def _normalized_effect(delta_psi: float | None) -> float:
     return min(abs(delta_psi) / 0.5, 1.0)
 
 
+# 中文备注：剪接解析：辅助处理biologycomponent（参数：event、annotated_genes）
 def _biology_component(event: StandardEvent, annotated_genes: Mapping[str, object]) -> float:
     """Annotation coverage of the gene (GO/KEGG/pathway terms available)."""
     gene = event.gene_symbol or event.gene_id
@@ -80,6 +83,7 @@ def _biology_component(event: StandardEvent, annotated_genes: Mapping[str, objec
     return 0.0
 
 
+# 中文备注：剪接解析：辅助处理文献component（参数：event、literature_genes）
 def _literature_component(event: StandardEvent, literature_genes: Mapping[str, object]) -> float:
     """Literature evidence count for the gene, capped at 5 records -> 1.0."""
     gene = event.gene_symbol or event.gene_id
@@ -90,6 +94,7 @@ def _literature_component(event: StandardEvent, literature_genes: Mapping[str, o
     return min(float(count) / 5.0, 1.0)
 
 
+# 中文备注：按四分量综合得分排序候选事件（参数：events、annotated_genes、literature_genes）
 def rank_candidates(
     events: Sequence[StandardEvent],
     annotated_genes: Mapping[str, object] | None = None,
@@ -140,6 +145,7 @@ def rank_candidates(
     return ranked
 
 
+# 中文备注：剪接解析：辅助处理top候选基因（参数：candidates、limit）
 def top_candidate_genes(candidates: Iterable[RankedCandidate], limit: int = 20) -> list[str]:
     """Unique gene list from the top candidates, preserving rank order."""
     genes: list[str] = []

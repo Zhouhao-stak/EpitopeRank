@@ -88,6 +88,7 @@ class AgentRunResult:
         }
 
 
+# 中文备注：智能体内核：辅助处理agent设置（参数：settings）
 def _agent_settings(settings: Any) -> Any:
     """Return the ``agent`` config block (or a default-like namespace)."""
     block = getattr(settings, "agent", None)
@@ -114,6 +115,7 @@ def _agent_settings(settings: Any) -> Any:
     return _Defaults()
 
 
+# 中文备注：智能体内核：构建goal（参数：context）
 def _build_goal(context: RunContext) -> Goal:
     """Derive the goal from the query (and the pre-run intent, if present)."""
     from epitoperank.agents.policy import classify_query
@@ -175,6 +177,7 @@ class AutonomousAgent:
             }
         )
 
+    # 中文备注：智能体内核：辅助处理sense（参数：无）
     def _sense(self) -> None:
         """First observation: profile the dataset before any decision."""
         context = self.context
@@ -228,6 +231,7 @@ class AutonomousAgent:
         self._memory = memory
 
     # -- execution --------------------------------------------------------
+    # 中文备注：智能体内核：执行followup步骤（参数：action_name、args、elapsed）
     def _run_followup_step(self, action_name: str, args: dict[str, Any], elapsed: Any) -> None:
         """Execute one follow-up action as a traceable step."""
         state = self.state
@@ -249,6 +253,7 @@ class AutonomousAgent:
         state.note_action(action_name)
         self.context.log("agent", action_name, status, f"[followup] {message[:300]}")
 
+    # 中文备注：智能体内核：持久化_persist（参数：无）
     def _persist(self) -> None:
         """Snapshot the decision state for a future follow-up (best-effort)."""
         try:
@@ -525,6 +530,7 @@ class AutonomousAgent:
         return result
 
 
+# 中文备注：智能体内核：执行autonomous（参数：context、settings、confirm_handler、state）
 def run_autonomous(
     context: RunContext,
     settings: Any | None = None,

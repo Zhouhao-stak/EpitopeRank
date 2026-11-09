@@ -21,12 +21,14 @@ from typing import Any, Sequence
 
 from epitoperank.tools.context import RunContext
 
+# 中文备注：报告生成：报告time（参数：无）
 def _report_time():
     from epitoperank.llm.trace import ACTIVE
     trace = ACTIVE.get()
     return trace.meta["report_time"] if trace else datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
 
 
+# 中文备注：报告生成：追踪methods（参数：无）
 def _trace_methods():
     from epitoperank.llm.trace import ACTIVE
     trace = ACTIVE.get()
@@ -52,6 +54,7 @@ def _fmt(value: Any, digits: int = 3, na: str = "NA") -> str:
     return str(value)
 
 
+# 中文备注：报告生成：构建interpretation（参数：context）
 def build_interpretation(context: RunContext) -> str:
     """Deterministic, evidence-grounded interpretation text.
 
@@ -222,7 +225,7 @@ class ReportGenerator:
 <meta charset="utf-8"/>
 <title>EpitopeRank Analysis Report</title>
 <style>
- body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; color: #1a1a1a; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; line-height: 1.55; }}
+ body {{ font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; color: #1a1a1a; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; line-height: 1.55; }}
  h1 {{ border-bottom: 3px solid #0072B2; padding-bottom: .4rem; }}
  h2 {{ color: #005485; margin-top: 2.2rem; }}
  table {{ border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem; }}
@@ -312,6 +315,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
 """
 
     # -- PDF --------------------------------------------------------------
+    # 中文备注：报告生成：渲染pdf（参数：path）
     def render_pdf(self, path: Path) -> bool:
         """Render the PDF report with reportlab; returns False when unavailable."""
         try:
@@ -619,6 +623,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return True
 
     # -- AI insight helpers -----------------------------------------------
+    # 中文备注：报告生成：辅助处理insights（参数：无）
     def _insights(self) -> dict[str, Any]:
         """Model-enriched insights for this run (empty in deterministic mode)."""
         raw = getattr(self.context, "llm_insights", None) or {}
@@ -735,6 +740,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         )
 
     # -- Phase 2 helpers ---------------------------------------------------
+    # 中文备注：报告生成：辅助处理hypothesisHTML（参数：无）
     def _hypothesis_html(self) -> str:
         """Pre-registered statistical tests the agent ran on its own result."""
         tests = list(getattr(self.context, "hypotheses", None) or [])
@@ -769,6 +775,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
             f"<ul>{notes}</ul>"
         )
 
+    # 中文备注：报告生成：辅助处理externalHTML（参数：无）
     def _external_html(self) -> str:
         """Findings retrieved from external knowledge sources (skills)."""
         external = getattr(self.context, "external", None) or {}
@@ -837,6 +844,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
             return ""
         return "<h3>5.5 External knowledge findings</h3>" + "".join(blocks)
 
+    # 中文备注：报告生成：辅助处理recurrenceHTML（参数：无）
     def _recurrence_html(self) -> str:
         """Render section 5.6: Lab-level recurrence."""
         external = getattr(self.context, "external", None) or {}
@@ -936,6 +944,7 @@ Workflow log entries: {len(context.workflow_log)}. All results are reproducible 
         return list(dict.fromkeys(references))[:20]
 
     # -- entry point ------------------------------------------------------
+    # 中文备注：报告生成：生成generate（参数：output_dir、formats）
     def generate(self, output_dir: str, formats: Sequence[str] = ("html", "pdf")) -> dict[str, Path]:
         """Write the report into ``output_dir`` and return the produced paths."""
         directory = Path(output_dir)

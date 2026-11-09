@@ -85,6 +85,7 @@ ALLOWED_KEYS: tuple[str, ...] = (
 CONFIG_FILE_NAMES: tuple[str, ...] = (".env", "配置大模型.env")
 
 
+# 中文备注：大模型层：辅助处理项目根目录（参数：无）
 def project_root() -> Path:
     """Directory that holds the sources (or the frozen bundle's contents)."""
     if getattr(sys, "frozen", False):
@@ -92,6 +93,7 @@ def project_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
+# 中文备注：大模型层：检索directories（参数：无）
 def search_directories() -> list[Path]:
     """Directories a configuration file is looked for in, in priority order.
 
@@ -121,22 +123,26 @@ def search_directories() -> list[Path]:
     return ordered
 
 
+# 中文备注：大模型层：辅助处理候选环境变量paths（参数：无）
 def candidate_env_paths() -> list[Path]:
     """Every file path that may hold configuration, highest priority first."""
     return [directory / name for directory in search_directories() for name in CONFIG_FILE_NAMES]
 
 
+# 中文备注：大模型层：辅助处理existing环境变量paths（参数：无）
 def existing_env_paths() -> list[Path]:
     """All configuration files that actually exist (priority order)."""
     return [path for path in candidate_env_paths() if path.is_file()]
 
 
+# 中文备注：大模型层：辅助处理existing环境变量路径（参数：无）
 def existing_env_path() -> Path | None:
     """The file new writes go to (the first candidate that exists)."""
     found = existing_env_paths()
     return found[0] if found else None
 
 
+# 中文备注：大模型层：辅助处理默认值环境变量路径（参数：无）
 def default_env_path() -> Path:
     """The file new writes go to (the frozen bundle wins over the source tree)."""
     return candidate_env_paths()[0]
@@ -181,6 +187,7 @@ def collect_env_values() -> tuple[dict[str, str], list[Path]]:
     return merged, sources
 
 
+# 中文备注：大模型层：加载环境变量值（参数：无）
 def load_env_values() -> list[Path]:
     """Apply :func:`collect_env_values` to ``os.environ`` without overriding.
 
@@ -194,6 +201,7 @@ def load_env_values() -> list[Path]:
     return sources
 
 
+# 中文备注：大模型层：辅助处理current环境变量值（参数：无）
 def current_env_values() -> dict[str, str]:
     """Effective configuration as the running process sees it."""
     values: dict[str, str] = {}
@@ -202,6 +210,7 @@ def current_env_values() -> dict[str, str]:
     return values
 
 
+# 中文备注：大模型层：写入环境变量值（参数：updates）
 def write_env_values(updates: dict[str, str]) -> tuple[Path, list[str]]:
     """Merge ``updates`` into the local ``.env`` file.
 
@@ -256,6 +265,7 @@ def write_env_values(updates: dict[str, str]) -> tuple[Path, list[str]]:
     return target, sorted(clean)
 
 
+# 中文备注：大模型层：写入one（参数：target、lines）
 def _write_one(target: Path, lines: list[str]) -> Path:
     """Write one configuration file, falling back to no-op on read-only disks."""
     try:
@@ -266,6 +276,7 @@ def _write_one(target: Path, lines: list[str]) -> Path:
     return target
 
 
+# 中文备注：大模型层：辅助处理mask（参数：values）
 def mask(values: dict[str, str]) -> dict[str, str]:
     """Return display-safe values (secrets replaced by a masked preview)."""
     masked = dict(values)
@@ -280,6 +291,7 @@ def mask(values: dict[str, str]) -> dict[str, str]:
     return masked
 
 
+# 中文备注：大模型层：辅助处理环境变量配置请求体（参数：无）
 def env_config_payload() -> dict[str, Any]:
     """Everything the UI needs to render the model configuration form."""
     main = existing_env_path()

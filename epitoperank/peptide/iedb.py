@@ -315,6 +315,7 @@ class IedbClient:
         return tuple(present)
 
     @staticmethod
+    # 中文备注：肽预测：辅助处理fasta（参数：peptides）
     def _fasta(peptides: Sequence[str]) -> tuple[str, dict[int, str]]:
         """Return FASTA text plus the ``seq_num -> peptide`` map."""
         mapping = {index + 1: peptide for index, peptide in enumerate(peptides)}
@@ -329,6 +330,7 @@ class IedbClient:
     # ------------------------------------------------------------------
     # Class-I / class-II binding
     # ------------------------------------------------------------------
+    # 中文备注：肽预测：预测mhci（参数：peptides、alleles、lengths、method）
     def predict_mhci(self, peptides: Sequence[str], alleles: Sequence[str],
                      *, lengths: Sequence[int] = MHC_I_LENGTHS,
                      method: str = "netmhcpan_el") -> list[dict[str, object]]:
@@ -362,6 +364,7 @@ class IedbClient:
                                                     set(batch), allowed))
         return records
 
+    # 中文备注：肽预测：预测mhcii（参数：peptides、alleles、length、method）
     def predict_mhcii(self, peptides: Sequence[str], alleles: Sequence[str],
                       *, length: int | str = 15,
                       method: str = "netmhciipan_el") -> list[dict[str, object]]:
@@ -421,6 +424,7 @@ class IedbClient:
     # ------------------------------------------------------------------
     # Processing / MHC-NP / stability
     # ------------------------------------------------------------------
+    # 中文备注：肽预测：预测processing（参数：peptides、alleles、lengths、proteasome）
     def predict_processing(self, peptides: Sequence[str], alleles: Sequence[str],
                            *, lengths: Sequence[int] = MHC_I_LENGTHS,
                            proteasome: str = "immuno") -> list[dict[str, object]]:
@@ -476,6 +480,7 @@ class IedbClient:
                         })
         return records
 
+    # 中文备注：肽预测：预测mhcnp（参数：peptides、alleles、lengths）
     def predict_mhcnp(self, peptides: Sequence[str], alleles: Sequence[str],
                       *, lengths: Sequence[int] = MHC_I_LENGTHS) -> list[dict[str, object]]:
         """MHC-NP: probability that a peptide is naturally processed and presented."""
@@ -515,6 +520,7 @@ class IedbClient:
                     })
         return records
 
+    # 中文备注：肽预测：预测stability（参数：peptides、alleles）
     def predict_stability(self, peptides: Sequence[str], alleles: Sequence[str]) -> list[dict[str, object]]:
         """Predict peptide-MHC stability with NetMHCstabpan-1.0."""
         return self.predict_mhci(peptides, alleles, method="netmhcstabpan")
@@ -522,6 +528,7 @@ class IedbClient:
     # ------------------------------------------------------------------
     # Known-epitope lookup
     # ------------------------------------------------------------------
+    # 中文备注：肽预测：辅助处理lookupepitopes（参数：peptides、limit）
     def lookup_epitopes(self, peptides: Sequence[str], *, limit: int = 3) -> dict[str, list[dict[str, object]]]:
         """Look up assay records for each peptide in the IEDB (query API).
 
@@ -556,6 +563,7 @@ class IedbClient:
     # ------------------------------------------------------------------
     # Allele catalogue
     # ------------------------------------------------------------------
+    # 中文备注：肽预测：辅助处理HLA 型别catalogue（参数：method）
     def allele_catalogue(self, method: str = "netmhcpan_el") -> list[str]:
         """Return the alleles the IEDB lists for a method (network required)."""
         spec = METHODS.get(method)
@@ -565,11 +573,13 @@ class IedbClient:
         return [line.strip() for line in text.splitlines() if line.strip().startswith("HLA-")]
 
 
+# 中文备注：肽预测：辅助处理method表（参数：无）
 def method_table() -> list[dict[str, object]]:
     """Describe every model this client can call (for API/docs/UI)."""
     return [spec.as_dict() for spec in METHODS.values()]
 
 
+# 中文备注：肽预测：描述describe（参数：allele）
 def describe(allele: str) -> HlaAllele:
     """Describe one allele (thin wrapper around :func:`hla.parse_panel`)."""
     return parse_panel([allele])[0]

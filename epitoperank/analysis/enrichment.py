@@ -40,6 +40,7 @@ class GeneAnnotation:
         return self.terms.get(ontology, ())
 
 
+# 中文备注：统计分析：加载基因annotation（参数：path）
 def load_gene_annotation(path: str | Path) -> dict[str, GeneAnnotation]:
     """Load a gene annotation table.
 
@@ -90,6 +91,7 @@ class EnrichmentResult:
     genes: tuple[str, ...]
 
 
+# 中文备注：统计分析：记录日志comb（参数：total、choose）
 def _log_comb(total: int, choose: int) -> float:
     """log C(total, choose) with edge cases."""
     if choose < 0 or choose > total:
@@ -97,6 +99,7 @@ def _log_comb(total: int, choose: int) -> float:
     return math.lgamma(total + 1) - math.lgamma(choose + 1) - math.lgamma(total - choose + 1)
 
 
+# 中文备注：统计分析：辅助处理hypergeomp值（参数：successes、draws、population_successes、population）
 def _hypergeom_p_value(successes: int, draws: int, population_successes: int, population: int) -> float:
     """One-sided hypergeometric over-representation p-value (upper tail).
 
@@ -122,6 +125,7 @@ def _hypergeom_p_value(successes: int, draws: int, population_successes: int, po
     return min(1.0, total)
 
 
+# 中文备注：GO/KEGG 富集分析（本地）（参数：query_genes、annotations、ontologies、alpha）
 def run_enrichment(
     query_genes: Sequence[str],
     annotations: Mapping[str, GeneAnnotation],

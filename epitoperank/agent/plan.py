@@ -47,6 +47,7 @@ class AnalysisPlan:
     created_at: str = ""
     notes: list[str] = field(default_factory=list)
 
+    # 中文备注：序列化为字典（参数：无）
     def as_dict(self) -> dict[str, Any]:
         return {
             "goal": self.goal, "intent": self.intent,
@@ -58,6 +59,7 @@ class AnalysisPlan:
         }
 
     @classmethod
+    # 中文备注：从字典构造对象（参数：raw）
     def from_dict(cls, raw: Any) -> "AnalysisPlan":
         if not isinstance(raw, dict):
             raise ValueError("plan must be a JSON object")
@@ -67,6 +69,7 @@ class AnalysisPlan:
         intent = str(raw.get("intent") or "differential_AS")
         if intent not in {"differential_AS", "neoantigen", "exploration"}:
             raise ValueError("unsupported plan.intent")
+        # 中文备注：智能体内核：列出string（参数：key、limit）
         def string_list(key, limit=40):
             value = raw.get(key) or []
             if not isinstance(value, list):
@@ -92,6 +95,7 @@ class AnalysisPlan:
             notes=string_list("notes", 10),
         )
 
+    # 中文备注：智能体内核：校验against注册表（参数：registry）
     def validate_against_registry(self, registry: dict[str, Any]) -> None:
         """Reject unknown tool names so an edited plan cannot invent actions."""
         unknown = [name for name in self.expected_tools if name not in registry]
@@ -99,6 +103,7 @@ class AnalysisPlan:
             raise ValueError("unknown tools in plan: " + ", ".join(unknown[:8]))
 
 
+# 中文备注：由自然语言目标生成可审阅的分析计划（参数：query、settings、enhancer）
 def build_plan(query: str, *, settings: Any = None, enhancer: Any = None) -> AnalysisPlan:
     """Build a deterministic plan from the objective; optionally refine wording.
 
@@ -179,6 +184,7 @@ def build_plan(query: str, *, settings: Any = None, enhancer: Any = None) -> Ana
     return plan
 
 
+# 中文备注：比较计划与实际执行轨迹的偏差（参数：plan、steps）
 def plan_deviations(plan: AnalysisPlan | None, steps: list[dict[str, Any]]) -> dict[str, Any]:
     """Compare the approved contract with what the agent actually did."""
     executed = [str(s.get("action") or "") for s in steps if isinstance(s, dict)]
@@ -209,6 +215,7 @@ def plan_deviations(plan: AnalysisPlan | None, steps: list[dict[str, Any]]) -> d
     }
 
 
+# 中文备注：汇总一次运行的可复现证明（参数：state）
 def reproducibility_proof(state: dict[str, Any]) -> dict[str, Any]:
     """Self-contained, read-only proof bundle for one recorded run."""
     from collections import Counter

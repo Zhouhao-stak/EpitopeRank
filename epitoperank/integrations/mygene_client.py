@@ -35,6 +35,7 @@ def backend_available() -> bool:
         return False
 
 
+# 中文备注：外部集成：注释annotate（参数：genes、scopes、timeout）
 def annotate(
     genes: Sequence[str],
     *,

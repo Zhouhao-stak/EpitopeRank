@@ -164,6 +164,7 @@ class PathwayEnrichmentSkill(BaseSkill):
                 error=f"富集分析失败: {str(exc)}",
             )
 
+    # 中文备注：外部技能：转换基因keggids（参数：genes）
     async def _convert_genes_to_kegg_ids(
         self, genes: list[str]
     ) -> dict[str, str]:
@@ -197,6 +198,7 @@ class PathwayEnrichmentSkill(BaseSkill):
                     continue
         return kegg_ids
 
+    # 中文备注：外部技能：检验hypergeometric（参数：k、n、N、M）
     def _hypergeometric_test(
         self, k: int, n: int, N: int, M: int
     ) -> float:
@@ -232,6 +234,7 @@ class PathwayEnrichmentSkill(BaseSkill):
         except (ValueError, OverflowError):
             return 1.0
 
+    # 中文备注：外部技能：辅助处理benjaminihochberg（参数：p_values）
     def _benjamini_hochberg(self, p_values: list[float]) -> list[float]:
         """Apply Benjamini-Hochberg FDR correction."""
         if not p_values:
@@ -253,6 +256,7 @@ class PathwayEnrichmentSkill(BaseSkill):
         
         return adjusted
 
+    # 中文备注：外部技能：辅助处理查询go富集（参数：genes、background、fdr_threshold、min_count）
     async def _query_go_enrichment(
         self,
         genes: list[str],
@@ -339,6 +343,7 @@ class PathwayEnrichmentSkill(BaseSkill):
         except Exception:  # noqa: BLE001
             return []
 
+    # 中文备注：外部技能：辅助处理查询keggpathways（参数：genes、background、fdr_threshold、min_count）
     async def _query_kegg_pathways(
         self,
         genes: list[str],
@@ -463,6 +468,7 @@ class PathwayEnrichmentSkill(BaseSkill):
         except Exception:  # noqa: BLE001
             return []
 
+    # 中文备注：外部技能：辅助处理查询reactomepathways（参数：genes、background、fdr_threshold、min_count）
     async def _query_reactome_pathways(
         self,
         genes: list[str],
@@ -475,6 +481,7 @@ class PathwayEnrichmentSkill(BaseSkill):
         # Could be enhanced later with proper API integration
         return []
 
+    # 中文备注：外部技能：辅助处理查询diseaseassociations（参数：genes、fdr_threshold）
     async def _query_disease_associations(
         self, genes: list[str], fdr_threshold: float
     ) -> list[dict[str, Any]]:

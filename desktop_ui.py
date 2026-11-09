@@ -39,6 +39,7 @@ _SWP_NOACTIVATE = 0x0010
 _SWP_FRAMECHANGED = 0x0020
 
 
+# 中文备注：desktop_ui.py：辅助处理colorref（参数：hex_color）
 def _colorref(hex_color: str) -> int:
     """Pack ``#rrggbb`` into the ``0x00BBGGRR`` COLORREF DWM expects."""
     value = hex_color.lstrip("#")
@@ -46,6 +47,7 @@ def _colorref(hex_color: str) -> int:
     return red | (green << 8) | (blue << 16)
 
 
+# 中文备注：desktop_ui.py：设置dwm（参数：hwnd、attribute、value）
 def _dwm_set(hwnd: int, attribute: int, value: int) -> bool:
     """Apply one DWMWA_* attribute; False when the OS rejects it."""
     try:
@@ -61,6 +63,7 @@ def _dwm_set(hwnd: int, attribute: int, value: int) -> bool:
         return False
 
 
+# 中文备注：desktop_ui.py：应用dark窗口chrome（参数：hwnd）
 def _apply_dark_window_chrome(hwnd: int) -> bool:
     """Paint the native caption in the app's dark palette. Idempotent."""
     if not hwnd:
@@ -89,6 +92,7 @@ def _apply_dark_window_chrome(hwnd: int) -> bool:
 _OWN_PROCESS_ID = ctypes.windll.kernel32.GetCurrentProcessId() if sys.platform == "win32" else 0
 
 
+# 中文备注：desktop_ui.py：辅助处理findprocess窗口（参数：title）
 def _find_process_window(title: str) -> int:
     """Return the HWND of this process' top-level window named ``title``."""
     user32 = ctypes.windll.user32
@@ -101,6 +105,7 @@ def _find_process_window(title: str) -> int:
     found: list[int] = []
 
     @ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    # 中文备注：desktop_ui.py：辅助处理callback（参数：hwnd、_param）
     def callback(hwnd: int, _param: int) -> bool:
         process_id = wintypes.DWORD()
         user32.GetWindowThreadProcessId(hwnd, ctypes.byref(process_id))
@@ -123,6 +128,7 @@ def _find_process_window(title: str) -> int:
     return found[0] if found else 0
 
 
+# 中文备注：desktop_ui.py：处理窗口（参数：window）
 def _window_handle(window: webview.Window) -> int:
     """Current HWND for ``window`` (native form first, then enumeration)."""
     native = getattr(window, "native", None)
@@ -136,6 +142,7 @@ def _window_handle(window: webview.Window) -> int:
     return _find_process_window(WINDOW_TITLE)
 
 
+# 中文备注：desktop_ui.py：辅助处理installdarkchrome（参数：window）
 def _install_dark_chrome(window: webview.Window) -> None:
     """Keep the caption dark once the window exists and stops restyling.
 
@@ -146,6 +153,7 @@ def _install_dark_chrome(window: webview.Window) -> None:
     if sys.platform != "win32":
         return
 
+    # 中文备注：desktop_ui.py：辅助处理worker（参数：无）
     def worker() -> None:
         deadline = time.monotonic() + 20
         while time.monotonic() < deadline:
@@ -159,6 +167,7 @@ def _install_dark_chrome(window: webview.Window) -> None:
     threading.Thread(target=worker, name="epitoperank-window-chrome", daemon=True).start()
 
 
+# 中文备注：程序主入口（参数：无）
 def main() -> int:
     _load_local_env()
     _write_env_templates()

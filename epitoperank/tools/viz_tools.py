@@ -6,6 +6,7 @@ from epitoperank.analysis.visualization import generate_all_figures
 from epitoperank.tools.context import RunContext
 
 
+# 中文备注：生成整套发表级图表（参数：context、output_dir）
 def generate_figures(context: RunContext, output_dir: str | None = None) -> str:
     """Generate the publication figure set (PNG 300 DPI + SVG).
 

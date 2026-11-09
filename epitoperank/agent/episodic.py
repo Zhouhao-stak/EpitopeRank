@@ -45,6 +45,7 @@ class EpisodicMemory:
         self.db_path = Path(db_path)
 
     # -- schema -----------------------------------------------------------
+    # 中文备注：智能体内核：确保ensure（参数：无）
     def ensure(self) -> bool:
         """Create the table; ``False`` when the location is unusable."""
         try:
@@ -93,6 +94,7 @@ class EpisodicMemory:
             return
 
     # -- read -------------------------------------------------------------
+    # 中文备注：智能体内核：辅助处理suggest参数（参数：source_format、event_count）
     def suggest_params(self, source_format: str, event_count: int) -> dict[str, Any] | None:
         """Parameters that produced a non-empty result on comparable data.
 
@@ -127,6 +129,7 @@ class EpisodicMemory:
             return params
         return None
 
+    # 中文备注：智能体内核：辅助处理recent（参数：limit）
     def recent(self, limit: int = 20) -> list[dict[str, Any]]:
         """Most recent episodes (for UI/debug)."""
         try:

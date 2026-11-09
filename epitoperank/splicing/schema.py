@@ -160,6 +160,7 @@ def _to_bool(value: Any) -> bool | None:
     return None
 
 
+# 中文备注：剪接解析：解析事件行（参数：raw）
 def parse_event_row(raw: Mapping[str, Any]) -> StandardEvent:
     """Parse one raw TSV/CSV row into a :class:`StandardEvent`."""
     psi_by_sample = {
@@ -195,6 +196,7 @@ def parse_event_row(raw: Mapping[str, Any]) -> StandardEvent:
     )
 
 
+# 中文备注：剪接解析：加载剪接事件TSV（参数：path）
 def load_events_tsv(path: str | Path) -> list[StandardEvent]:
     """Load a standardized event table (TSV or CSV) from ``path``."""
     path = Path(path)
@@ -206,6 +208,7 @@ def load_events_tsv(path: str | Path) -> list[StandardEvent]:
         return [parse_event_row(raw) for raw in reader]
 
 
+# 中文备注：剪接解析：加载样本metadata（参数：path）
 def load_sample_metadata(path: str | Path) -> list[SampleMetadata]:
     """Load ``sample_metadata.tsv`` / ``.csv`` describing samples and groups.
 
@@ -257,6 +260,7 @@ def load_sample_metadata(path: str | Path) -> list[SampleMetadata]:
     return samples
 
 
+# 中文备注：剪接解析：辅助处理分组样本ids（参数：samples）
 def group_sample_ids(samples: Iterable[SampleMetadata]) -> dict[str, list[str]]:
     """Group sample ids by their ``group`` label."""
     groups: dict[str, list[str]] = {}

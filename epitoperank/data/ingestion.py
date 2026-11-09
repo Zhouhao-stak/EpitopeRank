@@ -239,6 +239,7 @@ VALIDATION_ZH: dict[str, str] = {
 # ---------------------------------------------------------------------------
 
 
+# 中文备注：数据接入：辅助处理norm（参数：value）
 def _norm(value: Any) -> str:
     """Lowercase, spell out Greek letters, drop punctuation and spaces."""
     text = str(value or "").strip().lower()
@@ -261,6 +262,7 @@ def _truncate(value: Any, limit: int = MAX_CELL_CHARS) -> str:
     return text if len(text) <= limit else text[: limit - 1] + "…"
 
 
+# 中文备注：数据接入：辅助处理scrub（参数：text）
 def _scrub(text: str) -> str:
     """Remove anything that looks like a credential from surfaced errors."""
     cleaned = re.sub(r"(sk-[A-Za-z0-9_\-]{8,})", "sk-****", str(text or ""))
@@ -322,6 +324,7 @@ class FileProfile:
         """返回表头列数，即数据行的标准宽度。"""
         return len(self.headers)
 
+    # 中文备注：数据接入：辅助处理列值（参数：header、limit）
     def column_values(self, header: str, limit: int = 40) -> list[str]:
         """Distinct non-empty values for ``header`` (capped scan)."""
         try:
@@ -342,6 +345,7 @@ class FileProfile:
                 break
         return values
 
+    # 中文备注：数据接入：辅助处理iter行（参数：无）
     def iter_rows(self) -> Iterator[list[str]]:
         """Yield data rows after the detected header, aligned to its width."""
         for index, row in enumerate(_raw_table_rows(self.path, self.file_kind, self.encoding, self.delimiter)):
@@ -373,6 +377,7 @@ class FileProfile:
         }
 
 
+# 中文备注：数据接入：辅助处理decodehead（参数：raw）
 def _decode_head(raw: bytes) -> tuple[str, str]:
     """Return ``(encoding, text)`` for a byte sample, tolerating Excel exports."""
     if raw.startswith(b"\xff\xfe") or raw.startswith(b"\xfe\xff"):
@@ -401,6 +406,7 @@ def _head_text(path: Path) -> tuple[bytes, str, str]:
     return raw, encoding, text
 
 
+# 中文备注：数据接入：辅助处理raw表行（参数：path、kind、encoding、delimiter）
 def _raw_table_rows(path: Path, kind: str, encoding: str, delimiter: str) -> Iterator[list[str]]:
     """Read a real spreadsheet or delimited text without trusting its suffix."""
     if kind == "xlsx":
@@ -519,6 +525,7 @@ def _detect_header_row(rows: Sequence[Sequence[str]]) -> int:
     return best_index
 
 
+# 中文备注：数据接入：辅助处理画像文件（参数：path、count_rows）
 def profile_file(path: Path, *, count_rows: bool = True) -> FileProfile:
     """Profile one file; never raises for unreadable/unsupported inputs."""
     profile = FileProfile(path=path, name=path.name)
@@ -655,6 +662,7 @@ def _synonym_score(header: str, synonyms: Sequence[str]) -> float:
 _FIELD_PRIORITY = {"gene_symbol": 3, "gene_id": 2, "event_type": 2}
 
 
+# 中文备注：数据接入：映射列（参数：headers、synonyms、threshold、strict_fields）
 def _map_columns(
     headers: Sequence[str],
     synonyms: Mapping[str, Sequence[str]],
@@ -683,6 +691,7 @@ def _map_columns(
     return mapping
 
 
+# 中文备注：数据接入：检测样本列（参数：profile、mapped_headers）
 def _detect_sample_columns(profile: FileProfile, mapped_headers: set[str]) -> dict[str, str]:
     """Find per-sample PSI columns and derive a sample id from each header."""
     sample_columns: dict[str, str] = {}
@@ -848,6 +857,7 @@ def _candidate_for(profile: FileProfile) -> _Candidate | None:
     return _Candidate(profile=profile, columns=columns, sample_columns=sample_columns, score=score)
 
 
+# 中文备注：数据接入：判断transcriptquantification（参数：profile）
 def _is_transcript_quantification(profile: FileProfile) -> bool:
     """Recognize long-read transcript abundance without calling it event PSI."""
     headers = {_norm(header) for header in profile.headers}
@@ -859,6 +869,7 @@ def _is_transcript_quantification(profile: FileProfile) -> bool:
     return profile.supported and (bambu or named_counts)
 
 
+# 中文备注：数据接入：判断expressionquantification（参数：profile）
 def _is_expression_quantification(profile: FileProfile) -> bool:
     """Expression abundance columns are not event-level inclusion ratios."""
     headers = [header.lower() for header in profile.headers]
@@ -1003,6 +1014,7 @@ def _mapping_prompt(profiles: Sequence[FileProfile], heuristic: Mapping[str, Any
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
 
+# 中文备注：数据接入：辅助处理sanitize映射（参数：raw、profiles、heuristic、metadata_profile）
 def _sanitize_mapping(
     raw: Mapping[str, Any] | Any,
     profiles: Sequence[FileProfile],
@@ -1158,6 +1170,7 @@ def _sanitize_mapping(
 # ---------------------------------------------------------------------------
 
 
+# 中文备注：数据接入：解析float（参数：value、decimal_comma）
 def _parse_float(value: Any, *, decimal_comma: bool | None = None) -> tuple[float | None, bool]:
     """Parse vendor numbers; returns ``(value, was_percent)``.
 
@@ -1430,6 +1443,7 @@ def _convert(
     dropped_types = Counter()
     scaled_psi = False
 
+    # 中文备注：数据接入：转换为PSI（参数：value、signed）
     def as_psi(value: float | None, *, signed: bool = False) -> float | None:
         """Interpret 0-100 values as percentages; real PSI/ΔPSI is within [-1, 1]."""
         nonlocal scaled_psi
@@ -1825,6 +1839,7 @@ def _native_preview(directory: Path) -> dict[str, Any] | None:
     }
 
 
+# 中文备注：数据接入：上传分组identical（参数：directory、sample_ids）
 def _groups_from_identical_upload(directory: Path, sample_ids: Sequence[str]) -> dict[str, str]:
     """Reuse metadata only when a previous upload contains byte-identical events."""
     from epitoperank.data.loader import METADATA_FILENAMES, _find_file
@@ -1866,6 +1881,7 @@ def _groups_from_identical_upload(directory: Path, sample_ids: Sequence[str]) ->
     return {}
 
 
+# 中文备注：数据接入：辅助处理previewingestion（参数：input_dir、settings、use_llm、enhancer）
 def preview_ingestion(
     input_dir: str | Path,
     *,
@@ -2371,6 +2387,7 @@ def _write_standardized(
     return output_dir
 
 
+# 中文备注：数据接入：应用ingestion（参数：input_dir、mapping、output_dir）
 def apply_ingestion(
     input_dir: str | Path,
     mapping: Mapping[str, Any],
@@ -2448,6 +2465,7 @@ def apply_ingestion(
     }
 
 
+# 中文备注：数据接入：应用native分组（参数：input_dir、sample_groups）
 def apply_native_groups(input_dir: str | Path, sample_groups: Mapping[str, str]) -> dict[str, Any]:
     """Save a reviewed assignment for a recognized input in its upload directory."""
     directory = Path(input_dir)

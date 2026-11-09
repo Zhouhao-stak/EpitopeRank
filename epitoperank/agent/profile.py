@@ -34,6 +34,7 @@ def _ratio(events: list[Any], attribute: str) -> float:
     return round(hits / len(events), 4)
 
 
+# 中文备注：智能体内核：构建画像（参数：context）
 def build_profile(context: RunContext) -> dict[str, Any]:
     """Compute the dataset profile (pure read, no side effects)."""
     dataset = context.dataset
@@ -99,6 +100,7 @@ def build_profile(context: RunContext) -> dict[str, Any]:
     }
 
 
+# 中文备注：智能体内核：辅助处理画像文本（参数：profile）
 def profile_text(profile: dict[str, Any]) -> str:
     """Human-readable one-paragraph rendering of the profile."""
     types = ", ".join(f"{key}={value}" for key, value in sorted(profile["event_types"].items()))

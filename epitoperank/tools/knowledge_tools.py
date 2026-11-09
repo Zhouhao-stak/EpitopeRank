@@ -5,6 +5,7 @@ from __future__ import annotations
 from epitoperank.tools.context import RunContext
 
 
+# 中文备注：为候选基因收集文献证据（参数：context、genes、max_per_gene）
 def collect_literature_evidence(
     context: RunContext,
     genes: list[str] | None = None,
@@ -38,6 +39,7 @@ def collect_literature_evidence(
     return message
 
 
+# 中文备注：生成有证据支撑的生物学解读（参数：context）
 def interpret_candidates(context: RunContext) -> str:
     """Produce the structured biological interpretation of top candidates.
 

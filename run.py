@@ -40,6 +40,7 @@ if sys.platform == "win32":
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 
+# 中文备注：run.py：辅助处理cmdanalyze（参数：args）
 def _cmd_analyze(args: argparse.Namespace) -> int:
     from epitoperank.config import load_prepared_settings, load_settings
     from epitoperank.llm.client import describe_llm_mode
@@ -101,6 +102,7 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
     return 0
 
 
+# 中文备注：run.py：重放cmd（参数：args）
 def _cmd_replay(args):
     from epitoperank.config import load_prepared_settings
     from epitoperank.pipeline import run_analysis
@@ -118,6 +120,7 @@ def _cmd_replay(args):
     return 0
 
 
+# 中文备注：run.py：比较cmd（参数：args）
 def _cmd_compare(args):
     from epitoperank.llm.trace import compare
     differences = compare(args.trace_a, args.trace_b)
@@ -125,6 +128,7 @@ def _cmd_compare(args):
     return 1 if differences else 0
 
 
+# 中文备注：run.py：辅助处理cmdfollowup（参数：args）
 def _cmd_followup(args: argparse.Namespace) -> int:
     from epitoperank.config import (
         AgentSettings,
@@ -173,6 +177,7 @@ def _cmd_followup(args: argparse.Namespace) -> int:
     return 0
 
 
+# 中文备注：run.py：辅助处理cmd肽段（参数：args）
 def _cmd_peptide(args: argparse.Namespace) -> int:
     """Predict, filter and rank MHC-I/II peptides."""
     from epitoperank.peptide import PeptideOptions, capabilities, run
@@ -250,6 +255,7 @@ def _cmd_peptide(args: argparse.Namespace) -> int:
     return 0
 
 
+# 中文备注：run.py：辅助处理cmd项目（参数：args）
 def _cmd_projects(args: argparse.Namespace) -> int:
     from epitoperank.config import load_prepared_settings, load_settings
     from epitoperank.pipeline import list_projects
@@ -264,6 +270,7 @@ def _cmd_projects(args: argparse.Namespace) -> int:
     return 0
 
 
+# 中文备注：run.py：辅助处理cmd状态（参数：args）
 def _cmd_status(args: argparse.Namespace) -> int:
     from epitoperank.config import load_prepared_settings, load_settings
     from epitoperank.pipeline import project_status
@@ -316,6 +323,7 @@ def _cmd_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+# 中文备注：run.py：构建parser（参数：无）
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="epitoperank", description="EpitopeRank CLI")
     parser.add_argument("--config", default=None, help="Path to config.yaml")
@@ -431,6 +439,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+# 中文备注：程序主入口（参数：argv）
 def main(argv: list[str] | None = None) -> int:
     # The desktop launcher and the API load the local .env automatically; the
     # CLI should behave the same way, otherwise a key pasted into the UI looks

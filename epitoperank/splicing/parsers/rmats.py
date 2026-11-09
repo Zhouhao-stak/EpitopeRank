@@ -475,6 +475,7 @@ def parse_rmats_directory(
     return events
 
 
+# 中文备注：剪接解析：判断rmatsdirectory（参数：path）
 def is_rmats_directory(path: str | Path) -> bool:
     """Heuristic: a directory containing at least one recognizable rMATS table."""
     return bool(discover_rmats_tables(path))

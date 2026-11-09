@@ -11,6 +11,9 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'out' / 'demo_videos'
 OUT.mkdir(parents=True, exist_ok=True)
+# 字体合规说明：演示视频在本机调用 Windows 系统自带字体渲染字幕，
+# 只生成画面像素，不复制、不嵌入、不随产品分发任何字体文件。
+# 系统未安装该字体时应回退到默认字体，不得另行打包商业字体。
 FONT = 'C:/Windows/Fonts/msyh.ttc'
 W, H = 1280, 720
 BG = '#f5f7fb'; NAV = '#101b2f'; WHITE = '#ffffff'; INK = '#152238'

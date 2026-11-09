@@ -6,6 +6,7 @@ from epitoperank.report.generator import ReportGenerator
 from epitoperank.tools.context import RunContext
 
 
+# 中文备注：写出 HTML/PDF 报告（参数：context、output_dir）
 def generate_report(context: RunContext, output_dir: str | None = None) -> str:
     """Generate the scientific report (HTML and, if possible, PDF).
 

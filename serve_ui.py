@@ -81,6 +81,7 @@ def _write_env_templates() -> list[Path]:
     return written
 
 
+# 中文备注：serve_ui.py：辅助处理free端口（参数：start、attempts）
 def _free_port(start: int, attempts: int = 40) -> int:
     """Return the first free TCP port at or after ``start``."""
     for offset in range(attempts):
@@ -100,6 +101,7 @@ def _free_port(start: int, attempts: int = 40) -> int:
         return int(sock.getsockname()[1])
 
 
+# 中文备注：程序主入口（参数：无）
 def main() -> int:
     parser = argparse.ArgumentParser(description="Serve the EpitopeRank web UI")
     parser.add_argument("--host", default="127.0.0.1")
@@ -182,6 +184,7 @@ def main() -> int:
     return 0
 
 
+# 中文备注：serve_ui.py：打开whenready（参数：url、timeout）
 def _open_when_ready(url: str, timeout: float = 60.0) -> None:
     """Poll the health endpoint, then open the browser."""
     import urllib.request

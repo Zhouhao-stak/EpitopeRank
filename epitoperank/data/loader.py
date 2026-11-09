@@ -152,6 +152,7 @@ def _find_file(directory: Path, candidates: Iterable[str]) -> Path | None:
     return None
 
 
+# 中文备注：数据接入：判断standard事件表头（参数：path）
 def _has_standard_event_header(path: Path) -> bool:
     """True if the first row contains the full AS_event_master contract."""
     if path.suffix.lower() not in {".tsv", ".txt", ".csv"}:
@@ -206,6 +207,7 @@ def _find_standard_event_table(directory: Path) -> Path | None:
     return None
 
 
+# 中文备注：数据接入：加载differentialexpression（参数：path）
 def load_differential_expression(path: Path) -> list[DifferentialGene]:
     """Load a differential-expression table (gene_id/log2FC/pvalue/padj/baseMean)."""
     genes: list[DifferentialGene] = []
@@ -240,6 +242,7 @@ def _optional_float(value: Any) -> float | None:
         return None
 
 
+# 中文备注：数据接入：加载数据集（参数：input_path）
 def load_dataset(input_path: str | Path) -> Dataset:
     """Load and normalize an analysis input directory.
 

@@ -43,6 +43,7 @@ class FilterReport:
         }
 
 
+# 中文备注：剪接解析：辅助处理passessignificance（参数：event、settings）
 def passes_significance(event: StandardEvent, settings: FilterSettings) -> bool:
     """FDR and effect-size gate."""
     if event.fdr is None or event.delta_psi is None:
@@ -50,6 +51,7 @@ def passes_significance(event: StandardEvent, settings: FilterSettings) -> bool:
     return event.fdr < settings.fdr_threshold and abs(event.delta_psi) > settings.delta_psi_threshold
 
 
+# 中文备注：剪接解析：辅助处理passes质量（参数：event、settings）
 def passes_quality(event: StandardEvent, settings: FilterSettings) -> tuple[bool, str]:
     """Quality gate; returns (passed, reason-if-failed)."""
     if event.single_sample_driven:
@@ -66,6 +68,7 @@ def passes_quality(event: StandardEvent, settings: FilterSettings) -> tuple[bool
     return True, ""
 
 
+# 中文备注：按 FDR 与 |dPSI| 筛选显著剪接事件（参数：events、settings）
 def filter_significant_events(
     events: Sequence[StandardEvent],
     settings: FilterSettings | None = None,

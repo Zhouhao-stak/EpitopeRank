@@ -47,11 +47,13 @@ _NEGATIVE = ("D", "E", "C", "Y")
 _HYDROPHOBIC = frozenset("AVILMFWY")
 
 
+# 中文备注：肽预测：辅助处理molecularweight（参数：peptide）
 def molecular_weight(peptide: str) -> float:
     """Average (not monoisotopic) molecular mass in Da, including water."""
     return round(sum(RESIDUE_MASS[aa] for aa in peptide) + WATER_MASS, 2)
 
 
+# 中文备注：肽预测：辅助处理netcharge（参数：peptide、ph）
 def net_charge(peptide: str, ph: float = 7.0) -> float:
     """Net charge at ``ph`` using the Henderson-Hasselbalch equation."""
     charge = 0.0
@@ -66,6 +68,7 @@ def net_charge(peptide: str, ph: float = 7.0) -> float:
     return round(charge, 3)
 
 
+# 中文备注：肽预测：辅助处理isoelectricpoint（参数：peptide、iterations）
 def isoelectric_point(peptide: str, *, iterations: int = 64) -> float:
     """Bisection root of the net-charge curve on pH 0-14."""
     low, high = 0.0, 14.0
@@ -78,6 +81,7 @@ def isoelectric_point(peptide: str, *, iterations: int = 64) -> float:
     return round((low + high) / 2, 2)
 
 
+# 中文备注：肽预测：辅助处理netchargeraw（参数：peptide、ph）
 def net_charge_raw(peptide: str, ph: float) -> float:
     """Unrounded net charge, used by :func:`isoelectric_point`."""
     charge = 1.0 / (1.0 + 10 ** (ph - PKA["Nterm"]))
@@ -90,6 +94,7 @@ def net_charge_raw(peptide: str, ph: float) -> float:
     return charge
 
 
+# 中文备注：肽预测：辅助处理gravy（参数：peptide）
 def gravy(peptide: str) -> float:
     """Grand average of hydropathy (Kyte-Doolittle)."""
     if not peptide:
@@ -97,6 +102,7 @@ def gravy(peptide: str) -> float:
     return round(fmean(HYDROPATHY[aa] for aa in peptide), 3)
 
 
+# 中文备注：肽预测：辅助处理aromaticity（参数：peptide）
 def aromaticity(peptide: str) -> float:
     """Fraction of F/W/Y residues."""
     if not peptide:
@@ -104,6 +110,7 @@ def aromaticity(peptide: str) -> float:
     return round(sum(aa in "FWY" for aa in peptide) / len(peptide), 3)
 
 
+# 中文备注：肽预测：辅助处理aliphatic索引（参数：peptide）
 def aliphatic_index(peptide: str) -> float:
     """Ikai aliphatic index (mole-percent scaled)."""
     if not peptide:
@@ -112,6 +119,7 @@ def aliphatic_index(peptide: str) -> float:
     return round(counts["A"] + 2.9 * counts["V"] + 3.9 * (counts["I"] + counts["L"]), 2)
 
 
+# 中文备注：肽预测：辅助处理hydrophobicfraction（参数：peptide）
 def hydrophobic_fraction(peptide: str) -> float:
     """Fraction of strongly hydrophobic residues (A/V/I/L/M/F/W/Y)."""
     if not peptide:
@@ -119,6 +127,7 @@ def hydrophobic_fraction(peptide: str) -> float:
     return round(sum(aa in _HYDROPHOBIC for aa in peptide) / len(peptide), 3)
 
 
+# 中文备注：肽预测：辅助处理shannonentropy（参数：peptide）
 def shannon_entropy(peptide: str) -> float:
     """Per-position Shannon entropy in bits; low values flag low complexity."""
     if not peptide:
@@ -130,6 +139,7 @@ def shannon_entropy(peptide: str) -> float:
     return round(-sum(count / total * log2(count / total) for count in counts.values()), 3)
 
 
+# 中文备注：肽预测：辅助处理ligandanchors（参数：peptide、mhc_class）
 def ligand_anchors(peptide: str, *, mhc_class: int = 1) -> dict[str, str]:
     """Report the residues usually called anchor positions.
 
@@ -143,6 +153,7 @@ def ligand_anchors(peptide: str, *, mhc_class: int = 1) -> dict[str, str]:
     return {"p1": peptide[0] if peptide else ""}
 
 
+# 中文备注：肽预测：描述describe（参数：peptide、mhc_class）
 def describe(peptide: str, *, mhc_class: int = 1) -> dict[str, object]:
     """All local features for one peptide."""
     peptide = normalize_peptide(peptide)

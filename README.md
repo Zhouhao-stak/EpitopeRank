@@ -352,6 +352,8 @@ CI 在每次推送时跑：
 | [DATASETS.md](docs/DATASETS.md) | 可用数据集与参考表来源 |
 | [DATA_AND_DEPLOY.md](docs/DATA_AND_DEPLOY.md) | 数据存哪 · 部署 · 域名与 HTTPS |
 | [智能体的手册.md](docs/智能体的手册.md) | 能力全清单与边界 |
+| [函数与工具中文索引.md](docs/函数与工具中文索引.md) | 全仓函数/动作的中文说明与源码位置，便于维护交接 |
+| [FONTS.md](docs/FONTS.md) | 字体来源、商用授权核实与打包裁剪说明 |
 | [docs/README.md](docs/README.md) | 完整索引 |
 
 ## 设计原则

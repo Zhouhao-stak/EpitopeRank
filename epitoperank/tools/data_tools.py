@@ -5,6 +5,7 @@ from __future__ import annotations
 from epitoperank.tools.context import RunContext
 
 
+# 中文备注：把数据集概览写进 Methods（参数：context）
 def summarize_dataset(context: RunContext) -> str:
     """Return a compact summary of the loaded dataset.
 

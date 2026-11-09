@@ -46,10 +46,12 @@ def allow_all() -> bool:
         "1", "true", "yes", "on"}
 
 
+# 中文备注：epitoperank：辅助处理主机（参数：url）
 def _host_for(url: str) -> str:
     return (urllib.parse.urlsplit(url).hostname or "").lower()
 
 
+# 中文备注：epitoperank：判断allowed（参数：host）
 def _is_allowed(host: str) -> bool:
     if allow_all():
         return True
@@ -59,6 +61,7 @@ def _is_allowed(host: str) -> bool:
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     """重定向目标必须同样在白名单内，否则直接拒绝。"""
 
+    # 中文备注：epitoperank：辅助处理redirect请求（参数：req、fp、code、msg）
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: D102
         if not _is_allowed(_host_for(newurl)):
             raise urllib.error.HTTPError(newurl, code, "redirect target not allowed", headers, fp)

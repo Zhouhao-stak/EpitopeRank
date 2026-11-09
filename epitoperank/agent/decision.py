@@ -100,6 +100,7 @@ class Decision:
         }
 
 
+# 中文备注：智能体内核：辅助处理accept（参数：state、code、reason）
 def accept(state: AgentState, code: str, reason: str) -> None:
     """Record an issue as an accepted limitation (it no longer blocks)."""
     accepted = list(state.facts.get("accepted_limitations", []))
@@ -194,6 +195,7 @@ class DecisionEngine:
             )
         return None
 
+    # 中文备注：智能体内核：处理empty结果（参数：code）
     def _handle_empty_result(self, code: str) -> Decision | None:
         """Zero significant events: re-filter with new params, else adapt, else accept."""
         state = self.state
@@ -225,6 +227,7 @@ class DecisionEngine:
         )
         return None
 
+    # 中文备注：智能体内核：辅助处理accept（参数：code、reason、detail）
     def _accept(self, code: str, reason: str, detail: str = "") -> bool:
         """Record an issue as an accepted limitation (ask first when assisted)."""
         if code in self._asked:
@@ -372,6 +375,7 @@ class DecisionEngine:
             return Decision("act", action_name, clean, rationale, source="rule")
         return None
 
+    # 中文备注：智能体内核：辅助处理cleared（参数：action_name、rationale、args）
     def _cleared(self, action_name: str, rationale: str, args: dict[str, Any]) -> bool:
         """Ask a human before decisions that are hard to undo (assisted mode)."""
         gate = self.gate
@@ -405,6 +409,7 @@ class DecisionEngine:
         block = getattr(self.settings, "agent", None)
         return bool(getattr(block, "hypothesis_testing", True))
 
+    # 中文备注：智能体内核：辅助处理needsexternal富集（参数：无）
     def _needs_external_enrichment(self) -> bool:
         """True when no enrichment exists yet and an external call is worth it."""
         facts = self.state.facts
@@ -417,6 +422,7 @@ class DecisionEngine:
             return any(step.action == "run_enrichment" for step in self.state.steps)
         return True
 
+    # 中文备注：智能体内核：检索needs文献（参数：无）
     def _needs_literature_search(self) -> bool:
         """True when the collected evidence covers too few candidate genes."""
         facts = self.state.facts
@@ -529,6 +535,7 @@ class DecisionEngine:
             return None
 
     # -- optional model advisory -----------------------------------------
+    # 中文备注：智能体内核：辅助处理optionalinsight（参数：无）
     def _optional_insight(self) -> Decision | None:
         """Once the mandatory work is done, ask the model for an extra step."""
         state = self.state

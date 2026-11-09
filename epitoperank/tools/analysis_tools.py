@@ -12,6 +12,7 @@ from epitoperank.splicing.ranking import rank_candidates as _rank_candidates_imp
 from epitoperank.tools.context import RunContext
 
 
+# 中文备注：按 FDR 与 |dPSI| 筛选显著剪接事件（参数：context、fdr_threshold、delta_psi_threshold、event_types）
 def filter_significant_events(
     context: RunContext,
     fdr_threshold: float | None = None,
@@ -66,6 +67,7 @@ def filter_significant_events(
     return message
 
 
+# 中文备注：按四分量综合得分排序候选事件（参数：context、top_n）
 def rank_candidates(context: RunContext, top_n: int | None = None) -> str:
     """Rank significant events by the composite candidate score."""
     limit = top_n or context.settings.analysis.top_candidates
@@ -93,6 +95,7 @@ def rank_candidates(context: RunContext, top_n: int | None = None) -> str:
     return message
 
 
+# 中文备注：GO/KEGG 富集分析（本地）（参数：context、alpha）
 def run_enrichment(context: RunContext, alpha: float | None = None) -> str:
     """Run functional enrichment for the candidate genes.
 
@@ -123,6 +126,7 @@ def run_enrichment(context: RunContext, alpha: float | None = None) -> str:
     return message
 
 
+# 中文备注：工具层：辅助处理候选基因名称（参数：context）
 def _candidate_gene_names(context: RunContext) -> list[str]:
     """Gene symbols for the events that will be ranked (or all genes)."""
     if context.significant_events:
@@ -132,6 +136,7 @@ def _candidate_gene_names(context: RunContext) -> list[str]:
     return [gene for gene in dict.fromkeys(genes) if gene]
 
 
+# 中文备注：工具层：辅助处理analysis摘要（参数：context）
 def analysis_summary(context: RunContext) -> dict[str, Any]:
     """Structured summary of the analysis state (used by the report)."""
     stats = effect_size_summary(context.significant_events)

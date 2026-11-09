@@ -49,6 +49,7 @@ class Action:
 # --------------------------------------------------------------------------
 
 
+# 中文备注：对数据集做画像：规模、缺失、FDR 覆盖与分组平衡（参数：context、state）
 def profile_dataset(context: RunContext, state: AgentState) -> str:
     """Profile the dataset before deciding anything (the 'sense' phase)."""
     state.profile = build_profile(context)
@@ -56,6 +57,7 @@ def profile_dataset(context: RunContext, state: AgentState) -> str:
     return profile_text(state.profile)
 
 
+# 中文备注：在当前阈值下检查质量闸门的表现（参数：context、state）
 def assess_quality(context: RunContext, state: AgentState) -> str:
     """Assess how the quality gates behave at the current thresholds."""
     analysis = context.settings.analysis
@@ -112,6 +114,7 @@ def _count_at(context: RunContext, fdr: float, dpsi: float) -> int:
     return total
 
 
+# 中文备注：按数据自适应选择 FDR / |dPSI| 阈值（参数：context、state、target、strategy）
 def adapt_thresholds(
     context: RunContext,
     state: AgentState,
@@ -208,6 +211,7 @@ def adapt_thresholds(
     )
 
 
+# 中文备注：智能体内核：应用参数（参数：context、state、fdr、dpsi）
 def _apply_params(
     context: RunContext,
     state: AgentState,
@@ -243,6 +247,7 @@ def _apply_params(
     return message
 
 
+# 中文备注：对单个基因做深入展开（参数：context、state、gene）
 def deep_dive_gene(context: RunContext, state: AgentState, gene: str) -> str:
     """Zoom into one gene: its events, effect sizes and literature evidence."""
     gene = str(gene).strip()
@@ -285,6 +290,7 @@ def deep_dive_gene(context: RunContext, state: AgentState, gene: str) -> str:
 # --------------------------------------------------------------------------
 
 
+# 中文备注：智能体内核：辅助处理bridge（参数：state、context）
 def _bridge(state: AgentState, context: RunContext) -> SkillBridge:
     """Lazily create the (budgeted) bridge to the async external skills."""
     if state.bridge is None:
@@ -292,6 +298,7 @@ def _bridge(state: AgentState, context: RunContext) -> SkillBridge:
     return state.bridge
 
 
+# 中文备注：用统计检验挑战自己的结果（参数：context、state、alpha）
 def test_hypothesis(context: RunContext, state: AgentState, alpha: float | None = None) -> str:
     """Challenge the current result with pre-registered statistical tests.
 
@@ -310,6 +317,7 @@ def test_hypothesis(context: RunContext, state: AgentState, alpha: float | None 
     return summary
 
 
+# 中文备注：注释候选基因（参数：context、state、genes）
 def annotate_genes(context: RunContext, state: AgentState, genes: list[str] | None = None) -> str:
     """Annotate candidate genes from an external source (MyGene/Ensembl)."""
     target = [str(gene) for gene in (genes or context.top_genes(12))]
@@ -381,6 +389,7 @@ def annotate_genes(context: RunContext, state: AgentState, genes: list[str] | No
     return message
 
 
+# 中文备注：用 Ensembl/UniProt 增强基因注释（参数：context、state、genes、use_ensembl）
 def annotate_genes_enhanced(
     context: RunContext,
     state: AgentState,
@@ -450,6 +459,7 @@ def annotate_genes_enhanced(
     return message
 
 
+# 中文备注：用 KEGG/Reactome 原生通路补充富集（参数：context、state、use_kegg、use_reactome）
 def enrich_pathways_bioservices(
     context: RunContext,
     state: AgentState,
@@ -521,6 +531,7 @@ def enrich_pathways_bioservices(
     return message
 
 
+# 中文备注：检索 PubMed / Europe PMC（参数：context、state、gene、query）
 def search_literature(
     context: RunContext,
     state: AgentState,
@@ -585,6 +596,7 @@ def search_literature(
     return message
 
 
+# 中文备注：通过 GSEApy/Enrichr 做通路富集（参数：context、state、genes、organism）
 def enrich_pathways(
     context: RunContext,
     state: AgentState,
@@ -690,6 +702,7 @@ def enrich_pathways(
     return message
 
 
+# 中文备注：智能体内核：辅助处理coordinates（参数：event）
 def _coordinates_of(event: Any) -> tuple[str | None, int | None, int | None, str | None]:
     """Best-effort parse of chromosome/start/end/strand from an event."""
     chrom = getattr(event, "chromosome", None) or None
@@ -701,6 +714,7 @@ def _coordinates_of(event: Any) -> tuple[str | None, int | None, int | None, str
     return chrom, start, end, strand
 
 
+# 中文备注：解读重点剪接事件的临床意义（参数：context、state、gene、event_type）
 def interpret_splice_event(
     context: RunContext,
     state: AgentState,
@@ -841,6 +855,7 @@ def generate_report(context: RunContext, state: AgentState, output_dir: str | No
     return _impl(context, output_dir)
 
 
+# 中文备注：查询实验室级跨项目复现基因（参数：context、state、min_projects）
 def consult_knowledge(context: RunContext, state: AgentState, min_projects: int = 2) -> str:
     """Check lab-level recurrence before interpreting candidates.
 
@@ -896,6 +911,7 @@ def consult_knowledge(context: RunContext, state: AgentState, min_projects: int 
         )
 
 
+# 中文备注：把本次候选写入实验室知识库（参数：context、state、top_n）
 def persist_knowledge(context: RunContext, state: AgentState, top_n: int = 10) -> str:
     """Save top candidates from this run into the knowledge base.
 
@@ -1013,6 +1029,7 @@ def call_mcp_tool_action(context: RunContext, state: AgentState,
             raise ValueError("arguments 必须是 JSON 对象")
     except (ValueError, TypeError) as error:
         return f"参数无效：{error}"
+    # 中文备注：智能体内核：调用real（参数：无）
     def real_call() -> dict:
         try:
             return run_async(mcp_call_tool(str(server), str(tool), payload))
@@ -1040,6 +1057,7 @@ def call_mcp_tool_action(context: RunContext, state: AgentState,
     return json.dumps(result, ensure_ascii=False, default=str)[:1500]
 
 
+# 中文备注：构建智能体可调用的动作注册表（参数：无）
 def build_registry() -> dict[str, Action]:
     """All actions the decision engine may pick from."""
     actions = [

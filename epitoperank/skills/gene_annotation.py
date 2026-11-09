@@ -140,6 +140,7 @@ class GeneAnnotationSkill(BaseSkill):
                 error=f"基因注释查询失败: {str(exc)}",
             )
 
+    # 中文备注：外部技能：获取mygene信息（参数：query）
     async def _fetch_mygene_info(self, query: str) -> dict[str, Any] | None:
         """Fetch basic gene information from MyGene.info."""
         try:
@@ -163,6 +164,7 @@ class GeneAnnotationSkill(BaseSkill):
             pass
         return None
 
+    # 中文备注：外部技能：获取ensemblstructure（参数：gene_id、genome_build）
     async def _fetch_ensembl_structure(
         self, gene_id: str, genome_build: str
     ) -> dict[str, Any] | None:
@@ -189,6 +191,7 @@ class GeneAnnotationSkill(BaseSkill):
             pass
         return None
 
+    # 中文备注：外部技能：获取splicing剪接事件（参数：gene_id）
     async def _fetch_splicing_events(self, gene_id: str) -> list[dict[str, Any]] | None:
         """Fetch known splicing events from Ensembl."""
         # This would integrate with SpliceAI or similar databases
@@ -201,6 +204,7 @@ class GeneAnnotationSkill(BaseSkill):
             }
         ]
 
+    # 中文备注：外部技能：获取clinvarvariants（参数：gene_id）
     async def _fetch_clinvar_variants(self, gene_id: str) -> list[dict[str, Any]] | None:
         """Fetch clinical variants from ClinVar via NCBI E-utilities."""
         try:

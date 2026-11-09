@@ -163,6 +163,7 @@ class LiteratureSearchSkill(BaseSkill):
                 error=f"文献搜索失败: {str(exc)}",
             )
 
+    # 中文备注：外部技能：检索pubmed（参数：query、max_results、year_from、year_to）
     async def _search_pubmed(
         self,
         query: str,
@@ -261,6 +262,7 @@ class LiteratureSearchSkill(BaseSkill):
         except Exception:  # noqa: BLE001
             return []
 
+    # 中文备注：外部技能：检索europepmc（参数：query、max_results、year_from、year_to）
     async def _search_europe_pmc(
         self,
         query: str,
@@ -314,6 +316,7 @@ class LiteratureSearchSkill(BaseSkill):
         except Exception:  # noqa: BLE001
             return []
 
+    # 中文备注：外部技能：检索semanticscholar（参数：query、max_results、year_from、year_to）
     async def _search_semantic_scholar(
         self,
         query: str,

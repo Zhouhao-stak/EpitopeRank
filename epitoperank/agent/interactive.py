@@ -62,6 +62,7 @@ class ConfirmationGate:
         return self.mode == "assisted"
 
     # -- public -----------------------------------------------------------
+    # 中文备注：智能体内核：辅助处理approve（参数：kind、action、question、detail）
     def approve(
         self,
         kind: str,
@@ -113,6 +114,7 @@ class ConfirmationGate:
         return f"autonomy={self.mode}: {len(self.records)} decision(s), {asked} asked, {denied} declined"
 
 
+# 中文备注：智能体内核：辅助处理askstdin（参数：pending）
 def _ask_stdin(pending: PendingDecision) -> bool:
     """Prompt on stdin; fall back to the default when there is no terminal."""
     try:

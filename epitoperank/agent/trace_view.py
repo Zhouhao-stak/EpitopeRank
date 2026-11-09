@@ -15,6 +15,7 @@ from typing import Any
 from epitoperank.llm.trace import ModelTrace
 
 
+# 中文备注：读取项目目录下的 agent_state.json（参数：project_dir）
 def load_state(project_dir: str | Path) -> dict[str, Any]:
     """Load ``agent_state.json`` from a project directory (or the file itself)."""
     path = Path(project_dir)
@@ -27,6 +28,7 @@ def load_state(project_dir: str | Path) -> dict[str, Any]:
     return data
 
 
+# 中文备注：把状态文件汇总为界面可用的只读视图（参数：state）
 def summarize(state: dict[str, Any]) -> dict[str, Any]:
     """Build the decision-trace payload consumed by the web UI."""
     steps = [s for s in (state.get("steps") or []) if isinstance(s, dict)]

@@ -136,6 +136,7 @@ class KnowledgeService:
         return self._store
 
     # -- public API ----------------------------------------------------------
+    # 中文备注：知识库：收集证据（参数：genes、use_pubmed、max_per_gene）
     def collect_evidence(
         self,
         genes: list[str],
@@ -189,10 +190,12 @@ class KnowledgeService:
                     evidence.setdefault(gene, []).extend(entries)
         return evidence
 
+    # 中文备注：知识库：打分文献（参数：evidence）
     def literature_score(self, evidence: dict[str, list[Evidence]]) -> dict[str, int]:
         """Number of evidence records per gene (for candidate ranking)."""
         return {gene: len(entries) for gene, entries in evidence.items() if entries}
 
+    # 中文备注：知识库：描述来源（参数：无）
     def describe_sources(self) -> list[str]:
         """Human-readable list of active evidence sources."""
         sources = ["EpitopeRank curated knowledge base (offline)"]
@@ -206,6 +209,7 @@ class KnowledgeService:
                 sources.append("SQLite literature store")
         return sources
 
+    # 中文备注：知识库：导出export（参数：path）
     def export(self, path: str | Path) -> None:
         """Dump the evidence-source manifest to a JSON file (auditability)."""
         path = Path(path)

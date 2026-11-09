@@ -83,6 +83,7 @@ def rank_predictions(scores: Iterable[dict], candidates: Iterable[dict]) -> list
 
 def _candidate_key(item: dict) -> tuple[float, float]:
     """候选事件排序键：FDR 小者优先，其次 |ΔPSI| 大者优先。"""
+    # 中文备注：肽预测：辅助处理float（参数：value、default）
     def _float(value: Any, default: float) -> float:
         try:
             return float(value)

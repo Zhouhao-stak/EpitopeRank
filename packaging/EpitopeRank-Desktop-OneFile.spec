@@ -158,8 +158,62 @@ def _drop(entries):
     return kept
 
 
+# --- Font compliance / bundle size -----------------------------------------
+# matplotlib and reportlab ship their whole font collections. All of them are
+# free-licensed (DejaVu/Bitstream Vera, STIX OFL, reportlab samples), so there
+# is no licensing risk, but bundling ~9 MB of unused glyphs is pure waste.
+# Charts use matplotlib's default DejaVu Sans; PDF output uses reportlab's
+# built-in standard-14 metrics, never an embedded TrueType font. Keep only the
+# files those two paths can reach, so the executable stays smaller.
+_FONT_KEEP_EXACT = {
+    "dejavusans.ttf", "dejavusans-bold.ttf", "dejavusans-oblique.ttf",
+    "dejavusans-boldoblique.ttf", "dejavusansdisplay.ttf",
+    "dejavusansmono.ttf", "dejavusansmono-bold.ttf",
+}
+# matplotlib 的 font_manager 会按硬编码路径打开 LastResortHE-Regular.ttf，
+# mathtext 也可能回退到 STIX/cm 系列：这些字体必须保留，删掉会导致出图失败。
+_FONT_DROP_NAMES = ()
+
+
+def _keep_bundled_font(name):
+    """Return False for third-party font files the application never loads."""
+    lowered = name.replace("\\", "/").lower()
+    normalized = "/" + lowered.lstrip("/")
+    if "/mpl-data/fonts/" not in normalized and "/reportlab/fonts/" not in normalized:
+        return True
+    base = lowered.rsplit("/", 1)[-1]
+    # reportlab: keep the standard-14 AFM metrics, drop sample outline fonts.
+    if "/reportlab/fonts/" in normalized:
+        return base.endswith(".afm") or base.endswith(".txt")
+    if base.endswith((".afm", ".txt", ".map")):
+        return True
+    if base in _FONT_KEEP_EXACT:
+        return True
+    if any(base.startswith(prefix) for prefix in _FONT_DROP_NAMES):
+        return False
+    # DejaVu Serif 从不作为默认字体加载，可安全移除。
+    if base.startswith("dejavuserif") and base not in _FONT_KEEP_EXACT:
+        return False
+    # 其余（DejaVu Sans / Mono、LastResortHE、STIX、cm、AFM）全部保留。
+    return True
+
+
+def _drop_fonts(entries):
+    kept = []
+    dropped = 0
+    for entry in entries:
+        if _keep_bundled_font(str(entry[0])):
+            kept.append(entry)
+        else:
+            dropped += 1
+    if dropped:
+        print(f"[spec] dropped {dropped} unused bundled font files")
+    return kept
+
+
 a.binaries = _drop(a.binaries)
 a.datas = _drop(a.datas)
+a.datas = _drop_fonts(a.datas)
 
 exe = EXE(
     pyz,

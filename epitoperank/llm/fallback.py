@@ -73,6 +73,7 @@ class DeterministicClient(ChatCompletionClient):
         self._call_count = 0
 
     # -- scripting --------------------------------------------------------
+    # 中文备注：大模型层：辅助处理enqueue（参数：item）
     def enqueue(self, item: dict[str, Any]) -> None:
         """Append a scripted response (``{"text": ...}`` or ``{"tool": name, "args": {...}}``)."""
         self._queue.append(item)

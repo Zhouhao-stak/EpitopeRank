@@ -66,6 +66,7 @@ def _label(candidate: dict[str, Any]) -> str:
     return f"{gene} ({candidate.get('event_type', '?')})"
 
 
+# 中文备注：统计分析：辅助处理plotdpsiwaterfall（参数：candidates、output_dir、top_n）
 def plot_dpsi_waterfall(candidates: Sequence[dict[str, Any]], output_dir: Path, top_n: int = 25) -> Path:
     """Waterfall plot of the largest |delta PSI| candidates."""
     fig, ax = plt.subplots(figsize=(8.4, 5.2))
@@ -101,6 +102,7 @@ def plot_dpsi_waterfall(candidates: Sequence[dict[str, Any]], output_dir: Path, 
     return _save(fig, output_dir, "dpsi_waterfall")
 
 
+# 中文备注：统计分析：辅助处理plotdpsiecdf（参数：candidates、output_dir）
 def plot_dpsi_ecdf(candidates: Sequence[dict[str, Any]], output_dir: Path) -> Path:
     """Empirical CDF of delta PSI with effect-size thresholds annotated."""
     fig, ax = plt.subplots(figsize=(6.4, 4.8))
@@ -123,6 +125,7 @@ def plot_dpsi_ecdf(candidates: Sequence[dict[str, Any]], output_dir: Path) -> Pa
     return _save(fig, output_dir, "dpsi_ecdf")
 
 
+# 中文备注：统计分析：辅助处理plotFDRscree（参数：candidates、output_dir）
 def plot_fdr_scree(candidates: Sequence[dict[str, Any]], output_dir: Path) -> Path:
     """Rank vs -log10(FDR) scree plot highlighting the significance elbow."""
     fig, ax = plt.subplots(figsize=(6.4, 4.8))
@@ -142,6 +145,7 @@ def plot_fdr_scree(candidates: Sequence[dict[str, Any]], output_dir: Path) -> Pa
     return _save(fig, output_dir, "fdr_scree")
 
 
+# 中文备注：统计分析：辅助处理plot事件significance（参数：candidates、output_dir、fdr_threshold、delta_psi_threshold）
 def plot_event_significance(
     candidates: Sequence[dict[str, Any]],
     output_dir: Path,
@@ -177,6 +181,7 @@ def plot_event_significance(
     return _save(fig, output_dir, "event_significance")
 
 
+# 中文备注：统计分析：打分plotcomponents（参数：candidates、output_dir、top_n）
 def plot_score_components(candidates: Sequence[dict[str, Any]], output_dir: Path, top_n: int = 10) -> Path:
     """Stacked bar of the ranking-score components for top candidates."""
     fig, ax = plt.subplots(figsize=(7.6, 5.0))
@@ -214,6 +219,7 @@ def plot_score_components(candidates: Sequence[dict[str, Any]], output_dir: Path
     return _save(fig, output_dir, "score_components")
 
 
+# 中文备注：统计分析：辅助处理plot样本composition（参数：samples、output_dir）
 def plot_sample_composition(samples: Sequence[dict[str, Any]], output_dir: Path) -> Path:
     """Group / batch composition of the analysed cohort."""
     fig, axes = plt.subplots(1, 2, figsize=(9.2, 4.4))
@@ -253,6 +259,7 @@ def plot_sample_composition(samples: Sequence[dict[str, Any]], output_dir: Path)
     return _save(fig, output_dir, "sample_composition")
 
 
+# 中文备注：统计分析：辅助处理plot事件schematic（参数：output_dir）
 def plot_event_schematic(output_dir: Path) -> Path:
     """Classic schematic of the five alternative splicing event classes."""
     fig, axes = plt.subplots(5, 1, figsize=(7.4, 8.6))

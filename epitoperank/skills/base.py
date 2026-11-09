@@ -39,20 +39,24 @@ class BaseSkill(ABC):
 
     @property
     @abstractmethod
+    # 中文备注：外部技能：辅助处理名称（参数：无）
     def name(self) -> str:
         """Skill identifier (ASCII only for EXE compatibility)."""
 
     @property
     @abstractmethod
+    # 中文备注：外部技能：辅助处理description（参数：无）
     def description(self) -> str:
         """Human-readable description of what this skill does."""
 
     @property
+    # 中文备注：外部技能：辅助处理输入模式（参数：无）
     def input_schema(self) -> dict[str, Any]:
         """JSON Schema describing required/optional inputs."""
         return {}
 
     @abstractmethod
+    # 中文备注：外部技能：执行execute（参数：无）
     async def execute(self, **kwargs: Any) -> SkillResult:
         """Execute the skill with given parameters.
 
@@ -63,6 +67,7 @@ class BaseSkill(ABC):
             SkillResult with success/failure and data
         """
 
+    # 中文备注：外部技能：校验输入（参数：无）
     def validate_input(self, **kwargs: Any) -> tuple[bool, str | None]:
         """Validate input parameters against the schema.
 

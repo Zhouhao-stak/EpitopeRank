@@ -10,6 +10,7 @@ from pathlib import Path
 from epitoperank.neoantigen import CODONS, junction_peptides
 
 
+# 中文备注：epitoperank：辅助处理assessnmd（参数：altered_cds、premature_stop、last_junction_nt）
 def assess_nmd(altered_cds: str, premature_stop: str, last_junction_nt: str | int | None) -> dict:
     """50-nt rule using last exon junction measured from the coding start.
 
@@ -33,6 +34,7 @@ def assess_nmd(altered_cds: str, premature_stop: str, last_junction_nt: str | in
             'distance_nt': distance, 'rule': 'stop末端至最后外显子连接点 > 50 nt'}
 
 
+# 中文备注：epitoperank：辅助处理suppliedORF候选（参数：rows、event_ids）
 def supplied_orf_candidates(rows: list[dict], event_ids: set[str]) -> dict:
     """Use externally reconstructed CDS only, separating early stops from candidates."""
     candidates, separated = [], []
@@ -71,6 +73,7 @@ def supplied_orf_candidates(rows: list[dict], event_ids: set[str]) -> dict:
             'note': '读码框和提前终止状态由上游提供；NMD 仅按最后外显子连接点距离作规则预测，缺坐标时为未知。'}
 
 
+# 中文备注：epitoperank：辅助处理proteins（参数：path）
 def _proteins(path: Path):
     """Stream a protein FASTA, rejecting empty and malformed databases."""
     name = None
@@ -99,6 +102,7 @@ def _proteins(path: Path):
     yield name, ''.join(seq)
 
 
+# 中文备注：epitoperank：筛选normalprotein（参数：candidates、databases）
 def normal_protein_filter(candidates: list[dict], databases: dict[str, str | Path]) -> dict:
     """Apply exact peptide substring matching in the supplied ordered databases.
 
@@ -133,6 +137,7 @@ def normal_protein_filter(candidates: list[dict], databases: dict[str, str | Pat
             'limitations': ['仅在所提供的蛋白序列范围内进行精确匹配', '未执行 GTEx junction 匹配或正常组织表达评估']}
 
 
+# 中文备注：epitoperank：辅助处理expression证据（参数：candidates、records）
 def expression_evidence(candidates: list[dict], records: dict[str, dict]) -> dict:
     """Annotate measured expression and recurrence without filtering recurrence."""
     reasons: Counter[str] = Counter()
@@ -172,6 +177,7 @@ def _read_tsv(path: Path, columns: set[str]) -> list[dict]:
         return list(reader)
 
 
+# 中文备注：epitoperank：筛选gtexjunction（参数：candidates、event_file、gtex_file、event_build）
 def gtex_junction_filter(candidates: list[dict], event_file: Path, gtex_file: Path,
                          *, event_build: str, gtex_build: str) -> dict:
     """Match declared 1-based inclusive intron coordinates including strand."""
@@ -209,6 +215,7 @@ def gtex_junction_filter(candidates: list[dict], event_file: Path, gtex_file: Pa
             'note': '未检出不代表不存在；过滤依赖所提供表的覆盖度。'}
 
 
+# 中文备注：epitoperank：辅助处理normaltissueexpression（参数：candidates、event_genes、path）
 def normal_tissue_expression(candidates: list[dict], event_genes: dict[str, str], path: Path) -> dict:
     """Annotate observed gene expression; do not infer missing tissue as zero."""
     rows = _read_tsv(path, {'gene_id', 'tissue', 'expression', 'unit'})

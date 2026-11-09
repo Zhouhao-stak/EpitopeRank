@@ -50,6 +50,7 @@ class TeamRunResult:
         }
 
 
+# 中文备注：epitoperank：辅助处理taskmessage（参数：context）
 def _task_message(context: RunContext) -> str:
     """The initial task message handed to the team."""
     import json
@@ -76,6 +77,7 @@ def _task_message(context: RunContext) -> str:
     return message
 
 
+# 中文备注：epitoperank：执行team（参数：context）
 def run_team(context: RunContext) -> TeamRunResult:
     """Build and run the agent team for ``context`` (synchronous entry)."""
     return asyncio.run(_run_team_async(context))
@@ -156,6 +158,7 @@ async def _run_team_async(context: RunContext) -> TeamRunResult:
     return result
 
 
+# 中文备注：epitoperank：持久化规划planner（参数：context、result）
 def _persist_planner_plan(context: RunContext, result: TeamRunResult) -> None:
     """Save the planner's plan JSON into the analysis memory."""
     import json
@@ -174,6 +177,7 @@ def _persist_planner_plan(context: RunContext, result: TeamRunResult) -> None:
             return
 
 
+# 中文备注：epitoperank：录制事件（参数：event、result）
 def _record_event(event: Any, result: TeamRunResult) -> None:
     """Convert AutoGen stream events into the run log."""
     from autogen_agentchat.base import Response

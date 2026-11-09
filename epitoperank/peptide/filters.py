@@ -79,6 +79,7 @@ class SelfFilterResult:
         }
 
 
+# 中文备注：肽预测：扫描proteomes（参数：peptides、fasta_paths）
 def scan_proteomes(peptides: Iterable[str], fasta_paths: Sequence[str | Path]) -> SelfFilterResult:
     """Scan every FASTA and record which peptides occur exactly in each one."""
     peptide_list = unique(normalize_peptide(item) for item in peptides)
@@ -110,6 +111,7 @@ def scan_proteomes(peptides: Iterable[str], fasta_paths: Sequence[str | Path]) -
     return result
 
 
+# 中文备注：肽预测：注释候选（参数：candidates、fasta_paths）
 def annotate_candidates(candidates: Sequence[dict], fasta_paths: Sequence[str | Path]) -> tuple[list[dict], SelfFilterResult]:
     """Return candidate rows annotated with novelty, plus the scan summary."""
     scan = scan_proteomes([str(item["peptide"]) for item in candidates], fasta_paths)

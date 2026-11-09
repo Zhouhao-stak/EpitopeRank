@@ -125,6 +125,7 @@ def _health_ok(host: str, port: int) -> bool:
         return False
 
 
+# 中文备注：MCP 工具：启动服务（参数：host、port）
 def start_server(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> dict[str, Any]:
     """Start the demo server once; returns a status payload."""
     global _server, _thread
@@ -158,6 +159,7 @@ def start_server(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> dict[str
         return {"running": True, "url": f"http://{host}:{port}", "name": SERVER_NAME}
 
 
+# 中文备注：MCP 工具：确保demo服务（参数：无）
 def ensure_demo_server() -> dict[str, Any]:
     """Best-effort startup hook; never raises into the API boot path."""
     try:

@@ -31,6 +31,7 @@ RESULTS_DIRNAME = "results"
 _ILLEGAL = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
 
 
+# 中文备注：epitoperank：辅助处理默认值结果根目录（参数：project_root）
 def default_results_root(project_root: Path) -> Path:
     """Where exported bundles live, overridable with ``EPITOPERANK_RESULTS_ROOT``.
 
@@ -49,6 +50,7 @@ def default_results_root(project_root: Path) -> Path:
     return Path(project_root) / RESULTS_DIRNAME
 
 
+# 中文备注：epitoperank：辅助处理safefolder名称（参数：name、project_id、limit）
 def safe_folder_name(name: str, project_id: str, *, limit: int = 60) -> str:
     """A readable folder name that survives Explorer, plus the id for uniqueness."""
     cleaned = _ILLEGAL.sub("_", str(name or "").strip())
@@ -60,6 +62,7 @@ def safe_folder_name(name: str, project_id: str, *, limit: int = 60) -> str:
     return f"{cleaned}_{project_id}"
 
 
+# 中文备注：epitoperank：辅助处理copytree（参数：source、target）
 def _copy_tree(source: Path, target: Path) -> int:
     """Copy a directory into ``target`` (merging), returning the file count."""
     copied = 0
@@ -75,6 +78,7 @@ def _copy_tree(source: Path, target: Path) -> int:
     return copied
 
 
+# 中文备注：epitoperank：辅助处理候选来源（参数：project_dir、input_dir）
 def _candidate_sources(project_dir: Path, input_dir: Path | None) -> Iterable[tuple[str, Path]]:
     """Yield (label, path) pairs of everything worth showing the user."""
     for name in ("report.html", "report.pdf"):
@@ -131,6 +135,7 @@ def _manifest_text(
     return "\n".join(lines) + "\n"
 
 
+# 中文备注：epitoperank：导出交付包（参数：project_dir、project_name、project_id、results_root）
 def export_bundle(
     project_dir: str | Path,
     project_name: str,
@@ -172,6 +177,7 @@ def export_bundle(
     return target
 
 
+# 中文备注：epitoperank：打包交付包（参数：bundle_dir、dest）
 def package_bundle(bundle_dir: str | Path, *, dest: str | Path | None = None) -> Path | None:
     """Zip a results bundle so it can be mailed, archived or uploaded."""
     import zipfile
@@ -188,6 +194,7 @@ def package_bundle(bundle_dir: str | Path, *, dest: str | Path | None = None) ->
     return archive
 
 
+# 中文备注：epitoperank：上传cloudtarget（参数：无）
 def cloud_upload_target() -> tuple[str, str]:
     """Return ``(url, token)`` for the configured cloud receiver, or empty strings.
 
@@ -199,6 +206,7 @@ def cloud_upload_target() -> tuple[str, str]:
     return url, token
 
 
+# 中文备注：epitoperank：上传交付包（参数：archive、timeout）
 def upload_bundle(archive: str | Path, *, timeout: float = 120.0) -> dict[str, Any]:
     """POST a bundle zip to the configured cloud endpoint.
 

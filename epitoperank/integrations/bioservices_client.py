@@ -17,6 +17,7 @@ from typing import Any, Sequence
 from .runner import run_with_timeout
 
 
+# 中文备注：外部集成：辅助处理backendavailable（参数：无）
 def backend_available() -> bool:
     """Check if bioservices is installed."""
     try:
@@ -26,6 +27,7 @@ def backend_available() -> bool:
         return False
 
 
+# 中文备注：外部集成：注释ensembl（参数：genes、species、timeout）
 def ensembl_annotate(
     genes: Sequence[str],
     *,
@@ -98,6 +100,7 @@ def ensembl_annotate(
     return run_with_timeout(_call, timeout)
 
 
+# 中文备注：外部集成：注释uniprot（参数：proteins、timeout）
 def uniprot_annotate(
     proteins: Sequence[str],
     *,
@@ -155,6 +158,7 @@ def uniprot_annotate(
     return run_with_timeout(_call, timeout)
 
 
+# 中文备注：外部集成：辅助处理keggpathways（参数：genes、organism、timeout）
 def kegg_pathways(
     genes: Sequence[str],
     *,
@@ -244,6 +248,7 @@ def kegg_pathways(
     return run_with_timeout(_call, timeout)
 
 
+# 中文备注：外部集成：辅助处理reactomepathways（参数：genes、species、timeout）
 def reactome_pathways(
     genes: Sequence[str],
     *,
@@ -347,6 +352,7 @@ def reactome_pathways(
 # ---------------------------------------------------------------------------
 
 
+# 中文备注：外部集成：辅助处理keggorg编码（参数：organism）
 def _kegg_org_code(organism: str) -> str:
     """Convert common organism names to KEGG codes."""
     mapping = {
@@ -364,6 +370,7 @@ def _kegg_org_code(organism: str) -> str:
     return mapping.get(organism.lower().strip(), "hsa")
 
 
+# 中文备注：外部集成：提取subcellular（参数：entry）
 def _extract_subcellular(entry: dict[str, Any]) -> str | None:
     """Extract subcellular location from UniProt entry."""
     comments = entry.get("comments", [])
@@ -375,6 +382,7 @@ def _extract_subcellular(entry: dict[str, Any]) -> str | None:
     return None
 
 
+# 中文备注：外部集成：提取disease（参数：entry）
 def _extract_disease(entry: dict[str, Any]) -> str | None:
     """Extract disease association from UniProt entry."""
     comments = entry.get("comments", [])

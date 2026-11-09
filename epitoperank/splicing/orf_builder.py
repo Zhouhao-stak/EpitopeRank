@@ -118,6 +118,7 @@ class ReferenceProvider:
 class EnsemblReference(ReferenceProvider):
     """Ensembl REST 在线参考源（GRCh38 / human）。结果缓存到磁盘。"""
 
+    # 中文备注：剪接解析：初始化__init__（参数：species、cache_dir、timeout）
     def __init__(self, species: str = "human", cache_dir: Path | None = None,
                  timeout: float = 20.0) -> None:
         self.species = species
@@ -127,9 +128,11 @@ class EnsemblReference(ReferenceProvider):
         self._overlap_cache: dict[str, list[dict[str, Any]]] = {}
         self._cds_by_parent: dict[str, list[dict[str, Any]]] = {}
 
+    # 中文备注：剪接解析：获取_get（参数：url）
     def _get(self, url: str) -> str:
         return _http(url, timeout=self.timeout, cache_dir=self.cache_dir)
 
+    # 中文备注：剪接解析：辅助处理查询（参数：region、features）
     def _query(self, region: str, features: Iterable[str]) -> list[dict[str, Any]]:
         query = ";".join(f"feature={f}" for f in features)
         url = (f"{ENSEMBL}/overlap/region/{self.species}/{region}"
@@ -143,6 +146,7 @@ class EnsemblReference(ReferenceProvider):
         return [x for x in data if isinstance(x, dict)]
 
     @staticmethod
+    # 中文备注：剪接解析：转换为片段（参数：row）
     def _as_segment(row: dict[str, Any]) -> dict[str, Any] | None:
         if row.get("feature_type") != "cds":
             return None
@@ -154,6 +158,7 @@ class EnsemblReference(ReferenceProvider):
                 "phase": phase, "strand": int(row.get("strand") or 1),
                 "parent": str(row.get("Parent") or "")}
 
+    # 中文备注：剪接解析：辅助处理transcripts（参数：chrom、start、end、strand）
     def transcripts(self, chrom: str, start: int, end: int, strand: int,
                     gene_id: str) -> list[dict[str, Any]]:
         region = f"{chrom}:{max(1, start - 1500)}-{end + 1500}"
@@ -188,6 +193,7 @@ class EnsemblReference(ReferenceProvider):
         out.sort(key=lambda t: (not t["coding"], t["end"] - t["start"]))
         return out[:12]
 
+    # 中文备注：剪接解析：辅助处理CDS片段（参数：transcript）
     def cds_segments(self, transcript: dict[str, Any]) -> list[dict[str, Any]]:
         tid = transcript["id"]
         if tid not in self._overlap_cache:
@@ -206,6 +212,7 @@ class EnsemblReference(ReferenceProvider):
         segs.sort(key=lambda s: s["start"], reverse=transcript["strand"] < 0)
         return segs
 
+    # 中文备注：剪接解析：辅助处理序列（参数：chrom、start、end）
     def sequence(self, chrom: str, start: int, end: int) -> str:
         if end - start > 300_000:
             raise ValueError("单次请求的基因组区间过大（>300kb）")
@@ -213,6 +220,7 @@ class EnsemblReference(ReferenceProvider):
                f"{chrom}:{start}-{end}:1?content-type=text/plain")
         return _clean_seq(self._get(url))
 
+    # 中文备注：剪接解析：辅助处理assembly（参数：无）
     def assembly(self) -> str:
         return self._assembly or "Ensembl REST (GRCh38)"
 
@@ -220,6 +228,7 @@ class EnsemblReference(ReferenceProvider):
 class LocalReference(ReferenceProvider):
     """本地 GTF + FASTA 参考源；FASTA 需带 .fai（无则自动建立）。"""
 
+    # 中文备注：剪接解析：初始化__init__（参数：gtf、fasta）
     def __init__(self, gtf: Path, fasta: Path) -> None:
         self.gtf = Path(gtf)
         self.fasta = Path(fasta)
@@ -232,14 +241,17 @@ class LocalReference(ReferenceProvider):
         self._load_fai()
 
     @staticmethod
+    # 中文备注：剪接解析：辅助处理attr（参数：text、key）
     def _attr(text: str, key: str) -> str:
         match = re.search(rf'{key}\s+"([^"]+)"', text)
         return match.group(1) if match else ""
 
+    # 中文备注：剪接解析：辅助处理opener（参数：path）
     def _opener(self, path: Path):
         return gzip.open(path, "rt", encoding="utf-8", errors="replace") \
             if path.suffix == ".gz" else path.open("r", encoding="utf-8", errors="replace")
 
+    # 中文备注：剪接解析：加载gtf（参数：无）
     def _load_gtf(self) -> None:
         with self._opener(self.gtf) as fh:
             for line in fh:
@@ -270,6 +282,7 @@ class LocalReference(ReferenceProvider):
             meta["end"] = max(s["end"] for s in segs)
             meta["chrom"] = self._meta[tid].get("chrom", "")
 
+    # 中文备注：剪接解析：加载fai（参数：无）
     def _load_fai(self) -> None:
         index = Path(str(self.fasta) + ".fai")
         if not index.is_file():
@@ -308,6 +321,7 @@ class LocalReference(ReferenceProvider):
             f"{n}\t{l}\t{o}\t{b}\t{w}\n" for n, l, o, b, w in records),
             encoding="utf-8")
 
+    # 中文备注：剪接解析：辅助处理transcripts（参数：chrom、start、end、strand）
     def transcripts(self, chrom: str, start: int, end: int, strand: int,
                     gene_id: str) -> list[dict[str, Any]]:
         out = []
@@ -327,9 +341,11 @@ class LocalReference(ReferenceProvider):
         out.sort(key=lambda t: (not t["coding"], t["end"] - t["start"]))
         return out[:12]
 
+    # 中文备注：剪接解析：辅助处理CDS片段（参数：transcript）
     def cds_segments(self, transcript: dict[str, Any]) -> list[dict[str, Any]]:
         return list(self._cds.get(transcript["id"], []))
 
+    # 中文备注：剪接解析：辅助处理序列（参数：chrom、start、end）
     def sequence(self, chrom: str, start: int, end: int) -> str:
         key = next((k for k in self._fai if k.lstrip("chr") == chrom.lstrip("chr")), None)
         if key is None:
@@ -342,6 +358,7 @@ class LocalReference(ReferenceProvider):
             raw = fh.read(max(0, last - first + 1))
         return _clean_seq(raw.decode("ascii", "replace"))
 
+    # 中文备注：剪接解析：辅助处理assembly（参数：无）
     def assembly(self) -> str:
         return f"local: {self.gtf.name} + {self.fasta.name}"
 
@@ -459,6 +476,7 @@ def _read_rows(path: Path) -> list[dict[str, str]]:
         return rows
 
 
+# 中文备注：剪接解析：辅助处理num（参数：row）
 def _num(row: dict[str, str], *keys: str) -> float:
     for key in keys:
         try:

@@ -93,6 +93,7 @@ RMATS_MARKER_COLUMNS = (
 RMATS_FILENAME = re.compile(r'\.MATS\.[A-Za-z]+\.(txt|tsv|csv)$', re.IGNORECASE)
 
 
+# 中文备注：epitoperank：辅助处理lookslikermats（参数：header、name）
 def _looks_like_rmats(header, name: str = '') -> bool:
     """True when the table is a rMATS event table rather than a CDS table."""
     if RMATS_FILENAME.search(str(name or '').strip()):
@@ -104,6 +105,7 @@ def _looks_like_rmats(header, name: str = '') -> bool:
 COLUMN_SAMPLE_ROWS = 200
 
 
+# 中文备注：epitoperank：规范化表头（参数：name）
 def _normalize_header(name: str) -> str:
     """Fold a header cell into a comparable key (case/space/underscore-free)."""
     return re.sub(r'[\s\-_\u3000]+', '', str(name or '').strip().lower())
@@ -116,11 +118,13 @@ _CANONICAL_BY_ALIAS: dict[str, str] = {
 }
 
 
+# 中文备注：epitoperank：辅助处理canonicalCDS字段（参数：names）
 def canonical_cds_fields(names) -> list[str]:
     """Map raw column names onto the four canonical CDS field names."""
     return [_CANONICAL_BY_ALIAS.get(_normalize_header(name), _normalize_header(name)) for name in names]
 
 
+# 中文备注：epitoperank：辅助处理decode表文本（参数：path、limit）
 def decode_table_text(path: str | Path, *, limit: int | None = None) -> str:
     """Read a text table, tolerating UTF-8, UTF-8-BOM and GBK exports."""
     raw = Path(path).read_bytes()
@@ -139,6 +143,7 @@ def sniff_delimiter(header_line: str) -> str:
     return '\t' if header_line.count('\t') >= header_line.count(',') else ','
 
 
+# 中文备注：epitoperank：辅助处理表列（参数：path）
 def _table_columns(path: str | Path) -> tuple[list[str], str]:
     """Return (canonical columns, delimiter) from the first line of a table."""
     text = decode_table_text(path, limit=64_000)
@@ -148,6 +153,7 @@ def _table_columns(path: str | Path) -> tuple[list[str], str]:
     return canonical_cds_fields(header), delimiter
 
 
+# 中文备注：epitoperank：读取表行（参数：path、limit）
 def read_table_rows(path: str | Path, *, limit: int | None = None
                     ) -> tuple[list[str], list[list[str]], str]:
     """Read a whole table into memory rows (used for guessing and previewing)."""
@@ -169,6 +175,7 @@ _ACGT = set('ACGTU')
 _EVENT_ID_SHAPE = re.compile(r'^(?:SE|RI|A3SS|A5SS|MXE)\s*[:;_\-]?\s*\d+$', re.IGNORECASE)
 
 
+# 中文备注：epitoperank：辅助处理序列like（参数：value）
 def _sequence_like(value: str) -> bool:
     """True when a cell looks like a coding sequence (not a peptide or free text)."""
     text = str(value or '').strip().upper().replace('U', 'T')
@@ -227,6 +234,7 @@ def profile_columns(path: str | Path, event_ids: set[str] | None = None,
             'columns': columns, 'row_count': len(rows)}
 
 
+# 中文备注：epitoperank：检测映射列（参数：path、event_ids、sample_rows）
 def detect_column_map(path: str | Path, event_ids: set[str] | None = None,
                       *, sample_rows: int = COLUMN_SAMPLE_ROWS) -> dict:
     """Guess the four CDS roles from header aliases *and* cell contents.
@@ -318,6 +326,7 @@ def _median_length(column: dict) -> float:
     return sum(lengths) / len(lengths)
 
 
+# 中文备注：epitoperank：比较序列orientation（参数：profile、first、second、junction_index）
 def _compare_sequence_orientation(profile: dict, first: dict, second: dict,
                                   junction_index: int | None) -> dict:
     """Pick which sequence column is the reference and which is the altered one.
@@ -360,6 +369,7 @@ def _compare_sequence_orientation(profile: dict, first: dict, second: dict,
     return {'reference': longer['index'], 'altered': shorter['index'], 'source': 'guess'}
 
 
+# 中文备注：epitoperank：辅助处理inspectCDS表（参数：path、event_ids）
 def inspect_cds_table(path: str | Path, event_ids: set[str] | None = None) -> dict:
     """Judge a file by header *and* contents: can the four roles be located?"""
     path = Path(path)
@@ -417,6 +427,7 @@ def inspect_cds_table(path: str | Path, event_ids: set[str] | None = None) -> di
         return info
 
 
+# 中文备注：epitoperank：排序CDS（参数：path）
 def _cds_rank(path: Path) -> tuple:
     """Prefer the historical filenames, then anything that looks CDS-ish."""
     stem = path.stem.lower()
@@ -429,6 +440,7 @@ def _cds_rank(path: Path) -> tuple:
     return (2, 0, len(stem), stem)
 
 
+# 中文备注：epitoperank：发现CDS表（参数：include_partial、event_ids）
 def discover_cds_tables(*directories: str | Path, include_partial: bool = False,
                         event_ids: set[str] | None = None) -> list[dict]:
     """Find CDS tables inside the given directories by inspecting file contents."""
@@ -475,6 +487,7 @@ def discover_cds_tables(*directories: str | Path, include_partial: bool = False,
     return found + partial if include_partial else found
 
 
+# 中文备注：epitoperank：辅助处理pickCDS表（参数：candidates）
 def pick_cds_table(candidates: list) -> Path | None:
     """Choose the most likely CDS table from discovered candidates."""
     paths = [Path(item['path']) if isinstance(item, dict) else Path(item) for item in candidates]
@@ -492,6 +505,7 @@ def translate(cds: str) -> str:
     return protein.split('*', 1)[0]
 
 
+# 中文备注：epitoperank：辅助处理junction候选肽（参数：reference_cds、altered_cds、junction_nt、lengths）
 def junction_peptides(reference_cds: str, altered_cds: str, junction_nt: int,
                       lengths: tuple[int, ...] = (8, 9, 10, 11)) -> list[dict]:
     """Keep peptides crossing the novel exon junction, absent from reference ORF."""
@@ -516,6 +530,7 @@ def junction_peptides(reference_cds: str, altered_cds: str, junction_nt: int,
     return candidates
 
 
+# 中文备注：epitoperank：预测IEDB（参数：peptide、allele、opener）
 def predict_iedb(peptide: str, allele: str, *, opener=urlopen) -> dict:
     """Query the official IEDB MHC-I API; return its score fields verbatim."""
     if not HLA_PATTERN.fullmatch(allele):
@@ -533,6 +548,7 @@ def predict_iedb(peptide: str, allele: str, *, opener=urlopen) -> dict:
     return match
 
 
+# 中文备注：epitoperank：解析列索引（参数：header、column_map、detected）
 def _resolve_column_index(header: list[str], column_map: dict[str, str] | None,
                           detected: dict[str, str] | None = None) -> dict[str, int]:
     """Turn a customer-confirmed (or auto-detected) mapping into column indexes."""
@@ -576,6 +592,7 @@ def _number_text(value) -> str:
     return '' if value is None else value
 
 
+# 中文备注：epitoperank：预测batched（参数：pairs）
 def _predict_batched(pairs: list[tuple[str, str]]) -> tuple[list[dict], list[dict]]:
     """Query IEDB in batches (100 peptides per request) instead of one call per pair."""
     from epitoperank.peptide.iedb import IedbClient

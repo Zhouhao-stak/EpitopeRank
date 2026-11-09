@@ -33,6 +33,7 @@ class KnowledgeEntry:
 class LabKnowledge:
     """Persistent cross-project knowledge base for recurrent genes/pathways."""
 
+    # 中文备注：智能体内核：初始化__init__（参数：db_path）
     def __init__(self, db_path: str | Path | None = None) -> None:
         """Initialize the knowledge base.
 
@@ -59,6 +60,7 @@ class LabKnowledge:
         conn.row_factory = sqlite3.Row
         return conn
 
+    # 中文备注：智能体内核：关闭close（参数：无）
     def close(self) -> None:
         """Close any open database connections and checkpoint WAL."""
         try:
@@ -96,6 +98,7 @@ class LabKnowledge:
             )
 
     # -- public API ---------------------------------------------------------
+    # 中文备注：智能体内核：添加条目（参数：project_id、entries）
     def add_entries(self, project_id: str, entries: list[KnowledgeEntry]) -> int:
         """Add new knowledge entries from a completed project.
 
@@ -134,6 +137,7 @@ class LabKnowledge:
             )
         return len(entries)
 
+    # 中文备注：智能体内核：获取recurrent基因（参数：min_projects、limit）
     def get_recurrent_genes(
         self, min_projects: int = 2, limit: int = 50
     ) -> list[dict[str, Any]]:
@@ -191,6 +195,7 @@ class LabKnowledge:
             )
         return result
 
+    # 中文备注：智能体内核：辅助处理查询基因（参数：gene）
     def query_gene(self, gene: str) -> list[dict[str, Any]]:
         """Get all historical appearances of a specific gene.
 
@@ -215,6 +220,7 @@ class LabKnowledge:
 
         return [dict(row) for row in rows]
 
+    # 中文备注：智能体内核：辅助处理intersect候选（参数：candidate_genes、min_projects）
     def intersect_with_candidates(
         self, candidate_genes: list[str], min_projects: int = 2
     ) -> list[dict[str, Any]]:
@@ -238,6 +244,7 @@ class LabKnowledge:
         # Filter to intersection
         return [r for r in recurrent if r["gene"].upper() in candidate_set]
 
+    # 中文备注：智能体内核：获取统计（参数：无）
     def get_stats(self) -> dict[str, Any]:
         """Return summary statistics about the knowledge base."""
         with self._connect() as conn:

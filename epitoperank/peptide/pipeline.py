@@ -152,6 +152,7 @@ def _event_metadata(event: object) -> dict[str, object]:
     }
 
 
+# 中文备注：肽预测：辅助处理上下文（参数：protein、start、length、window）
 def _context(protein: str, start: int, length: int, window: int) -> str:
     """Centre a class-II window on the peptide, clamped to the protein."""
     if len(protein) <= window:
@@ -163,6 +164,7 @@ def _context(protein: str, start: int, length: int, window: int) -> str:
     return protein[left:right]
 
 
+# 中文备注：肽预测：辅助处理候选CDS（参数：input_dir、cds_table、lengths、class2_window）
 def candidates_from_cds(input_dir: str | Path, cds_table: str | Path, *,
                         lengths: Sequence[int] = MHC_I_LENGTHS,
                         class2_window: int = 15) -> dict[str, object]:
@@ -242,6 +244,7 @@ def candidates_from_cds(input_dir: str | Path, cds_table: str | Path, *,
     }
 
 
+# 中文备注：肽预测：加载肽段表（参数：path）
 def load_peptide_table(path: str | Path) -> list[dict[str, object]]:
     """Read a peptide table (TSV/CSV) or a peptide FASTA.
 
@@ -279,6 +282,7 @@ def load_peptide_table(path: str | Path) -> list[dict[str, object]]:
 # ----------------------------------------------------------------------
 # Prediction
 # ----------------------------------------------------------------------
+# 中文备注：肽预测：辅助处理客户端（参数：options）
 def _client(options: PeptideOptions) -> IedbClient:
     """Build the IEDB client, keeping the default on-disk cache enabled.
 
@@ -295,6 +299,7 @@ def _client(options: PeptideOptions) -> IedbClient:
     return IedbClient(**kwargs)  # type: ignore[arg-type]
 
 
+# 中文备注：肽预测：辅助处理class2contexts（参数：candidates）
 def _class2_contexts(candidates: Sequence[dict]) -> tuple[list[str], int]:
     """Collect MHC-II windows long enough for the model (11-30 aa)."""
     contexts = unique([str(item["class2_context"]) for item in candidates
@@ -386,6 +391,7 @@ def _run_local(candidates: Sequence[dict], alleles: Sequence[HlaAllele]) -> dict
 # ----------------------------------------------------------------------
 # Aggregation
 # ----------------------------------------------------------------------
+# 中文备注：肽预测：辅助处理best（参数：rows、key、maximize）
 def _best(rows: Iterable[dict], key: str, *, maximize: bool = False) -> dict | None:
     """Pick the best row by a numeric key (lower is better unless ``maximize``)."""
     best = None
@@ -403,6 +409,7 @@ def _best(rows: Iterable[dict], key: str, *, maximize: bool = False) -> dict | N
     return best
 
 
+# 中文备注：肽预测：去重predictions（参数：predictions）
 def dedupe_predictions(predictions: Sequence[dict]) -> list[dict]:
     """Keep one row per (peptide, allele, method), preferring the best score.
 
@@ -431,6 +438,7 @@ def dedupe_predictions(predictions: Sequence[dict]) -> list[dict]:
     return list(best.values())
 
 
+# 中文备注：肽预测：聚合aggregate（参数：candidates、predictions）
 def aggregate(candidates: Sequence[dict], predictions: Sequence[dict]) -> list[dict[str, object]]:
     """Collapse long-form predictions into one row per peptide."""
     by_peptide: dict[str, list[dict]] = {}
@@ -551,6 +559,7 @@ def _summary_markdown(manifest: dict, ranked: Sequence[dict]) -> str:
 # ----------------------------------------------------------------------
 # Orchestration
 # ----------------------------------------------------------------------
+# 中文备注：肽预测：执行run（参数：output_dir、input_dir、cds_table、peptides）
 def run(*, output_dir: str | Path,
         input_dir: str | Path | None = None,
         cds_table: str | Path | None = None,

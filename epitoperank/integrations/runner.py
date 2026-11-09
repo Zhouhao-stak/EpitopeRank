@@ -18,6 +18,7 @@ _EXECUTOR = concurrent.futures.ThreadPoolExecutor(
 )
 
 
+# 中文备注：外部集成：执行timeout（参数：func、timeout）
 def run_with_timeout(func: Callable[[], T], timeout: float) -> T | None:
     """Execute ``func`` on a worker thread; return ``None`` on timeout/error."""
     try:
@@ -29,6 +30,7 @@ def run_with_timeout(func: Callable[[], T], timeout: float) -> T | None:
         return None
 
 
+# 中文备注：外部集成：辅助处理行frame（参数：frame、limit）
 def _rows_from_frame(frame: Any, limit: int) -> list[dict[str, Any]]:
     """Normalise a pandas DataFrame into plain dict rows (defensive)."""
     try:

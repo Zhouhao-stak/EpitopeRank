@@ -97,6 +97,7 @@ def _request(url: str, opener: Callable[..., Any], timeout: float) -> bytes:
         raise RagError(f"Europe PMC unreachable: {error}") from error
 
 
+# 中文备注：知识库：检索打开access（参数：query、max_articles、opener、timeout）
 def search_open_access(query: str, *, max_articles: int = 3,
                        opener: Callable[..., Any] = urlopen,
                        timeout: float = DEFAULT_TIMEOUT) -> list[dict[str, Any]]:
@@ -130,6 +131,7 @@ def search_open_access(query: str, *, max_articles: int = 3,
     return results
 
 
+# 中文备注：知识库：辅助处理decodexml（参数：raw）
 def _decode_xml(raw: bytes) -> str:
     """Decode JATS XML using the declared encoding, then UTF-8, then cp1252.
 
@@ -165,6 +167,7 @@ def _decode_xml(raw: bytes) -> str:
     return raw.decode("utf-8", errors="replace").lstrip("\ufeff")
 
 
+# 中文备注：知识库：获取fulltextxml（参数：pmcid、opener、timeout、cache_dir）
 def fetch_fulltext_xml(pmcid: str, *, opener: Callable[..., Any] = urlopen,
                        timeout: float = DEFAULT_TIMEOUT,
                        cache_dir: str | Path | None = None,
@@ -220,6 +223,7 @@ def _text_of(element: ET.Element) -> str:
     return " ".join(part for part in parts if part).strip()
 
 
+# 中文备注：知识库：提取sections（参数：xml_text）
 def extract_sections(xml_text: str) -> list[dict[str, str]]:
     """Extract ``{title, text}`` sections from JATS XML, with an abstract first.
 
@@ -263,6 +267,7 @@ def extract_sections(xml_text: str) -> list[dict[str, str]]:
     return sections
 
 
+# 中文备注：知识库：辅助处理stem（参数：token）
 def _stem(token: str) -> str:
     """Very small plural normaliser (no external NLP dependency)."""
     if len(token) > 4 and token.endswith("s") and not token.endswith(("ss", "us", "is", "as")):
@@ -281,6 +286,7 @@ def tokenize(text: str) -> list[str]:
     return tokens
 
 
+# 中文备注：知识库：辅助处理chunksections（参数：sections、target_words、max_chunks）
 def chunk_sections(sections: Sequence[dict[str, str]], *,
                    target_words: int = 170, max_chunks: int = 400) -> list[dict[str, str]]:
     """Split sections into overlapping-free word chunks that fit a context budget."""
@@ -364,6 +370,7 @@ def _snippet(text: str, query: str, *, limit: int = 420) -> str:
     return snippet if len(snippet) <= limit else snippet[:limit].rsplit(" ", 1)[0] + "…"
 
 
+# 中文备注：知识库：检索passages（参数：query、max_articles、max_passages、opener）
 def search_passages(query: str, *, max_articles: int = 3, max_passages: int = 6,
                     opener: Callable[..., Any] = urlopen,
                     cache_dir: str | Path | None = None,
@@ -442,6 +449,7 @@ def search_passages(query: str, *, max_articles: int = 3, max_passages: int = 6,
     }
 
 
+# 中文备注：知识库：辅助处理索引键（参数：query、identifiers）
 def index_key(query: str, identifiers: Iterable[str]) -> str:
     """Stable identifier for reports/tests (not used for caching yet)."""
     blob = "|".join([query, *sorted(identifiers)])

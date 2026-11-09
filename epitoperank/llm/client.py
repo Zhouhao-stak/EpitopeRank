@@ -66,6 +66,7 @@ _MODEL_HINTS: tuple[tuple[str, str], ...] = (
 )
 
 
+# 中文备注：大模型层：检测provider（参数：settings）
 def detect_provider(settings: Settings) -> str:
     """Return the endpoint family for ``settings``.
 
@@ -100,6 +101,7 @@ def _normalised_thinking(raw: str) -> str:
     return "auto"
 
 
+# 中文备注：大模型层：解析thinking（参数：settings、tools_expected）
 def resolve_thinking(settings: Settings, *, tools_expected: bool = True) -> str:
     """Thinking state ("enabled" / "disabled" / "") for one request kind.
 
@@ -115,12 +117,14 @@ def resolve_thinking(settings: Settings, *, tools_expected: bool = True) -> str:
     return "disabled" if tools_expected else "enabled"
 
 
+# 中文备注：大模型层：解析reasoningeffort（参数：settings）
 def resolve_reasoning_effort(settings: Settings) -> str:
     """Validated reasoning effort, or ``""`` to use the vendor default."""
     value = str(getattr(settings.llm, "reasoning_effort", "") or "").strip().lower()
     return value if value in REASONING_EFFORTS else ""
 
 
+# 中文备注：大模型层：辅助处理providerextrabody（参数：settings、tools_expected）
 def provider_extra_body(settings: Settings, *, tools_expected: bool = True) -> dict[str, Any]:
     """Vendor-specific request body overrides for this endpoint."""
     body: dict[str, Any] = {}
@@ -135,6 +139,7 @@ def provider_extra_body(settings: Settings, *, tools_expected: bool = True) -> d
     return body
 
 
+# 中文备注：大模型层：辅助处理effectivetemperature（参数：settings、tools_expected）
 def effective_temperature(settings: Settings, *, tools_expected: bool = True) -> float | None:
     """Sampling temperature to send, or ``None`` when it must be omitted.
 
@@ -148,6 +153,7 @@ def effective_temperature(settings: Settings, *, tools_expected: bool = True) ->
     return float(settings.llm.temperature or 0.0)
 
 
+# 中文备注：大模型层：构建模型客户端（参数：settings、model、tools_expected）
 def build_model_client(
     settings: Settings,
     *,
@@ -197,6 +203,7 @@ def build_model_client(
     )
 
 
+# 中文备注：大模型层：描述大模型mode（参数：settings）
 def describe_llm_mode(settings: Settings) -> str:
     """Human-readable description of the active model mode."""
     if not settings.llm.configured:

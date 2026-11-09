@@ -24,6 +24,7 @@ from typing import Any, Iterator, Sequence
 _TRUE_VALUES = {"1", "true", "yes", "on"}
 
 
+# 中文备注：记忆存储：辅助处理walenabled（参数：无）
 def _wal_enabled() -> bool:
     """True when ``EPITOPERANK_SQLITE_WAL`` asks for write-ahead logging.
 
@@ -344,6 +345,7 @@ class ProjectMemory:
             ).fetchone()
         return int(row[0]) if row else 0
 
+    # 中文备注：记忆存储：辅助处理查询剪接事件（参数：project_id、offset、limit、order_by）
     def query_events(
         self,
         project_id: str,
@@ -384,6 +386,7 @@ class ProjectMemory:
             ).fetchall()
         return {str(row[0]): int(row[1]) for row in rows}
 
+    # 中文备注：记忆存储：列出项目统计（参数：无）
     def list_projects_with_stats(self) -> list[dict[str, Any]]:
         """Projects plus the counters the history panel needs."""
         with self._connect() as connection:
@@ -397,6 +400,7 @@ class ProjectMemory:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    # 中文备注：记忆存储：删除项目（参数：project_id）
     def delete_project(self, project_id: str) -> int:
         """Remove every row belonging to ``project_id``; returns rows deleted."""
         tables = (

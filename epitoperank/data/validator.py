@@ -61,6 +61,7 @@ class ValidationResult:
         }
 
 
+# 中文备注：数据接入：校验数据集（参数：dataset）
 def validate_dataset(dataset: Dataset) -> ValidationResult:
     """Validate a loaded dataset against the Standard BioAnalysis Format."""
     result = ValidationResult()

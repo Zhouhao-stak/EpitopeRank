@@ -68,6 +68,7 @@ def _save(fig: Figure, output_dir: Path, name: str, title: str, caption: str) ->
     return FigureResult(name=name, title=title, png_path=png_path, svg_path=svg_path, caption=caption)
 
 
+# 中文备注：统计分析：辅助处理plotvolcano（参数：events、output_dir、fdr_threshold、delta_psi_threshold）
 def plot_volcano(
     events: Sequence[StandardEvent],
     output_dir: Path,
@@ -108,6 +109,7 @@ def plot_volcano(
     )
 
 
+# 中文备注：统计分析：辅助处理plot事件typecounts（参数：events、output_dir）
 def plot_event_type_counts(events: Sequence[StandardEvent], output_dir: Path) -> FigureResult:
     """Bar chart of event counts per AS event type."""
     fig, ax = plt.subplots(figsize=(5.6, 4.2))
@@ -135,6 +137,7 @@ def plot_event_type_counts(events: Sequence[StandardEvent], output_dir: Path) ->
     )
 
 
+# 中文备注：统计分析：辅助处理plotPSIheatmap（参数：events、samples、output_dir、top_n）
 def plot_psi_heatmap(
     events: Sequence[StandardEvent],
     samples: Sequence[SampleMetadata],
@@ -193,6 +196,7 @@ def plot_psi_heatmap(
     )
 
 
+# 中文备注：统计分析：辅助处理plotPSIdistribution（参数：events、samples、output_dir、top_n）
 def plot_psi_distribution(
     events: Sequence[StandardEvent],
     samples: Sequence[SampleMetadata],
@@ -254,6 +258,7 @@ def plot_psi_distribution(
     )
 
 
+# 中文备注：统计分析：辅助处理plot候选排名（参数：candidates、output_dir、top_n）
 def plot_candidate_ranking(
     candidates: Sequence[RankedCandidate],
     output_dir: Path,
@@ -284,6 +289,7 @@ def plot_candidate_ranking(
     )
 
 
+# 中文备注：统计分析：辅助处理plot富集（参数：results、output_dir、top_n）
 def plot_enrichment(
     results: Sequence[EnrichmentResult],
     output_dir: Path,
@@ -328,6 +334,7 @@ FIGURE_SPECS: dict[str, str] = {
 }
 
 
+# 中文备注：统计分析：生成图表（参数：events、samples、candidates、enrichment）
 def generate_all_figures(
     events: Sequence[StandardEvent],
     samples: Sequence[SampleMetadata],

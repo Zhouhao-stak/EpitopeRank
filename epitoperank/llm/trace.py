@@ -20,17 +20,20 @@ class ReplayError(RuntimeError):
     """A trace cannot reproduce this run; never an advisory failure."""
 
 
+# 中文备注：大模型层：摘要digest（参数：value）
 def digest(value: Any) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False,
                                      default=str, separators=(",", ":")).encode()).hexdigest()
 
 
+# 中文备注：大模型层：计算哈希文件（参数：path）
 def file_hash(path: Path) -> str:
     # Same streaming SHA-256 algorithm used by input manifests.
     with path.open("rb") as handle:
         return hashlib.file_digest(handle, "sha256").hexdigest()
 
 
+# 中文备注：大模型层：辅助处理输入指纹（参数：path）
 def fingerprints(path) -> dict:
     root = Path(path)
     files = sorted(root.rglob("*")) if root.is_dir() else [root]
@@ -56,6 +59,7 @@ class ModelCallRecord:
     timestamp: str
 
 
+# 中文备注：大模型层：辅助处理模型请求（参数：enhancer、stage）
 def model_request(enhancer, *, stage, **kwargs):
     """Use one recording boundary, including small injected completion clients."""
     trace = getattr(enhancer, "recorder", None) or ACTIVE.get()
@@ -65,6 +69,7 @@ def model_request(enhancer, *, stage, **kwargs):
 
 
 class ModelTrace:
+    # 中文备注：大模型层：初始化__init__（参数：settings、replay）
     def __init__(self, settings, replay=None):
         self.settings = settings
         self.replay = bool(replay)
@@ -117,6 +122,7 @@ class ModelTrace:
             except (KeyError, TypeError, ValueError) as error:
                 self.fail(f"incomplete model trace: {error}")
 
+    # 中文备注：脱敏并清理轨迹中的凭据字段（参数：value）
     def clean(self, value):
         if isinstance(value, dict):
             return {k: self.clean(v.split("?", 1)[0].split("@")[-1] if k == "base_url" and isinstance(v, str) else v) for k, v in value.items()
@@ -130,16 +136,19 @@ class ModelTrace:
             return re.sub(r"(?i)((?:api[_-]?key|token)[\s\"']*[:=][\s\"']*)[^\s,;\"'}]+", r"\1[REDACTED]", value)
         return value
 
+    # 中文备注：记录错误并以 ReplayError 中止重放（参数：message）
     def fail(self, message):
         self.errors.append({"error": message})
         raise ReplayError(message)
 
     @staticmethod
+    # 中文备注：计算轨迹内容的完整性摘要（参数：data）
     def checksum(data):
         value = copy.deepcopy(data)
         value.get("meta", {}).pop("integrity", None)
         return digest(value)
 
+    # 中文备注：统一的模型调用录制/重放边界（参数：enhancer、kwargs）
     def request(self, enhancer, kwargs):
         from .enrich import extract_json
         from .client import effective_temperature
@@ -165,6 +174,7 @@ class ModelTrace:
         call_count, error_count = len(enhancer.calls), len(enhancer.errors)
         notes = []
         logger = enhancer.logger
+        # 中文备注：大模型层：辅助处理capture（参数：无）
         def capture(*args):
             notes.append(self.clean(args))
             if logger:
@@ -188,6 +198,7 @@ class ModelTrace:
                               errors_added=self.clean(enhancer.errors[error_count:]), notes=notes)
         return response
 
+    # 中文备注：录制或重放一次 MCP 工具调用（参数：server、tool、args、invoke）
     def tool_call(self, server, tool, args, invoke):
         """Single recording/replay boundary for MCP tool invocations.
 
@@ -210,6 +221,7 @@ class ModelTrace:
             "timestamp": datetime.now(timezone.utc).isoformat()}))
         return result
 
+    # 中文备注：决定下一步动作：修阻塞、模型规划或规则链（参数：engine、original）
     def decide(self, engine, original):
         if not self.replay:
             begin = len(self.calls)
@@ -241,6 +253,7 @@ class ModelTrace:
         decision.source = "replay"
         return decision
 
+    # 中文备注：校验所有录制项都已在重放中消费（参数：无）
     def finish(self):
         if self.replay and (self.cursor != len(self.calls)
                             or self.decision_cursor != len(self.decisions)
@@ -248,15 +261,19 @@ class ModelTrace:
             self.fail("unconsumed model calls, decisions or MCP tool calls")
 
 
+# 中文备注：大模型层：辅助处理traced决策（参数：method）
 def traced_decision(method):
     @wraps(method)
+    # 中文备注：大模型层：辅助处理wrapped（参数：engine）
     def wrapped(engine):
         trace = ACTIVE.get()
         return trace.decide(engine, lambda: method(engine)) if trace else method(engine)
     return wrapped
 
 
+# 中文备注：逐项比对两份运行轨迹是否一致（参数：a、b）
 def compare(a, b):
+    # 中文备注：大模型层：加载load（参数：path）
     def load(path):
         p = Path(path)
         state_path = p / "agent_state.json" if p.is_dir() else p
@@ -266,8 +283,10 @@ def compare(a, b):
                                    if (state_path.parent / f"report.{kind}").exists()}
         return data
     left, right = load(a), load(b)
+    # 中文备注：大模型层：辅助处理步骤（参数：data）
     def steps(data):
         output = data.get("meta", {}).get("output_dir", "")
+        # 中文备注：大模型层：辅助处理normal（参数：value）
         def normal(value):
             return value.replace(output, "<OUTPUT>") if output and isinstance(value, str) else value
         return [{k: normal(v) for k, v in s.items() if k not in {"source", "seconds"}} for s in data.get("steps", [])]

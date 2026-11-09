@@ -327,6 +327,7 @@ def _as_tuple(pmids: Any) -> tuple[str, ...]:
     return tuple(str(item) for item in pmids)
 
 
+# 中文备注：知识库：辅助处理lookup基因（参数：genes）
 def lookup_genes(genes: Iterable[str]) -> list[KnowledgeRecord]:
     """Look up curated records for the given gene symbols."""
     records: list[KnowledgeRecord] = []
@@ -347,6 +348,7 @@ def lookup_genes(genes: Iterable[str]) -> list[KnowledgeRecord]:
     return records
 
 
+# 中文备注：知识库：辅助处理known基因（参数：无）
 def known_genes() -> tuple[str, ...]:
     """Gene symbols covered by the bundled knowledge base."""
     return tuple(sorted(BUNDLED_GENE_KNOWLEDGE))

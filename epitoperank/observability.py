@@ -18,6 +18,7 @@ REQUEST_ID: contextvars.ContextVar[str] = contextvars.ContextVar(
 )
 
 
+# 中文备注：epitoperank：辅助处理new请求id（参数：value）
 def new_request_id(value: str | None = None) -> str:
     """Return a bounded, safe correlation id for one request."""
     candidate = (value or "").strip()
@@ -64,6 +65,7 @@ def _level(value: str | int | None) -> int:
     return resolved if isinstance(resolved, int) else logging.INFO
 
 
+# 中文备注：epitoperank：辅助处理configurelogging（参数：log_path、level）
 def configure_logging(
     log_path: str | Path | None = None,
     level: str | int | None = None,
@@ -105,11 +107,13 @@ def configure_logging(
     return target
 
 
+# 中文备注：epitoperank：设置请求id（参数：value）
 def set_request_id(value: str) -> contextvars.Token[str]:
     """Bind a request id to the current async context."""
     return REQUEST_ID.set(value)
 
 
+# 中文备注：epitoperank：重置请求id（参数：token）
 def reset_request_id(token: contextvars.Token[str]) -> None:
     """Restore the previous request id after a request finishes."""
     REQUEST_ID.reset(token)

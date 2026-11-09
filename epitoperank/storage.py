@@ -47,6 +47,7 @@ _lock = threading.Lock()
 # --------------------------------------------------------------------------
 # default location
 # --------------------------------------------------------------------------
+# 中文备注：返回默认运行时目录（参数：无）
 def default_runtime_root() -> Path:
     """Return the persistent, per-user directory for runtime state.
 
@@ -76,6 +77,7 @@ def _exe_dir() -> Path | None:
     return None
 
 
+# 中文备注：epitoperank：辅助处理legacy运行时roots（参数：target）
 def legacy_runtime_roots(target: Path | None = None) -> list[Path]:
     """Return every location older builds may have written state to.
 
@@ -126,6 +128,7 @@ def legacy_runtime_roots(target: Path | None = None) -> list[Path]:
     return unique
 
 
+# 中文备注：epitoperank：辅助处理storage信息（参数：root）
 def storage_info(root: Path | None = None) -> dict[str, Any]:
     """Describe the storage layout (used by the UI "data location" panel)."""
     root = (root or default_runtime_root()).resolve()
@@ -189,6 +192,7 @@ def _columns(connection: sqlite3.Connection, table: str, schema: str = "main") -
     return [row[1] for row in rows]
 
 
+# 中文备注：epitoperank：合并SQLite（参数：target、source）
 def _merge_sqlite(target: Path, source: Path) -> dict[str, int]:
     """Merge ``source`` into ``target`` without clobbering existing rows.
 
@@ -283,6 +287,7 @@ def _copy_tree(source: Path, target: Path) -> int:
     return copied
 
 
+# 中文备注：epitoperank：辅助处理rewriteartifactpaths（参数：database、old_root、new_root）
 def _rewrite_artifact_paths(database: Path, old_root: Path, new_root: Path) -> int:
     """Point stored artifact paths at the migrated location."""
     if not database.is_file():
@@ -304,6 +309,7 @@ def _rewrite_artifact_paths(database: Path, old_root: Path, new_root: Path) -> i
         connection.close()
 
 
+# 中文备注：epitoperank：辅助处理migratelegacystorage（参数：target、force、logger）
 def migrate_legacy_storage(
     target: Path | None = None,
     *,

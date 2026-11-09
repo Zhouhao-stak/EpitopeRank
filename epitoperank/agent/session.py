@@ -29,6 +29,7 @@ KNOWN_EVENT_TYPES = ("SE", "MXE", "RI", "A3SS", "A5SS")
 # ---------------------------------------------------------------------------
 # Persistence
 # ---------------------------------------------------------------------------
+# 中文备注：智能体内核：保存状态（参数：state、project_dir）
 def save_state(state: AgentState, project_dir: str | Path) -> Path:
     """Write the agent's decision state next to the report.
 
@@ -64,6 +65,7 @@ def save_state(state: AgentState, project_dir: str | Path) -> Path:
     return path
 
 
+# 中文备注：读取项目目录下的 agent_state.json（参数：project_dir、context）
 def load_state(project_dir: str | Path, context: Any) -> AgentState | None:
     """Rebuild an :class:`AgentState` from a prior run.
 
@@ -125,6 +127,7 @@ def load_state(project_dir: str | Path, context: Any) -> AgentState | None:
 # ---------------------------------------------------------------------------
 # Follow-up intent (rule-based, no LLM required)
 # ---------------------------------------------------------------------------
+# 中文备注：智能体内核：解析followup（参数：query、known_genes）
 def parse_followup(query: str, known_genes: list[str] | None = None) -> dict[str, Any]:
     """Turn a follow-up query into concrete planner instructions.
 
@@ -151,6 +154,7 @@ def parse_followup(query: str, known_genes: list[str] | None = None) -> dict[str
     return {"event_types": event_types, "genes": genes}
 
 
+# 中文备注：智能体内核：构建followup动作（参数：intent、top_n）
 def build_followup_actions(
     intent: dict[str, Any], top_n: int | None = None
 ) -> list[tuple[str, dict[str, Any]]]:

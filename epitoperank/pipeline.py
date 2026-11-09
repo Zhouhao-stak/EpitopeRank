@@ -49,6 +49,7 @@ class AnalysisOutcome:
     context: RunContext
     report_paths: dict[str, Path] = field(default_factory=dict)
 
+    # 中文备注：epitoperank：辅助处理摘要（参数：无）
     def summary(self) -> dict[str, Any]:
         """JSON payload for the API and the web UI.
 
@@ -137,6 +138,7 @@ class AnalysisOutcome:
             "capabilities": capability_report(),
         }
 
+    # 中文备注：epitoperank：辅助处理大模型block（参数：无）
     def _llm_block(self) -> dict[str, Any]:
         """Everything the model added to this run (for the API and the UI)."""
         insights = getattr(self.context, "llm_insights", None) or {}
@@ -163,6 +165,7 @@ class AnalysisOutcome:
         }
 
 
+    # 中文备注：epitoperank：辅助处理agentblock（参数：无）
     def _agent_block(self) -> dict[str, Any]:
         """The autonomous agent's decision trace (empty in scripted mode)."""
         team = self.team
@@ -172,6 +175,7 @@ class AnalysisOutcome:
 
 
 
+# 中文备注：运行一次完整分析并录制可复现轨迹（参数：query、input_path、settings、project_id）
 def run_analysis(query: str, input_path: str | Path, *, settings: Settings | None = None,
                  project_id: str | None = None, project_name: str | None = None,
                  output_root: str | Path | None = None, confirm_handler: Any | None = None,
@@ -192,6 +196,7 @@ def run_analysis(query: str, input_path: str | Path, *, settings: Settings | Non
             if inputs != trace.meta.get("input_fingerprints") or query != trace.meta.get("query"):
                 trace.fail("input fingerprints/query mismatch")
             config = trace.meta["config"]
+            # 中文备注：epitoperank：恢复restore（参数：block、values）
             def restore(block, values):
                 return dataclasses.replace(block, **{k: restore(getattr(block, k), v)
                     if dataclasses.is_dataclass(getattr(block, k)) else v for k, v in values.items()})
@@ -262,6 +267,7 @@ def run_analysis(query: str, input_path: str | Path, *, settings: Settings | Non
         raise
 
 
+# 中文备注：epitoperank：执行analysis（参数：query、input_path、settings、project_id）
 def _run_analysis(
     query: str,
     input_path: str | Path,
@@ -382,6 +388,7 @@ def _run_analysis(
     )
 
 
+# 中文备注：epitoperank：辅助处理resumeanalysis（参数：project_id、query、settings、output_root）
 def resume_analysis(
     project_id: str,
     query: str,
@@ -539,6 +546,7 @@ def resume_analysis(
     )
 
 
+# 中文备注：epitoperank：辅助处理项目状态（参数：project_id、settings）
 def project_status(project_id: str, settings: Settings | None = None) -> dict[str, Any] | None:
     """Load a persisted project's status from the analysis memory.
 
@@ -578,6 +586,7 @@ def project_status(project_id: str, settings: Settings | None = None) -> dict[st
     }
 
 
+# 中文备注：epitoperank：列出项目（参数：settings）
 def list_projects(settings: Settings | None = None) -> list[dict[str, Any]]:
     """List known projects (most recent first) with per-project counters."""
     if settings is None:

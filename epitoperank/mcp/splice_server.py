@@ -45,18 +45,21 @@ _MAX_PEPTIDES_LOOKUP = 10
 
 
 @server.tool()
+# 中文备注：MCP 工具：列出项目（参数：无）
 def list_projects() -> dict:
     """List analyzed EpitopeRank projects with their project_id."""
     return _list_projects()
 
 
 @server.tool()
+# 中文备注：MCP 工具：辅助处理项目摘要（参数：project_id）
 def project_summary(project_id: str) -> dict:
     """Summarize one project: samples, events, significant hits, top candidates."""
     return _project_summary(project_id)
 
 
 @server.tool()
+# 中文备注：MCP 工具：检索剪接事件（参数：project_id、gene、event_type、fdr_max）
 def search_events(
     project_id: str,
     gene: str = "",
@@ -77,6 +80,7 @@ def search_events(
 
 
 @server.tool()
+# 中文备注：MCP 工具：辅助处理explain事件type（参数：event_type）
 def explain_event_type(event_type: str = "") -> dict:
     """Explain SE, MXE, A5SS, A3SS and RI event types (empty returns all)."""
     if not event_type.strip():
@@ -85,12 +89,14 @@ def explain_event_type(event_type: str = "") -> dict:
 
 
 @server.tool()
+# 中文备注：MCP 工具：计算deltaPSI（参数：group1_psi、group2_psi）
 def compute_delta_psi(group1_psi: float, group2_psi: float) -> dict:
     """Compute delta PSI = group2 - group1 and interpret the direction."""
     return _compute_delta_psi(group1_psi, group2_psi)
 
 
 @server.tool()
+# 中文备注：MCP 工具：辅助处理肽段capabilities（参数：无）
 def peptide_capabilities() -> dict:
     """Report peptide predictors, IEDB method keys, reference tables and limits."""
     from epitoperank.peptide import capabilities
@@ -99,6 +105,7 @@ def peptide_capabilities() -> dict:
 
 
 @server.tool()
+# 中文备注：MCP 工具：辅助处理肽段properties（参数：peptides）
 def peptide_properties(peptides: list[str]) -> dict:
     """Compute offline physicochemical features for up to 50 peptides.
 
@@ -120,6 +127,7 @@ def peptide_properties(peptides: list[str]) -> dict:
 
 
 @server.tool()
+# 中文备注：MCP 工具：预测MHCbinding（参数：peptides、alleles、mhc_class、processing）
 def predict_mhc_binding(
     peptides: list[str],
     alleles: list[str],
@@ -163,6 +171,7 @@ def predict_mhc_binding(
 
 
 @server.tool()
+# 中文备注：MCP 工具：辅助处理lookupepitope（参数：peptides）
 def lookup_epitope(peptides: list[str]) -> dict:
     """Look up to 10 peptides in the IEDB T-cell assay database.
 
@@ -190,6 +199,7 @@ def lookup_epitope(peptides: list[str]) -> dict:
 
 
 @server.tool()
+# 中文备注：MCP 工具：辅助处理文献passages（参数：query、max_articles、max_passages）
 def literature_passages(query: str, max_articles: int = 2, max_passages: int = 4) -> dict:
     """Full-text literature passages (Europe PMC open access, local BM25).
 

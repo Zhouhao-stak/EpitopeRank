@@ -54,6 +54,7 @@ class ThresholdBandit:
             self.arms[key] = ArmStats()
         return self.arms[key]
 
+    # 中文备注：智能体内核：选择choose（参数：candidates、counts、goal_target）
     def choose(
         self,
         candidates: list[tuple[float, float]],
@@ -103,6 +104,7 @@ class ThresholdBandit:
 
         return best_arm if best_arm else candidates[0]
 
+    # 中文备注：智能体内核：更新update（参数：fdr、dpsi、reward）
     def update(self, fdr: float, dpsi: float, reward: float) -> None:
         """Record the reward for pulling this arm."""
         arm = self.get_arm(fdr, dpsi)
@@ -110,6 +112,7 @@ class ThresholdBandit:
         arm.total_reward += reward
         arm.last_reward = reward
 
+    # 中文备注：智能体内核：保存save（参数：path）
     def save(self, path: str | Path) -> None:
         """Persist bandit state to disk."""
         path = Path(path)
@@ -129,6 +132,7 @@ class ThresholdBandit:
         }
         path.write_text(json.dumps(data, indent=2))
 
+    # 中文备注：智能体内核：加载load（参数：path）
     def load(self, path: str | Path) -> None:
         """Load bandit state from disk."""
         path = Path(path)
@@ -147,6 +151,7 @@ class ThresholdBandit:
             pass  # Silently ignore corrupt files
 
 
+# 中文备注：智能体内核：计算reward（参数：count、goal_target、fdr、dpsi）
 def compute_reward(count: int, goal_target: int, fdr: float, dpsi: float) -> float:
     """Compute reward for a threshold choice.
 

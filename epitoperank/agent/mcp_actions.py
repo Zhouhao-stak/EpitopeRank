@@ -111,6 +111,7 @@ SPEC_BY_ACTION = {spec["name"]: spec for spec in TOOL_SPECS}
 DEFAULT_SERVER = BUILTIN_SERVER_NAME
 
 
+# 中文备注：智能体内核：辅助处理compact模式（参数：params）
 def compact_schema(params: dict[str, Any]) -> dict[str, str]:
     """One-line type hints for the planner prompt (keeps the payload small)."""
     output: dict[str, str] = {}
@@ -126,6 +127,7 @@ def compact_schema(params: dict[str, Any]) -> dict[str, str]:
     return output
 
 
+# 中文备注：按声明的 schema 校验模型给出的工具参数（参数：params、raw）
 def validate_args(params: dict[str, Any], raw: Any) -> tuple[dict[str, Any], list[str]]:
     """Validate model-supplied arguments; return cleaned args and dropped keys.
 
@@ -189,6 +191,7 @@ def validate_args(params: dict[str, Any], raw: Any) -> tuple[dict[str, Any], lis
     return cleaned, dropped
 
 
+# 中文备注：从工具结果中提取决策所需的结构化摘要（参数：tool、result）
 def summarize_result(tool: str, result: Any) -> dict[str, Any]:
     """Extract decision-relevant fields from an MCP result for ``state.facts``."""
     payload = result if isinstance(result, dict) else {"value": result}
@@ -222,6 +225,7 @@ def summarize_result(tool: str, result: Any) -> dict[str, Any]:
     return summary
 
 
+# 中文备注：智能体内核：调用local（参数：tool、args）
 def _local_invoke(tool: str, args: dict[str, Any]) -> dict[str, Any] | None:
     """Offline fallback for built-in tools when the MCP HTTP server is down.
 
@@ -255,11 +259,13 @@ def _local_invoke(tool: str, args: dict[str, Any]) -> dict[str, Any] | None:
     return None
 
 
+# 中文备注：统一 MCP 调用边界：录制或重放（参数：server、tool、args、network）
 def invoke_tool(server: str, tool: str, args: dict[str, Any],
                 *, network: bool = True) -> dict[str, Any]:
     """Single MCP boundary: replay uses the tape, otherwise call + record."""
     from epitoperank.llm.trace import ACTIVE
 
+    # 中文备注：智能体内核：调用real（参数：无）
     def real_call() -> dict[str, Any]:
         if network and server == BUILTIN_SERVER_NAME:
             try:
@@ -288,12 +294,14 @@ def invoke_tool(server: str, tool: str, args: dict[str, Any],
     return real_call()
 
 
+# 中文备注：把内置 MCP 工具展开为独立动作（参数：无）
 def build_mcp_actions() -> list[Any]:
     """Build one registry Action per built-in MCP tool."""
     from .actions import Action
 
     actions = []
     for spec in TOOL_SPECS:
+        # 中文备注：智能体内核：辅助处理handler（参数：context、state、_tool、_params）
         def handler(context: Any, state: Any, _tool: str = spec["tool"],
                     _params: dict = spec["params"], _name: str = spec["name"], **kwargs: Any) -> str:
             from .mcp_actions import invoke_tool, summarize_result, validate_args

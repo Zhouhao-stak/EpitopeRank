@@ -58,6 +58,7 @@ class HypothesisResult:
         }
 
 
+# 中文备注：智能体内核：辅助处理benjaminihochberg（参数：p_values）
 def _benjamini_hochberg(p_values: Sequence[float]) -> list[float]:
     """BH step-up adjusted p-values (monotone, clipped at 1)."""
     m = len(p_values)
@@ -90,6 +91,7 @@ def _float(value: Any) -> float | None:
 # ---------------------------------------------------------------------------
 
 
+# 中文备注：智能体内核：检验dpsishift（参数：values）
 def _test_dpsi_shift(values: list[float]) -> tuple[float | None, float | None, str]:
     """Wilcoxon signed-rank (or t-test for small n) against a zero shift."""
     import scipy.stats as stats  # noqa: PLC0415 - optional backend
@@ -122,6 +124,7 @@ def _test_direction_balance(up: int, down: int) -> tuple[float | None, float | N
         return None, None, "binomial test (two-sided, p=0.5)"
 
 
+# 中文备注：智能体内核：检验事件typebias（参数：hit_counts、background_counts）
 def _test_event_type_bias(
     hit_counts: dict[str, int], background_counts: dict[str, int]
 ) -> tuple[float | None, float | None, str, str]:
@@ -156,6 +159,7 @@ def _test_event_type_bias(
         return None, None, "chi-square goodness of fit", ""
 
 
+# 中文备注：智能体内核：检验coverageconfound（参数：effects、support、missing）
 def _test_coverage_confound(
     effects: list[float], support: list[float], missing: list[float]
 ) -> tuple[float | None, float | None, str, str]:
@@ -184,6 +188,7 @@ def _test_coverage_confound(
         return None, None, "Spearman rank correlation", ""
 
 
+# 中文备注：智能体内核：检验基因recurrence（参数：events_per_gene、background_events_per_gene）
 def _test_gene_recurrence(
     events_per_gene: dict[str, int], background_events_per_gene: dict[str, int]
 ) -> tuple[float | None, float | None, str, str]:
@@ -222,6 +227,7 @@ def _test_gene_recurrence(
 # ---------------------------------------------------------------------------
 
 
+# 中文备注：智能体内核：执行hypothesistests（参数：context、alpha）
 def run_hypothesis_tests(context: Any, alpha: float = ALPHA_DEFAULT) -> list[HypothesisResult]:
     """Run every pre-registered test against the current run context."""
     significant = list(getattr(context, "significant_events", []) or [])
@@ -396,6 +402,7 @@ def _median(values: list[float]) -> float | None:
     return (ordered[mid - 1] + ordered[mid]) / 2
 
 
+# 中文备注：智能体内核：辅助处理文本摘要（参数：results）
 def text_summary(results: Sequence[HypothesisResult]) -> str:
     """One-line-per-test summary for logs and the workflow trace."""
     if not results:

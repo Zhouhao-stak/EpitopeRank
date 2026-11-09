@@ -28,6 +28,7 @@ class SequenceError(ValueError):
     """Raised when a peptide or FASTA record is not usable."""
 
 
+# 中文备注：肽预测：规范化肽段（参数：value、allow_ambiguous）
 def normalize_peptide(value: object, *, allow_ambiguous: bool = False) -> str:
     """Return an uppercase peptide, or raise :class:`SequenceError`.
 
@@ -46,6 +47,7 @@ def normalize_peptide(value: object, *, allow_ambiguous: bool = False) -> str:
     return peptide
 
 
+# 中文备注：肽预测：校验肽段（参数：value、lengths、allow_ambiguous）
 def validate_peptide(value: object, *, lengths: Iterable[int] = MHC_I_LENGTHS,
                      allow_ambiguous: bool = False) -> str:
     """Normalize and check that the length is one the requested model supports."""
@@ -59,11 +61,13 @@ def validate_peptide(value: object, *, lengths: Iterable[int] = MHC_I_LENGTHS,
     return peptide
 
 
+# 中文备注：肽预测：摘要肽段（参数：peptide）
 def peptide_digest(peptide: str) -> str:
     """Stable short identifier used in caches and result tables."""
     return hashlib.sha1(peptide.encode("ascii")).hexdigest()[:16]
 
 
+# 中文备注：肽预测：辅助处理unique（参数：items）
 def unique(items: Iterable[str]) -> list[str]:
     """Deduplicate while preserving first-seen order."""
     return list(dict.fromkeys(items))
@@ -78,6 +82,7 @@ def file_sha256(path: str | Path, *, chunk_size: int = 1024 * 1024) -> str:
     return digest.hexdigest()
 
 
+# 中文备注：肽预测：读取fasta（参数：path、kind）
 def read_fasta(path: str | Path, *, kind: str = "protein") -> Iterator[tuple[str, str]]:
     """Stream ``(header, sequence)`` pairs, rejecting empty or malformed records.
 
@@ -177,6 +182,7 @@ class SelfReference:
             proteins.extend(read_fasta(path, kind="protein"))
         return cls(proteins)
 
+    # 中文备注：肽预测：辅助处理hits（参数：peptides）
     def hits(self, peptides: Iterable[str]) -> dict[str, list[str]]:
         """Map each peptide to the headers of proteins that contain it exactly."""
         result: dict[str, list[str]] = {}

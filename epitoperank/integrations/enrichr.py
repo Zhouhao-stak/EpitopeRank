@@ -49,6 +49,7 @@ def backend_available() -> bool:
         return False
 
 
+# 中文备注：外部集成：富集enrich（参数：genes、organism、libraries、background）
 def enrich(
     genes: Sequence[str],
     *,

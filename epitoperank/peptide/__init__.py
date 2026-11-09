@@ -106,6 +106,7 @@ __all__ = [
 ]
 
 
+# 中文备注：肽预测：辅助处理capabilities（参数：无）
 def capabilities() -> dict[str, object]:
     """Describe which peptide features can run right now.
 

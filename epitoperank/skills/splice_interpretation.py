@@ -176,6 +176,7 @@ class SpliceInterpretationSkill(BaseSkill):
                 error=f"剪接事件解读失败: {str(exc)}",
             )
 
+    # 中文备注：外部技能：预测splicestrength（参数：chromosome、start、end、strand）
     async def _predict_splice_strength(
         self,
         chromosome: str,
@@ -193,6 +194,7 @@ class SpliceInterpretationSkill(BaseSkill):
             "strand": strand,
         }
 
+    # 中文备注：外部技能：获取spliceai分数（参数：gene_symbol、chromosome、start、end）
     async def _get_spliceai_scores(
         self,
         gene_symbol: str,
@@ -223,6 +225,7 @@ class SpliceInterpretationSkill(BaseSkill):
         except Exception:  # noqa: BLE001
             return None
 
+    # 中文备注：外部技能：辅助处理analyzeproteinimpact（参数：gene_symbol、event_type、delta_psi）
     async def _analyze_protein_impact(
         self,
         gene_symbol: str,
@@ -286,6 +289,7 @@ class SpliceInterpretationSkill(BaseSkill):
         except Exception:  # noqa: BLE001
             return None
 
+    # 中文备注：外部技能：辅助处理查询clinicaldatabases（参数：gene_symbol、event_type）
     async def _query_clinical_databases(
         self, gene_symbol: str, event_type: str
     ) -> dict[str, Any] | None:
@@ -336,6 +340,7 @@ class SpliceInterpretationSkill(BaseSkill):
         except Exception:  # noqa: BLE001
             return None
 
+    # 中文备注：外部技能：辅助处理findtherapeuticopportunities（参数：gene_symbol、event_type）
     async def _find_therapeutic_opportunities(
         self, gene_symbol: str, event_type: str
     ) -> dict[str, Any] | None:
@@ -398,6 +403,7 @@ class SpliceInterpretationSkill(BaseSkill):
 
         return therapeutic_info if any(therapeutic_info.values()) else None
 
+    # 中文备注：外部技能：生成摘要（参数：gene_symbol、event_type、delta_psi、fdr）
     def _generate_summary(
         self,
         gene_symbol: str,

@@ -76,6 +76,7 @@ class LLMSettings:
         return bool(self.api_key and self.base_url)
 
     @property
+    # 中文备注：判断大模型端点当前是否可用（参数：无）
     def usable(self) -> bool:
         """Configured *and* switched on, with a model name to call."""
         return self.configured and self.enabled and bool(self.model)
@@ -161,6 +162,7 @@ class AnalysisSettings:
     enrichment_alpha: float = 0.05
 
 
+# 中文备注：返回默认运行时目录（参数：无）
 def default_runtime_root() -> Path:
     """Platform-safe, *persistent* default for the runtime root.
 
@@ -220,6 +222,7 @@ def _load_env_file(path: Path) -> dict[str, str]:
     return values
 
 
+# 中文备注：epitoperank：应用环境变量覆盖项（参数：data）
 def _apply_env_overrides(data: dict[str, Any]) -> dict[str, Any]:
     """Map ``EPITOPERANK_*`` environment variables onto the config tree."""
     overrides = {
@@ -250,6 +253,7 @@ def _env_str(name: str, fallback: str = "") -> str:
     return value if value is not None else fallback
 
 
+# 中文备注：epitoperank：辅助处理大模型设置（参数：data）
 def _llm_settings(data: dict[str, Any] | None = None) -> LLMSettings:
     """Build LLM settings: secrets from the environment only.
 
@@ -302,6 +306,7 @@ def _llm_settings(data: dict[str, Any] | None = None) -> LLMSettings:
     )
 
 
+# 中文备注：epitoperank：辅助处理agent设置（参数：data）
 def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
     """Build autonomous-agent settings (YAML ``agent:`` block + env)."""
     block = data or {}
@@ -390,6 +395,7 @@ def _agent_settings(data: dict[str, Any] | None = None) -> AgentSettings:
     )
 
 
+# 中文备注：epitoperank：辅助处理pubmedenabled（参数：无）
 def pubmed_enabled() -> bool:
     """Whether live PubMed retrieval is enabled (default: true).
 
@@ -404,12 +410,14 @@ def pubmed_enabled() -> bool:
     }
 
 
+# 中文备注：加载配置并把状态库迁移到可写位置（参数：config_path）
 def load_prepared_settings(config_path: str | Path | None = None) -> tuple[Settings, list[str]]:
     """Load settings and relocate SQLite state off unusable filesystems."""
     settings = load_settings(config_path)
     return prepare_storage(settings)
 
 
+# 中文备注：加载 YAML 配置并叠加环境变量覆盖（参数：config_path）
 def load_settings(config_path: str | Path | None = None) -> Settings:
     """Load settings from YAML plus environment overrides."""
     path = Path(config_path) if config_path else DEFAULT_CONFIG_PATH
@@ -478,6 +486,7 @@ def load_settings(config_path: str | Path | None = None) -> Settings:
     )
 
 
+# 中文备注：确保运行时目录存在且可写（参数：settings）
 def ensure_runtime_dirs(settings: Settings) -> None:
     """Create runtime directories if they do not exist yet."""
     for directory in (
@@ -488,6 +497,7 @@ def ensure_runtime_dirs(settings: Settings) -> None:
         directory.mkdir(parents=True, exist_ok=True)
 
 
+# 中文备注：epitoperank：辅助处理SQLitewritable（参数：path、timeout）
 def _sqlite_writable(path: Path, timeout: float = 5.0) -> bool:
     """Probe whether a SQLite database can be created at ``path``.
 
@@ -524,6 +534,7 @@ def _sqlite_writable(path: Path, timeout: float = 5.0) -> bool:
         return False
 
 
+# 中文备注：把 SQLite 状态库迁移到可写文件系统（参数：settings）
 def prepare_storage(settings: Settings) -> tuple[Settings, list[str]]:
     """Validate SQLite locations and relocate them to local disk if needed.
 

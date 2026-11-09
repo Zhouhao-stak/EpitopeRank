@@ -285,7 +285,6 @@ docker run --rm -v epitoperank-data:/data -v $PWD:/bak alpine sh -c "cd / && tar
 | `/api/neoantigen/readiness/{id}` | GET | 肽生成就绪检查 |
 | `/api/neoantigen/run` | POST | 运行路线 A（`project_id`、`alleles`、`max_predictions`） |
 | `/api/neoantigen/mopepgen` | POST | 运行路线 B（`project_id`、`reference_source`、`genome`/`gtf`/`proteome`） |
-| `/api/neoantigen/audit` | POST | 证据审计（阶段 0/2） |
 | `/api/neoantigen/workflow/start` / `advance` | POST | 分阶段工作流启动/推进 |
 | `/api/storage` | GET | 查看存储位置与迁移状态 |
 

@@ -12,6 +12,7 @@ from typing import Any, Sequence
 from epitoperank.splicing.schema import StandardEvent
 
 
+# 中文备注：统计分析：辅助处理chisquarep值（参数：control_in、control_out、experiment_in、experiment_out）
 def chi_square_p_value(
     control_in: float,
     control_out: float,
@@ -44,6 +45,7 @@ def chi_square_p_value(
     return math.erfc(math.sqrt(max(0.0, statistic) / 2.0))
 
 
+# 中文备注：统计分析：辅助处理benjaminihochberg（参数：p_values）
 def benjamini_hochberg(p_values: Sequence[float | None]) -> list[float | None]:
     """Benjamini-Hochberg FDR adjustment, preserving ``None`` entries."""
     indexed = [
@@ -62,6 +64,7 @@ def benjamini_hochberg(p_values: Sequence[float | None]) -> list[float | None]:
     return [adjusted.get(index) for index in range(len(p_values))]
 
 
+# 中文备注：统计分析：辅助处理recomputeFDR（参数：events）
 def recompute_fdr(events: Sequence[StandardEvent]) -> None:
     """Recompute FDR from p-values in place (BH adjustment)."""
     adjusted = benjamini_hochberg([event.p_value for event in events])
@@ -70,6 +73,7 @@ def recompute_fdr(events: Sequence[StandardEvent]) -> None:
             event.fdr = round(fdr, 12)
 
 
+# 中文备注：统计分析：辅助处理effect条数摘要（参数：events）
 def effect_size_summary(events: Sequence[StandardEvent]) -> dict[str, Any]:
     """Summarize delta-PSI distribution of an event collection."""
     deltas = [event.delta_psi for event in events if event.delta_psi is not None]

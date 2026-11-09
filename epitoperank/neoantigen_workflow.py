@@ -33,6 +33,7 @@ def _table(path: Path) -> list[dict]:
         return list(csv.DictReader(handle, delimiter=',' if path.suffix.lower() == '.csv' else '\t'))
 
 
+# 中文备注：epitoperank：推进advance（参数：state、dataset、parameters、predictor）
 def advance(state: dict, dataset, parameters: dict, *, predictor=predict_iedb) -> dict:
     """Advance exactly one stage; caller must persist state only on success."""
     if parameters.get('confirm') is not True:

@@ -21,6 +21,7 @@ from epitoperank.agents.prompts import (
 AGENT_NAMES = ("bio_planner", "bio_analyst", "bio_interpreter")
 
 
+# 中文备注：多智能体：构建agents（参数：planner_client、analyst_client、interpreter_client、tools）
 def build_agents(
     *,
     planner_client: ChatCompletionClient,

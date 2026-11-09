@@ -56,6 +56,7 @@ def _read(path: Path) -> list[dict[str, str]]:
         raise ReferenceError(f"cannot read {path.name}: {error}") from error
 
 
+# 中文备注：肽预测：加载HLA 型别（参数：mhc_class）
 def load_alleles(mhc_class: int) -> list[dict[str, object]]:
     """Return bundled alleles for one MHC class, with locus/supertype filled in.
 
@@ -86,6 +87,7 @@ def load_alleles(mhc_class: int) -> list[dict[str, object]]:
     return result
 
 
+# 中文备注：肽预测：加载knownepitopes（参数：无）
 def load_known_epitopes() -> list[dict[str, str]]:
     """Return the bundled IEDB assay extract (empty list when not fetched)."""
     return _read(reference_dir() / "known_epitopes.tsv")

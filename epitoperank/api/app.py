@@ -71,6 +71,7 @@ _FAVICON_SVG = (
 )
 
 
+# 中文备注：Web 接口：辅助处理覆盖项（参数：settings、thresholds）
 def _with_overrides(settings: Any, thresholds: Any) -> Any:
     """Return settings with optional per-request analysis thresholds applied.
 
@@ -157,6 +158,7 @@ def _export_project_bundle(
     return str(target) if target else ""
 
 
+# 中文备注：构建并返回 FastAPI 应用（参数：无）
 def create_app() -> FastAPI:
     """Build the EpitopeRank API application."""
     # Load .env file so API keys are available in environment variables
@@ -212,11 +214,13 @@ def create_app() -> FastAPI:
     rate_lock = threading.Lock()
 
     @app.get("/")
+    # 中文备注：HTTP 接口：GET /（参数：无）
     def index() -> Any:
         """Serve the browser UI (what the desktop exe opens automatically)."""
         return render_web_ui(f"EpitopeRank v{API_VERSION}")
 
     @app.get("/assets/opencc-cn2t.js", include_in_schema=False)
+    # 中文备注：HTTP 接口：GET /assets/opencc-cn2t.js（参数：无）
     def traditional_chinese_converter() -> FileResponse:
         """Serve the bundled, offline Chinese script converter."""
         converter = Path(__file__).resolve().parent.parent / "interface" / "opencc-cn2t.js"
@@ -233,8 +237,17 @@ def create_app() -> FastAPI:
         return {"status": "ok", "version": API_VERSION, "llm_configured": settings.llm.configured}
 
     @app.middleware("http")
+    # 中文备注：Web 接口：辅助处理请求boundary（参数：request、call_next）
     async def request_boundary(request: Request, call_next: Any) -> Response:
         """Apply request correlation, baseline headers, and optional API auth."""
+        # Reject encoded or literal parent-directory segments before routing.
+        # Several handlers build paths from {project_id}/{name} path params.
+        from urllib.parse import unquote
+
+        raw_path = request.scope.get("raw_path", b"").decode("latin-1", "ignore")
+        decoded_path = unquote(raw_path)
+        if ".." in decoded_path or "\x00" in decoded_path:
+            return JSONResponse(status_code=400, content={"detail": "invalid path"})
         request_id = new_request_id(request.headers.get("X-Request-ID"))
         token = set_request_id(request_id)
         started = time.perf_counter()
@@ -304,6 +317,7 @@ def create_app() -> FastAPI:
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         return response
 
+    # 中文备注：Web 接口：辅助处理fresh设置（参数：无）
     def _fresh_settings() -> Any:
         """Reload settings so a key saved through /api/llm/config is live.
 
@@ -319,6 +333,7 @@ def create_app() -> FastAPI:
             return settings
 
     @app.get("/api/llm/status")
+    # 中文备注：HTTP 接口：GET /api/llm/status（参数：无）
     def llm_status_endpoint() -> dict[str, Any]:
         """Is a model endpoint configured, and what may it enrich?"""
         from epitoperank.llm.enrich import llm_status
@@ -329,6 +344,7 @@ def create_app() -> FastAPI:
         return payload
 
     @app.post("/api/llm/config")
+    # 中文备注：HTTP 接口：POST /api/llm/config（参数：payload）
     def llm_config(payload: dict[str, Any]) -> dict[str, Any]:
         """Save model credentials into the local ``.env`` file.
 
@@ -370,44 +386,13 @@ def create_app() -> FastAPI:
             "config": env_config_payload(),
         }
 
-    @app.post("/api/understand")
-    def understand(payload: dict[str, Any]) -> dict[str, Any]:
-        """Resolve a natural-language question into a structured intent.
-
-        Model-based when an endpoint is configured, rule-based otherwise,
-        so the UI can show the same panel in both modes.
-        """
-        query = str(payload.get("query", "")).strip()
-        if not query:
-            raise HTTPException(status_code=400, detail="query is required")
-        from epitoperank.llm.enrich import build_enhancer
-        from epitoperank.llm.tasks import understand_query
-
-        facts = payload.get("facts") if isinstance(payload.get("facts"), dict) else None
-        try:
-            from epitoperank.llm.enrich import build_enhancer
-
-            enhancer = build_enhancer(_fresh_settings())
-            result = understand_query(query, enhancer=enhancer, facts=facts)
-            # Surface why the model path was skipped: without this the UI shows
-            # a perfectly reasonable rule-based answer and the user cannot tell
-            # that their key / endpoint is not actually working.
-            if isinstance(result, dict) and result.get("source") != "llm" and enhancer.errors:
-                result["llm_errors"] = enhancer.errors[-3:]
-            return result
-        except Exception as error:  # noqa: BLE001 - degrade to the rule baseline
-            from epitoperank.llm.tasks import classify_query_fallback
-
-            fallback = classify_query_fallback(query, error=str(error))
-            fallback["llm_errors"] = [{"feature": "understand", "error": str(error)}]
-            return fallback
-
     @app.get("/api/projects")
     def projects() -> dict[str, Any]:
         """列出全部项目（纯读库，供首页项目列表使用）。"""
         return {"projects": list_projects(settings)}
 
     @app.get("/api/storage")
+    # 中文备注：HTTP 接口：GET /api/storage（参数：无）
     def storage() -> dict[str, Any]:
         """Where the app keeps its data, so the user can back it up."""
         from epitoperank.storage import storage_info
@@ -427,6 +412,7 @@ def create_app() -> FastAPI:
         return payload
 
     @app.get("/api/projects/{project_id}/trace")
+    # 中文备注：HTTP 接口：GET /api/projects/{project_id}/trace（参数：project_id）
     def project_trace(project_id: str) -> dict[str, Any]:
         """Read-only decision trace: steps, decision sources, model/tool calls.
 
@@ -450,12 +436,14 @@ def create_app() -> FastAPI:
                                 detail=f"Unreadable decision trace: {error}") from error
 
     @app.post("/api/trace/compare")
+    # 中文备注：HTTP 接口：POST /api/trace/compare（参数：payload）
     def trace_compare(payload: dict[str, Any]) -> dict[str, Any]:
         """Compare two recorded runs (record vs replay) for byte-level identity."""
         from epitoperank.llm.trace import compare
 
         root = settings.paths.runtime_root.resolve()
 
+        # 中文备注：Web 接口：解析追踪resolve_trace（参数：value）
         def resolve_trace(value: Any) -> Path:
             if not value:
                 raise HTTPException(status_code=400, detail="left and right are required")
@@ -488,10 +476,12 @@ def create_app() -> FastAPI:
     plan_jobs: dict[str, dict[str, Any]] = {}
     plan_jobs_lock = threading.RLock()
 
+    # 中文备注：Web 接口：设置job（参数：job_id）
     def _set_job(job_id: str, **fields: Any) -> None:
         with plan_jobs_lock:
             plan_jobs.setdefault(job_id, {}).update(fields)
 
+    # 中文备注：Web 接口：追踪文件（参数：project_id）
     def _trace_file(project_id: str) -> Path:
         import re
 
@@ -505,6 +495,7 @@ def create_app() -> FastAPI:
         return path
 
     @app.post("/api/plan/preview")
+    # 中文备注：HTTP 接口：POST /api/plan/preview（参数：payload）
     def plan_preview(payload: dict[str, Any]) -> dict[str, Any]:
         """Turn a natural-language objective into an editable plan (no execution)."""
         from epitoperank.agent.actions import build_registry
@@ -514,6 +505,7 @@ def create_app() -> FastAPI:
         return {"plan": plan.as_dict(), "registry_size": len(build_registry())}
 
     @app.post("/api/plan/run")
+    # 中文备注：HTTP 接口：POST /api/plan/run（参数：payload）
     def plan_run(payload: dict[str, Any]) -> dict[str, Any]:
         """Start an analysis from a reviewed plan; returns a pollable job id."""
         from epitoperank.agent.plan import AnalysisPlan
@@ -535,6 +527,7 @@ def create_app() -> FastAPI:
         job_id = secrets.token_urlsafe(12)
         _set_job(job_id, status="running", kind="run", project_id=project_id)
 
+        # 中文备注：Web 接口：辅助处理worker（参数：无）
         def worker() -> None:
             from epitoperank.pipeline import run_analysis
 
@@ -554,6 +547,7 @@ def create_app() -> FastAPI:
         return {"job_id": job_id, "status": "running"}
 
     @app.get("/api/jobs/{job_id}")
+    # 中文备注：HTTP 接口：GET /api/jobs/{job_id}（参数：job_id）
     def job_status(job_id: str) -> dict[str, Any]:
         if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", job_id or ""):
             raise HTTPException(status_code=400, detail="Invalid job id")
@@ -564,6 +558,7 @@ def create_app() -> FastAPI:
         return {"job_id": job_id, **job}
 
     @app.get("/api/projects/{project_id}/proof")
+    # 中文备注：HTTP 接口：GET /api/projects/{project_id}/proof（参数：project_id）
     def project_proof(project_id: str) -> dict[str, Any]:
         """Self-contained reproducibility proof for one recorded run."""
         from epitoperank.agent.plan import reproducibility_proof
@@ -579,6 +574,7 @@ def create_app() -> FastAPI:
         return proof
 
     @app.post("/api/projects/{project_id}/verify")
+    # 中文备注：HTTP 接口：POST /api/projects/{project_id}/verify（参数：project_id、payload）
     def project_verify(project_id: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
         """Replay the recorded run offline and compare steps/params/ranked/reports."""
         from epitoperank.agent.trace_view import load_state
@@ -597,6 +593,7 @@ def create_app() -> FastAPI:
         job_id = secrets.token_urlsafe(12)
         _set_job(job_id, status="running", kind="verify", project_id=project_id)
 
+        # 中文备注：Web 接口：辅助处理worker（参数：无）
         def worker() -> None:
             import dataclasses
             import traceback
@@ -627,6 +624,7 @@ def create_app() -> FastAPI:
         return {"job_id": job_id, "status": "running"}
 
     @app.get("/api/projects/{project_id}/events")
+    # 中文备注：HTTP 接口：GET /api/projects/{project_id}/events（参数：project_id、page、size、q）
     def project_events(
         project_id: str,
         page: int = 1,
@@ -672,6 +670,7 @@ def create_app() -> FastAPI:
         }
 
     @app.delete("/api/projects/{project_id}")
+    # 中文备注：HTTP 接口：DELETE /api/projects/{project_id}（参数：project_id）
     def delete_project(project_id: str) -> dict[str, Any]:
         """Delete a project: database rows plus its output folder."""
         from epitoperank.memory.project_memory import ProjectMemory
@@ -686,6 +685,7 @@ def create_app() -> FastAPI:
         return {"deleted": project_id, "rows": removed_rows}
 
     @app.post("/api/projects/{project_id}/export")
+    # 中文备注：HTTP 接口：POST /api/projects/{project_id}/export（参数：project_id）
     def export_project(project_id: str) -> dict[str, Any]:
         """Publish this project's report/figures into its own results folder."""
         from epitoperank.memory.project_memory import ProjectMemory
@@ -704,6 +704,7 @@ def create_app() -> FastAPI:
         return {"ok": True, "path": bundle}
 
     @app.post("/api/projects/{project_id}/reveal-bundle")
+    # 中文备注：HTTP 接口：POST /api/projects/{project_id}/reveal-bundle（参数：project_id）
     def reveal_project_bundle(project_id: str) -> dict[str, Any]:
         """Export (if needed) and open the folder in the system file manager."""
         from epitoperank.memory.project_memory import ProjectMemory
@@ -742,6 +743,7 @@ def create_app() -> FastAPI:
         return bundle
 
     @app.post("/api/projects/{project_id}/package")
+    # 中文备注：HTTP 接口：POST /api/projects/{project_id}/package（参数：project_id）
     def package_project(project_id: str) -> dict[str, Any]:
         """Zip the project's results folder for e-mail, archive or upload."""
         from epitoperank.results_export import package_bundle
@@ -752,6 +754,7 @@ def create_app() -> FastAPI:
         return {"ok": True, "path": str(archive), "size_mb": round(archive.stat().st_size / 1048576, 2)}
 
     @app.post("/api/projects/{project_id}/upload")
+    # 中文备注：HTTP 接口：POST /api/projects/{project_id}/upload（参数：project_id）
     def upload_project(project_id: str) -> dict[str, Any]:
         """Push the project's bundle to the configured cloud endpoint."""
         from epitoperank.results_export import (
@@ -775,6 +778,7 @@ def create_app() -> FastAPI:
         return {"ok": True, "archive": str(archive), "cloud": result.get("detail", "")}
 
     @app.post("/api/cloud/upload")
+    # 中文备注：HTTP 接口：POST /api/cloud/upload（参数：file）
     async def cloud_receive(file: UploadFile = File(...)) -> dict[str, Any]:
         """Receive a results bundle from a desktop client (server-side endpoint)."""
         target_dir = settings.paths.runtime_root / "cloud_receipts"
@@ -821,6 +825,7 @@ def create_app() -> FastAPI:
             summary["results_dir"] = bundle
         return JSONResponse(summary)
 
+    # 中文备注：Web 接口：辅助处理ingest输入目录（参数：raw）
     def _ingest_input_dir(raw: str) -> Path:
         """Resolve an ingestion directory and keep model exposure local.
 
@@ -845,6 +850,7 @@ def create_app() -> FastAPI:
         return path
 
     @app.post("/api/ingest/preview")
+    # 中文备注：HTTP 接口：POST /api/ingest/preview（参数：payload）
     def ingest_preview(payload: dict[str, Any]) -> dict[str, Any]:
         """Profile messy input and propose a reviewed mapping (no files written)."""
         from epitoperank.data.ingestion import preview_ingestion
@@ -865,6 +871,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=500, detail=f"Ingestion preview failed: {error}") from error
 
     @app.post("/api/ingest/apply")
+    # 中文备注：HTTP 接口：POST /api/ingest/apply（参数：payload）
     def ingest_apply(payload: dict[str, Any]) -> dict[str, Any]:
         """Convert files with a confirmed mapping into a standardized directory."""
         from epitoperank.data.ingestion import apply_ingestion
@@ -886,6 +893,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=500, detail=f"Ingestion apply failed: {error}") from error
 
     @app.post("/api/ingest/groups")
+    # 中文备注：HTTP 接口：POST /api/ingest/groups（参数：payload）
     def ingest_groups(payload: dict[str, Any]) -> dict[str, Any]:
         """Persist confirmed sample groups for an already recognized input."""
         from epitoperank.data.ingestion import apply_native_groups
@@ -1091,34 +1099,6 @@ def create_app() -> FastAPI:
             _neo_save(workflow_id, {**session, 'state': state})
         return {'workflow_id': workflow_id, **state}
 
-    @app.post("/api/neoantigen/audit")
-    def neoantigen_audit(payload: dict[str, Any]) -> dict[str, Any]:
-        """按 ``stage`` 分派：0 做数据审计，2 做事件级过滤（需先确认审计结果）。"""
-        from epitoperank.data.loader import load_dataset
-        from epitoperank.neoantigen_audit import audit, filter_events
-
-        project_id = str(payload.get('project_id') or '').strip()
-        if project_id:
-            project = project_status(project_id, settings)
-            if not project:
-                raise HTTPException(status_code=404, detail='项目不存在')
-            directory = _ingest_input_dir(str(project['project'].get('source_dir') or ''))
-        else:
-            directory = _ingest_input_dir(str(payload.get('input_dir') or ''))
-        try:
-            dataset = load_dataset(directory)
-            if payload.get('stage', 0) == 0:
-                return audit(dataset, payload.get('evidence') or {})
-            if payload.get('stage') == 2:
-                if payload.get('audit_confirmed') is not True:
-                    raise ValueError('请先完成并确认阶段 0 数据审计')
-                return filter_events(dataset, min_support=payload.get('min_support'),
-                                     min_samples=payload.get('min_samples'),
-                                     support_is_junction_reads=payload.get('support_is_junction_reads', False))
-            raise ValueError('目前仅支持阶段 0 审计及阶段 2 事件级过滤')
-        except (ValueError, TypeError, OSError) as error:
-            raise HTTPException(status_code=422, detail=str(error)) from error
-
     def _project_input_dirs(project_id: str) -> tuple[Path, list[Path]]:
         """返回项目的数据目录，以及需一并搜索的目录列表（standardized 时含其父目录）。"""
         project = project_status(project_id, settings)
@@ -1130,6 +1110,7 @@ def create_app() -> FastAPI:
             roots.append(_ingest_input_dir(str(directory.parent)))
         return directory, roots
 
+    # 中文备注：Web 接口：解析CDS表（参数：value、roots）
     def _resolve_cds_table(value: Any, roots: list[Path]) -> Path:
         """Map a customer-supplied file name or path onto an existing CDS table."""
         from epitoperank.neoantigen import inspect_cds_table
@@ -1184,6 +1165,7 @@ def create_app() -> FastAPI:
         (Path(directory) / CDS_MAPPING_FILE).write_text(
             json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
 
+    # 中文备注：Web 接口：辅助处理映射（参数：table、requested、roots）
     def _mapping_for(table: Path, requested: Any, roots: list[Path]) -> dict[str, str] | None:
         """Merge an explicit mapping from the request with one saved earlier."""
         saved = _load_cds_mappings(Path(table).parent).get(Path(table).name, {}).get('map') or {}
@@ -1193,6 +1175,7 @@ def create_app() -> FastAPI:
         return merged or None
 
     @app.post("/api/neoantigen/column-map")
+    # 中文备注：HTTP 接口：POST /api/neoantigen/column-map（参数：payload）
     def neo_column_map(payload: dict[str, Any]) -> dict[str, Any]:
         """Persist a human-confirmed column mapping for one CDS table."""
         from epitoperank.neoantigen import CDS_FIELDS, read_table_rows
@@ -1235,6 +1218,7 @@ def create_app() -> FastAPI:
                 'warning': None if produced else '这套映射没有为样本行生成任何肽，请核对参考与改变后序列是否填反。'}
 
     @app.post("/api/neoantigen/cds-upload")
+    # 中文备注：HTTP 接口：POST /api/neoantigen/cds-upload（参数：project_id、file）
     async def neo_cds_upload(project_id: Annotated[str, Form()], file: Annotated[UploadFile, File()]) -> dict[str, Any]:
         """Store a CDS table chosen from the customer's disk into the project directory."""
         from epitoperank.neoantigen import CDS_TABLE_MAX_BYTES, CDS_TABLE_SUFFIXES, discover_cds_tables, inspect_cds_table
@@ -1284,6 +1268,7 @@ def create_app() -> FastAPI:
             roots = [directory]
         source = str(payload.get('source') or 'ensembl').strip().lower()
         if source == 'local':
+            # 中文备注：Web 接口：辅助处理参考表（参数：value）
             def _reference(value: Any) -> Path:
                 raw = str(value or '').strip()
                 if not raw:
@@ -1303,12 +1288,14 @@ def create_app() -> FastAPI:
         else:
             raise HTTPException(status_code=422, detail='source 只能是 ensembl 或 local')
 
+        # 中文备注：Web 接口：辅助处理bounded（参数：key、default、low、high）
         def _bounded(key: str, default: int, low: int, high: int) -> int:
             try:
                 return max(low, min(high, int(payload.get(key) or default)))
             except (TypeError, ValueError):
                 return default
 
+        # 中文备注：Web 接口：辅助处理float（参数：key、default）
         def _float(key: str, default: float) -> float:
             try:
                 return float(payload.get(key) or default)
@@ -1342,6 +1329,7 @@ def create_app() -> FastAPI:
         }
 
     @app.post("/api/neoantigen/run")
+    # 中文备注：HTTP 接口：POST /api/neoantigen/run（参数：payload）
     def neoantigen_run(payload: dict[str, Any]) -> dict[str, Any]:
         """Generate auditable junction peptides; optionally query IEDB."""
         from epitoperank.neoantigen import run
@@ -1387,6 +1375,7 @@ def create_app() -> FastAPI:
         return FileResponse(path, filename=name)
 
     @app.post("/api/neoantigen/reveal")
+    # 中文备注：HTTP 接口：POST /api/neoantigen/reveal（参数：payload）
     def neoantigen_reveal(payload: dict[str, Any]) -> dict[str, Any]:
         """Open results folder in system file manager (desktop only)."""
         directory = _ingest_input_dir(str(payload.get("input_dir", "")))
@@ -1409,6 +1398,7 @@ def create_app() -> FastAPI:
     # ------------------------------------------------------------------
 
     @app.get("/api/peptide/capabilities")
+    # 中文备注：HTTP 接口：GET /api/peptide/capabilities（参数：无）
     def peptide_capabilities() -> dict[str, Any]:
         """Report which peptide predictors, models and reference tables exist."""
         from epitoperank.peptide import capabilities
@@ -1419,6 +1409,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
     @app.get("/api/peptide/reference")
+    # 中文备注：HTTP 接口：GET /api/peptide/reference（参数：mhc_class、search、limit）
     def peptide_reference(
         mhc_class: int = 1, search: str = "", limit: int = 500
     ) -> dict[str, Any]:
@@ -1440,6 +1431,7 @@ def create_app() -> FastAPI:
         return {"total": len(items), "items": items[:limit], "manifest": manifest}
 
     @app.post("/api/peptide/predict")
+    # 中文备注：HTTP 接口：POST /api/peptide/predict（参数：payload）
     def peptide_predict(payload: dict[str, Any]) -> dict[str, Any]:
         """Predict MHC binding/processing for a small peptide list."""
         from epitoperank.peptide import IedbError, predict_peptides
@@ -1520,6 +1512,7 @@ def create_app() -> FastAPI:
         }
 
     @app.post("/api/peptide/run")
+    # 中文备注：HTTP 接口：POST /api/peptide/run（参数：payload）
     def peptide_run(payload: dict[str, Any]) -> dict[str, Any]:
         """Generate splice-derived candidates, predict, filter and rank peptides."""
         from epitoperank.peptide import PeptideOptions, run as run_peptides
@@ -1616,6 +1609,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
     @app.get("/api/peptide/file")
+    # 中文备注：HTTP 接口：GET /api/peptide/file（参数：input_dir、name）
     def peptide_file(input_dir: str, name: str) -> FileResponse:
         """Download one whitelisted peptide result file."""
         directory = _ingest_input_dir(input_dir)
@@ -1635,6 +1629,7 @@ def create_app() -> FastAPI:
         return FileResponse(path, filename=name)
 
     @app.post("/api/upload")
+    # 中文备注：HTTP 接口：POST /api/upload（参数：files）
     async def upload(files: list[UploadFile] = File(...)) -> dict[str, Any]:
         """Upload analysis input files into a new staging directory."""
         import logging
@@ -1710,6 +1705,7 @@ def create_app() -> FastAPI:
     # ==================== MCP Integration Endpoints ====================
 
     @app.get("/api/mcp/servers")
+    # 中文备注：HTTP 接口：GET /api/mcp/servers（参数：refresh）
     async def mcp_servers(refresh: bool = False) -> dict[str, Any]:
         """List configured MCP servers, connection state and tool schemas."""
         from epitoperank.mcp import get_mcp_client
@@ -1812,6 +1808,7 @@ def create_app() -> FastAPI:
         return {"ok": True, "removed": name}
 
     @app.post("/api/mcp/call")
+    # 中文备注：HTTP 接口：POST /api/mcp/call（参数：payload）
     async def mcp_call_tool(payload: dict[str, Any]) -> dict[str, Any]:
         """Call an MCP tool on a connected server."""
         from epitoperank.mcp import get_mcp_client
@@ -1838,6 +1835,7 @@ def create_app() -> FastAPI:
         return {"success": True, "result": result, "server": server_name, "tool": tool_name}
 
     @app.post("/api/mcp/agent")
+    # 中文备注：HTTP 接口：POST /api/mcp/agent（参数：payload）
     async def mcp_agent(payload: dict[str, Any]) -> dict[str, Any]:
         """Let the model pick one MCP tool for a natural-language request.
 
@@ -2077,82 +2075,6 @@ def create_app() -> FastAPI:
 
     # ==================== Skills Endpoints ====================
 
-    @app.get("/api/skills/list")
-    def skills_list() -> dict[str, Any]:
-        """List all available splicing-specific skills."""
-        from epitoperank.skills import (
-            GeneAnnotationSkill,
-            LiteratureSearchSkill,
-            PathwayEnrichmentSkill,
-            SpliceInterpretationSkill,
-        )
-
-        skills = [
-            GeneAnnotationSkill(),
-            LiteratureSearchSkill(),
-            PathwayEnrichmentSkill(),
-            SpliceInterpretationSkill(),
-        ]
-
-        return {
-            "skills": [
-                {
-                    "name": skill.name,
-                    "description": skill.description,
-                    "input_schema": skill.input_schema,
-                }
-                for skill in skills
-            ]
-        }
-
-    @app.post("/api/skills/execute")
-    async def skills_execute(payload: dict[str, Any]) -> dict[str, Any]:
-        """Execute a splicing-specific skill.
-
-        Expected payload:
-        {
-            "skill_name": "gene_annotation",
-            "parameters": {
-                "gene_symbol": "BRCA1",
-                "include_splicing": true
-            }
-        }
-        """
-        skill_name = payload.get("skill_name")
-        parameters = payload.get("parameters", {})
-
-        if not skill_name:
-            raise HTTPException(status_code=400, detail="skill_name is required")
-
-        # Import and instantiate the requested skill
-        skill_map = {
-            "gene_annotation": "GeneAnnotationSkill",
-            "literature_search": "LiteratureSearchSkill",
-            "pathway_enrichment": "PathwayEnrichmentSkill",
-            "splice_interpretation": "SpliceInterpretationSkill",
-        }
-
-        skill_class_name = skill_map.get(skill_name)
-        if not skill_class_name:
-            raise HTTPException(status_code=404, detail=f"Unknown skill: {skill_name}")
-
-        # Dynamic import to avoid circular dependencies
-        import importlib
-
-        module = importlib.import_module("epitoperank.skills")
-        skill_class = getattr(module, skill_class_name)
-        skill = skill_class()
-
-        # Validate input
-        is_valid, error_msg = skill.validate_input(**parameters)
-        if not is_valid:
-            raise HTTPException(status_code=400, detail=error_msg)
-
-        # Execute the skill
-        result = await skill.execute(**parameters)
-
-        return result.to_dict()
-
     @app.get("/api/figure/{project_id}/{figure_name}")
     def figure(project_id: str, figure_name: str) -> Any:
         """返回项目图表；先查项目 figures 目录与产物记录，缺图时按需现画再返回。"""
@@ -2179,6 +2101,7 @@ def create_app() -> FastAPI:
     return app
 
 
+# 中文备注：Web 接口：构建ondemand图表（参数：name、payload、target_dir）
 def _build_on_demand_figure(name: str, payload: dict[str, Any], target_dir: Path) -> Path | None:
     """Generate a lazy figure from persisted project state."""
     candidates = payload.get("candidates") or []

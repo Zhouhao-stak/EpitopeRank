@@ -59,6 +59,7 @@ _JSON_FENCE = re.compile(r"```(?:json|JSON)?\s*(.*?)```", re.DOTALL)
 _CJK = re.compile(r"[\u4e00-\u9fff]")
 
 
+# 中文备注：大模型层：执行异步（参数：coro）
 def run_async(coro: Any) -> Any:
     """Run a coroutine from sync code, also when a loop is already running.
 
@@ -75,6 +76,7 @@ def run_async(coro: Any) -> Any:
         return pool.submit(asyncio.run, coro).result()
 
 
+# 中文备注：大模型层：提取JSON（参数：text）
 def extract_json(text: str | None) -> Any:
     """Parse JSON from a model reply (raw, fenced, or embedded in prose)."""
     raw = (text or "").strip()
@@ -104,6 +106,7 @@ def _braced(raw: str) -> list[str]:
     return candidates
 
 
+# 中文备注：大模型层：检测语言（参数：query、configured）
 def detect_language(query: str, configured: str = "auto") -> str:
     """Pick the language for generated prose ("zh" or "en")."""
     setting = (configured or "auto").strip().lower()
@@ -190,6 +193,7 @@ class LLMEnhancer:
                 pass
 
     # -- completion -------------------------------------------------------
+    # 中文备注：大模型层：调用once（参数：system、user、model、max_tokens）
     def _call_once(
         self,
         system: str,
@@ -241,6 +245,7 @@ class LLMEnhancer:
                     )
             return None
 
+    # 中文备注：统一的模型调用录制/重放边界（参数：无）
     def request(self, **kwargs):
         """Injectable recording/replay boundary, outside complete (the network guard)."""
         from .trace import ACTIVE
@@ -250,6 +255,7 @@ class LLMEnhancer:
         kwargs.pop("stage", None)
         return self.complete(**kwargs)
 
+    # 中文备注：执行一次模型调用并返回文本（参数：system、user、feature、model）
     def complete(
         self,
         *,
@@ -320,6 +326,7 @@ class LLMEnhancer:
         )
         return text
 
+    # 中文备注：请求模型返回 JSON 并解析为对象（参数：system、user、feature、model）
     def json(
         self,
         *,
@@ -419,6 +426,7 @@ class LLMEnhancer:
         return _as_text(result)
 
     # -- reporting --------------------------------------------------------
+    # 中文备注：大模型层：描述describe（参数：无）
     def describe(self) -> dict[str, Any]:
         """Status payload for the API and the UI."""
         llm = self.settings.llm
@@ -468,6 +476,7 @@ def _as_text(result: Any) -> str:
     return str(content)
 
 
+# 中文备注：大模型层：辅助处理redact（参数：url）
 def _redact(url: str) -> str:
     """Show the endpoint host but never credentials or query strings."""
     value = (url or "").strip()
@@ -479,6 +488,7 @@ def _redact(url: str) -> str:
     return stripped
 
 
+# 中文备注：大模型层：构建enhancer（参数：settings、logger）
 def build_enhancer(
     settings: Settings | None = None,
     *,
@@ -492,6 +502,7 @@ def build_enhancer(
     return LLMEnhancer(settings, logger=logger)
 
 
+# 中文备注：大模型层：辅助处理大模型状态（参数：settings）
 def llm_status(settings: Settings | None = None) -> dict[str, Any]:
     """Model status without making any call (used by the API/UI)."""
     try:

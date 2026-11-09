@@ -66,6 +66,7 @@ def _load_predictor(presentation: bool = False):
     return predictor
 
 
+# 中文备注：肽预测：预测mhci（参数：peptides、alleles、presentation）
 def predict_mhci(peptides: Sequence[str], alleles: Sequence[str], *,
                  presentation: bool = False) -> list[dict[str, object]]:
     """Run MHCflurry locally and return records shaped like the IEDB client's.

@@ -95,6 +95,7 @@ class Criterion:
             return False
 
 
+# 中文备注：智能体内核：辅助处理默认值验收标准（参数：无）
 def default_criteria() -> list[Criterion]:
     """What 'a complete splicing analysis' means, checkable by machine."""
     return [
@@ -143,6 +144,7 @@ class Goal:
     description: str
     criteria: list[Criterion] = field(default_factory=default_criteria)
 
+    # 中文备注：智能体内核：辅助处理evaluate（参数：state）
     def evaluate(self, state: "AgentState") -> tuple[bool, list[str]]:
         """Return (satisfied, unmet criterion codes)."""
         unmet = [item.code for item in self.criteria if not item.satisfied(state)]
@@ -189,6 +191,7 @@ class AgentState:
     bridge: Any | None = None
 
     # -- observation ------------------------------------------------------
+    # 中文备注：智能体内核：观察observe（参数：无）
     def observe(self) -> dict[str, Any]:
         """Refresh facts from the run context (the 'sense' phase)."""
         context = self.context
@@ -244,6 +247,7 @@ class AgentState:
         """按严重程度排序（blocker→warning→info）后返回问题列表。"""
         return sorted(self.issues, key=lambda item: _SEVERITY_ORDER.get(item.severity, 3))
 
+    # 中文备注：智能体内核：辅助处理snapshot（参数：无）
     def snapshot(self) -> dict[str, Any]:
         """Compact view handed to the decision engine (and to the LLM)."""
         return {
@@ -271,6 +275,7 @@ class AgentState:
         }
 
 
+# 中文备注：智能体内核：启动timer（参数：无）
 def start_timer() -> Callable[[], float]:
     """Return a callable giving elapsed seconds since its creation."""
     started = time.monotonic()

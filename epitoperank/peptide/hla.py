@@ -100,6 +100,7 @@ class HlaAllele:
         }
 
 
+# 中文备注：肽预测：规范化HLA 型别（参数：value、strict）
 def normalize_allele(value: object, *, strict: bool = True) -> str:
     """Return the canonical IEDB name, e.g. ``HLA-A*02:01``.
 
@@ -137,6 +138,7 @@ def normalize_allele(value: object, *, strict: bool = True) -> str:
     return candidate
 
 
+# 中文备注：肽预测：辅助处理MHCclass（参数：allele）
 def mhc_class(allele: str) -> int:
     """1 for A/B/C, 2 for DR/DQ/DP."""
     name = normalize_allele(allele)
@@ -164,6 +166,7 @@ def describe(allele: str) -> HlaAllele:
     )
 
 
+# 中文备注：肽预测：解析panel（参数：values、allow_mixed_classes）
 def parse_panel(values: object, *, allow_mixed_classes: bool = False) -> list[HlaAllele]:
     """Validate an allele list and return deduplicated :class:`HlaAllele` objects."""
     if isinstance(values, str):
@@ -197,6 +200,7 @@ def split_by_class(alleles: list[HlaAllele]) -> dict[int, list[HlaAllele]]:
     return grouped
 
 
+# 中文备注：肽预测：辅助处理panel（参数：name）
 def panel(name: str) -> list[str]:
     """Look up a bundled convenience panel by name."""
     key = name.strip().lower().replace("-", "_")
