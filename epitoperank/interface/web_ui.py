@@ -626,6 +626,22 @@ input:focus,select:focus,textarea:focus { outline-color:#a98aff; }
 a { color:#ffb829; }
 @media(max-width:1000px) { .start-guide { grid-template-columns:1fr; padding:36px 12px; }.start-guide h2 { max-width:12em; }.start-guide ol { padding:24px 0 0; }.constellation-art { right:-50px; width:52%; opacity:.45; } }
 @media(max-width:768px) { .workspace-heading h1 { font-size:32px; }.start-guide h2 { font-size:36px; }.start-guide { margin-bottom:30px; }.constellation-art { width:85%; right:-100px; top:30px; opacity:.25; } }
+
+.trace-badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:500; border:1px solid rgba(140,160,200,.28); }
+.trace-llm { background:rgba(90,140,255,.16); color:#8fb4ff; }
+.trace-rule { background:rgba(140,150,170,.14); color:var(--text-secondary); }
+.trace-reflection { background:rgba(240,170,60,.16); color:#f0b44a; }
+.trace-episodic { background:rgba(150,100,220,.16); color:#c3a0ff; }
+.trace-replay { background:rgba(60,190,150,.16); color:#6fd6b0; }
+.trace-step { border-left:2px solid rgba(140,160,200,.25); padding:6px 0 12px 14px; margin-left:6px; position:relative; }
+.trace-step::before { content:''; position:absolute; left:-5px; top:13px; width:8px; height:8px; border-radius:50%; background:var(--text-secondary); }
+.trace-step-title { font-size:13px; font-weight:500; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.trace-meta { font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.55; word-break:break-word; }
+.trace-call { border:1px solid rgba(140,160,200,.18); border-radius:8px; padding:10px; margin-bottom:8px; font-size:12px; }
+.trace-bar { height:6px; border-radius:4px; background:rgba(140,160,200,.18); overflow:hidden; margin-top:8px; }
+.trace-bar > span { display:block; height:100%; background:#6f9bff; }
+.trace-metric { font-size:24px; font-weight:500; margin-top:4px; }
+.trace-control { background:rgba(14,27,43,.7); color:var(--text-primary); border:1px solid rgba(140,160,200,.28); border-radius:8px; padding:8px 10px; font-size:13px; }
 </style>
 </head>
 <body>
@@ -646,6 +662,8 @@ a { color:#ffb829; }
     </div>
     <div class="nav-section"><div class="nav-label">工作区</div>
       <button type="button" class="nav-item" data-detail="1" onclick="openProjectDetail()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M4 9h16 M9 9v11 M14 4v5"/></svg>项目详情</button>
+      <button type="button" class="nav-item" data-page="trace"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16 M4 12h10 M4 19h7 M17 12l3 3-3 3"/></svg>决策轨迹</button>
+      <button type="button" class="nav-item" data-page="mission"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg>自主任务</button>
       <button type="button" class="nav-item" data-page="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3 M12 18v3 M3 12h3 M18 12h3 M6 6l2 2 M16 16l2 2 M6 18l2-2 M16 8l2-2 M8 12a4 4 0 1 0 8 0a4 4 0 1 0-8 0"/></svg>设置</button>
     </div>
   </aside>
@@ -1031,7 +1049,72 @@ a { color:#ffb829; }
         </div>
       </div>
       
-      <div class="page" id="page-settings"><header class="workspace-heading"><div><h1>工作区设置</h1><p>配置 AI 解读服务与外部工具，查看连接状态。</p></div></header>
+      
+      <div class="page" id="page-trace"><header class="workspace-heading"><div><h1>决策轨迹</h1><p>一次分析里，每一步由谁决定、依据是什么，以及模型与工具各自做了什么。数值计算仍由确定性工具完成。</p></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <select id="trace-project" class="trace-control" style="min-width:230px" onchange="loadDecisionTrace()"></select>
+          <button class="btn btn-sm btn-secondary" onclick="loadDecisionTrace()">刷新轨迹</button>
+        </div></header>
+        <div id="trace-summary" class="grid grid-4" style="margin-bottom:16px;"></div>
+        <div class="card" style="margin-bottom:16px;">
+          <div style="font-size:16px;font-weight:600;margin-bottom:6px;">完整性与重放校验</div>
+          <div id="trace-integrity" class="trace-meta">选择项目后加载轨迹…</div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <input id="trace-compare-right" class="trace-control" placeholder="另一个 agent_state.json 路径（可选）" style="flex:1;min-width:260px;">
+            <button class="btn btn-sm btn-secondary" onclick="compareDecisionTrace()">对比两次运行</button>
+          </div>
+          <div id="trace-compare-result" class="trace-meta" style="margin-top:10px;"></div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card"><div style="font-size:16px;font-weight:600;margin-bottom:12px;">决策时间线</div><div id="trace-steps"></div></div>
+          <div class="card"><div style="font-size:16px;font-weight:600;margin-bottom:12px;">模型与工具调用</div><div id="trace-calls"></div></div>
+        </div>
+      </div>
+
+      <div class="page" id="page-mission"><header class="workspace-heading"><div><h1>自主任务</h1><p>用一句科研目标生成可审阅的分析计划；确认后自主执行，并给出可离线复现的证明。</p></div></header>
+        <div class="card" style="margin-bottom:16px;">
+          <div style="font-size:16px;font-weight:600;margin-bottom:10px;">1 · 描述目标</div>
+          <textarea id="mission-query" class="trace-control" rows="2" style="width:100%;resize:vertical;" placeholder="例如：为 UPF1 敲低样本找 3 个可验证的 MHC-I 新抗原候选">为 UPF1 敲低样本找 3 个可验证的 MHC-I 新抗原候选</textarea>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;">
+            <input id="mission-input" class="trace-control" style="flex:1;min-width:280px;" placeholder="输入数据目录，例如 E:/rMATS_data/UPF1_KD_vs_scr2">
+            <button class="btn btn-sm btn-primary" onclick="missionGenerate()">生成计划</button>
+          </div>
+          <div id="mission-plan-status" class="trace-meta" style="margin-top:8px;"></div>
+        </div>
+        <div class="card" id="mission-plan-card" style="margin-bottom:16px;display:none;">
+          <div style="font-size:16px;font-weight:600;margin-bottom:10px;">2 · 审阅并修改计划（这份契约会随运行一起存档）</div>
+          <div class="grid grid-2">
+            <div><div class="trace-meta">目标</div><input id="mission-goal" class="trace-control" style="width:100%;"></div>
+            <div><div class="trace-meta">意图</div><select id="mission-intent" class="trace-control" style="width:100%;"><option value="differential_AS">差异可变剪接</option><option value="neoantigen">新抗原 / 肽预测</option><option value="exploration">数据探索</option></select></div>
+          </div>
+          <div class="grid grid-4" style="margin-top:10px;">
+            <div><div class="trace-meta">FDR 阈值</div><input id="mission-fdr" class="trace-control" style="width:100%;" type="number" step="0.01" min="0.001" max="0.99"></div>
+            <div><div class="trace-meta">|dPSI| 阈值</div><input id="mission-dpsi" class="trace-control" style="width:100%;" type="number" step="0.01" min="0.001" max="0.99"></div>
+            <div><div class="trace-meta">候选数上限</div><input id="mission-topn" class="trace-control" style="width:100%;" type="number" min="1" max="200"></div>
+            <div><div class="trace-meta">最大步数</div><input id="mission-steps" class="trace-control" style="width:100%;" type="number" min="1" max="60"></div>
+          </div>
+          <div style="margin-top:10px;"><div class="trace-meta">允许调用的工具（每行一个；删掉即不允许该动作）</div>
+            <textarea id="mission-tools" class="trace-control" rows="7" style="width:100%;resize:vertical;font-family:var(--font-mono,monospace);font-size:12px;"></textarea></div>
+          <div id="mission-plan-meta" class="trace-meta" style="margin-top:8px;"></div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" onclick="missionRun()">确认并执行</button>
+            <span class="trace-meta">阈值与预算来自本机配置，模型不能改写。</span>
+          </div>
+        </div>
+        <div class="card" id="mission-result" style="display:none;">
+          <div style="font-size:16px;font-weight:600;margin-bottom:10px;">3 · 执行结果与可复现证明</div>
+          <div id="mission-run-summary" class="trace-meta"></div>
+          <div id="mission-deviations" style="margin-top:10px;"></div>
+          <div id="mission-proof" style="margin-top:10px;"></div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-secondary" onclick="missionVerify()">一键离线重放验证</button>
+            <button class="btn btn-sm btn-secondary" onclick="missionCopyProof()">复制重放命令</button>
+            <button class="btn btn-sm btn-secondary" onclick="missionOpenTrace()">查看决策轨迹</button>
+          </div>
+          <div id="mission-verify-result" class="trace-meta" style="margin-top:10px;"></div>
+        </div>
+      </div>
+<div class="page" id="page-settings"><header class="workspace-heading"><div><h1>工作区设置</h1><p>配置 AI 解读服务与外部工具，查看连接状态。</p></div></header>
         <div class="grid grid-2">
           <div class="card">
             <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px;"> 模型配置</div>
@@ -2283,6 +2366,292 @@ function toggleNavigation(force) {
   if (open) { syncFluidMarker(); navigation.querySelector('.nav-item.active').focus(); }
 
 }
+
+const traceState = { projectsLoaded: false, data: null };
+function traceEsc(value) {
+  return String(value === undefined || value === null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function traceShort(value, limit) {
+  let text;
+  try { text = typeof value === 'string' ? value : JSON.stringify(value); }
+  catch (error) { text = String(value); }
+  text = String(text || '');
+  return text.length > limit ? text.slice(0, limit) + '…' : text;
+}
+function traceBadge(source) {
+  const key = String(source || 'rule');
+  const labels = { llm: '模型决策', rule: '规则链', reflection: '反思纠错', episodic: '经验记忆', replay: '重放' };
+  const cls = ['llm', 'reflection', 'episodic', 'replay'].includes(key) ? key : 'rule';
+  return '<span class="trace-badge trace-' + cls + '">' + traceEsc(labels[key] || key) + '</span>';
+}
+function traceMetric(label, value, detail, bar) {
+  let barHtml = '';
+  if (typeof bar === 'number') {
+    const pct = Math.max(0, Math.min(100, Math.round(bar * 100)));
+    barHtml = '<div class="trace-bar"><span style="width:' + pct + '%"></span></div>';
+  }
+  return '<div class="card"><div class="trace-meta">' + traceEsc(label) + '</div>'
+    + '<div class="trace-metric">' + traceEsc(value) + '</div>'
+    + '<div class="trace-meta">' + traceEsc(detail) + '</div>' + barHtml + '</div>';
+}
+async function loadDecisionTrace() {
+  const select = document.getElementById('trace-project');
+  if (!select) return;
+  const summary = document.getElementById('trace-summary');
+  const stepsBox = document.getElementById('trace-steps');
+  const callsBox = document.getElementById('trace-calls');
+  const integrity = document.getElementById('trace-integrity');
+  if (!traceState.projectsLoaded) {
+    const projects = await apiCall('/projects');
+    const list = (projects && projects.projects) || [];
+    select.innerHTML = list.map(function (p) {
+      const id = p.project_id || p.id || '';
+      return '<option value="' + traceEsc(id) + '">' + traceEsc(p.name || id) + '</option>';
+    }).join('');
+    if (state.currentProject) select.value = state.currentProject;
+    traceState.projectsLoaded = true;
+  }
+  const id = select.value;
+  if (!id) {
+    summary.innerHTML = '';
+    integrity.textContent = '还没有已分析的项目。请先运行一次分析。';
+    stepsBox.innerHTML = '<div class="trace-meta">暂无轨迹。</div>';
+    callsBox.innerHTML = '<div class="trace-meta">暂无调用。</div>';
+    return;
+  }
+  stepsBox.innerHTML = '<div class="trace-meta">正在读取轨迹…</div>';
+  const data = await apiCall('/projects/' + encodeURIComponent(id) + '/trace');
+  if (!data || !data.available) {
+    summary.innerHTML = '';
+    integrity.textContent = '该项目没有决策轨迹：' + traceEsc((data && data.detail) || '接口不可用')
+      + '。只有 agentic 模式运行会写入 agent_state.json。';
+    stepsBox.innerHTML = '<div class="trace-meta">暂无轨迹。</div>';
+    callsBox.innerHTML = '<div class="trace-meta">暂无调用。</div>';
+    return;
+  }
+  traceState.data = data;
+  const pct = Math.round((data.llm_ratio || 0) * 100);
+  summary.innerHTML = traceMetric('总决策步数', data.total_steps, '含规则链与模型选步')
+    + traceMetric('模型参与决策', data.llm_steps, '占比 ' + pct + '%', data.llm_ratio)
+    + traceMetric('自我纠错 / 经验', (data.reflection_steps || 0) + ' / ' + (data.episodic_steps || 0), 'reflection / episodic')
+    + traceMetric('模型 / 工具调用', data.model_call_count + ' / ' + data.tool_call_count, '全部写入轨迹文件');
+  const fingerprints = Object.keys(data.input_fingerprints || {}).length;
+  const reports = Object.keys(data.reports || {}).length;
+  let integrityText = '轨迹完整性：' + (data.integrity_ok ? '校验通过' : '未通过或无签名')
+    + '；输入指纹 ' + fingerprints + ' 个文件；报告哈希 ' + reports + ' 份；模型 '
+    + traceEsc(data.model_name || '未配置') + '；llm_enabled=' + traceEsc(String(data.llm_enabled));
+  if (data.errors && data.errors.length) {
+    integrityText += '；错误 ' + data.errors.length + ' 条：' + traceShort(data.errors[0], 140);
+  }
+  integrity.textContent = integrityText;
+  stepsBox.innerHTML = (data.steps || []).map(function (s) {
+    const args = s.args && Object.keys(s.args).length ? traceShort(s.args, 180) : '';
+    const issues = (s.issues || []).length ? '问题：' + traceEsc(traceShort(s.issues.join('、'), 160)) : '';
+    return '<div class="trace-step"><div class="trace-step-title">'
+      + '<span>' + traceEsc(s.index) + '.</span><span>' + traceEsc(s.action) + '</span>'
+      + traceBadge(s.source) + '<span class="trace-meta">' + traceEsc(s.status) + '</span></div>'
+      + '<div class="trace-meta">' + traceEsc(s.rationale || '') + '</div>'
+      + (args ? '<div class="trace-meta">参数 ' + traceEsc(args) + '</div>' : '')
+      + (issues ? '<div class="trace-meta">' + issues + '</div>' : '')
+      + '<div class="trace-meta">耗时 ' + traceEsc(s.seconds) + ' s</div></div>';
+  }).join('') || '<div class="trace-meta">没有步骤记录。</div>';
+  const modelCards = (data.model_calls || []).map(function (c) {
+    return '<div class="trace-call"><div style="font-weight:500">#' + traceEsc(c.seq) + ' '
+      + traceEsc(c.stage) + ' · ' + traceEsc(c.model || '') + '</div>'
+      + '<div class="trace-meta">prompt ' + traceEsc(c.prompt_hash) + ' · temp '
+      + traceEsc(c.temperature) + ' · ' + traceEsc(c.elapsed_ms) + ' ms</div>'
+      + '<div class="trace-meta">解析结果 ' + traceEsc(traceShort(c.parsed, 220)) + '</div>'
+      + '<details><summary class="trace-meta">查看原始响应</summary><div class="trace-meta">'
+      + traceEsc(traceShort(c.raw_response, 1200)) + '</div></details></div>';
+  }).join('');
+  const toolCards = (data.tool_calls || []).map(function (c) {
+    return '<div class="trace-call"><div style="font-weight:500">#' + traceEsc(c.seq) + ' MCP '
+      + traceEsc(c.tool) + ' · ' + traceEsc(c.server) + '</div>'
+      + '<div class="trace-meta">参数 ' + traceEsc(traceShort(c.args, 200)) + '</div>'
+      + '<div class="trace-meta">结果 ' + traceEsc(traceShort(c.result, 260)) + '</div></div>';
+  }).join('');
+  callsBox.innerHTML = modelCards + toolCards || '<div class="trace-meta">这次运行没有模型或工具调用（纯确定性运行）。</div>';
+}
+async function compareDecisionTrace() {
+  const out = document.getElementById('trace-compare-result');
+  const left = document.getElementById('trace-project').value;
+  const right = document.getElementById('trace-compare-right').value.trim();
+  if (!left) { out.textContent = '请先选择项目。'; return; }
+  const payload = { left: left, right: right || left };
+  out.textContent = '正在对比…';
+  const result = await apiCall('/trace/compare', { method: 'POST', body: JSON.stringify(payload) });
+  if (!result) { out.textContent = '对比请求失败。'; return; }
+  if (result.detail) { out.textContent = '对比失败：' + traceEsc(result.detail); return; }
+  out.textContent = result.identical
+    ? '两次运行的步骤、参数、排序结果与报告哈希完全一致。'
+    : '存在差异：' + traceEsc((result.differences || []).join('；'));
+}
+
+
+const missionState = { plan: null, projectId: '', proof: null, job: '' };
+function missionSetStatus(text) {
+  document.getElementById('mission-plan-status').textContent = text;
+}
+function missionPoll(jobId, onDone, onTick) {
+  let attempts = 0;
+  const tick = async function () {
+    attempts += 1;
+    const job = await apiCall('/jobs/' + encodeURIComponent(jobId));
+    if (!job) { onDone({ status: 'failed', error: '无法查询任务状态' }); return; }
+    if (onTick) onTick(job, attempts);
+    if (job.status === 'running' && attempts < 160) {
+      setTimeout(tick, 1500);
+      return;
+    }
+    onDone(job);
+  };
+  tick();
+}
+async function missionGenerate() {
+  missionSetStatus('正在生成计划…');
+  const payload = { query: document.getElementById('mission-query').value.trim() };
+  const result = await apiCall('/plan/preview', { method: 'POST', body: JSON.stringify(payload) });
+  if (!result || !result.plan) { missionSetStatus('计划生成失败：' + traceEsc((result && result.detail) || '接口不可用')); return; }
+  missionState.plan = result.plan;
+  const plan = result.plan;
+  document.getElementById('mission-goal').value = plan.goal || '';
+  document.getElementById('mission-intent').value = plan.intent || 'differential_AS';
+  document.getElementById('mission-fdr').value = (plan.thresholds || {}).fdr || 0.05;
+  document.getElementById('mission-dpsi').value = (plan.thresholds || {}).delta_psi || 0.1;
+  document.getElementById('mission-topn').value = (plan.thresholds || {}).top_candidates || 20;
+  document.getElementById('mission-steps').value = (plan.budgets || {}).max_steps || 20;
+  document.getElementById('mission-tools').value = (plan.expected_tools || []).join(String.fromCharCode(10));
+  document.getElementById('mission-plan-meta').textContent = '计划来源 ' + traceEsc(plan.source)
+    + '；可用动作注册表 ' + traceEsc(result.registry_size) + ' 个；预期输出：'
+    + traceEsc((plan.expected_outputs || []).join('、'));
+  document.getElementById('mission-plan-card').style.display = 'block';
+  missionSetStatus('计划已生成，请审阅或修改后执行。');
+}
+function missionCollectPlan() {
+  const base = missionState.plan || {};
+  const thresholds = Object.assign({}, base.thresholds || {}, {
+    fdr: parseFloat(document.getElementById('mission-fdr').value),
+    delta_psi: parseFloat(document.getElementById('mission-dpsi').value),
+    top_candidates: parseInt(document.getElementById('mission-topn').value, 10)
+  });
+  const budgets = Object.assign({}, base.budgets || {}, {
+    max_steps: parseInt(document.getElementById('mission-steps').value, 10)
+  });
+  return {
+    goal: document.getElementById('mission-goal').value.trim() || base.goal,
+    intent: document.getElementById('mission-intent').value,
+    thresholds: thresholds, budgets: budgets,
+    expected_tools: document.getElementById('mission-tools').value.split(String.fromCharCode(10))
+      .map(function (s) { return s.trim(); }).filter(Boolean),
+    expected_outputs: base.expected_outputs || [],
+    source: 'user', created_at: base.created_at || '', notes: base.notes || []
+  };
+}
+async function missionRun() {
+  const inputDir = document.getElementById('mission-input').value.trim();
+  if (!inputDir) { missionSetStatus('请先填写输入数据目录。'); return; }
+  missionSetStatus('正在执行分析，可能需要几十秒…');
+  const payload = {
+    query: document.getElementById('mission-query').value.trim(),
+    input_dir: inputDir, plan: missionCollectPlan()
+  };
+  const started = await apiCall('/plan/run', { method: 'POST', body: JSON.stringify(payload) });
+  if (!started || !started.job_id) {
+    missionSetStatus('启动失败：' + traceEsc((started && started.detail) || '接口不可用')); return;
+  }
+  missionState.job = started.job_id;
+  missionPoll(started.job_id, function (job) {
+    if (job.status === 'done') {
+      missionState.projectId = job.project_id || '';
+      document.getElementById('mission-result').style.display = 'block';
+      document.getElementById('mission-run-summary').textContent = '项目 '
+        + traceEsc(job.project_id) + '；模式 ' + traceEsc(job.mode) + '；执行 '
+        + traceEsc(job.steps) + ' 步；' + traceEsc(job.stopped_reason || '');
+      missionSetStatus('分析完成，正在生成可复现证明…');
+      missionLoadProof(job.project_id);
+    } else {
+      missionSetStatus('执行失败：' + traceEsc(job.error || '未知错误'));
+    }
+  }, function (job, n) {
+    if (n % 4 === 0) missionSetStatus('正在执行分析…（已等待 ' + Math.round(n * 1.5) + ' 秒）');
+  });
+}
+async function missionLoadProof(projectId) {
+  const proof = await apiCall('/projects/' + encodeURIComponent(projectId) + '/proof');
+  if (!proof || proof.detail) {
+    missionSetStatus('证明生成失败：' + traceEsc((proof && proof.detail) || '接口不可用')); return;
+  }
+  missionState.proof = proof;
+  const dev = proof.deviations || {};
+  let devHtml = '<div class="trace-meta" style="font-weight:500;margin-bottom:6px;">计划与实际</div>';
+  devHtml += '<div class="trace-meta">计划工具 ' + traceEsc(dev.planned_count)
+    + ' 个，实际执行 ' + traceEsc(dev.executed_count) + ' 步，计划命中率 '
+    + traceEsc(dev.adherence_ratio === null ? '无计划' : Math.round((dev.adherence_ratio || 0) * 100) + '%') + '</div>';
+  if ((dev.planned_not_run || []).length) {
+    devHtml += '<div class="trace-meta">未执行：' + traceEsc(dev.planned_not_run.join('、')) + '</div>';
+  }
+  (dev.autonomous_additions || []).slice(0, 6).forEach(function (item) {
+    devHtml += '<div class="trace-call"><div style="font-weight:500">自主补充 ' + traceEsc(item.action)
+      + ' · ' + traceBadge(item.source) + '</div><div class="trace-meta">' + traceEsc(item.reason) + '</div></div>';
+  });
+  document.getElementById('mission-deviations').innerHTML = devHtml;
+  const traj = proof.trajectory || {};
+  const reports = Object.keys(proof.reports || {}).length;
+  document.getElementById('mission-proof').innerHTML =
+    '<div class="trace-meta" style="font-weight:500;margin-bottom:6px;">可复现证明</div>'
+    + '<div class="trace-meta">完整性 ' + (proof.integrity_ok ? '校验通过' : '未通过')
+    + '；输入指纹 ' + traceEsc(Object.keys(proof.input_fingerprints || {}).length)
+    + ' 个文件；报告哈希 ' + traceEsc(reports) + ' 份；模型调用 '
+    + traceEsc(traj.model_calls) + ' 次；工具调用 ' + traceEsc(traj.tool_calls) + ' 次</div>'
+    + '<div class="trace-call" style="margin-top:8px;font-family:var(--font-mono,monospace);word-break:break-all;">'
+    + traceEsc(proof.replay_command) + '</div>'
+    + '<div class="trace-meta">' + traceEsc((proof.limitations || []).join(' ')) + '</div>';
+  missionSetStatus('分析完成，证明已生成。可点「一键离线重放验证」。');
+}
+async function missionVerify() {
+  const id = missionState.projectId;
+  if (!id) return;
+  document.getElementById('mission-verify-result').textContent = '正在离线重放并逐项比对…';
+  const started = await apiCall('/projects/' + encodeURIComponent(id) + '/verify',
+    { method: 'POST', body: JSON.stringify({}) });
+  if (!started || !started.job_id) {
+    document.getElementById('mission-verify-result').textContent =
+      '验证启动失败：' + traceEsc((started && started.detail) || '接口不可用');
+    return;
+  }
+  missionPoll(started.job_id, function (job) {
+    const box = document.getElementById('mission-verify-result');
+    if (job.status === 'done') {
+      box.textContent = job.identical
+        ? '重放通过：步骤、参数、排序结果与报告哈希逐项一致，且全程未调用模型或外部工具。'
+        : '重放存在差异：' + traceEsc((job.differences || []).join('；'));
+    } else {
+      box.textContent = '验证失败：' + traceEsc(job.error || '未知错误');
+    }
+  }, function (job, n) {
+    if (n % 4 === 0) document.getElementById('mission-verify-result').textContent =
+      '正在离线重放…（已等待 ' + Math.round(n * 1.5) + ' 秒）';
+  });
+}
+function missionCopyProof() {
+  const command = missionState.proof && missionState.proof.replay_command;
+  if (!command) return;
+  if (navigator.clipboard) navigator.clipboard.writeText(command);
+  document.getElementById('mission-verify-result').textContent = '重放命令已复制：' + command;
+}
+function missionOpenTrace() {
+  const id = missionState.projectId;
+  if (!id) return;
+  const select = document.getElementById('trace-project');
+  if (select) {
+    const option = Array.from(select.options).find(function (o) { return o.value === id; });
+    if (!option) { const opt = document.createElement('option'); opt.value = id; opt.textContent = id; select.appendChild(opt); }
+    select.value = id;
+  }
+  navigateTo('trace');
+}
+
 function navigateTo(page) {
   if (!document.getElementById('page-' + page)) return;
   closeProjectDetail();
@@ -2306,6 +2675,8 @@ function navigateTo(page) {
   if (page === 'peptide') { pepInitPage(); }
   if (page === 'explorer') loadExplorer();
   if (page === 'settings') { loadModelConfig(); loadMcpServers(); }
+  if (page === 'trace') loadDecisionTrace();
+  if (page === 'mission') missionGenerate();
 }
 async function apiCall(endpoint, options = {}) {
   try { const response = await fetch(`/api${endpoint}`, { headers: { 'Content-Type': 'application/json' }, ...options }); return await response.json(); }

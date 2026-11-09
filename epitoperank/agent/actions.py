@@ -38,6 +38,10 @@ class Action:
     func: Callable[..., str]
     #: Facts that must be true before the action makes sense.
     requires: tuple[str, ...] = ()
+    #: Optional argument declarations. When present, the model planner may
+    #: supply structured values (lists, numbers) validated against this schema
+    #: instead of being restricted to scalars.
+    arg_schema: dict[str, Any] | None = None
 
 
 # --------------------------------------------------------------------------
@@ -858,9 +862,21 @@ def consult_knowledge(context: RunContext, state: AgentState, min_projects: int 
         c.gene_symbol or c.gene_id for c in candidates if (c.gene_symbol or c.gene_id)
     ]
 
-    # Query knowledge base
-    kb = LabKnowledge()
-    recurrent = kb.intersect_with_candidates(candidate_genes, min_projects=min_projects)
+    # LabKnowledge is a cross-run, cwd-relative SQLite store. Reading it again
+    # during replay would include projects recorded *after* the taped run and
+    # change the report. Consume the recorded snapshot instead (read-only).
+    from copy import deepcopy
+
+    from epitoperank.llm.trace import ACTIVE
+
+    trace = ACTIVE.get()
+    if trace is not None and trace.replay:
+        recurrent = deepcopy(list(trace.knowledge_snapshot or []))
+    else:
+        recurrent = LabKnowledge().intersect_with_candidates(
+            candidate_genes, min_projects=min_projects)
+        if trace is not None:
+            trace.knowledge_snapshot = deepcopy(recurrent)
 
     if recurrent:
         state.facts["recurrent_genes"] = recurrent
@@ -872,7 +888,8 @@ def consult_knowledge(context: RunContext, state: AgentState, min_projects: int 
         )
     else:
         state.facts["recurrent_genes"] = []
-        stats = kb.get_stats()
+        stats = LabKnowledge().get_stats() if trace is None or not trace.replay else {
+            "unique_genes": 0, "projects_tracked": 0}
         return (
             f"No recurrent genes found in knowledge base ({stats['unique_genes']} unique genes "
             f"from {stats['projects_tracked']} projects tracked). Proceeding with standard interpretation."
@@ -886,6 +903,12 @@ def persist_knowledge(context: RunContext, state: AgentState, top_n: int = 10) -
     the knowledge base for future runs.
     """
     from .knowledge import KnowledgeEntry, LabKnowledge
+
+    from epitoperank.llm.trace import ACTIVE
+
+    trace = ACTIVE.get()
+    if trace is not None and trace.replay:
+        return "Skipped during replay: the lab knowledge base is read-only."
 
     candidates = context.candidates or []
     if not candidates:
@@ -990,14 +1013,30 @@ def call_mcp_tool_action(context: RunContext, state: AgentState,
             raise ValueError("arguments 必须是 JSON 对象")
     except (ValueError, TypeError) as error:
         return f"参数无效：{error}"
-    try:
-        result = run_async(mcp_call_tool(str(server), str(tool), payload))
-    except Exception as error:  # noqa: BLE001
-        context.log("agent", "call_mcp_tool", "error", str(error)[:200])
-        return f"MCP 调用失败：{error}"
+    def real_call() -> dict:
+        try:
+            return run_async(mcp_call_tool(str(server), str(tool), payload))
+        except Exception as error:  # noqa: BLE001
+            context.log("agent", "call_mcp_tool", "error", str(error)[:200])
+            return {"error": f"MCP 调用失败：{error}"}
+
+    from epitoperank.llm.trace import ACTIVE
+    from .mcp_actions import summarize_result
+
+    trace = ACTIVE.get()
+    result = (trace.tool_call(str(server), str(tool), payload, real_call)
+              if trace is not None else real_call())
+    summary = summarize_result(str(tool), result)
+    # Structured write-back: the next OODA iteration sees tool outcomes rather
+    # than only "a tool was called", which is what enables result-driven plans.
     state.facts["last_mcp_call"] = {"server": server, "tool": tool,
-                                    "ok": bool(result.get("success", True))}
-    context.log("agent", "call_mcp_tool", "ok", f"{server}/{tool}")
+                                    "ok": bool(summary["ok"])}
+    state.facts["last_mcp_tool"] = str(tool)
+    state.facts["last_mcp_ok"] = bool(summary["ok"])
+    state.facts["mcp_summaries"] = {
+        **(state.facts.get("mcp_summaries") or {}), str(tool): summary}
+    context.log("agent", "call_mcp_tool", "ok",
+                f"{server}/{tool} " + json.dumps(summary, ensure_ascii=False)[:300])
     return json.dumps(result, ensure_ascii=False, default=str)[:1500]
 
 
@@ -1090,4 +1129,9 @@ def build_registry() -> dict[str, Action]:
             call_mcp_tool_action,
         ),
     ]
+    # First-class built-in MCP tools: one discoverable action per tool, with a
+    # declared argument schema so the planner can compose prediction chains.
+    from .mcp_actions import build_mcp_actions
+
+    actions.extend(build_mcp_actions())
     return {action.name: action for action in actions}

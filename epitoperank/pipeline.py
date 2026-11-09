@@ -174,7 +174,8 @@ class AnalysisOutcome:
 
 def run_analysis(query: str, input_path: str | Path, *, settings: Settings | None = None,
                  project_id: str | None = None, project_name: str | None = None,
-                 output_root: str | Path | None = None, confirm_handler: Any | None = None) -> AnalysisOutcome:
+                 output_root: str | Path | None = None, confirm_handler: Any | None = None,
+                 plan: Any | None = None) -> AnalysisOutcome:
     """Record a complete analysis, or strictly replay agent.replay without LLM I/O."""
     import dataclasses
     from datetime import datetime, timezone
@@ -202,22 +203,27 @@ def run_analysis(query: str, input_path: str | Path, *, settings: Settings | Non
         else:
             if not settings.agent.agentic:
                 return _run_analysis(query, input_path, settings=settings, project_id=project_id,
-                    project_name=project_name, output_root=output_root, confirm_handler=confirm_handler)
+                    project_name=project_name, output_root=output_root, confirm_handler=confirm_handler,
+                    plan=plan)
             project_id = project_id or f"SPN-{uuid.uuid4().hex[:8].upper()}"
             trace.meta = trace.clean({"schema_version": 1, "input_fingerprints": inputs,
                 "model_name": settings.llm.model, "llm_enabled": settings.llm.usable,
                 "config": {"agent": dataclasses.asdict(settings.agent), "llm": dataclasses.asdict(settings.llm),
                     "analysis": dataclasses.asdict(settings.analysis), "report_formats": settings.report_formats},
                 "query": query, "project_id": project_id,
+                "input_dir": str(input_path),
+                "analysis_plan": plan.as_dict() if plan is not None else None,
                 "report_time": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')})
         output_dir = Path(output_root or settings.paths.runtime_root / "projects") / project_id
+        trace.meta.setdefault("state_path", str(output_dir / "agent_state.json"))
         if replay and output_dir.resolve() == Path(replay).resolve().parent:
             output_dir = output_dir.parent / (output_dir.name + "-replay-failed")
             trace.fail("replay output directory must differ from the recorded project directory")
         token = ACTIVE.set(trace)
         try:
             outcome = _run_analysis(query, input_path, settings=settings, project_id=project_id,
-                project_name=project_name, output_root=output_root, confirm_handler=confirm_handler)
+                project_name=project_name, output_root=output_root, confirm_handler=confirm_handler,
+                plan=plan)
             trace.finish()
             if replay:
                 actual_steps = [{"action": s.action, "args": s.args, "status": s.status} for s in outcome.team.steps]
@@ -234,7 +240,9 @@ def run_analysis(query: str, input_path: str | Path, *, settings: Settings | Non
                 if reports != trace.meta["reports"]:
                     trace.fail("replay report sha256 mismatch (external data may have changed)")
             trace.meta.update(decisions=trace.decisions, ranked=ranked, reports=reports, output_dir=str(outcome.output_dir))
-            data.update(model_calls=trace.calls, meta=trace.meta, errors=trace.errors)
+            data.update(model_calls=trace.calls, tool_calls=trace.tool_calls,
+                        knowledge_snapshot=trace.knowledge_snapshot,
+                        meta=trace.meta, errors=trace.errors)
             data = trace.clean(data)
             data["meta"]["integrity"] = trace.checksum(data)
             state_path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
@@ -263,6 +271,7 @@ def _run_analysis(
     project_name: str | None = None,
     output_root: str | Path | None = None,
     confirm_handler: Any | None = None,
+    plan: Any | None = None,
 ) -> AnalysisOutcome:
     """Run the full analysis pipeline for one query against one input dataset."""
     if settings is None:
@@ -306,6 +315,10 @@ def _run_analysis(
         output_dir=output_dir,
         validation=validation,
     )
+    try:
+        context.analysis_plan = plan
+    except Exception:  # noqa: BLE001 - the contract is metadata, never required
+        pass
     context.log("system", "run_started", "ok", f"query={query!r} input={dataset.source_dir}")
 
     # Pre-analysis intent understanding (model-based when configured).

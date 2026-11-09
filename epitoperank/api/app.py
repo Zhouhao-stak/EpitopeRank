@@ -426,6 +426,206 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=404, detail=f"Project {project_id} not found")
         return payload
 
+    @app.get("/api/projects/{project_id}/trace")
+    def project_trace(project_id: str) -> dict[str, Any]:
+        """Read-only decision trace: steps, decision sources, model/tool calls.
+
+        The autonomous loop already writes all of this to ``agent_state.json``;
+        this endpoint simply exposes it so the UI (and an auditor) can see how
+        a run was actually decided.
+        """
+        from epitoperank.agent.trace_view import load_state, summarize
+
+        if not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", project_id or ""):
+            raise HTTPException(status_code=400, detail="Invalid project id")
+        root = (settings.paths.runtime_root / "projects").resolve()
+        state_path = (root / project_id / "agent_state.json").resolve()
+        if not state_path.is_relative_to(root) or not state_path.is_file():
+            raise HTTPException(status_code=404,
+                                detail=f"No decision trace for project {project_id}")
+        try:
+            return summarize(load_state(state_path))
+        except (OSError, ValueError, json.JSONDecodeError) as error:
+            raise HTTPException(status_code=422,
+                                detail=f"Unreadable decision trace: {error}") from error
+
+    @app.post("/api/trace/compare")
+    def trace_compare(payload: dict[str, Any]) -> dict[str, Any]:
+        """Compare two recorded runs (record vs replay) for byte-level identity."""
+        from epitoperank.llm.trace import compare
+
+        root = settings.paths.runtime_root.resolve()
+
+        def resolve_trace(value: Any) -> Path:
+            if not value:
+                raise HTTPException(status_code=400, detail="left and right are required")
+            raw = str(value).strip()
+            # A bare project id is resolved to its recorded state file, so the
+            # UI can compare "this project" against another run's path.
+            if re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", raw) and not raw.endswith(".json"):
+                path = (root / "projects" / raw / "agent_state.json").resolve()
+            else:
+                path = Path(raw).resolve()
+            if not path.is_relative_to(root):
+                raise HTTPException(status_code=400, detail="Trace path outside runtime root")
+            if path.is_dir():
+                path = path / "agent_state.json"
+            if not path.is_file():
+                raise HTTPException(status_code=404, detail=f"Trace not found: {path.name}")
+            return path
+
+        left = resolve_trace(payload.get("left"))
+        right = resolve_trace(payload.get("right"))
+        try:
+            differences = compare(left, right)
+        except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
+            raise HTTPException(status_code=422,
+                                detail=f"Cannot compare traces: {error}") from error
+        return {"identical": not differences, "differences": differences,
+                "left": str(left), "right": str(right)}
+
+    # -- goal-driven plan, execution and reproducibility proof ------------
+    plan_jobs: dict[str, dict[str, Any]] = {}
+    plan_jobs_lock = threading.RLock()
+
+    def _set_job(job_id: str, **fields: Any) -> None:
+        with plan_jobs_lock:
+            plan_jobs.setdefault(job_id, {}).update(fields)
+
+    def _trace_file(project_id: str) -> Path:
+        import re
+
+        if not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", project_id or ""):
+            raise HTTPException(status_code=400, detail="Invalid project id")
+        root = (settings.paths.runtime_root / "projects").resolve()
+        path = (root / project_id / "agent_state.json").resolve()
+        if not path.is_relative_to(root) or not path.is_file():
+            raise HTTPException(status_code=404,
+                                detail=f"No decision trace for project {project_id}")
+        return path
+
+    @app.post("/api/plan/preview")
+    def plan_preview(payload: dict[str, Any]) -> dict[str, Any]:
+        """Turn a natural-language objective into an editable plan (no execution)."""
+        from epitoperank.agent.actions import build_registry
+        from epitoperank.agent.plan import build_plan
+
+        plan = build_plan(str(payload.get("query") or ""), settings=settings)
+        return {"plan": plan.as_dict(), "registry_size": len(build_registry())}
+
+    @app.post("/api/plan/run")
+    def plan_run(payload: dict[str, Any]) -> dict[str, Any]:
+        """Start an analysis from a reviewed plan; returns a pollable job id."""
+        from epitoperank.agent.plan import AnalysisPlan
+
+        query = str(payload.get("query") or "").strip()
+        input_dir = str(payload.get("input_dir") or "").strip()
+        if not query or not input_dir or not Path(input_dir).is_dir():
+            raise HTTPException(status_code=422, detail="query and an existing input_dir are required")
+        try:
+            plan = AnalysisPlan.from_dict(payload.get("plan"))
+            from epitoperank.agent.actions import build_registry
+
+            plan.validate_against_registry(build_registry())
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        project_id = str(payload.get("project_id") or "").strip() or None
+        if project_id and not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", project_id):
+            raise HTTPException(status_code=400, detail="Invalid project id")
+        job_id = secrets.token_urlsafe(12)
+        _set_job(job_id, status="running", kind="run", project_id=project_id)
+
+        def worker() -> None:
+            from epitoperank.pipeline import run_analysis
+
+            try:
+                outcome = run_analysis(
+                    query, input_dir, settings=settings, plan=plan,
+                    project_id=project_id,
+                    output_root=settings.paths.runtime_root / "projects")
+                summary = outcome.summary()
+                _set_job(job_id, status="done", project_id=summary.get("project_id"),
+                         steps=len(outcome.team.steps), mode=summary.get("mode"),
+                         stopped_reason=summary.get("stopped_reason"))
+            except Exception as error:  # noqa: BLE001
+                _set_job(job_id, status="failed", error=f"{type(error).__name__}: {error}")
+
+        threading.Thread(target=worker, name=f"plan-run-{job_id}", daemon=True).start()
+        return {"job_id": job_id, "status": "running"}
+
+    @app.get("/api/jobs/{job_id}")
+    def job_status(job_id: str) -> dict[str, Any]:
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", job_id or ""):
+            raise HTTPException(status_code=400, detail="Invalid job id")
+        with plan_jobs_lock:
+            job = dict(plan_jobs.get(job_id) or {})
+        if not job:
+            raise HTTPException(status_code=404, detail="Job not found")
+        return {"job_id": job_id, **job}
+
+    @app.get("/api/projects/{project_id}/proof")
+    def project_proof(project_id: str) -> dict[str, Any]:
+        """Self-contained reproducibility proof for one recorded run."""
+        from epitoperank.agent.plan import reproducibility_proof
+        from epitoperank.agent.trace_view import load_state
+
+        path = _trace_file(project_id)
+        try:
+            state = load_state(path)
+        except (OSError, ValueError, json.JSONDecodeError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        proof = reproducibility_proof(state)
+        proof["state_path"] = str(path)
+        return proof
+
+    @app.post("/api/projects/{project_id}/verify")
+    def project_verify(project_id: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Replay the recorded run offline and compare steps/params/ranked/reports."""
+        from epitoperank.agent.trace_view import load_state
+        from epitoperank.llm.trace import compare
+        from epitoperank.pipeline import run_analysis
+
+        path = _trace_file(project_id)
+        state = load_state(path)
+        meta = state.get("meta") or {}
+        query = str(meta.get("query") or "")
+        provided = str((payload or {}).get("input_dir") or "").strip()
+        input_dir = provided or str(meta.get("input_dir") or "")
+        if not query or not input_dir or not Path(input_dir).is_dir():
+            raise HTTPException(status_code=422,
+                                detail="Original input directory is unavailable; supply input_dir")
+        job_id = secrets.token_urlsafe(12)
+        _set_job(job_id, status="running", kind="verify", project_id=project_id)
+
+        def worker() -> None:
+            import dataclasses
+            import traceback
+
+            from epitoperank.config import PathSettings
+
+            try:
+                scratch = settings.paths.runtime_root / "verify" / job_id
+                scratch.mkdir(parents=True, exist_ok=True)
+                # Isolated runtime state: a shared lab knowledge base can add
+                # recurrence bonuses and make an otherwise valid replay diverge.
+                isolated = dataclasses.replace(
+                    settings,
+                    paths=PathSettings(scratch, scratch / "memory.db", scratch / "literature.db"),
+                    agent=dataclasses.replace(settings.agent, replay=str(path)))
+                outcome = run_analysis(query, input_dir, settings=isolated,
+                                       project_id=project_id, output_root=scratch)
+                replay_state = outcome.output_dir / "agent_state.json"
+                differences = compare(path, replay_state)
+                _set_job(job_id, status="done", identical=not differences,
+                         differences=differences, replay_state=str(replay_state))
+            except Exception as error:  # noqa: BLE001
+                _set_job(job_id, status="failed",
+                         error=f"{type(error).__name__}: {error}",
+                         trace=traceback.format_exc()[-600:])
+
+        threading.Thread(target=worker, name=f"verify-{job_id}", daemon=True).start()
+        return {"job_id": job_id, "status": "running"}
+
     @app.get("/api/projects/{project_id}/events")
     def project_events(
         project_id: str,

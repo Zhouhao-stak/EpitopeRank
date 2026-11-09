@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from playwright.sync_api import sync_playwright
 from epitoperank.interface.web_ui import render
-pages=['dashboard','pipeline','explorer','visualization','gene','report','settings','neoantigen','peptide']
+pages=['dashboard','pipeline','explorer','visualization','gene','report','settings','neoantigen','peptide','trace','mission']
 Path('out/ui-review').mkdir(exist_ok=True)
 with sync_playwright() as p:
  browser=p.chromium.launch(headless=True, **({'executable_path': os.environ['UI_CHROMIUM_PATH']} if os.environ.get('UI_CHROMIUM_PATH') else {}))
@@ -82,5 +82,5 @@ with sync_playwright() as p:
  assert '載入失敗' in page.evaluate("Array.from(document.querySelectorAll('[role=status],[role=alert]')).map(n=>n.textContent).join('|')")
  print('opencc 加载失败时的降级路径通过')
  assert not errors, errors
- print('All 18 views, drawer, quick search, motion preferences, example interaction and zh-Hant lazy-load passed.')
+ print('All 22 views, drawer, quick search, motion preferences, example interaction and zh-Hant lazy-load passed.')
  browser.close()

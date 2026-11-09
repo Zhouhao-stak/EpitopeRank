@@ -461,8 +461,12 @@ class DecisionEngine:
             "generate_figures": ("filtered",),
             "generate_report": ("filtered", "ranked", "interpreted"),
         }
+        from .mcp_actions import compact_schema
+
         available = [
-            {"name": name, "description": action.description}
+            {"name": name, "description": action.description,
+             **({"params": compact_schema(action.arg_schema)}
+                if getattr(action, "arg_schema", None) else {})}
             for name, action in self.registry.items()
             if self._requirements_met(name)
             and not state_overused(state, name)
@@ -487,7 +491,7 @@ class DecisionEngine:
             text = model_request(enhancer,
                 stage="model_plan",
                 system=PLAN_SYSTEM,
-                user=json.dumps(payload, ensure_ascii=False, default=str)[:6000],
+                user=json.dumps(payload, ensure_ascii=False, default=str)[:9000],
                 max_tokens=400, json_output=True, timeout=60,
             )
             data = extract_json(text or "")
@@ -496,10 +500,23 @@ class DecisionEngine:
             action = str(data.get("action") or "")
             if action not in {item["name"] for item in available}:
                 return None
-            args = data.get("args") if isinstance(data.get("args"), dict) else {}
-            # 只允许简单标量参数：杜绝模型往工具里塞任意结构或路径对象
-            args = {str(k): v for k, v in args.items()
-                    if isinstance(v, (str, int, float, bool))}
+            raw_args = data.get("args") if isinstance(data.get("args"), dict) else {}
+            selected = self.registry.get(action)
+            if selected is not None and getattr(selected, "arg_schema", None):
+                # Declared-schema tools (MCP) may receive structured values such
+                # as peptide lists, but every value is validated and required
+                # arguments must be present before the proposal is accepted.
+                from .mcp_actions import validate_args
+
+                args, _dropped = validate_args(selected.arg_schema, raw_args)
+                if any(rule.get("required") and key not in args
+                       for key, rule in selected.arg_schema.items()):
+                    return None
+            else:
+                # Legacy actions keep the scalar-only guard: no arbitrary
+                # structures or path objects may reach deterministic tools.
+                args = {str(k): v for k, v in raw_args.items()
+                        if isinstance(v, (str, int, float, bool))}
             rationale = str(data.get("rationale") or "model planning")[:200]
             decision = Decision("act", action, args, rationale,
                                 source="llm", confidence=0.75)

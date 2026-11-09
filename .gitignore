@@ -65,6 +65,8 @@ packaging/build-log.txt
 /results/
 # scratch outputs, screenshots, ad-hoc probes
 /out/
+# runtime-learned agent state (threshold bandit / episodic memory)
+/.epitoperank/
 # local datasets: downloaded reference data, customer pilot inputs
 # (kept outside the repo root by convention, but be safe)
 /public_datasets/

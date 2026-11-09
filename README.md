@@ -197,10 +197,14 @@ HLA-A*02:01,HLA-B*07:02
 标注 `strong`（<0.5%）/ `weak`（<2%）/ `none`，并带基因、事件、ΔPSI、FDR 等元数据；
 manifest 与界面状态栏同时给出分档计数。
 
-**自主智能体与外网**：`agent.autonomous_planning` 让大模型在 OODA 每一步从完整动作表
-（含 `web_fetch`、`rebuild_orf_table`、`call_mcp_tool`）里选下一步，规则链始终作为安全回退；
-工具权限可用 `agent.allow_network` / `agent.allow_file_write` 关闭。设置页可连接外部 MCP 服务器，
-内置 `web_fetch` 工具按域名白名单访问 Ensembl/NCBI/IEDB 等站点。
+**自主智能体与外网**：`agent.autonomous_planning` 让大模型在 OODA 每一步从完整动作表里选下一步，
+规则链作为安全回退。内置 9 个 MCP 工具（`predict_mhc_binding`、`lookup_epitope`、
+`peptide_properties`、`search_events` 等）已展开为**独立的一等动作**：模型能看到参数 schema、
+传入结构化参数（如肽段列表），工具结果（percentile rank、命中数等）会回灌黑板供下一轮决策使用，
+因此模型可以根据预测结果改变后续计划。所有工具调用连同结果快照写入 `agent_state.json`，重放时
+使用快照、不访问外网。侧栏「决策轨迹」页展示每步的决策来源（规则 / 模型 / 反思 / 经验 / 重放）、
+依据、模型原始响应与完整性校验。工具权限可用 `agent.allow_network` / `agent.allow_file_write` 关闭。
+设置页可连接外部 MCP 服务器；`call_mcp_tool` 仍保留用于调用任意外部工具。
 
 命令行：
 
@@ -251,14 +255,17 @@ Docker 容器内 `/data`（命名卷 `epitoperank-data`），可用 `EPITOPERANK
 |---|---|---|
 | AgentState | `agent/state.py` | 事实/问题/步骤黑板 + 可判定的验收标准 |
 | Profile | `agent/profile.py` | 数据画像：规模、FDR 覆盖率、缺失、支持读数、组平衡 |
-| Actions | `agent/actions.py` | 24 个动作注册表（画像/质检/调阈值/统计检验/外网/ORF 重建/MCP） |
-| DecisionEngine | `agent/decision.py` | 自我决策核心：规则链优先，模型建议为辅 |
+| Actions | `agent/actions.py` | 33 个动作注册表：24 个原有动作 + 9 个一等化 MCP 工具 |
+| DecisionEngine | `agent/decision.py` | 自我决策核心：模型规划优先于规则链，规则链作校验与安全回退 |
 | Verifier | `agent/verify.py` | 结果体检，产出 Issue(code, severity, suggestion) |
 | Reflector | `agent/reflector.py` | 问题 → 补救动作（改阈值 / 重试 / 降级接受） |
 | AutonomousAgent | `agent/loop.py` | OODA 主循环 + 步数/时间/错误三重预算 + 决策轨迹 |
 | EpisodicMemory | `agent/episodic.py` | 跨运行经验：相似数据上次用什么阈值成功过 |
 | Session | `agent/session.py` | 多轮追问：状态快照 + 意图解析 + followup |
-| ModelTrace | `llm/trace.py` | 录制每次模型调用（prompt/响应/采样参数）并支持严格离线重放 |
+| McpActions | `agent/mcp_actions.py` | MCP 工具发现、参数 schema 校验、结果结构化回灌 |
+| TraceView | `agent/trace_view.py` | 决策轨迹只读汇总：来源分布、完整性校验 |
+| AnalysisPlan | `agent/plan.py` | 可审阅的计划契约、计划/实际偏差、可复现证明 |
+| ModelTrace | `llm/trace.py` | 录制模型调用（prompt/响应/采样参数）与 MCP 工具快照，支持严格离线重放 |
 
 决策**以规则为主、模型为辅**，所以离线（无 key）时同样是真决策，不是放录像。
 
@@ -322,7 +329,7 @@ pytest tests/unit tests/integration -v
 pytest --cov=epitoperank --cov-report=html
 ```
 
-当前 **331 个测试全部通过**（单元 + API/UI 集成，含轨迹录制与重放回归）。
+当前 **360 个测试全部通过**（单元 + API/UI 集成，含轨迹录制、工具快照重放、计划契约与可复现证明回归）。
 
 CI 在每次推送时跑：
 
@@ -353,14 +360,14 @@ CI 在每次推送时跑：
 2. 增加剪接领域专用智能层（标准化、排序、证据）；
 3. 无 LLM key 时全流程仍可运行（规则驱动的确定性决策）；
 4. 可无缝接入 Phase 2（FASTQ → 比对 → 剪接检测 → 现有 AI 层）；
-5. 全程可复现：workflow、参数、软件版本、日志全部留痕；模型调用写入 `agent_state.json`，可用 `run.py replay` 严格离线重放、`run.py compare` 逐项比对；
+5. 全程可复现：workflow、参数、软件版本、日志全部留痕；模型调用与 MCP 工具结果快照写入 `agent_state.json`，可用 `run.py replay` 严格离线重放、`run.py compare` 逐项比对；数值计算始终由确定性工具完成，模型只决定调用哪些工具；
 6. 结论必须有证据支撑，严格区分「已证实的统计结果」与「待验证的假设」。
 
 ## 路线图
 
 - **Phase 2**：FASTQ 处理、比对 pipeline（rMATS 在线运行）
 - **Phase 3**：单细胞 RNA-seq、多组学
-- **Phase 4**：AI autonomous bioinformatics researcher
+- **Phase 4**：受控自主的科研助手（工具编排 + 可验证的决策轨迹，而非开放式通用智能体）
 
 ## 致谢与许可
 
@@ -371,6 +378,28 @@ CI 在每次推送时跑：
 - BioGAIP 原始代码保留在 `legacy/`，遵循其原始 AGPL-3.0 许可
 - 第三方预测能力来自 IEDB（NetMHCpan 4.1 EL 等），使用时请遵守其许可与引用要求
 
+## 目标驱动的自主任务与可复现证明
+
+侧栏「自主任务」把一次分析变成**可审阅的契约**，而不是黑盒：
+
+1. 输入一句科研目标（如「为 UPF1 敲低样本找 3 个可验证的 MHC-I 新抗原候选」）→ 生成计划，
+   列出允许调用的工具、FDR / |ΔPSI| / 候选数阈值、预期输出与硬预算。阈值和预算来自
+   `config/config.yaml`，模型不能改写；工具名必须在注册表内，伪造的动作会被拒绝。
+2. 计划**可编辑**：删掉某行即不允许该工具。确认后写入 `agent_state.json` 的
+   `meta.analysis_plan`，随运行结果一起存档。
+3. 计划是契约、不是脚本：OODA 循环会按数据状态偏离计划。执行结束后页面显示
+   **计划命中率、未执行的计划动作、自主补充的动作及其依据**（哪条规则 / 哪个模型决策触发）。
+4. 「可复现证明」汇总输入文件 SHA-256 指纹、配置快照、决策/模型/工具调用数、报告哈希、
+   轨迹完整性校验和一条可复制的 `run.py replay` 命令。
+5. 「一键离线重放验证」在后台真实重跑该轨迹：跳过所有模型与 MCP 网络调用、消费录制快照，
+   逐项比对步骤、参数、排序结果与报告 SHA-256，返回 `identical` 或明确的差异清单。
+
+对应接口：`POST /api/plan/preview`、`POST /api/plan/run`、`GET /api/jobs/{id}`、
+`GET /api/projects/{id}/proof`、`POST /api/projects/{id}/verify`。
+重放时 `consult_knowledge` 使用录制的 `knowledge_snapshot`、`persist_knowledge` 跳过写入，
+因此跨运行的实验室知识库不会让复现结果漂移。外部服务（IEDB / PubMed）始终来自快照，
+不保证实时响应相同。
+
 ## 模型轨迹录制与决策重放
 
 默认 `agentic` 分析会把本次完整生命周期的模型调用写入输出项目的
@@ -378,8 +407,10 @@ CI 在每次推送时跑：
 `enrichment:<feature>`（叙述、解读、自评等）。无需额外录制开关。
 `model_calls` 保存有序编号、脱敏后的完整 prompt、SHA-256、模型名、实际生效温度、
 max_tokens/json_output、原始响应、解析对象、耗时、重试次数与时间。
-`meta` 保存 schema_version=1、输入文件指纹、脱敏配置快照、完整决策序列、
-排序结果及报告 SHA-256。旧版无这些字段的状态仍可用于普通 load_state/followup，
+`tool_calls` 以同样方式录制 MCP 工具调用的参数与结果快照；重放时按序消费快照，
+顺序或参数不符即明确失败，绝不静默联网。侧栏「决策轨迹」页可直接查看这些内容并
+调用「对比两次运行」。`meta` 保存 schema_version=1、输入文件指纹、脱敏配置快照、
+完整决策序列、排序结果及报告 SHA-256。旧版无这些字段的状态仍可用于普通 load_state/followup，
 但不能当作完整的重放轨迹。
 
 在项目根目录执行（PowerShell；录制时模型凭据沿用本地环境）：

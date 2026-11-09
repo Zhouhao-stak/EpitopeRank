@@ -70,7 +70,9 @@ class ModelTrace:
         self.replay = bool(replay)
         self.calls = []
         self.decisions = []
-        self.cursor = self.decision_cursor = 0
+        self.tool_calls = []
+        self.knowledge_snapshot = []
+        self.cursor = self.decision_cursor = self.tool_cursor = 0
         self.errors = []
         self.secrets = [str(v) for k, v in asdict(settings.llm).items()
                         if re.search(r"key|token|authorization|secret|password", k, re.I) and v]
@@ -87,12 +89,19 @@ class ModelTrace:
             self.meta = data.get("meta", {})
             self.calls = data.get("model_calls", [])
             self.decisions = self.meta.get("decisions", [])
+            self.tool_calls = data.get("tool_calls", [])
+            self.knowledge_snapshot = data.get("knowledge_snapshot", [])
             if self.meta.get("schema_version") != 1 or not self.meta.get("integrity"):
                 self.fail("missing or unsupported model trace")
             if self.meta["integrity"] != self.checksum(data):
                 self.fail("trace checksum mismatch")
             if not isinstance(self.calls, list) or not isinstance(self.decisions, list):
                 self.fail("model calls and decisions must be lists")
+            if not isinstance(self.tool_calls, list) or any(
+                    not isinstance(item, dict) or
+                    not {"server", "tool", "args", "result"} <= set(item)
+                    for item in self.tool_calls):
+                self.fail("invalid MCP tool call tape")
             from .enrich import extract_json
             try:
                 for i, call in enumerate(self.calls):
@@ -179,6 +188,28 @@ class ModelTrace:
                               errors_added=self.clean(enhancer.errors[error_count:]), notes=notes)
         return response
 
+    def tool_call(self, server, tool, args, invoke):
+        """Single recording/replay boundary for MCP tool invocations.
+
+        Replay consumes the recorded result instead of touching the network, so
+        external services cannot make a reproduced run diverge.
+        """
+        wanted = (str(server), str(tool), self.clean(dict(args)))
+        if self.replay:
+            if self.tool_cursor >= len(self.tool_calls):
+                self.fail(f"missing recorded MCP tool call: {tool}")
+            record = self.tool_calls[self.tool_cursor]
+            if (record["server"], record["tool"], record["args"]) != wanted:
+                self.fail(f"MCP tool call order/arguments mismatch at seq {self.tool_cursor}: {tool}")
+            self.tool_cursor += 1
+            return copy.deepcopy(record["result"])
+        result = invoke()
+        self.tool_calls.append(self.clean({
+            "seq": len(self.tool_calls), "server": wanted[0], "tool": wanted[1],
+            "args": wanted[2], "result": result,
+            "timestamp": datetime.now(timezone.utc).isoformat()}))
+        return result
+
     def decide(self, engine, original):
         if not self.replay:
             begin = len(self.calls)
@@ -211,8 +242,10 @@ class ModelTrace:
         return decision
 
     def finish(self):
-        if self.replay and (self.cursor != len(self.calls) or self.decision_cursor != len(self.decisions)):
-            self.fail("unconsumed model calls or decisions")
+        if self.replay and (self.cursor != len(self.calls)
+                            or self.decision_cursor != len(self.decisions)
+                            or self.tool_cursor != len(self.tool_calls)):
+            self.fail("unconsumed model calls, decisions or MCP tool calls")
 
 
 def traced_decision(method):

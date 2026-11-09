@@ -174,7 +174,7 @@ Profile → Verify → Decide → Act → Trace
 | AgentState | `epitoperank/agent/state.py` | facts / issues / steps blackboard with decidable acceptance criteria |
 | Profile | `epitoperank/agent/profile.py` | dataset profiling |
 | Actions | `epitoperank/agent/actions.py` | action registry |
-| DecisionEngine | `epitoperank/agent/decision.py` | rule chain first, model suggestion optional |
+| DecisionEngine | `epitoperank/agent/decision.py` | model planning first, rule chain as safe fallback |
 | Verifier | `epitoperank/agent/verify.py` | result health checks |
 | Reflector | `epitoperank/agent/reflector.py` | issue → remedial action |
 | AutonomousAgent | `epitoperank/agent/loop.py` | OODA loop with step/time/error budgets |
