@@ -1,4 +1,5 @@
 #!/bin/bash
+cd "$(dirname "$0")/../.." || exit 1
 # EpitopeRank Deployment Script for 123.255.66.81:39145
 # User: wang_zi_wei
 # No root required - uses existing Docker installation

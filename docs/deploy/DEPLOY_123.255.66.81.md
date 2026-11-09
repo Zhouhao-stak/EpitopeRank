@@ -25,7 +25,7 @@
 
 ```bash
 # 在项目根目录执行
-./deploy-to-123.255.66.81.sh
+./deploy/scripts/deploy-to-123.255.66.81.sh
 
 # 脚本会自动完成：
 # ✓ 检查服务器连接
@@ -41,7 +41,7 @@
 以后每次代码更新后，只需重新运行：
 
 ```bash
-./deploy-to-123.255.66.81.sh
+./deploy/scripts/deploy-to-123.255.66.81.sh
 ```
 
 脚本会自动同步文件并重启服务。
@@ -79,7 +79,7 @@ cp .env.production.example .env
 # DEEPSEEK_API_KEY=sk-your-key
 
 # 重新部署（会上传新的 .env）
-./deploy-to-123.255.66.81.sh
+./deploy/scripts/deploy-to-123.255.66.81.sh
 ```
 
 ️ **注意**: `.env` 文件包含敏感信息，不要提交到 Git！
@@ -172,7 +172,7 @@ ssh -p 39145 wang_zi_wei@123.255.66.81 \
 ssh -p 39145 wang_zi_wei@123.255.66.81 \
   "netstat -tuln | grep -E ':8800'"
 
-# 修改 docker-compose.coolify.yml 中的端口映射
+# 修改 deploy/scripts/docker-compose.coolify.yml 中的端口映射
 # 例如改为 9800:8800
 ```
 
@@ -185,7 +185,7 @@ ssh -p 39145 wang_zi_wei@123.255.66.81 \
 # 检查内存使用
 ssh -p 39145 wang_zi_wei@123.255.66.81 "free -h"
 
-# 减少资源限制（编辑 docker-compose.coolify.yml）
+# 减少资源限制（编辑 deploy/scripts/docker-compose.coolify.yml）
 deploy:
   resources:
     limits:

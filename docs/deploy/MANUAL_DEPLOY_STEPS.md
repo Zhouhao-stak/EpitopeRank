@@ -203,8 +203,8 @@ docker-compose up -d --build
 # 检查端口占用
 netstat -tuln | grep -E ':8800'
 
-# 如果被占用，修改 docker-compose.coolify.yml
-vim docker-compose.coolify.yml
+# 如果被占用，修改 deploy/scripts/docker-compose.coolify.yml
+vim deploy/scripts/docker-compose.coolify.yml
 # 改为其他端口，如 9800:8800
 ```
 

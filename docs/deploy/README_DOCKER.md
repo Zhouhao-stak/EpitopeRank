@@ -12,7 +12,7 @@
 
 **构建命令：**
 ```bash
-build.bat
+scripts/windows/build.bat
 ```
 
 **输出位置：**
@@ -40,7 +40,7 @@ dist/EpitopeRank/
 **启动命令：**
 ```bash
 # Windows（一键启动）
-docker-start.bat
+scripts/windows/docker-start.bat
 
 # Linux/Mac
 docker-compose up -d
@@ -48,10 +48,10 @@ docker-compose up -d
 
 **管理命令：**
 ```bash
-docker-run.bat start      # 启动
-docker-run.bat stop       # 停止
-docker-run.bat logs       # 查看日志
-docker-run.bat status     # 查看状态
+scripts/windows/docker-run.bat start      # 启动
+scripts/windows/docker-run.bat stop       # 停止
+scripts/windows/docker-run.bat logs       # 查看日志
+scripts/windows/docker-run.bat status     # 查看状态
 ```
 
 **访问地址：**

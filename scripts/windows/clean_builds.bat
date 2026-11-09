@@ -1,6 +1,7 @@
 @echo off
+cd /d "%~dp0..\.."
 REM Clean all build artifacts except dist/
-REM Usage: clean_builds.bat
+REM Usage: scripts/windows/clean_builds.bat
 
 setlocal enabledelayedexpansion
 
@@ -56,7 +57,7 @@ echo   Cleanup Complete!
 echo ========================================
 echo.
 echo   EXE location: dist\EpitopeRank.exe
-echo   To rebuild:   run build.bat
+echo   To rebuild:   run scripts/windows/build.bat
 echo.
 
 pause

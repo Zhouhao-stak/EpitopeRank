@@ -1,7 +1,8 @@
 #!/bin/bash
+cd "$(dirname "$0")/../.." || exit 1
 # EpitopeRank Server Deployment Script (No Root Required)
 # Prerequisites: Docker installed on server, user in docker group
-# Usage: ./deploy-to-server.sh [user@server] [remote_dir]
+# Usage: ./deploy/scripts/deploy-to-server.sh [user@server] [remote_dir]
 
 set -e
 

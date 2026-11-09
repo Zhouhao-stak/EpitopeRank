@@ -1,4 +1,5 @@
 #!/bin/bash
+cd "$(dirname "$0")/../.." || exit 1
 # Build and deploy EpitopeRank on server
 cd /home/wang_zi_wei/epitoperank
 

@@ -313,4 +313,4 @@ bash deploy/userland/sgctl status
 
 ---
 
-相关文档：[README](README.md) · [数据与部署总览](../DATA_AND_DEPLOY.md) · [Docker 用法](DOCKER_USAGE.md)
+相关文档：[README](../../README.md) · [数据与部署总览](../DATA_AND_DEPLOY.md) · [Docker 用法](DOCKER_USAGE.md)

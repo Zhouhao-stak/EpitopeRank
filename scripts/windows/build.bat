@@ -1,6 +1,7 @@
 @echo off
+cd /d "%~dp0..\.."
 REM EpitopeRank Build Script - Outputs to dist/ directory
-REM Usage: build.bat
+REM Usage: scripts/windows/build.bat
 
 setlocal enabledelayedexpansion
 

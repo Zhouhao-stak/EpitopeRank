@@ -229,7 +229,7 @@ parsers/
 #### 方案一: PyInstaller EXE（Windows 便携版）
 
 ```bash
-build.bat
+scripts/windows/build.bat
 # 输出: dist/EpitopeRank.exe (~62MB)
 ```
 

@@ -14,7 +14,7 @@ EpitopeRank.exe
 **方式2：Docker（推荐团队使用）**
 ```bash
 # 一键启动，带配置向导
-docker-start.bat
+scripts/windows/docker-start.bat
 ```
 
 ### Linux/Mac 用户
@@ -84,7 +84,7 @@ cd E:\EpitopeRank\dist\EpitopeRank
 
 **Docker:**
 ```bash
-docker-start.bat
+scripts/windows/docker-start.bat
 ```
 
 ### 步骤2：访问界面
@@ -117,25 +117,25 @@ docker-start.bat
 
 ```bash
 # 启动
-docker-run.bat start
+scripts/windows/docker-run.bat start
 
 # 停止
-docker-run.bat stop
+scripts/windows/docker-run.bat stop
 
 # 查看日志
-docker-run.bat logs
+scripts/windows/docker-run.bat logs
 
 # 查看状态
-docker-run.bat status
+scripts/windows/docker-run.bat status
 
 # 重启
-docker-run.bat restart
+scripts/windows/docker-run.bat restart
 
 # 重新构建（代码更新后）
-docker-run.bat rebuild
+scripts/windows/docker-run.bat rebuild
 
 # 清理所有数据（谨慎使用）
-docker-run.bat clean
+scripts/windows/docker-run.bat clean
 ```
 
 ### 检查健康状态
@@ -186,13 +186,13 @@ curl -H "Authorization: Bearer sk-your-key" https://api.deepseek.com/v1/models
 **PyInstaller:**
 ```bash
 git pull
-build.bat
+scripts/windows/build.bat
 ```
 
 **Docker:**
 ```bash
 git pull
-docker-run.bat rebuild
+scripts/windows/docker-run.bat rebuild
 ```
 
 ### Q4: 数据保存在哪里？
@@ -225,7 +225,7 @@ docker-run.bat rebuild
 1. 查看日志：
    ```bash
    # Docker
-   docker-run.bat logs
+   scripts/windows/docker-run.bat logs
    
    # EXE (控制台输出)
    EpitopeRank.exe --no-browser

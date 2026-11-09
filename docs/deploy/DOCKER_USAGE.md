@@ -16,7 +16,7 @@
 
 3. **一键启动**
    ```bash
-   docker-start.bat
+   scripts/windows/docker-start.bat
    ```
 
 4. **访问应用**
@@ -38,16 +38,16 @@ docker-compose logs -f
 
 ## 管理命令
 
-使用 `docker-run.bat` 管理容器：
+使用 `scripts/windows/docker-run.bat` 管理容器：
 
 ```bash
-docker-run.bat start      # 启动
-docker-run.bat stop       # 停止
-docker-run.bat restart    # 重启
-docker-run.bat logs       # 查看日志
-docker-run.bat status     # 查看状态
-docker-run.bat rebuild    # 重新构建
-docker-run.bat clean      # 清理所有数据
+scripts/windows/docker-run.bat start      # 启动
+scripts/windows/docker-run.bat stop       # 停止
+scripts/windows/docker-run.bat restart    # 重启
+scripts/windows/docker-run.bat logs       # 查看日志
+scripts/windows/docker-run.bat status     # 查看状态
+scripts/windows/docker-run.bat rebuild    # 重新构建
+scripts/windows/docker-run.bat clean      # 清理所有数据
 ```
 
 ## 配置说明

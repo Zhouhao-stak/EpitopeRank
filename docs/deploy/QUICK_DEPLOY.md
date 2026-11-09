@@ -192,7 +192,7 @@ A: 确认密码正确，或者联系管理员确认你的账户权限。
 A: 服务器上 Docker 未安装，需要管理员安装。
 
 **Q: Port already in use**
-A: 修改 `docker-compose.coolify.yml` 中的端口映射，例如改为 `9800:8800`。
+A: 修改 `deploy/scripts/docker-compose.coolify.yml` 中的端口映射，例如改为 `9800:8800`。
 
 ---
 

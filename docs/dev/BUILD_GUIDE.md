@@ -10,8 +10,8 @@ EpitopeRank/
 │   ├── EpitopeRank-Desktop-OneFile.spec ← PyInstaller配置（唯一 spec）
 │   ├── icon.ico                ← 应用图标
 │   └── rthook_runtime.py       ← 运行时钩子
-├── build.bat                    ← 一键构建脚本
-└── clean_builds.bat             ← 清理构建产物脚本
+├── scripts/windows/build.bat                    ← 一键构建脚本
+└── scripts/windows/clean_builds.bat             ← 清理构建产物脚本
 ```
 
 **不再有**：
@@ -27,7 +27,7 @@ EpitopeRank/
 
 双击运行：
 ```
-build.bat
+scripts/windows/build.bat
 ```
 
 或手动执行：
@@ -46,7 +46,7 @@ cd E:/EpitopeRank
 
 双击运行：
 ```
-clean_builds.bat
+scripts/windows/clean_builds.bat
 ```
 
 这会删除：
@@ -81,7 +81,7 @@ git tag -l
 git checkout v3-professional-ui -- epitoperank/interface/
 
 # 重新构建
-build.bat
+scripts/windows/build.bat
 ```
 
 ---
@@ -106,11 +106,11 @@ build.bat
 
 ### Q: 为什么packaging里还有旧目录？
 
-A: 如果某些目录删不掉（"Device or resource busy"），说明有进程在占用。运行 `clean_builds.bat` 会自动杀掉进程再清理。
+A: 如果某些目录删不掉（"Device or resource busy"），说明有进程在占用。运行 `scripts/windows/clean_builds.bat` 会自动杀掉进程再清理。
 
 ### Q: 能不能自定义输出目录？
 
-A: 可以，修改 `build.bat` 中的 `--distpath` 参数：
+A: 可以，修改 `scripts/windows/build.bat` 中的 `--distpath` 参数：
 ```bash
 python -m PyInstaller ... --distpath my-custom-dir
 ```

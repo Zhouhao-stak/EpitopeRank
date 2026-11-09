@@ -34,10 +34,10 @@ mkdir -p ~/test && rmdir ~/test
 
 ```bash
 # 在本地执行
-../../deploy-to-server.sh user@your-server.com /home/user/epitoperank
+../../deploy/scripts/deploy-to-server.sh user@your-server.com /home/user/epitoperank
 
 # 首次部署后，更新只需重新运行脚本
-../../deploy-to-server.sh user@your-server.com /home/user/epitoperank
+../../deploy/scripts/deploy-to-server.sh user@your-server.com /home/user/epitoperank
 ```
 
 **优点**：
@@ -208,7 +208,7 @@ fly deploy
 
 **优先尝试**：
 1. 检查 Docker 是否已安装
-2. 如果有，用 `deploy-to-server.sh` 脚本
+2. 如果有，用 `deploy/scripts/deploy-to-server.sh` 脚本
 3. 如果没有，请管理员安装（只需 5 分钟）
 
 **备选方案**：
@@ -304,7 +304,7 @@ deploy:
 4. **设置别名**（方便以后使用）：
    ```bash
    # 添加到 ~/.bashrc
-   alias deploy-epitoperank='../../deploy-to-server.sh user@server /home/user/epitoperank'
+   alias deploy-epitoperank='../../deploy/scripts/deploy-to-server.sh user@server /home/user/epitoperank'
    
    # 以后只需输入
    deploy-epitoperank
@@ -314,7 +314,7 @@ deploy:
 
 ##  相关文档
 
-- [自动化部署脚本](deploy-to-server.sh)
+- [自动化部署脚本](../../deploy/scripts/deploy-to-server.sh)
 - [Coolify 部署指南](DEPLOY_COOLIFY.md)（需要 root）
 - [Docker 使用指南](DOCKER_USAGE.md)
 - [快速开始](COOLIFY_QUICKSTART.md)

@@ -1,6 +1,7 @@
 @echo off
+cd /d "%~dp0..\.."
 REM EpitopeRank Docker Start Script for Windows
-REM Usage: docker-start.bat
+REM Usage: scripts/windows/docker-start.bat
 
 echo ========================================
 echo   EpitopeRank Docker Setup

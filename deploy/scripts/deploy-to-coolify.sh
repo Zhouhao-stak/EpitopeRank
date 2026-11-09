@@ -1,6 +1,7 @@
 #!/bin/bash
+cd "$(dirname "$0")/../.." || exit 1
 # EpitopeRank Quick Deploy Script for Coolify
-# Usage: ./deploy-to-coolify.sh [server-ip]
+# Usage: ./deploy/scripts/deploy-to-coolify.sh [server-ip]
 
 set -e  # Exit on error
 
@@ -63,7 +64,7 @@ if [ ! -f ".env.production" ]; then
 fi
 
 # Verify required files exist
-REQUIRED_FILES=("Dockerfile" "docker-compose.coolify.yml" "requirements.txt")
+REQUIRED_FILES=("Dockerfile" "deploy/scripts/docker-compose.coolify.yml" "requirements.txt")
 for file in "${REQUIRED_FILES[@]}"; do
     if [ ! -f "$file" ]; then
         echo -e "${RED}✗ Missing required file: ${file}${NC}"

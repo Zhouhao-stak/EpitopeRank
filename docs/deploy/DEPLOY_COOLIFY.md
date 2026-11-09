@@ -109,13 +109,13 @@ python3 -c "import secrets; print(secrets.token_urlsafe(32))"
 
 1. 点击 **"Deployments"** → **"Configuration"**
 2. 选择 **"Docker Compose"** 模式
-3. 上传或粘贴 `docker-compose.coolify.yml` 内容
+3. 上传或粘贴 `deploy/scripts/docker-compose.coolify.yml` 内容
 
 或者更简单的方式：
 
 ```bash
 # 在你的本地项目中执行
-git add docker-compose.coolify.yml .env.production.example nginx.conf
+git add deploy/scripts/docker-compose.coolify.yml .env.production.example nginx.conf
 git commit -m "Add Coolify deployment configuration"
 git push origin main
 ```
@@ -249,7 +249,7 @@ docker restart epitoperank-api
 **解决**：
 ```bash
 # 查看详细日志
-docker compose -f docker-compose.coolify.yml logs --tail 200
+docker compose -f deploy/scripts/docker-compose.coolify.yml logs --tail 200
 
 # 常见问题：
 # - API Key 未配置 → 检查环境变量
@@ -318,7 +318,7 @@ docker-compose.prod.yml     # 生产环境
 ### 性能调优
 
 ```bash
-# 调整资源限制（docker-compose.coolify.yml）
+# 调整资源限制（deploy/scripts/docker-compose.coolify.yml）
 deploy:
   resources:
     limits:

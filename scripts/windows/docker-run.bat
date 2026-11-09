@@ -1,6 +1,7 @@
 @echo off
+cd /d "%~dp0..\.."
 REM EpitopeRank Docker Management Script
-REM Usage: docker-run.bat [command]
+REM Usage: scripts/windows/docker-run.bat [command]
 
 setlocal enabledelayedexpansion
 
@@ -72,7 +73,7 @@ goto :unknown_command
     echo   EpitopeRank Docker Manager
     echo ========================================
     echo.
-    echo Usage: docker-run.bat [command]
+    echo Usage: scripts/windows/docker-run.bat [command]
     echo.
     echo Commands:
     echo   start     - Start containers

@@ -37,7 +37,7 @@
 | [WINSCP_DEPLOY_GUIDE.md](deploy/WINSCP_DEPLOY_GUIDE.md) / [WINSCP_ONE_CLICK.md](deploy/WINSCP_ONE_CLICK.md) | WinSCP 图形化上传 |
 | [DOCKER_USAGE.md](deploy/DOCKER_USAGE.md) / [README_DOCKER.md](deploy/README_DOCKER.md) | Docker 使用与镜像说明 |
 
-部署脚本仍在仓库根目录：`deploy-to-coolify.sh`、`deploy-to-server.sh`、`deploy-to-123.255.66.81.sh`、`build-on-server.sh`、`check-deploy-status.sh`。
+部署脚本仍在仓库根目录：`deploy/scripts/deploy-to-coolify.sh`、`deploy/scripts/deploy-to-server.sh`、`deploy/scripts/deploy-to-123.255.66.81.sh`、`deploy/scripts/build-on-server.sh`、`deploy/scripts/check-deploy-status.sh`。
 
 ## 开发（`dev/`）
 

@@ -347,7 +347,7 @@ docker compose logs epitoperank-api
 **常见原因**：
 - `.env` 文件缺失 → `cp .env.production.example .env`
 - API Key 未配置 → 编辑 `.env` 添加
-- 端口被占用 → 修改 `docker-compose.coolify.yml`
+- 端口被占用 → 修改 `deploy/scripts/docker-compose.coolify.yml`
 
 ---
 

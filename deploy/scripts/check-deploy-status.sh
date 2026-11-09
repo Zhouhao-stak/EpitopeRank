@@ -1,4 +1,5 @@
 #!/bin/bash
+cd "$(dirname "$0")/../.." || exit 1
 # EpitopeRank Deployment Status Checker
 # Run this to check if deployment is complete
 
