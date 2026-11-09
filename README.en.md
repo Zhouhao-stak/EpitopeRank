@@ -212,12 +212,23 @@ licence terms.
 
 ## Demo video
 
-A ~62-second narration-free UI walkthrough recorded with the real UPF1 rMATS
-dataset (112,908 splicing events), with on-screen step captions and real IEDB
-prediction results:
+A ~2.5-minute narration-free **full feature walkthrough** of v1.4.1, recorded
+with the real UPF1 rMATS dataset (112,908 splicing events). On-screen Chinese
+step captions; every interaction is a real call, including two IEDB peptide
+predictions and an offline replay verification:
 
-[![Peptide prediction preview (looping GIF)](media/posters/EpitopeRank-v1.3.0-UPF1-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+[![Full walkthrough preview (looping GIF)](media/posters/EpitopeRank-v1.4.1-full-demo-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.1/EpitopeRank-v1.4.1-full-demo.mp4)
 
-> A looping preview of the real IEDB prediction results. GitHub does not embed mp4 players in README files, so an inline GIF is used; click it to play the full 62-second video.
+> Looping preview of the real IEDB prediction results. GitHub does not embed
+> mp4 players in README files, so an inline GIF is used; click it to play the
+> full video in your browser.
 
-[Play the full video in your browser (release asset, video/mp4)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.3.0/EpitopeRank-v1.3.0-UPF1-demo.mp4)
+[Play the full video (release asset, video/mp4)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.1/EpitopeRank-v1.4.1-full-demo.mp4)
+
+Coverage: dashboard and project drawer, event browser, visualisations, gene
+view, analysis report, splice-derived neoantigens, peptide workbench (MHC-I and
+MHC-II 18-aa long peptide with real result tables), decision trace (LLM
+decision share, per-step sources, model/tool calls, integrity check), goal-driven
+mission (reviewable plan, plan-vs-actual deviations, reproducibility proof,
+one-click offline replay), and settings.
+
