@@ -159,6 +159,25 @@ def _export_project_bundle(
 
 
 # 中文备注：构建并返回 FastAPI 应用（参数：无）
+def _list_project_artifacts(folder: Path) -> list[dict[str, Any]]:
+    """列出一次运行的实际产物，供界面直接告诉用户「数据在哪」。"""
+    items: list[dict[str, Any]] = []
+
+    def add(path: Path, kind: str) -> None:
+        if path.is_file():
+            items.append({"name": path.name, "kind": kind, "path": str(path),
+                          "size": path.stat().st_size})
+
+    for name, kind in (("report.html", "report:html"), ("report.pdf", "report:pdf"),
+                       ("agent_state.json", "trace")):
+        add(folder / name, kind)
+    figures = folder / "figures"
+    if figures.is_dir():
+        for path in sorted(figures.glob("*.png"))[:12]:
+            add(path, "figure")
+    return items
+
+
 def create_app() -> FastAPI:
     """Build the EpitopeRank API application."""
     # Load .env file so API keys are available in environment variables
@@ -537,9 +556,22 @@ def create_app() -> FastAPI:
                     project_id=project_id,
                     output_root=settings.paths.runtime_root / "projects")
                 summary = outcome.summary()
+                stopped = str(summary.get("stopped_reason") or "")
+                lowered = stopped.lower()
+                if "error budget" in lowered or "failures" in lowered:
+                    outcome_status = "failed"
+                elif "budget exhausted" in lowered:
+                    outcome_status = "partial"
+                else:
+                    outcome_status = "succeeded"
+                dataset = summary.get("dataset") or {}
                 _set_job(job_id, status="done", project_id=summary.get("project_id"),
                          steps=len(outcome.team.steps), mode=summary.get("mode"),
-                         stopped_reason=summary.get("stopped_reason"))
+                         stopped_reason=stopped, outcome_status=outcome_status,
+                         event_count=dataset.get("event_count") or 0,
+                         figures=len(summary.get("figures") or []),
+                         diagnostics=dataset.get("diagnostics") or [],
+                         output_dir=summary.get("output_dir"))
             except Exception as error:  # noqa: BLE001
                 _set_job(job_id, status="failed", error=f"{type(error).__name__}: {error}")
 
@@ -571,6 +603,12 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=422, detail=str(error)) from error
         proof = reproducibility_proof(state)
         proof["state_path"] = str(path)
+        proof["output_dir"] = str(path.parent)
+        proof["artifacts"] = _list_project_artifacts(path.parent)
+        proof["report_urls"] = {
+            "html": f"/api/report/{project_id}?format=html",
+            "pdf": f"/api/report/{project_id}?format=pdf",
+        }
         return proof
 
     @app.post("/api/projects/{project_id}/verify")

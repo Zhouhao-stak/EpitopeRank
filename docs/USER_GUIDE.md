@@ -85,7 +85,7 @@
 
 > 坐标为 0-based，系统内部自动转为 1-based inclusive。注意：JC 表中 `IJC/SJC` 列是逗号分隔的逐样本值。
 
-### 3.2 样本元数据（可选但推荐）：`sample_metadata.tsv`
+### 3.2 样本元数据（实际必需）：`sample_metadata.tsv`
 
 放同一目录下，用于分组比较和图表：
 
@@ -95,6 +95,11 @@ S1	tumor	tumor	lung	b1
 S2	tumor	tumor	lung	b1
 S3	normal	normal	lung	b1
 ```
+
+> **v1.4.2：请不要跳过这张表。** rMATS 解析器用样本 ID 生成 `psi_by_sample`，缺表时每个事件的
+> `valid_sample_count` 都是 0，质量闸门会判「有效样本数不足」并挡掉全部显著事件，最后只得到一份
+> 没有候选、没有图表的空报告。输入目录也要指向**单个数据集文件夹**，不要指向多个数据集共用的
+> 上级目录；上级目录会直接报错并推荐正确路径。
 
 ### 3.3 差异表达表（可选，用于剪接-表达联合分析）：`differential_expression.tsv`
 
@@ -315,3 +320,14 @@ nginx 前置时必须设置 `client_max_body_size 2048m;`（见 `deploy/nginx.co
 
 **Q8：肽长能改成 7-mer 吗？**
 不能，路线 A 固定 8–11 mer（MHC-I 经典呈递长度）；moPepGen 路线由其自身参数控制。
+
+**Q9：自主任务显示「本次分析未产出数据 / error budget exhausted (3 failures)」？**
+说明过滤连续失败触发了错误预算熔断。先看第 3 区红色状态条的排查建议与「查看决策轨迹」，
+最常见原因是输入目录缺 `sample_metadata.tsv` 或填成了上级目录；改成单个数据集文件夹后重跑即可。
+该页只展示审计凭证，业务数据在「报告」「事件浏览器」「候选新抗原」「可视化」页，
+文件在 `%LOCALAPPDATA%\EpitopeRank\projects\<项目ID>\`。
+
+**Q10：肽预测「预测完成 12 条」为什么表格里全是「非结合」？**
+结果行数 = 肽段数 × HLA 型别数 × 方法数，不等于候选数。判读以 `percentile_rank` 为准：
+`<0.5` 强结合、`0.5~2` 弱结合、其余不列为候选；v1.4.2 起表格逐行标注，无强/弱结合时会红字提示。
+「分数」列里 NetMHCpan EL 得分（0–1）与 IEDB 加工总分（负值）量纲不同，不可横向比较。

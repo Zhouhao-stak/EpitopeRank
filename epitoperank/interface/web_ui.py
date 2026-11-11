@@ -633,6 +633,20 @@ a { color:#ffb829; }
 .trace-reflection { background:rgba(240,170,60,.16); color:#f0b44a; }
 .trace-episodic { background:rgba(150,100,220,.16); color:#c3a0ff; }
 .trace-replay { background:rgba(60,190,150,.16); color:#6fd6b0; }
+.mission-banner { padding:14px 16px; border-radius:12px; border:1px solid; margin-bottom:12px; font-size:13px; line-height:1.6; }
+.mission-banner-failed { background:rgba(226,75,74,.12); border-color:rgba(226,75,74,.45); color:var(--danger); }
+.mission-banner-partial { background:rgba(239,159,39,.12); border-color:rgba(239,159,39,.45); color:#efb45a; }
+.mission-banner-succeeded { background:rgba(94,234,212,.10); border-color:rgba(94,234,212,.38); color:var(--accent); }
+.mission-banner-running { background:var(--surface-2); border-color:var(--border); color:var(--text-secondary); }
+.mission-hint { font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.6; }
+.mission-path { font-family:var(--font-mono,monospace); font-size:12px; word-break:break-all; color:var(--text-secondary); }
+.mission-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.mission-code { white-space:nowrap; overflow-x:auto; font-family:var(--font-mono,monospace); font-size:12px; }
+.pep-tier { display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; font-size:11px; border:1px solid; }
+.pep-tier-strong { color:#6fd6b0; border-color:rgba(111,214,176,.5); background:rgba(111,214,176,.12); }
+.pep-tier-weak { color:#efb45a; border-color:rgba(239,180,90,.5); background:rgba(239,180,90,.12); }
+.pep-tier-none { color:var(--text-muted); border-color:var(--border); }
+.pep-tier-unknown { color:var(--text-muted); border-color:var(--border); opacity:.75; }
 .trace-step { border-left:2px solid rgba(140,160,200,.25); padding:6px 0 12px 14px; margin-left:6px; position:relative; }
 .trace-step::before { content:''; position:absolute; left:-5px; top:13px; width:8px; height:8px; border-radius:50%; background:var(--text-secondary); }
 .trace-step-title { font-size:13px; font-weight:500; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
@@ -1080,6 +1094,7 @@ a { color:#ffb829; }
             <button class="btn btn-sm btn-primary" onclick="missionGenerate()">生成计划</button>
           </div>
           <div id="mission-plan-status" class="trace-meta" style="margin-top:8px;"></div>
+          <div class="trace-meta" style="margin-top:4px;color:var(--text-muted);">输入目录请指向含 sample_metadata.tsv 的单个数据集文件夹；不要填多个数据集共用的上级目录，否则样本分组读不到，会筛不出显著事件。</div>
         </div>
         <div class="card" id="mission-plan-card" style="margin-bottom:16px;display:none;">
           <div style="font-size:16px;font-weight:600;margin-bottom:10px;">2 · 审阅并修改计划（这份契约会随运行一起存档）</div>
@@ -1103,10 +1118,14 @@ a { color:#ffb829; }
         </div>
         <div class="card" id="mission-result" style="display:none;">
           <div style="font-size:16px;font-weight:600;margin-bottom:10px;">3 · 执行结果与可复现证明</div>
-          <div id="mission-run-summary" class="trace-meta"></div>
-          <div id="mission-deviations" style="margin-top:10px;"></div>
-          <div id="mission-proof" style="margin-top:10px;"></div>
-          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <div id="mission-status-banner"></div>
+          <div id="mission-artifacts"></div>
+          <div id="mission-run-summary" class="trace-meta" style="margin-top:8px;"></div>
+          <div id="mission-deviations" style="margin-top:12px;"></div>
+          <div id="mission-proof" style="margin-top:12px;"></div>
+          <div class="mission-actions">
+            <button class="btn btn-sm btn-primary" onclick="missionOpenReport('html')">打开本次报告</button>
+            <button class="btn btn-sm btn-secondary" onclick="missionOpenReport('pdf')">打开 PDF</button>
             <button class="btn btn-sm btn-secondary" onclick="missionVerify()">一键离线重放验证</button>
             <button class="btn btn-sm btn-secondary" onclick="missionCopyProof()">复制重放命令</button>
             <button class="btn btn-sm btn-secondary" onclick="missionOpenTrace()">查看决策轨迹</button>
@@ -2156,7 +2175,7 @@ function pepRenderPredictionTable() {
   });
   const header = '<th style="white-space:nowrap;">#</th>' + [
     ['peptide', '肽段'], ['allele', 'HLA'],
-    ['method', '方法'], ['percentile_rank', 'percentile'], ['score', '分数']
+    ['method', '方法'], ['percentile_rank', 'percentile rank（<0.5 强 / <2 弱）'], ['score', '分数（EL / 加工总分，不可比）']
   ].map(([column, text]) => {
     const marker = pepState.sortKey === column ? (pepState.sortDir === 1 ? ' ▲' : ' ▼') : '';
     return '<th data-sort="' + column + '" style="cursor:pointer;white-space:nowrap;">'
@@ -2164,8 +2183,16 @@ function pepRenderPredictionTable() {
   }).join('');
   const body = rows.map((row, index) => {
     const method = row.method_label || row.method || '';
-    const percentile = (row.percentile_rank === null || row.percentile_rank === undefined)
-      ? '—' : pepEscape(row.percentile_rank);
+    const rankValue = Number(row.percentile_rank);
+    const hasRank = row.percentile_rank !== null && row.percentile_rank !== undefined
+      && Number.isFinite(rankValue);
+    let tierClass = 'pep-tier-unknown';
+    let tierText = '无 rank';
+    if (hasRank && rankValue < 0.5) { tierClass = 'pep-tier-strong'; tierText = '强结合'; }
+    else if (hasRank && rankValue < 2) { tierClass = 'pep-tier-weak'; tierText = '弱结合'; }
+    else if (hasRank) { tierClass = 'pep-tier-none'; tierText = '非结合'; }
+    const percentile = (hasRank ? pepEscape(row.percentile_rank) : '—')
+      + '<span class="pep-tier ' + tierClass + '">' + tierText + '</span>';
     const scoreValue = pepScoreValue(row);
     const score = scoreValue === Number.POSITIVE_INFINITY ? '—' : pepEscape(scoreValue);
     return '<tr>'
@@ -2180,7 +2207,27 @@ function pepRenderPredictionTable() {
   box.innerHTML = '<div class="table-container" style="max-height:460px;overflow:auto;">'
     + '<table><thead><tr>' + header + '</tr></thead><tbody>' + body + '</tbody></table></div>'
     + '<div style="font-size:12px;color:var(--text-muted);margin-top:6px;">共 '
-    + rows.length + ' 行（肽段 × HLA × 方法）。点击表头可排序。</div>';
+    + rows.length + ' 行（肽段 × HLA × 方法）。点击表头可排序。'
+    + '强结合 &lt;0.5、弱结合 0.5~2、其余不列为候选；EL 分数与加工总分量纲不同，不可横向比较。</div>'
+    + '<div id="pep-tier-summary" class="trace-meta" style="margin-top:6px;"></div>';
+  const tierCounts = { strong: 0, weak: 0, none: 0, unknown: 0 };
+  rows.forEach(function (row) {
+    const value = Number(row.percentile_rank);
+    if (row.percentile_rank === null || row.percentile_rank === undefined || !Number.isFinite(value)) {
+      tierCounts.unknown += 1;
+    } else if (value < 0.5) { tierCounts.strong += 1; }
+    else if (value < 2) { tierCounts.weak += 1; }
+    else { tierCounts.none += 1; }
+  });
+  const tierSummary = document.getElementById('pep-tier-summary');
+  if (tierSummary) {
+    const usable = tierCounts.strong + tierCounts.weak;
+    tierSummary.textContent = '自动分级：强结合 ' + tierCounts.strong + ' 条 · 弱结合 '
+      + tierCounts.weak + ' 条 · 非结合 ' + tierCounts.none + ' 条 · 无 rank '
+      + tierCounts.unknown + ' 条。'
+      + (usable ? '' : '本批未发现可用结合候选，不能据此宣称找到新抗原。');
+    tierSummary.style.color = usable ? 'var(--text-secondary)' : 'var(--danger)';
+  }
   box.querySelectorAll('th[data-sort]').forEach(th => {
     th.addEventListener('click', () => pepSortBy(th.getAttribute('data-sort')));
   });
@@ -2270,7 +2317,7 @@ async function pepPredict() {
     const suffix = errorCount ? '；有 ' + errorCount + ' 条服务错误，见下方说明' : '；无服务错误';
     pepSetStatus(status, '预测完成：候选 ' + Number(data.candidate_count || 0) + ' 条，预测记录 '
       + count + ' 条' + suffix + '。' + zeroHint
-      + ' percentile rank 越低越好；预测不等于呈递或免疫原性。', errorCount ? 'error' : 'muted');
+      + ' percentile rank 越低越好（<0.5 强 / <2 弱）；预测不等于呈递或免疫原性。', errorCount ? 'error' : 'muted');
   } catch (error) {
     pepState.predictions = [];
     pepRenderPredictionTable();
@@ -2490,6 +2537,68 @@ async function compareDecisionTrace() {
 
 
 const missionState = { plan: null, projectId: '', proof: null, job: '' };
+function missionEsc(value) { return traceEsc(value === undefined || value === null ? '' : String(value)); }
+function missionRenderStatus(job, proof) {
+  const box = document.getElementById('mission-status-banner');
+  if (!box) return;
+  const info = job || {};
+  let status = (proof && proof.run_status) || info.outcome_status
+    || (info.status === 'failed' ? 'failed' : (info.status === 'done' ? 'succeeded' : 'running'));
+  let cls = 'mission-banner mission-banner-running';
+  let title = '正在执行分析';
+  let body = '任务已提交；完成后这里会直接给出结论、失败原因和产物位置。';
+  if (status === 'failed') {
+    cls = 'mission-banner mission-banner-failed';
+    title = '本次分析未产出数据';
+    body = (proof && proof.run_summary) || ('执行失败：' + (info.error || info.stopped_reason || '未知原因'));
+  } else if (status === 'partial') {
+    cls = 'mission-banner mission-banner-partial';
+    title = '结果不完整';
+    body = (proof && proof.run_summary) || ('分析提前结束：' + (info.stopped_reason || '预算耗尽'));
+  } else if (status === 'succeeded') {
+    cls = 'mission-banner mission-banner-succeeded';
+    title = '分析完成';
+    body = (proof && proof.run_summary) || '报告、图表与决策轨迹已写入下方目录。';
+  }
+  let html = '<div class="' + cls + '"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">'
+    + missionEsc(title) + '</div><div>' + missionEsc(body) + '</div>';
+  const failure = proof && proof.failure;
+  if (failure) {
+    html += '<div class="mission-hint">终止原因：' + missionEsc(failure.reason) + '</div>';
+    html += '<div class="mission-hint">排查建议：' + missionEsc(failure.hint) + '</div>';
+  }
+  (info.diagnostics || []).forEach(function (item) {
+    html += '<div class="mission-hint">数据加载提示：' + missionEsc(item) + '</div>';
+  });
+  box.innerHTML = html + '</div>';
+}
+function missionRenderArtifacts(proof) {
+  const box = document.getElementById('mission-artifacts');
+  if (!box) return;
+  const artifacts = (proof && proof.artifacts) || [];
+  const dir = (proof && proof.output_dir) || '';
+  let html = '<div class="trace-meta" style="font-weight:500;margin-bottom:6px;">本次产物在哪</div>';
+  html += '<div class="mission-path">' + missionEsc(dir) + '</div>';
+  if (!artifacts.length) {
+    html += '<div class="mission-hint">本次没有生成结果文件；失败时通常只有一份占位报告。</div>';
+  } else {
+    html += '<div class="mission-hint">已生成 ' + artifacts.length + ' 个文件：'
+      + artifacts.slice(0, 8).map(function (item) { return missionEsc(item.name); }).join('、') + '</div>';
+    const figures = artifacts.filter(function (item) { return item.kind === 'figure'; }).length;
+    html += figures
+      ? '<div class="mission-hint">图表 ' + figures + ' 张；报告、轨迹都在上面的目录里。</div>'
+      : '<div class="mission-hint">没有图表：本次没有进入出图与候选排序环节。</div>';
+  }
+  html += '<div class="mission-hint">这一区只放可复现凭证；候选表、剪接事件与图表请到左侧「报告」「事件浏览器」「候选新抗原」「可视化」页查看。</div>';
+  box.innerHTML = html;
+}
+function missionOpenReport(format) {
+  const id = missionState.projectId;
+  if (!id) { document.getElementById('mission-verify-result').textContent = '请先执行一次分析。'; return; }
+  const urls = (missionState.proof && missionState.proof.report_urls) || {};
+  const url = urls[format] || ('/api/report/' + encodeURIComponent(id) + '?format=' + format);
+  window.open(url, '_blank', 'noopener');
+}
 function missionSetStatus(text) {
   document.getElementById('mission-plan-status').textContent = text;
 }
@@ -2551,6 +2660,9 @@ function missionCollectPlan() {
 async function missionRun() {
   const inputDir = document.getElementById('mission-input').value.trim();
   if (!inputDir) { missionSetStatus('请先填写输入数据目录。'); return; }
+  const resultBox = document.getElementById('mission-result');
+  resultBox.style.display = 'block';
+  missionRenderStatus({ status: 'running' }, null);
   missionSetStatus('正在执行分析，可能需要几十秒…');
   const payload = {
     query: document.getElementById('mission-query').value.trim(),
@@ -2558,42 +2670,56 @@ async function missionRun() {
   };
   const started = await apiCall('/plan/run', { method: 'POST', body: JSON.stringify(payload) });
   if (!started || !started.job_id) {
+    missionRenderStatus({ status: 'failed', error: (started && started.detail) || '接口不可用' }, null);
     missionSetStatus('启动失败：' + traceEsc((started && started.detail) || '接口不可用')); return;
   }
   missionState.job = started.job_id;
   missionPoll(started.job_id, function (job) {
+    resultBox.style.display = 'block';
     if (job.status === 'done') {
       missionState.projectId = job.project_id || '';
-      document.getElementById('mission-result').style.display = 'block';
+      missionRenderStatus(job, null);
       document.getElementById('mission-run-summary').textContent = '项目 '
-        + traceEsc(job.project_id) + '；模式 ' + traceEsc(job.mode) + '；执行 '
-        + traceEsc(job.steps) + ' 步；' + traceEsc(job.stopped_reason || '');
-      missionSetStatus('分析完成，正在生成可复现证明…');
-      missionLoadProof(job.project_id);
+        + missionEsc(job.project_id) + '；模式 ' + missionEsc(job.mode) + '；执行 '
+        + missionEsc(job.steps) + ' 步；终止状态 ' + missionEsc(job.stopped_reason || '正常结束')
+        + '；输入事件 ' + missionEsc(job.event_count || 0) + ' 条；图表 ' + missionEsc(job.figures || 0) + ' 张。';
+      missionSetStatus('正在生成可复现证明…');
+      missionLoadProof(job.project_id, job);
     } else {
-      missionSetStatus('执行失败：' + traceEsc(job.error || '未知错误'));
+      missionRenderStatus(job, null);
+      missionSetStatus('执行失败：' + missionEsc(job.error || '未知错误'));
     }
   }, function (job, n) {
     if (n % 4 === 0) missionSetStatus('正在执行分析…（已等待 ' + Math.round(n * 1.5) + ' 秒）');
   });
 }
-async function missionLoadProof(projectId) {
+async function missionLoadProof(projectId, job) {
   const proof = await apiCall('/projects/' + encodeURIComponent(projectId) + '/proof');
   if (!proof || proof.detail) {
-    missionSetStatus('证明生成失败：' + traceEsc((proof && proof.detail) || '接口不可用')); return;
+    missionRenderStatus(job || {}, null);
+    missionSetStatus('证明生成失败：' + missionEsc((proof && proof.detail) || '接口不可用')); return;
   }
   missionState.proof = proof;
+  missionRenderStatus(job || {}, proof);
+  missionRenderArtifacts(proof);
   const dev = proof.deviations || {};
   let devHtml = '<div class="trace-meta" style="font-weight:500;margin-bottom:6px;">计划与实际</div>';
-  devHtml += '<div class="trace-meta">计划工具 ' + traceEsc(dev.planned_count)
-    + ' 个，实际执行 ' + traceEsc(dev.executed_count) + ' 步，计划命中率 '
-    + traceEsc(dev.adherence_ratio === null ? '无计划' : Math.round((dev.adherence_ratio || 0) * 100) + '%') + '</div>';
+  devHtml += '<div class="trace-meta">计划工具 ' + missionEsc(dev.planned_count)
+    + ' 个，实际执行 ' + missionEsc(dev.executed_count) + ' 步，计划命中率 '
+    + missionEsc(dev.adherence_ratio === null ? '无计划' : Math.round((dev.adherence_ratio || 0) * 100) + '%') + '</div>';
+  devHtml += '<div class="mission-hint">' + missionEsc(dev.note || '') + '</div>';
   if ((dev.planned_not_run || []).length) {
-    devHtml += '<div class="trace-meta">未执行：' + traceEsc(dev.planned_not_run.join('、')) + '</div>';
+    devHtml += '<div class="trace-call"><div style="font-weight:500">未执行的计划动作（'
+      + dev.planned_not_run.length + ' 个）</div><div class="trace-meta">'
+      + missionEsc(dev.planned_not_run.join('、')) + '</div><div class="mission-hint">'
+      + missionEsc(dev.planned_not_run_reason || '') + '</div></div>';
   }
   (dev.autonomous_additions || []).slice(0, 6).forEach(function (item) {
-    devHtml += '<div class="trace-call"><div style="font-weight:500">自主补充 ' + traceEsc(item.action)
-      + ' · ' + traceBadge(item.source) + '</div><div class="trace-meta">' + traceEsc(item.reason) + '</div></div>';
+    devHtml += '<div class="trace-call"><div style="font-weight:500">自主补充 ' + missionEsc(item.action)
+      + ' · ' + traceBadge(item.source) + '</div><div class="trace-meta">'
+      + missionEsc(item.reason_zh || item.reason) + '</div>'
+      + '<details style="margin-top:4px;"><summary class="trace-meta" style="cursor:pointer;">查看模型原始依据</summary>'
+      + '<div class="trace-meta">' + missionEsc(item.reason) + '</div></details></div>';
   });
   document.getElementById('mission-deviations').innerHTML = devHtml;
   const traj = proof.trajectory || {};
@@ -2601,13 +2727,15 @@ async function missionLoadProof(projectId) {
   document.getElementById('mission-proof').innerHTML =
     '<div class="trace-meta" style="font-weight:500;margin-bottom:6px;">可复现证明</div>'
     + '<div class="trace-meta">完整性 ' + (proof.integrity_ok ? '校验通过' : '未通过')
-    + '；输入指纹 ' + traceEsc(Object.keys(proof.input_fingerprints || {}).length)
-    + ' 个文件；报告哈希 ' + traceEsc(reports) + ' 份；模型调用 '
-    + traceEsc(traj.model_calls) + ' 次；工具调用 ' + traceEsc(traj.tool_calls) + ' 次</div>'
-    + '<div class="trace-call" style="margin-top:8px;font-family:var(--font-mono,monospace);word-break:break-all;">'
-    + traceEsc(proof.replay_command) + '</div>'
-    + '<div class="trace-meta">' + traceEsc((proof.limitations || []).join(' ')) + '</div>';
-  missionSetStatus('分析完成，证明已生成。可点「一键离线重放验证」。');
+    + '；输入指纹 ' + missionEsc(Object.keys(proof.input_fingerprints || {}).length)
+    + ' 个文件；报告哈希 ' + missionEsc(reports) + ' 份；模型调用 '
+    + missionEsc(traj.model_calls) + ' 次；工具调用 ' + missionEsc(traj.tool_calls) + ' 次</div>'
+    + '<div class="trace-call mission-code" style="margin-top:8px;">'
+    + missionEsc(proof.replay_command) + '</div>'
+    + '<div class="mission-hint">' + missionEsc((proof.limitations || []).join(' ')) + '</div>';
+  missionSetStatus(proof.run_status === 'failed'
+    ? '分析未产出数据；失败原因与产物位置已显示在上方。'
+    : '分析完成，证明已生成。可点「一键离线重放验证」。');
 }
 async function missionVerify() {
   const id = missionState.projectId;
@@ -2636,9 +2764,10 @@ async function missionVerify() {
 }
 function missionCopyProof() {
   const command = missionState.proof && missionState.proof.replay_command;
-  if (!command) return;
+  const box = document.getElementById('mission-verify-result');
+  if (!command) { box.textContent = '暂无可复制的重放命令。'; return; }
   if (navigator.clipboard) navigator.clipboard.writeText(command);
-  document.getElementById('mission-verify-result').textContent = '重放命令已复制：' + command;
+  box.textContent = '重放命令已复制到剪贴板（单行，可直接粘贴到终端）。';
 }
 function missionOpenTrace() {
   const id = missionState.projectId;

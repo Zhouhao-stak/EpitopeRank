@@ -210,25 +210,38 @@ builds the Windows portable build and publishes a release.
 original licence). HLA predictions come from IEDB; observe their citation and
 licence terms.
 
+## v1.4.2 usability fixes
+
+- The input directory must point at **one dataset folder** containing `sample_metadata.tsv`.
+  Passing a shared parent directory used to silently produce an empty report (all events failed
+  the "insufficient valid samples" gate). It now fails fast with a recommended path, or recovers
+  automatically when there is exactly one nested dataset.
+- The mission page now shows an explicit status banner (success / partial / no data), the output
+  directory with generated files, and buttons to open the HTML/PDF report. Model rationales and
+  replay limitations are shown in Chinese, with the original English text kept in collapsible details.
+- The peptide prediction table labels each row strong / weak / non-binding using the
+  `percentile_rank < 0.5 / < 2` cutoffs, explains that EL scores and processing totals are not
+  comparable, and warns when no usable binder was found.
+
 ## Demo video
 
-A ~2.5-minute narration-free **full feature walkthrough** of v1.4.1, recorded
+A 2 min 53 s narration-free **full feature walkthrough** of v1.4.2, recorded
 with the real UPF1 rMATS dataset (112,908 splicing events). On-screen Chinese
-step captions; every interaction is a real call, including two IEDB peptide
-predictions and an offline replay verification:
+step captions; every interaction is a real call, including IEDB peptide predictions,
+per-row binding tiers, and the mission page's success/failure status banners:
 
-[![Full walkthrough preview (looping GIF)](media/posters/EpitopeRank-v1.4.1-full-demo-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.1/EpitopeRank-v1.4.1-full-demo.mp4)
+[![Full walkthrough preview (looping GIF)](media/posters/EpitopeRank-v1.4.2-full-demo-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.2/EpitopeRank-v1.4.2-full-demo.mp4)
 
 > Looping preview of the real IEDB prediction results. GitHub does not embed
 > mp4 players in README files, so an inline GIF is used; click it to play the
 > full video in your browser.
 
-[Play the full video (release asset, video/mp4)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.1/EpitopeRank-v1.4.1-full-demo.mp4)
+[Play the full video (release asset, video/mp4)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.2/EpitopeRank-v1.4.2-full-demo.mp4)
 
 Coverage: dashboard and project drawer, event browser, visualisations, gene
-view, analysis report, splice-derived neoantigens, peptide workbench (MHC-I and
-MHC-II 18-aa long peptide with real result tables), decision trace (LLM
+view, analysis report, splice-derived neoantigens, peptide workbench (real IEDB
+results with strong/weak/non-binding badges), decision trace (LLM
 decision share, per-step sources, model/tool calls, integrity check), goal-driven
-mission (reviewable plan, plan-vs-actual deviations, reproducibility proof,
-one-click offline replay), and settings.
+mission (reviewable plan, success/failure status banners, output directory and
+report buttons, Chinese rationales, reproducibility proof), and settings.
 

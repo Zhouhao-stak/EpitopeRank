@@ -107,7 +107,7 @@
     <h1>EpitopeRank 手把手教程</h1>
     <p>从 rMATS 原始表 → 剪接事件 → 候选新抗原肽 → HLA 结合预测，全程用一套真实公开数据走通</p>
     <div class="meta">
-      <span>适用版本 v0.1.0</span>
+      <span>适用版本 v1.4.2</span>
       <span>演示数据：pDC 抗病毒剪接（4771 事件）</span>
       <span>预计用时 20–30 分钟</span>
     </div>
@@ -130,6 +130,7 @@
     <li><a href="#s8">第 7 步　交付与导出</a></li>
     <li><a href="#s9">第 8 步　换自己的数据</a></li>
     <li><a href="#s10">常见问题</a></li>
+    <li><a href="#s11">第 9 步　自主任务：计划、偏差与可复现证明</a></li>
   </ol>
 </nav>
 
@@ -236,7 +237,7 @@ venv\Scripts\python.exe serve_ui.py --port 8800
 
   <p><b>rMATS 五个表的文件名不限</b>，系统按<b>表头字段</b>自动识别事件类型，也会读文件名里的 <code>SE</code> / <code>A3SS</code> / <code>A5SS</code> / <code>MXE</code> / <code>RI</code> 词元。所以 <code>SE.MATS.JC.txt</code>、<code>UPF1_KD_vs_ctrl_SE.MATS.JCEC.txt</code>、<code>ri.mats.jc.txt</code> 都能直接用，带比较组前缀、大小写混用、<code>.gz</code> 压缩也都可以。唯一要求是文件里要保留 rMATS 的计数列（<code>IncLevel1</code>、<code>IJC_SAMPLE_1</code>、<code>SJC_SAMPLE_1</code>）。少几个事件类型也可以，比如只做 SE 就只放 SE 那张表。</p>
 
-  <p><code>sample_metadata.tsv</code> 是可选的，但强烈建议放，否则分组比较和样本相关图表出不来：</p>
+  <p><b>这张表实际上必须放。</b>缺了它，rMATS 解析出的每个事件 <code>valid_sample_count</code> 都会记为 0，被质量闸门判为「有效样本数不足」而全部挡掉，最终只会得到一份没有候选、没有图表的空报告：</p>
 <pre><code>sample_id	group	condition	tissue	batch
 SRR1	activated	infected	pDC	b1
 SRR2	activated	infected	pDC	b1
@@ -245,6 +246,10 @@ SRR4	control	mock	pDC	b1
 SRR5	control	mock	pDC	b1
 SRR6	control	mock	pDC	b1
 </code></pre>
+
+  <div class="box warn">
+    <p><b>输入目录要指向「单个数据集文件夹」，不要填多个数据集共用的上级目录。</b>例如应填 <code>E:/rMATS_data/UPF1_KD_vs_scr2</code>，而不是 <code>E:/rMATS_data</code>。上级目录里没有样本表，程序读不到分组信息；v1.4.2 起，检测到多个各自带样本表的数据集时会直接停止并推荐正确目录，不会再静默产出空报告。</p>
+  </div>
 
   <div class="box warn">
     <p><b>编码序列表反而没有任何命名要求。</b>叫 <code>序列表.csv</code>、<code>表3.tsv</code>、<code>实验原始导出_序列.csv</code> 都行；列名写中文、英文、甚至 <code>序列1/序列2</code> 这种也认——系统会读单元格内容反推每一列是什么（第 5 步会看到）。</p>
@@ -440,6 +445,11 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
 
   <p>判读口径（IEDB / NetMHCpan 惯例）：<b>百分位 &lt; 0.5% 为强结合，&lt; 2% 为弱结合</b>。这套数据里强结合 0 条、弱结合 5 条（A*02:01 四条、B*07:02 一条）。</p>
 
+  <div class="box tip">
+    <p><b>v1.4.2 起，肽预测结果表会自动判读：</b>每行带「强结合 / 弱结合 / 非结合」徽章，表头写明阈值；本批没有强/弱结合时，表格下方用红字明确提示「本批未发现可用结合候选，不能据此宣称找到新抗原」。</p>
+    <p>另外两点容易读错：结果行数 = 肽段数 × HLA 型别数 × 预测方法数，<b>12 行不等于 12 个候选</b>；「分数」列里 NetMHCpan 的 EL 得分（0–1）与 IEDB 加工总分（负值）量纲不同，不能横向比大小。加工预测那几行的 percentile 显示 <code>—</code>，是该方法本身不产出百分位，不是数据缺失。</p>
+  </div>
+
   <div class="box warn">
     <p><b>这意味着什么，要跟客户说清楚：</b>这套公开数据的最优结果是 0.91% 的弱结合肽，<b>没有强结合</b>。这既可能是真的没有好抗原，也可能是 HLA 型别和样本人群不匹配（这批是 pDC 细胞系数据）。如果要拿去做验证实验，先把这张表按百分位升序排序，取前 10–20 条做多肽合成 + 四聚体或 ELISpot，<b>不要只看第一位</b>。</p>
   </div>
@@ -463,6 +473,7 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
   </ol>
 
   <p>页面最下面还有一块「从当前项目生成候选肽」：它把事件表 + 编码序列表 + HLA 串成一条线自动跑完，等价于第 5 步的全流程，但结果会带排序和汇总报告，适合重复出报告。</p>
+  <p><b>看结果时的常见误读：</b>顶部写「预测完成：候选 3 条，预测记录 12 条」并不代表找到 3 个可用新抗原——「候选」只是输入的肽段条数。请以表格里的分级徽章和下方的红色提示为准；<code>percentile rank</code> 为 14、24、60 这类数值都属于非结合。</p>
 </section>
 
 <section class="step" id="s8">
@@ -481,6 +492,11 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
 </code></pre>
   <p>在「历史项目详情」页有三个按钮：<b>📁 成果文件夹</b>（直接在资源管理器打开）、<b>📦 打包 ZIP</b>（压成压缩包，方便发给同事或存云盘）、<b>📄 打开报告</b>。一个项目的全部产物约 <b>4 MB</b>，不会越跑越大——体积大的是历史项目累积的数据库，删项目时一并清掉。</p>
   <div class="box tip"><b>想换位置？</b>在 <code>.env</code> 里设 <code>EPITOPERANK_RESULTS_ROOT=D:\某目录</code> 即可。桌面版默认放在 exe 同级的 <code>results\</code>。</div>
+
+  <h3><span class="num">0.5</span>自主任务的结果在哪（v1.4.2）</h3>
+  <p>用左侧「自主任务」发起的分析，第 3 区顶部有一张醒目的状态条：成功为绿色、结果不全为黄色、失败为红色，并直接写出终止原因与排查建议；下面「本次产物在哪」列出完整目录和已生成文件，另有「打开本次报告」「打开 PDF」按钮。</p>
+  <p>桌面版默认目录是 <code>C:\Users\&lt;用户名&gt;\AppData\Local\EpitopeRank\projects\&lt;项目ID&gt;\</code>，其中 <code>agent_state.json</code> 是完整决策轨迹，另有 <code>report.html</code> / <code>report.pdf</code>；成功时还会有 <code>figures\</code>。若只有 11 KB 左右的报告且没有图表目录，说明这次没有产出候选，状态条会写明原因。</p>
+  <p>要看业务数据，请到左侧「报告」「事件浏览器」「候选新抗原」「可视化」页选对应项目；第 3 区本身只放审计凭证（计划偏差、输入指纹、报告哈希、重放命令）。</p>
 
   <h3><span class="num">1.</span>结果文件在哪</h3>
   <p>结果写在项目原始数据目录下的 <code>neoantigen_results/</code>。最省事的办法是点结果面板右上角「<b>打开结果目录</b>」，资源管理器直接定位过去。本例是：</p>
@@ -526,6 +542,9 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
       <tr><td>HLA 型别格式不对</td><td>检查是否漏了 <code>HLA-</code> 前缀或 <code>*</code> 号</td></tr>
       <tr><td>预测成功 0 条 / 失败若干条</td><td>外网不通，或 IEDB 临时不可用。看 manifest 的 <code>prediction_errors</code>；肽结果本身不受影响</td></tr>
       <tr><td>上传大文件报 413</td><td>前面挂了 nginx。加 <code>client_max_body_size 2048m;</code>，或直连 8800 端口</td></tr>
+      <tr><td>输入目录下发现 N 个各自带样本表的数据集</td><td>把多个数据集共用的上级目录当成了输入。按提示改成其中一个完整数据集文件夹（推荐路径最浅的那个），确保目录里直接有 <code>sample_metadata.tsv</code></td></tr>
+      <tr><td>本次分析未产出数据 / error budget exhausted (3 failures)</td><td>过滤连续失败触发错误预算熔断。多半是输入目录缺样本表导致有效样本数为 0，或阈值过严。看第 3 区红色状态条与「查看决策轨迹」，按建议改输入目录后重跑</td></tr>
+      <tr><td>肽预测 percentile 是 14、24、60，却显示「预测完成」</td><td>服务调用成功 ≠ 找到候选。<code>&lt;0.5</code> 才算强结合、<code>&lt;2</code> 弱结合，这些都属于非结合；表格下方的红色分级提示才是结论</td></tr>
     </tbody>
   </table>
 </section>
@@ -549,13 +568,46 @@ EV0001	ATGGCCAAGATCTACAGCTGA	ATGGCCAAGATCTACAGCCCTGACTGA	18
   <h3>同一份数据跑两次结果会变吗？</h3>
   <p>不会。剪接分析、肽生成都是确定性的；HLA 预测结果来自 IEDB，网络重试可能让个别肽缺失，但已有结果写入磁盘缓存，重复请求会直接命中缓存。</p>
 
+  <h3>自主任务页「计划命中率」很低，是出错了吗？</h3>
+  <p>不一定。计划是可审阅的契约而不是脚本，智能体会按实际数据调整步骤；偏离（未执行的动作、自主补充的动作）都会显式记录并给出中文依据。真正需要警惕的是红色状态条「本次分析未产出数据」，那代表分析提前终止。</p>
+
+  <h3>「一键离线重放验证」在验证什么？</h3>
+  <p>后台用录制的模型调用、工具结果与知识库快照重跑一次，全程不联网，再逐项比对步骤、参数、排序结果与报告哈希。一致说明这次分析可以逐字节复现；这是给合作者或审稿人看的证据，不是重新算一遍数据。</p>
+
   <h3>项目太多想清理</h3>
   <p>仪表盘历史项目列表可以搜索；进项目详情点右上角「删除项目」会同时删库记录和项目目录，<b>不可恢复</b>，删前先确认报告和结果文件已经导出。</p>
 </section>
 
+<section class="step" id="s11">
+  <span class="badge">第 9 步</span>
+  <h2>自主任务：从一句目标到可复现证明（v1.4.2）</h2>
+  <p class="lede">左侧「自主任务」适合开放目标，例如「为 UPF1 敲低样本找 3 个可验证的 MHC-I 新抗原候选」。它不直接给数据表，而是给一份可审阅的契约和一份可验证的证明。</p>
+
+  <h3><span class="num">1.</span>填目标与输入目录</h3>
+  <p>输入目录必须是<b>单个数据集文件夹</b>（含 <code>sample_metadata.tsv</code>），不要填上级目录；页面上已写明这条提示。</p>
+
+  <h3><span class="num">2.</span>审阅计划</h3>
+  <p>点「生成计划」后，第 2 区列出目标、意图、FDR / |dPSI| / 候选数阈值、最大步数，以及允许调用的工具清单（每行一个，删掉即禁用）。阈值与预算来自本机配置，模型不能改写；确认后点「确认并执行」。</p>
+
+  <h3><span class="num">3.</span>读懂第 3 区</h3>
+  <table>
+    <thead><tr><th style="width:190px">区块</th><th>怎么读</th></tr></thead>
+    <tbody>
+      <tr><td>状态条</td><td>绿色=完成、黄色=结果不全、红色=未产出数据。红色时直接给出终止原因、排查建议与数据加载提示，不会再让人把失败当成成功</td></tr>
+      <tr><td>本次产物在哪</td><td>列出完整目录与已生成文件，附「打开本次报告 / 打开 PDF」。没有图表时会明说「本次没有进入出图与候选排序环节」</td></tr>
+      <tr><td>计划与实际</td><td>计划工具数、实际步数、命中率；未执行的动作给出中文原因；模型自主补充的动作带来源徽章与中文依据，英文原文折叠保留</td></tr>
+      <tr><td>可复现证明</td><td>完整性校验、输入指纹、报告哈希、模型/工具调用数、单行的 <code>run.py replay</code> 命令，以及中文的重放边界说明</td></tr>
+    </tbody>
+  </table>
+  <div class="box tip"><b>数据在哪？</b>这一区只放审计凭证。候选表、剪接事件、图表请到左侧「报告」「事件浏览器」「候选新抗原」「可视化」页查看；文件本身在 <code>...\projects\&lt;项目ID&gt;\</code>。</div>
+
+  <h3><span class="num">4.</span>一键离线重放验证</h3>
+  <p>点按钮后后台真跑一次录制轨迹，逐项比对步骤、参数、排序结果与报告哈希，结果为「重放通过」或列出差异。配合「查看决策轨迹」可回溯每一步的来源与依据。</p>
+</section>
+
 <footer>
-  EpitopeRank v0.1.0 · 本教程所有数字均来自 <code>E:/EpitopeRank_data/datasets/data_public/peptide_test</code> 实跑结果<br>
-  详细字段定义见 <code>docs/USER_GUIDE.md</code>，数据来源见 <code>E:/EpitopeRank_data/datasets/data_public/README.md</code>
+  EpitopeRank v1.4.2 · 基础示例数字来自公开 pDC 数据实跑；v1.4.2 增补了输入目录、肽预测分级与自主任务的判读口径<br>
+  详细字段定义见 <code>docs/USER_GUIDE.md</code>；全功能演示视频见仓库 <code>media/videos/</code>
 </footer>
 
 </div>

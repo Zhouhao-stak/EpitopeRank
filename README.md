@@ -67,24 +67,24 @@ MODEL_NAME=deepseek-flash
 
 ## 演示视频
 
-用 **UPF1 真实 rMATS 数据**（112,908 个剪接事件）录制的 **v1.4.1 全功能巡览**，
-约 2 分 34 秒、无配音、带中文步骤字幕。所有交互都是真实调用，包括两次 IEDB
-肽预测、决策轨迹与离线重放验证：
+用 **UPF1 真实 rMATS 数据**（112,908 个剪接事件）录制的 **v1.4.2 全功能巡览**，
+约 2 分 53 秒、无配音、带中文步骤字幕。所有交互都是真实调用，包括 IEDB
+肽预测与分级判读、决策轨迹、自主任务的成功/失败状态与可复现证明：
 
-[![全功能演示预览（自动循环动图）](media/posters/EpitopeRank-v1.4.1-full-demo-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.1/EpitopeRank-v1.4.1-full-demo.mp4)
+[![全功能演示预览（自动循环动图）](media/posters/EpitopeRank-v1.4.2-full-demo-preview.gif)](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.2/EpitopeRank-v1.4.2-full-demo.mp4)
 
 > 上方是视频中段（真实 IEDB 预测结果）的循环预览。GitHub 不内嵌 mp4 播放器，
 > 因此用动图做首页预览；点它或下面的链接可在浏览器中直接播放完整视频。
 
-- [在线播放完整视频（Release 资产，video/mp4）](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.1/EpitopeRank-v1.4.1-full-demo.mp4)
-- [仓库内 MP4 副本](media/videos/EpitopeRank-v1.4.1-full-demo.mp4)
-- [静态封面](media/posters/EpitopeRank-v1.4.1-full-demo.jpg)
+- [在线播放完整视频（Release 资产，video/mp4）](https://github.com/Zhouhao-stak/EpitopeRank/releases/download/v1.4.2/EpitopeRank-v1.4.2-full-demo.mp4)
+- [仓库内 MP4 副本](media/videos/EpitopeRank-v1.4.2-full-demo.mp4)
+- [静态封面](media/posters/EpitopeRank-v1.4.2-full-demo.jpg)
 
 覆盖顺序：仪表盘与项目详情抽屉 → 事件浏览器 → 可视化图表 → 基因详情 →
-分析报告 → 剪接候选新抗原 → 肽预测工作台（MHC-I 三肽 + MHC-II 18 aa 长肽，
-含点击「预测并排序」后的真实结果表与排序）→ 决策轨迹（模型参与决策占比、
-逐步来源、模型/工具调用、完整性校验）→ 自主任务（可审阅计划、计划/实际偏差、
-可复现证明、一键离线重放验证）→ 工作区设置。
+分析报告 → 剪接候选新抗原 → 肽预测工作台（真实 IEDB 结果、逐行强/弱/非结合
+分级徽章与无可用候选提示）→ 决策轨迹（模型参与决策占比、来源徽章、完整性校验）
+→ 自主任务（可审阅计划、成功与失败两种状态的醒目状态条、产物目录与打开报告、
+计划/实际偏差、中文决策依据、可复现证明与一键离线重放验证）→ 工作区设置。
 
 旧版两段中英双语录屏仍保留在 `master` 分支的 `media/videos/` 中。
 
@@ -156,6 +156,11 @@ Coolify 一键部署、无 root 服务器部署等方案见 [docs/deploy/](docs/
 | `AS_event_master.tsv`（内部标准表） | 由上面前置生成，也可直接读 |
 
 `sample_metadata.tsv` 列：`sample_id, group, condition, tissue, batch`。
+
+> **v1.4.2 重要修正**：输入目录要指向**单个数据集文件夹**（目录里直接有
+> `sample_metadata.tsv`），不要填多个数据集共用的上级目录。上级目录缺样本表时，
+> 事件的有效样本数会被记为 0，质量闸门将挡掉所有显著事件，最终只产出一份空报告。
+> 现在检测到这种目录会明确报错并推荐正确路径；只包一个数据集时会自动读取子目录样本表并给出提示。
 
 可选附件：`gene_annotation.tsv`（GO/KEGG 列，用于富集）、
 `differential_expression.tsv`（gene_id/log2FC/pvalue/padj/baseMean）。
@@ -334,7 +339,7 @@ pytest tests/unit tests/integration -v
 pytest --cov=epitoperank --cov-report=html
 ```
 
-当前 **360 个测试全部通过**（单元 + API/UI 集成，含轨迹录制、工具快照重放、计划契约与可复现证明回归）。
+当前 **377 个测试全部通过**（单元 + API/UI 集成，含轨迹录制、工具快照重放、计划契约与可复现证明回归）。
 
 CI 在每次推送时跑：
 
@@ -400,6 +405,13 @@ CI 在每次推送时跑：
    轨迹完整性校验和一条可复制的 `run.py replay` 命令。
 5. 「一键离线重放验证」在后台真实重跑该轨迹：跳过所有模型与 MCP 网络调用、消费录制快照，
    逐项比对步骤、参数、排序结果与报告 SHA-256，返回 `identical` 或明确的差异清单。
+
+**v1.4.2 针对「结果看不懂、数据找不到」做了四项修正**：第 3 区顶部新增醒目的运行状态条
+（成功 / 结果不全 / 未产出数据），失败时直接给出终止原因、排查建议和数据加载诊断；新增
+「本次产物在哪」区块，列出完整目录、已生成文件与「打开本次报告 / 打开 PDF」按钮；模型
+自主决策的依据改为中文，英文原文折叠保留；`run.py replay` 命令改为单行显示，复制后可直接粘贴。
+肽预测结果表同时接入 `binding_tiers` 口径，逐行标注强 / 弱 / 非结合，并在本批无可用结合候选时
+用红字明确提示，避免把「预测完成 12 条」误读成「找到候选」。
 
 对应接口：`POST /api/plan/preview`、`POST /api/plan/run`、`GET /api/jobs/{id}`、
 `GET /api/projects/{id}/proof`、`POST /api/projects/{id}/verify`。

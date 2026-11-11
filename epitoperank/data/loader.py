@@ -100,6 +100,8 @@ class Dataset:
     annotation: dict[str, Any] = field(default_factory=dict)
     de_genes: list[DifferentialGene] = field(default_factory=list)
     extra_files: dict[str, Path] = field(default_factory=dict)
+    #: 中文备注：加载诊断（例如样本表来自子目录、样本表缺失）
+    diagnostics: list[str] = field(default_factory=list)
 
     @property
     def groups(self) -> dict[str, list[str]]:
@@ -127,6 +129,7 @@ class Dataset:
             "event_types": event_types,
             "annotated_genes": len(self.annotation),
             "de_gene_count": len(self.de_genes),
+            "diagnostics": list(self.diagnostics),
         }
 
 
@@ -150,6 +153,29 @@ def _find_file(directory: Path, candidates: Iterable[str]) -> Path | None:
             if prefix == "" or prefix.isdigit():
                 return path
     return None
+
+
+def _metadata_in_subdirs(directory: Path, max_depth: int = 3) -> list[Path]:
+    # 中文备注：递归查找带 rMATS 结果表且含样本表的子目录
+    # 用户常把多个数据集共用的上级目录当成输入；顶层没有样本表时，
+    # rMATS 解析会把有效样本数记为 0，质量闸门随后挡掉所有显著事件。
+    hits: list[Path] = []
+
+    def walk(current: Path, depth: int) -> None:
+        if depth > max_depth:
+            return
+        try:
+            children = sorted(current.iterdir(), key=lambda item: item.name)
+        except OSError:
+            return
+        if _find_file(current, METADATA_FILENAMES) and is_rmats_directory(current):
+            hits.append(current)
+        for child in children:
+            if child.is_dir() and not child.name.startswith("."):
+                walk(child, depth + 1)
+
+    walk(directory, 0)
+    return hits
 
 
 # 中文备注：数据接入：判断standard事件表头（参数：path）
@@ -254,10 +280,33 @@ def load_dataset(input_path: str | Path) -> Dataset:
         raise FileNotFoundError(f"Input path not found: {directory}")
 
     samples: list[SampleMetadata] = []
+    diagnostics: list[str] = []
     # 输入既可以是目录，也可以是单个文件；单文件时样本表放在同级目录里。
     is_directory_input = directory.is_dir()
     metadata_dir = directory if is_directory_input else directory.parent
     metadata_path = _find_file(metadata_dir, METADATA_FILENAMES) if metadata_dir.is_dir() else None
+    if not metadata_path and is_directory_input:
+        candidates = _metadata_in_subdirs(directory)
+        if len(candidates) == 1:
+            metadata_path = _find_file(candidates[0], METADATA_FILENAMES)
+            diagnostics.append(
+                f"输入目录本身没有样本表，已自动从 {candidates[0]} 读取样本分组；"
+                "建议以后直接把输入目录指向这个数据集文件夹。"
+            )
+        elif len(candidates) > 1:
+            ranked = sorted(candidates, key=lambda item: (len(item.parts), str(item)))
+            preview = "、".join(str(item) for item in ranked[:4])
+            raise ValueError(
+                f"输入目录下发现 {len(candidates)} 个各自带样本表的数据集，"
+                "混在一起分析会让样本分组与事件表对不上，因此已停止。"
+                "请把输入目录改为其中一个完整数据集文件夹，"
+                f"推荐路径最浅的：{ranked[0]}；其余候选：{preview}"
+            )
+        else:
+            diagnostics.append(
+                "未找到 sample_metadata.tsv：样本分组缺失会让有效样本数记为 0，"
+                "质量闸门可能过滤掉全部显著事件；请把输入目录指向含样本表的数据集文件夹。"
+            )
     if metadata_path:
         samples = load_sample_metadata(metadata_path)
     groups = group_sample_ids(samples)
@@ -329,4 +378,5 @@ def load_dataset(input_path: str | Path) -> Dataset:
         annotation=annotation,
         de_genes=de_genes,
         extra_files=extra_files,
+        diagnostics=diagnostics,
     )

@@ -185,6 +185,26 @@ def build_plan(query: str, *, settings: Any = None, enhancer: Any = None) -> Ana
 
 
 # 中文备注：比较计划与实际执行轨迹的偏差（参数：plan、steps）
+def _zh_reason(action: str, reason: str) -> str:
+    """把模型生成的英文决策依据概括成中文；原文仍由前端折叠保留。"""
+    text = (reason or "").lower()
+    if "filter failed" in text and "quality" in text:
+        return "过滤连续两次无结果，先检查当前阈值下的质量闸门，再决定重试或调整。"
+    if "relax threshold" in text or ("threshold" in text and "0 hits" in text):
+        return "当前阈值下没有显著事件，改由数据本身选择更宽松的阈值再试。"
+    if "safety net" in text:
+        return "兜底规则：每次运行都必须产出一份报告。"
+    if "profiling done" in text:
+        return "数据画像已完成，继续过滤显著事件以解锁后续排序。"
+    if "prior filters" in text or "episodic-hint" in text:
+        return "此前严格阈值没有命中，改用经验建议的阈值重试过滤。"
+    if "next unmet criterion" in text or "unblocks ranking" in text:
+        return "按计划推进：上一步的必要条件已满足，执行下一个未完成动作。"
+    if "filter failed" in text:
+        return "过滤未得到显著事件，按当前数据状态重新尝试。"
+    return "模型依据当前数据状态自主选择了这一步；英文原文见折叠区。"
+
+
 def plan_deviations(plan: AnalysisPlan | None, steps: list[dict[str, Any]]) -> dict[str, Any]:
     """Compare the approved contract with what the agent actually did."""
     executed = [str(s.get("action") or "") for s in steps if isinstance(s, dict)]
@@ -200,9 +220,10 @@ def plan_deviations(plan: AnalysisPlan | None, steps: list[dict[str, Any]]) -> d
         if name in planned_set or name in seen:
             continue
         seen.add(name)
+        reason = str(step.get("rationale") or "data-driven decision")[:200]
         additions.append({
             "action": name, "step": index, "source": step.get("source"),
-            "reason": str(step.get("rationale") or "data-driven decision")[:200],
+            "reason": reason, "reason_zh": _zh_reason(name, reason),
         })
     adhered = len([name for name in planned if name in executed_set])
     return {
@@ -211,16 +232,66 @@ def plan_deviations(plan: AnalysisPlan | None, steps: list[dict[str, Any]]) -> d
         "adherence_ratio": round(adhered / len(planned), 3) if planned else None,
         "planned_not_run": not_run,
         "autonomous_additions": additions[:20],
-        "note": "Deviations are expected: the OODA loop reacts to observed facts.",
+        "note": "计划是契约而不是脚本：智能体会按观察到的实际数据调整步骤，偏离会被完整记录。",
+        "planned_not_run_reason": (
+            "这些动作未执行，是因为前置条件没有满足（例如显著事件为 0、错误预算耗尽）；"
+            "智能体依据数据提前终止，而不是按脚本硬跑完。"
+        ),
     }
 
 
 # 中文备注：汇总一次运行的可复现证明（参数：state）
+def _candidate_count(facts: dict[str, Any]) -> int:
+    """兼容历史轨迹里 candidates 为数字或列表两种写法。"""
+    value = facts.get("candidates")
+    if isinstance(value, (list, tuple, dict, set)):
+        return len(value)
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return int(value)
+    return 0
+
+
+def _run_outcome(meta: dict[str, Any], facts: dict[str, Any]) -> tuple[str, str, dict | None, int, int]:
+    """把终止状态翻译成界面能直接展示的中文结论。"""
+    stopped = str(meta.get("stopped_reason") or "").strip()
+    lowered = stopped.lower()
+    candidates = _candidate_count(facts)
+    figures = facts.get("figures")
+    figure_count = len(figures) if isinstance(figures, (list, tuple)) else int(figures or 0)
+    if "error budget" in lowered or "failures" in lowered:
+        status = "failed"
+        summary = f"分析提前终止：{stopped or '连续失败触发错误预算'}，本次未产出候选数据。"
+    elif "budget exhausted" in lowered:
+        status = "partial"
+        summary = f"分析达到预算上限：{stopped}，结果可能不完整。"
+    elif candidates <= 0:
+        status = "partial"
+        summary = "流程已结束，但没有筛出候选事件；请检查输入数据与过滤阈值。"
+    else:
+        status = "succeeded"
+        summary = f"分析完成：{candidates} 个候选、{figure_count} 张图表，报告与轨迹已归档。"
+    failure = None
+    if status != "succeeded":
+        failure = {
+            "reason": stopped or "未达成目标",
+            "detail": summary,
+            "hint": (
+                "常见原因是把输入指向了多个数据集共用的上级目录，样本表未被读取，"
+                "有效样本数记为 0，显著事件被质量闸门全部挡掉。"
+                "请把输入改为含 sample_metadata.tsv 的单个数据集文件夹后重跑；"
+                "点「查看决策轨迹」可逐步核对当时的事实与依据。"
+            ),
+        }
+    return status, summary, failure, candidates, figure_count
+
+
+# 中文备注：汇总一次运行的可复现证明（参数：state）
 def reproducibility_proof(state: dict[str, Any]) -> dict[str, Any]:
-    """Self-contained, read-only proof bundle for one recorded run."""
+    """汇总一次运行的可复现证明（只读），并把结论翻译成中文。"""
     from collections import Counter
 
     meta = state.get("meta") or {}
+    facts = state.get("facts") or {}
     steps = [s for s in (state.get("steps") or []) if isinstance(s, dict)]
     raw_plan = meta.get("analysis_plan")
     plan = None
@@ -233,6 +304,7 @@ def reproducibility_proof(state: dict[str, Any]) -> dict[str, Any]:
     input_dir = str(meta.get("input_dir") or "<input-dir>")
     state_path = str(meta.get("state_path") or "<agent_state.json>")
     sources = Counter(str(s.get("source") or "rule") for s in steps)
+    status, summary, failure, candidates, figure_count = _run_outcome(meta, facts)
     return {
         "project_id": meta.get("project_id"), "query": meta.get("query"),
         "schema_version": meta.get("schema_version"),
@@ -250,13 +322,21 @@ def reproducibility_proof(state: dict[str, Any]) -> dict[str, Any]:
         "integrity_ok": bool(recorded) and recorded == ModelTrace.checksum(state),
         "plan": plan.as_dict() if plan else None,
         "deviations": plan_deviations(plan, steps),
+        "run_status": status,
+        "run_summary": summary,
+        "failure": failure,
+        "candidate_count": candidates,
+        "figure_count": figure_count,
+        "stopped_reason": meta.get("stopped_reason"),
+        "artifacts": [],
+        "output_dir": "",
+        "report_urls": {},
+        "state_path": state_path,
         "replay_command": (
             "venv/Scripts/python.exe run.py replay "
             f'--input "{input_dir}" --trace "{state_path}" --out <out-dir>'),
         "limitations": [
-            "Replay uses an isolated runtime state; a shared lab knowledge base "
-            "can change enrichment bonuses between runs.",
-            "External services (IEDB, PubMed) are consumed from recorded snapshots; "
-            "live responses are not guaranteed to be identical.",
+            "重放在隔离的运行状态下进行；若共用实验室知识库，复发基因加分可能让两次运行产生差异。",
+            "外部服务（IEDB、PubMed）的响应取自录制快照；实时网络结果不保证与录制时一致。",
         ],
     }
